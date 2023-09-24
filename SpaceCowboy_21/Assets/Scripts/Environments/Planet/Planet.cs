@@ -11,6 +11,7 @@ public class Planet : MonoBehaviour
     public float gravityRadius = 4f;
     public float gravityForce = 300f;
     //public LayerMask targetLayer;
+    public GameObject gravityViewer;
     CircleCollider2D circleColl;
 
     [Header("Planet Properties")]
@@ -27,6 +28,7 @@ public class Planet : MonoBehaviour
         //CheckGravityAtStart();
         circleColl = GetComponentInChildren<CircleCollider2D>();
         circleColl.radius = gravityRadius;
+        gravityViewer.transform.localScale = Vector3.one * gravityRadius * 2f;
     }
 
     /*
@@ -52,6 +54,12 @@ public class Planet : MonoBehaviour
         {
             gravity.gravityPlanets.Add(this);
         }
+
+        if (collision.CompareTag("Player"))
+        {
+            gravityViewer.SetActive(true);
+
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -59,6 +67,12 @@ public class Planet : MonoBehaviour
         if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
         {
             gravity.gravityPlanets.Remove(this);
+        }
+
+        if (collision.CompareTag("Player"))
+        {
+            gravityViewer.SetActive(false);
+
         }
     }
 
