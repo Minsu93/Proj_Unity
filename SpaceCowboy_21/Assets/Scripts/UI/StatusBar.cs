@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class StatusBar : MonoBehaviour
 {
     public Image healthBar;
-    public Image jetPackBar;
 
     private Health playerHealth;
     private bool isActive = false;

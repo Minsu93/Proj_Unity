@@ -54,14 +54,20 @@ namespace SpaceCowboy
         public event System.Action StopAimEvent;
         public event System.Action PlayerHitEvent;
         public event System.Action PlayerDieEvent;
+        public event System.Action PlayerReloadEvent;
+
         //public event System.Action PlayerChangeState;
 
         //총기 관련
         float lastShootTime;
         float shootInterval = 0.3f;
         float gunRecoil;
+        float reloadTime;
         bool isSingleShot;
+        bool needReload;
+        bool isReloading;
         Coroutine shootRoutine;
+        
 
         PlayerWeapon playerWeapon;
         public  PlayerView playerView;
@@ -511,6 +517,8 @@ namespace SpaceCowboy
                 return;
 
             state = PlayerState.Stun;
+            //연발 총을 쏘는 도중이라면 루틴을 중단한다. 
+            TryStopShoot();
 
             //플레이어를 뒤로 넉백시킨다. 지상/공중일 때 따로..
             if (OnAir)
@@ -635,7 +643,7 @@ namespace SpaceCowboy
         }
 
 
-        void DeadEvent()
+        public void DeadEvent()
         {
             //true 인 경우 체력이 0 이하로 떨어졌다는 뜻.
             state = PlayerState.Die;
@@ -728,7 +736,7 @@ namespace SpaceCowboy
                 if(shootRoutine != null)
                 {
                     StopCoroutine(shootRoutine);
-
+                    shootRoutine = null;
                 }
             }
         }
@@ -750,6 +758,16 @@ namespace SpaceCowboy
             if (state == PlayerState.Stun)
                 return;
 
+            if (isReloading)
+                return;
+
+            //없으면 리로드하기
+            if (needReload)
+            {
+                TryReload();
+                return;
+            }
+
             //총알 발사구가 행성 내부에 있다면 발사하지 않는다. 
             RaycastHit2D hit = Physics2D.Raycast(transform.position, aimDirection, 1f, LayerMask.GetMask("Planet"));
             if (hit.collider != null)
@@ -762,7 +780,11 @@ namespace SpaceCowboy
             if (currentTime - lastShootTime > shootInterval)
             {
                 lastShootTime = currentTime;
+                //view 애니메이션 실행
+                playerView.PreShoot();
                 if (ShootEvent != null) ShootEvent();
+                //총알 발사
+                needReload = playerWeapon.PlayShootEvent();
             }
 
             if (runON)
@@ -779,6 +801,38 @@ namespace SpaceCowboy
             }
         }
 
+        public void TryReload()
+        {
+            //재장전 중이 아닐 때 
+            if (isReloading)
+                return;
+
+            //재장전이 가능할떄 (currAmmo 가 maxAmmo보다 작을때)
+            if (playerWeapon.CanReload())
+            {
+                StartCoroutine(ReloadRoutine());
+            }
+
+        }
+
+        IEnumerator ReloadRoutine()
+        {
+            isReloading = true;
+            if (StopAimEvent != null) StopAimEvent();
+            if (PlayerReloadEvent != null) PlayerReloadEvent();
+
+            yield return new WaitForSeconds(reloadTime);
+
+
+            playerWeapon.ReloadAmmo();
+            isReloading = false;
+            needReload = false;
+            if (StartAimEvent != null) StartAimEvent();
+
+
+        }
+
+
         public void TryChangeWeapon(WeaponData _data)
         {
             //playerWeapon 변수에서 총기Interval 을 가져온다. 
@@ -790,8 +844,14 @@ namespace SpaceCowboy
             //recoil 변경
             gunRecoil = _data.Recoil;
 
+            //재장전 시간 변경
+            reloadTime = _data.ReloadTime;
+
+            //연발 or 단발 
             isSingleShot = _data.SingleShot;
+
         }
+
 
     }
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: WaterGun
   m_EditorClassIdentifier: 
   oneHand: 0
+  singleShot: 0
   burstNumber: 1
   burstInterval: 0
   numberOfProjectiles: 1
@@ -21,7 +22,8 @@ MonoBehaviour:
   randomSpreadAngle: 0
   recoil: 0
   projectilePrefab: {fileID: 6292677011125795810, guid: 3bdd5a34c463d3448a0c85768aefd646, type: 3}
-  maxAmmo: 25
+  maxAmmo: 250
+  reloadTime: 3
   damage: 0.25
   lifeTime: 2
   speed: 7

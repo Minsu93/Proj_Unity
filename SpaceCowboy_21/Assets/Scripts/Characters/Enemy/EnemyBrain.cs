@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace SpaceEnemy
 {
+    [SelectionBase]
+
     public class EnemyBrain : MonoBehaviour
     {
         public EnemyState enemyState = EnemyState.Idle;

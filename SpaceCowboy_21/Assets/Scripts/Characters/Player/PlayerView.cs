@@ -19,7 +19,7 @@ namespace SpaceCowboy
 
         [Space]
 
-        public AnimationReferenceAsset idle, onJump, onSpace, runForward, runBackward, shoot, aim, die;
+        public AnimationReferenceAsset idle, onJump, onSpace, runForward, runBackward, shoot, aim, reload, die;
 
         PlayerState previousState;
         MeshRenderer _renderer;
@@ -34,6 +34,7 @@ namespace SpaceCowboy
         [SpineSkin] public string _2HandSkin;
 
         Skin characterSkin;
+        Skeleton skel;
 
         // Start is called before the first frame update
         void Start()
@@ -44,6 +45,7 @@ namespace SpaceCowboy
             playerBehavior.StartAimEvent += PlayAim;
             playerBehavior.StopAimEvent += StopAim;
             playerBehavior.PlayerDieEvent += Dead;
+            playerBehavior.PlayerReloadEvent += Reload;
 
             PlayAim();
 
@@ -51,6 +53,8 @@ namespace SpaceCowboy
             _renderer = GetComponent<MeshRenderer>();
             block = new MaterialPropertyBlock();
             _renderer.SetPropertyBlock(block);
+
+            skel = skeletonAnimation.skeleton;
 
         }
 
@@ -126,14 +130,21 @@ namespace SpaceCowboy
             _changeState = true;
         }
 
+        public void PreShoot()
+        {
+            //자세 초기화
+            skeletonAnimation.AnimationState.ClearTrack(1);
+            skel.SetToSetupPose();
+
+        }
         public void PlayShoot()
         {
             //skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
 
             TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
-            entry.AttachmentThreshold = 1;
-            entry.MixDuration = 0;
-            skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0.3f, 0.1f);
+            //entry.AttachmentThreshold = 1;
+            //entry.MixDuration = 0;
+            //skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
 
 
         }
@@ -227,6 +238,12 @@ namespace SpaceCowboy
             */
 
         }
+
+        public void Reload()
+        {
+            skeletonAnimation.AnimationState.SetAnimation(1, reload, false);
+        }
+
 
         void FlipScaleX()
         {

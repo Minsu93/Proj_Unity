@@ -54,6 +54,10 @@ public class WeaponData : ScriptableObject
     public int MaxAmmo { get { return maxAmmo; } }
 
     [SerializeField]
+    float reloadTime;  // 데미지
+    public float ReloadTime { get { return reloadTime; } }
+
+    [SerializeField]
     float damage;  // 데미지
     public float Damage { get { return damage; } }
 

@@ -62,6 +62,12 @@ public class PlayerInput : MonoBehaviour
             playerWeapon.ChangeWeapon(1);
 
         }
+
+        // Weapon Reload
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            playerBehavior.TryReload();
+        }
     }
 
     private void FixedUpdate()

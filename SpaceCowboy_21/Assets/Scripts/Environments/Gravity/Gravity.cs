@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PlanetSpace;
+
 
 public class Gravity : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class Gravity : MonoBehaviour
     public float gravityMultiplier = 1f;
 
     public bool activate = true;
+    public int oxygenInt = -1;
 
     protected Rigidbody2D rb;
 
@@ -24,7 +27,11 @@ public class Gravity : MonoBehaviour
         if (!activate)
             return;
 
+        //가장 가까이 있는 행성 체크
         nearestPlanet = GetNearestPlanet();
+
+        //산소 체크
+        CheckOxygenState();
 
     }
 
@@ -70,6 +77,35 @@ public class Gravity : MonoBehaviour
 
         }
         return targetPlanet;
+    }
+
+    void CheckOxygenState()
+    {
+
+         List<PlanetType> types = new List<PlanetType>();
+
+        for (int i = 0; i < gravityPlanets.Count; i++)
+        {
+            if (gravityPlanets[i] == null)
+                continue;
+
+            types.Add(gravityPlanets[i].planetType);
+        }
+        
+
+        if (types.Contains(PlanetType.Green))
+        {   //Green 이 하나라도 있으면
+            oxygenInt = 0;
+        }
+        else if (types.Contains(PlanetType.Red))
+        {   //Green은 없고 Red가 있으면
+            oxygenInt =1;
+
+        }
+        else
+        {   //Blue만 있으면 
+            oxygenInt = 2;
+        }
     }
 
 

@@ -31,11 +31,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Start()
     {
-        if (playerBehavior == null) return;
-        playerBehavior.ShootEvent += PlayShootEvent;
-
-        ChangeWeapon(0);
-
+      
         //현재 리스트에 있는 총마다 각각 총알의 수 초기화.
         currAmmos = new int[weapons.Length];
 
@@ -44,25 +40,42 @@ public class PlayerWeapon : MonoBehaviour
             currAmmos[i] = weapons[i].MaxAmmo;
         }
 
+        ChangeWeapon(0);
+
+
     }
 
-    
 
-    void PlayShootEvent()
+
+    public bool PlayShootEvent()
     {
-        //만약 총알이 부족하다면 발사하지 않는다. 
-        int ammoNeed = burstNumber * numberOfProjectiles;
-        if(currAmmo < ammoNeed)
+        bool needReload = false;
+
+        if(currAmmo > 0)
+        {
+            //쏠 때마다 총알 한발씩 제거
+            currAmmo -= 1;
+
+            StartCoroutine(ShootRoutine());
+
+            needReload = currAmmo > 0 ? false : true;
+            return needReload;
+
+        }
+        else
         {
             //총알을 발사하지 않는다. 
-            return;
+            needReload = true;
+            return needReload;
         }
 
-        StartCoroutine(ShootRoutine());
+
     }
 
     IEnumerator ShootRoutine()
     {
+        yield return null; 
+
         float totalSpread = projectileSpread * (numberOfProjectiles - 1);       //우선 전체 총알이 퍼질 각도를 구한다
         Vector3 dir = gunTip.right; //발사 각도
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90 - (totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
@@ -85,11 +98,12 @@ public class PlayerWeapon : MonoBehaviour
                 projectile.transform.rotation = tempRot * randomRotation;
                 projectile.GetComponent<Projectile>().init(damage, lifeTime, speed);
 
-                currAmmo -= 1;
+
             }
             //AudioManager.instance.PlaySfx(AudioManager.Sfx.Shoot);
 
-            yield return new WaitForSeconds(burstInterval);
+            if(burstInterval> 0)
+                yield return new WaitForSeconds(burstInterval);
 
             //총기 반동 >> PlayerBehavior로
             //rb.AddForce(transform.right * -1f * recoil, ForceMode2D.Impulse);
@@ -107,7 +121,10 @@ public class PlayerWeapon : MonoBehaviour
     public void ChangeWeapon(int index)
     {
         //현재 갖고 있던 총알을 배열에 넣는다. 
-        currAmmos[currentWeaponIndex] = currAmmo;
+        if(currentWeaponIndex >= 0)
+        {
+            currAmmos[currentWeaponIndex] = currAmmo;
+        }
 
         currentWeaponIndex = index;
         currentWeaponData = weapons[currentWeaponIndex];
@@ -145,10 +162,18 @@ public class PlayerWeapon : MonoBehaviour
         currAmmo = currAmmos[currentWeaponIndex];
     }
 
-    void ReloadAmmo()
+    public void ReloadAmmo()
     {
         //리로드에는 시간이 필요하다.
         currAmmo = maxAmmo;
+    }
+
+    public bool CanReload()
+    {
+        bool canReload;
+
+        canReload = currAmmo < maxAmmo ? true : false;
+        return canReload;
     }
 
 }

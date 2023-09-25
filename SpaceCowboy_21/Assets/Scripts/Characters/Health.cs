@@ -64,7 +64,7 @@ public class Health : MonoBehaviour
         return isDead;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if(_invincibleTimer > 0)
         {
