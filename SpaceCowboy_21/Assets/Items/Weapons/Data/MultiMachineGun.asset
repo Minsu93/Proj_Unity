@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: MultiMachineGun
+  m_EditorClassIdentifier: 
+  oneHand: 0
+  singleShot: 0
+  burstNumber: 1
+  burstInterval: 0
+  numberOfProjectiles: 3
+  shootInterval: 0.25
+  projectileSpread: 20
+  randomSpreadAngle: 0
+  recoil: 1
+  projectilePrefab: {fileID: 8166384816120809469, guid: 5eb2810f24279734e91d234075919489, type: 3}
+  maxAmmo: 30
+  reloadTime: 1
+  damage: 4
+  lifeTime: 1
+  speed: 10
+  knockBackForce: 0
+  reflectionCount: 0

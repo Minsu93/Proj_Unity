@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class OxygenHealth : Health
 {
+    public bool activateOxygen;
     public PlayerBehavior playerBehavior;
     public CharacterGravity playerGravity;
     public float consumePerSeconds = 0.01f;
@@ -13,6 +14,9 @@ public class OxygenHealth : Health
     {
         base.Update();
 
+        if (!activateOxygen)
+            return;
+        /*
         switch (playerGravity.oxygenInt)
         {
             case 0:
@@ -35,10 +39,11 @@ public class OxygenHealth : Health
                 break;
 
         }
+        */
 
         if(currHealth > 0)
         {
-            currHealth -= consumePerSeconds * consumeMultiplier * Time.deltaTime;
+            currHealth += consumePerSeconds * consumeMultiplier * Time.deltaTime;
             currHealth = Mathf.Clamp(currHealth, 0, maxHealth);
 
         }

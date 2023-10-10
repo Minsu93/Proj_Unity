@@ -16,6 +16,7 @@ public class PlayerInput : MonoBehaviour
     PlayerBehavior playerBehavior;
     PlayerWeapon playerWeapon;
 
+
     private void OnValidate()
     {
         if(playerBehavior == null) { playerBehavior = GetComponent<PlayerBehavior>(); }
@@ -25,8 +26,19 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Map
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            GameManager.Instance.MapOpen();
+
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            GameManager.Instance.MapClose();
+        }
+
         // Jump
-        if(Input.GetButtonDown(JumpButton))
+        if (Input.GetButtonDown(JumpButton))
         {
             playerBehavior.TryJump();
         }
@@ -48,6 +60,10 @@ public class PlayerInput : MonoBehaviour
         {
             playerBehavior.TryRun();
         }
+        if (Input.GetButtonUp(RunButton))
+        {
+            playerBehavior.StopRun();
+        }
 
         // Weapon Change
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -68,10 +84,14 @@ public class PlayerInput : MonoBehaviour
         {
             playerBehavior.TryReload();
         }
+
+      
+
     }
 
     private void FixedUpdate()
     {
+
         //Vector2 moveRaw = Vector2.zero;
 
         moveDir.x = Input.GetAxisRaw(HorizontalAxis);

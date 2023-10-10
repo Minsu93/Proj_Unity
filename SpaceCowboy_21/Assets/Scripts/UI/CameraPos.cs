@@ -11,11 +11,13 @@ public class CameraPos : MonoBehaviour
     Transform player;
     GameObject reticle;
 
+    bool activate = true;
+
     private void Awake()
     {
         this.player = GameManager.Instance.player;
         this.transform.position = player.transform.position;
-
+        GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
         //reticle = new GameObject("Reticle");
         //reticle.transform.position = player.position;
         //reticle.transform.parent = transform;
@@ -25,6 +27,14 @@ public class CameraPos : MonoBehaviour
     }
     private void Update()
     {
+        if (!activate)
+        {
+            //캐릭터가 죽으면 카메라는 플레이어 시체를 따라다님.
+            this.transform.position = player.transform.position;
+
+            return;
+        }
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
         //reticle.transform.position = mousePos;
@@ -41,5 +51,15 @@ public class CameraPos : MonoBehaviour
         }
 
         this.transform.position = ret * threshold + (Vector2)player.position;
+    }
+
+    public void StopCameraFollow()
+    {
+        activate = false;
+    }
+
+    public void StartCameraFollow()
+    {
+        activate = true;
     }
 }

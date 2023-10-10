@@ -19,6 +19,7 @@ namespace SpaceCowboy
         float lastJumpTime;     //점프 후 잠시동안 onAir 감지 정지.
         bool onFalling; //떨어지고 있는 중.
         bool airJump;   //공중 점프가 가능한지 여부 
+        Vector2 preJumpVec; //이전 점프 벡터
 
         [Header("Aim Property")]
         public Vector3 mousePos;
@@ -114,6 +115,9 @@ namespace SpaceCowboy
             if (state == PlayerState.Die)
                 return;
 
+            //플레이어 높이 체크
+            //Vector2 height = characterGravity.nearestPoint - (Vector2)transform.position;
+            //Debug.Log(height.magnitude);
 
             //캐릭터 회전
             RotateCharacterToGround();
@@ -150,26 +154,7 @@ namespace SpaceCowboy
 
             Vector2 upVec = ((Vector2)transform.position - characterGravity.nearestPoint).normalized;
             RotateToVector(upVec, turnSpeedOnLand);
-            
-            /*
-            int faceInt;
-            Vector2 targetPointPos;
-            Vector2 pastPointPos;
-            int pastPoint;
-            Vector2 direction;
-            EdgeCollider2D edge = characterGravity.nearestEdgeCollider;
 
-            faceInt = faceRight ? 1 : -1;
-            targetPointPos = edge.transform.TransformPoint(edge.points[currentEdgePointIndex % (edge.points.Length - 1)]);   //콜라이더의 마지막  point 는 곧 0과 같다. 그래서 제외.
-
-            pastPoint = (currentEdgePointIndex - faceInt + (edge.points.Length - 1)) % (edge.points.Length - 1);
-            pastPointPos = edge.transform.TransformPoint(edge.points[pastPoint]);
-            direction = (targetPointPos - pastPointPos) * faceInt;
-            Vector2 normal = new Vector2(-direction.y, direction.x).normalized;
-
-            Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: normal);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeedOnLand * Time.deltaTime);
-            */
         }
 
         void RotateToVector(Vector2 normal, float turnSpeed)
@@ -259,6 +244,7 @@ namespace SpaceCowboy
             }
 
             state = PlayerState.Jumping;
+            //공중 점프가 가능하게 한다. 
             airJump = true;
 
             lastJumpTime = Time.time;
@@ -267,10 +253,12 @@ namespace SpaceCowboy
             OnAir = true;
 
             Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
+            upVector = upVector.normalized;
             //Vector2 forwardVector = moveDir.normalized;     //moveDir(현재 이동 방향) 기준으로 앞쪽으로 점프시키므로, moveDir 수치를 천천히 줄여서 점프 방향 수정하는 것도 만들 수 있다. 
             Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
             Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
             jumpDir = jumpDir.normalized;
+            preJumpVec = jumpDir;
             Vector2 jumpVector = jumpDir * jumpForce;
 
             rb.velocity = Vector2.zero;
@@ -285,14 +273,15 @@ namespace SpaceCowboy
         {
             airJump = false;
 
-            Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
-            //Vector2 forwardVector = moveDir.normalized;     //moveDir(현재 이동 방향) 기준으로 앞쪽으로 점프시키므로, moveDir 수치를 천천히 줄여서 점프 방향 수정하는 것도 만들 수 있다. 
-            Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
-            Vector2 jumpDir = upVector;
-            jumpDir = jumpDir.normalized;
-            Vector2 jumpVector = jumpDir * jumpForce * 0.5f;
+            //Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
+            //upVector = upVector.normalized;
 
-            //rb.velocity = Vector2.zero;
+            //Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
+            //Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
+            //jumpDir = jumpDir.normalized;
+            Vector2 jumpVector = preJumpVec * jumpForce * 0.8f;
+
+            rb.velocity = Vector2.zero;
             rb.AddForce(jumpVector, ForceMode2D.Impulse);
         }
 
@@ -330,7 +319,7 @@ namespace SpaceCowboy
             //공중에 있을 때 움직임 
             else
             {
-                MoveOnAir();
+                //MoveOnAir();
             }
 
 
@@ -418,7 +407,7 @@ namespace SpaceCowboy
 
 
         public void ChangePlanet()  
-        {   //행성이 바뀌면 right 방향을 재계산. 
+        {   //행성이 바뀌면 right 방향을 재계산. CharacterGravity에서 신호를 받는다.
             reserveChangeFaceRight = true;
         }
 
@@ -444,10 +433,6 @@ namespace SpaceCowboy
 
                 state = PlayerState.Idle;
 
-                if (runON)
-                {
-                    StopRun();
-                }
             }
         }
 
@@ -484,6 +469,7 @@ namespace SpaceCowboy
                     moveVector = targetPointPos + (normal * 0.51f);         //플레이어의 높이다. 타겟 포인트에서 노말방향 * 플레이어 높이를 목표로 움직임.
                     moveVector -= rb.position;
                     moveDist = moveVector.magnitude;
+
                     Debug.DrawRay(rb.position, moveVector, Color.cyan, 0.5f);
 
 
@@ -665,7 +651,7 @@ namespace SpaceCowboy
             //충돌 판정을 멈춘다
             //coll.enabled = false;
 
-            //전역 이벤트 발동
+            //전역 이벤트 발동. 적들에게 캐릭터가 죽었다고 전달. 
             GameManager.Instance.PlayerIsDead();
         }
 
@@ -674,19 +660,19 @@ namespace SpaceCowboy
 
         public void TryRun()
         {   //input에서 실행
-            if (runON)
-            {
-                StopRun();
-            }
-            else
-            {
-                runON = true;
-            }
+            runON = true;
+            //에임 중지
+            if (StopAimEvent != null)
+                StopAimEvent();
+
         }
 
         public void StopRun()
         {   //input에서 실행
             runON = false;
+            //에임 다시 시작
+            if (StartAimEvent != null)
+                StartAimEvent();
         }
 
 
@@ -713,6 +699,10 @@ namespace SpaceCowboy
         public void TryStartShoot()
         {
             //총 쏘기 이벤트를 시작한다. 단발총인 경우는 한 발만 발사. 연발 총인 경우는 발사 루틴을 지속
+
+            //달리기 중인 경우에는 총을 쏘지 못한다. 
+            if (runON)
+                return;
 
             //단발총인 경우에는 shootevent를 한번 실행한다. 쿨이 안되서 다시 눌러도 소용없음. 
             if (isSingleShot)
@@ -785,19 +775,15 @@ namespace SpaceCowboy
                 if (ShootEvent != null) ShootEvent();
                 //총알 발사
                 needReload = playerWeapon.PlayShootEvent();
-            }
-
-            if (runON)
-            {
-                StopRun();
-            }
 
 
-            if (onSpace)
-            {
-                //aim의 반대 방향으로 반동을 준다
-                Vector2 recoilDir = aimDirection * -1f;
-                rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+                //우주에 있는 동안 총의 Recoil을 적용한다!
+                if (onSpace)
+                {
+                    //aim의 반대 방향으로 반동을 준다
+                    Vector2 recoilDir = aimDirection * -1f;
+                    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+                }
             }
         }
 

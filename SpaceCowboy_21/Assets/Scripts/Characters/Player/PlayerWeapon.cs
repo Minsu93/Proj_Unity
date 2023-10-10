@@ -16,13 +16,14 @@ public class PlayerWeapon : MonoBehaviour
     float burstInterval;    //연속 발사 시 사이 시간
     float projectileSpread; //총알 마다 떨어진 각도
     float randomSpreadAngle;    //총구 흔들림때문에 생기는 랜덤값
-    float recoil;   //총기 반동
+    //float recoil;   //총기 반동
     GameObject projectilePrefab;    //총알의 종류
     float damage, lifeTime, speed, knockBackForce;  // Projectile 수치들
-    int maxAmmo;    //총알 탄창의 max수치
+    public int maxAmmo { get; private set; }    //총알 탄창의 max수치
 
     public int currAmmo { get; private set; }     //현재 남아있는 총알
     int[] currAmmos;
+    int reflectionCount;
     
     public Transform _1H_GunTip;
     public Transform _2H_GunTip;
@@ -96,7 +97,7 @@ public class PlayerWeapon : MonoBehaviour
                 GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
                 projectile.transform.position = gunTip.position;
                 projectile.transform.rotation = tempRot * randomRotation;
-                projectile.GetComponent<Projectile>().init(damage, lifeTime, speed);
+                projectile.GetComponent<Projectile_Player>().init(damage, lifeTime, speed, reflectionCount);
 
 
             }
@@ -146,7 +147,7 @@ public class PlayerWeapon : MonoBehaviour
         shootInterval = currentWeaponData.ShootInterval;   
         projectileSpread = currentWeaponData.ProjectileSpread; 
         randomSpreadAngle = currentWeaponData.RandomSpreadAngle;    
-        recoil = currentWeaponData.Recoil;  
+        //recoil = currentWeaponData.Recoil;  
 
         projectilePrefab = currentWeaponData.ProjectilePrefab; 
         damage = currentWeaponData.Damage;
@@ -154,6 +155,7 @@ public class PlayerWeapon : MonoBehaviour
         lifeTime = currentWeaponData.LifeTime;
         speed = currentWeaponData.Speed;
         //knockBackForce = currentWeaponData.KnockBackForce;
+        reflectionCount = currentWeaponData.ReflectionCount;
 
         //Player Behavior에 ShootInterval 전달.
         playerBehavior.TryChangeWeapon(currentWeaponData);

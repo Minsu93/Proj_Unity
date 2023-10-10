@@ -12,7 +12,7 @@ namespace SpaceEnemy
         public float chaseSpeed;
         public float enemyHeight = 0.51f;
         public float turnSpeedOnLand = 700f;
-        [SerializeField] float rotateAngle;
+        float rotateAngle;
 
         [Header("KnockBack Property")]
         public float knockBackSpeed;
@@ -136,6 +136,7 @@ namespace SpaceEnemy
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnspeedMultiplier * turnSpeed * Time.deltaTime);
 
         }
+
 
 
 
@@ -287,7 +288,7 @@ namespace SpaceEnemy
                 Vector2 pastPointPos = GetPointPos(currIndex);
 
                 //움직일 장소의 노말을 구한다.
-                Vector2 direction = gravity.nearestEdgeCollider.points[nextIndex] - gravity.nearestEdgeCollider.points[currIndex];
+                Vector2 direction = targetPointPos - pastPointPos;
                 Vector2 normal = Vector2.Perpendicular(direction).normalized * dirIndex;
                 
                 //최종 움직일 장소는 타겟 + 노말방향으로 키만큼 높은데 있는 장소
@@ -343,7 +344,7 @@ namespace SpaceEnemy
                 Vector2 pastPointPos = GetPointPos(currIndex);
 
                 //움직일 장소의 노말을 구한다.
-                Vector2 direction = gravity.nearestEdgeCollider.points[nextIndex] - gravity.nearestEdgeCollider.points[currIndex];
+                Vector2 direction = targetPointPos - pastPointPos;
                 Vector2 normal = Vector2.Perpendicular(direction).normalized * dirIndex;
                 //최종 움직일 장소는 타겟 + 노말방향으로 키만큼 높은데 있는 장소
                 Vector2 movePos = targetPointPos + (normal * enemyHeight);
@@ -378,8 +379,8 @@ namespace SpaceEnemy
 
         Vector2 GetPointPos(int pointIndex)
         {
-            Vector2 edgePoint = gravity.nearestEdgeCollider.points[pointIndex];
-            Vector2 pointPos = gravity.nearestEdgeCollider.transform.TransformPoint(edgePoint);
+            Vector3 localPoint = gravity.nearestEdgeCollider.points[pointIndex];
+            Vector2 pointPos = gravity.nearestEdgeCollider.transform.TransformPoint(localPoint);
             return pointPos;
         }
 
@@ -450,17 +451,15 @@ namespace SpaceEnemy
                 EnemyStopAImEvent();
         }
 
-        protected void StartGuardEvent()
+        protected virtual void StartGuardEvent()
         {
             if (EnemyStartGuardEvent != null)
                 EnemyStartGuardEvent();
-            brain.guardON = true;   
         }
-        protected void StopGuardEvent()
+        protected virtual void StopGuardEvent()
         {
             if (EnemyStopGuardEvent != null)
                 EnemyStopGuardEvent();
-            brain.guardON = false;
         }
 
         public void HitEvent()

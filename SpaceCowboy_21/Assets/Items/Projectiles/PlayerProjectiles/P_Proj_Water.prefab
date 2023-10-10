@@ -4981,7 +4981,7 @@ GameObject:
   - component: {fileID: 6672809801243708868}
   - component: {fileID: -5107147801187730982}
   - component: {fileID: 5885827282753015796}
-  - component: {fileID: 8602049676335730687}
+  - component: {fileID: 2245261894489709750}
   - component: {fileID: -1193727413953729404}
   - component: {fileID: 6086370999244632270}
   m_Layer: 9
@@ -5046,7 +5046,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.2
---- !u!114 &8602049676335730687
+--- !u!114 &2245261894489709750
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5055,19 +5055,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 6292677011125795810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 393b8b0de368f3e4ea11a2d769659013, type: 3}
+  m_Script: {fileID: 11500000, guid: 7da647933a0cb0d4a9d92c873200aa26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 1089958226170938091, guid: 4e11157af152a94479a5a40a80de5f4f, type: 3}
   knockBackTime: 0.2
   knockBackForce: 2
   disableDelayTime: 1
-  target: 1
-  rotateOn: 1
   gravityOn: 1
   collideOnPlanet: 1
   hitDestroyOn: 1
   hitByProjectileOn: 0
+  activate: 0
   ViewObj: {fileID: 8991112628740824846}
   trail: {fileID: 1670229204778518344}
 --- !u!114 &-1193727413953729404
@@ -5082,6 +5081,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd5636146dbd9e45b40cdb3e9765806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotateBySpeed: 1
+  slowProj: 0
+  slowTimer: 0
+  slowSpeed: 0
 --- !u!114 &6086370999244632270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5098,6 +5101,7 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   gravityMultiplier: 3
   activate: 1
+  oxygenInt: -1
 --- !u!1 &8991112628740824846
 GameObject:
   m_ObjectHideFlags: 0

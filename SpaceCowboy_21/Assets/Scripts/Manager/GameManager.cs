@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,14 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     public PoolManager poolManager;
+    public CameraPos cameraPos;
+    public CinemachineVirtualCamera virtualCamera;
+    public float lensExpand = 16.0f;
+    public float lensReduce = 8.0f;
+    float currLens;
+    float targetLens;
+    float approx = 0.05f;
+    public float controlSpeed = 5.0f;
 
     public static GameManager Instance
     {
@@ -50,6 +59,8 @@ public class GameManager : MonoBehaviour
         // Instance 참조 전 Awake()가 실행되는 경우이다.
         _instance = GetComponent<GameManager>();
         DontDestroyOnLoad(gameObject);
+
+
     }
 
 
@@ -58,6 +69,9 @@ public class GameManager : MonoBehaviour
         //AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
+
+        currLens = lensReduce;
+        targetLens = currLens;
     }
 
 
@@ -65,7 +79,22 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
+
+
     }
+
+    private void FixedUpdate()
+    {
+
+        if (Mathf.Abs(currLens - targetLens) > approx)
+        {
+            currLens = Mathf.Lerp(currLens, targetLens, Time.deltaTime * controlSpeed);
+            virtualCamera.m_Lens.OrthographicSize = currLens;
+
+        }
+        
+    }
+
 
 
     // 플레이어가 죽이면 전역에 이벤트 발생
@@ -73,5 +102,24 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerDeadEvent != null)
             PlayerDeadEvent();
+    }
+
+    public void MapOpen()
+    {
+        //cameraLens.LensExpand();
+        //virtualCamera.m_Lens.OrthographicSize = lensExpand;
+        targetLens = lensExpand;
+
+        cameraPos.StopCameraFollow();
+        
+    }
+
+    public void MapClose()
+    {
+        //cameraLens.LensReduce();
+        //virtualCamera.m_Lens.OrthographicSize = lensReduce;
+        targetLens = lensReduce;
+
+        cameraPos.StartCameraFollow();
     }
 }

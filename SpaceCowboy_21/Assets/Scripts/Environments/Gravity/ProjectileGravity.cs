@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PlanetSpace;
+using Unity.VisualScripting;
 
 public class ProjectileGravity : Gravity
 {
@@ -55,6 +56,37 @@ public class ProjectileGravity : Gravity
         //currDir = currDir + (gravDir * totalGrav * currentGravityForce * gravityMultiplier * 0.1f * Time.deltaTime);
 
         //rb.velocity = currDir.normalized * vel;
+    }
 
+    public void ResetGravityMultiplier()
+    {
+        gravityMultiplier = initialG;
+    }
+
+    public void GravityAdded(float amount)
+    {
+        gravityMultiplier = initialG + amount;
+    }
+
+    public override Planet GetNearestPlanet()       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
+    {
+        Planet targetPlanet = null;
+        float minDist = 1000f;
+
+        for (int i = 0; i < gravityPlanets.Count; i++)
+        {
+            if (gravityPlanets[i] == null)
+                continue;
+
+            Vector2 targetVec = gravityPlanets[i].transform.position - this.transform.position;
+            
+            if (targetVec.magnitude < minDist)
+            {
+                minDist = targetVec.magnitude;
+                targetPlanet = gravityPlanets[i];
+            }
+        }
+
+        return targetPlanet;
     }
 }

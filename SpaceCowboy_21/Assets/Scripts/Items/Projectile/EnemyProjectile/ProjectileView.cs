@@ -9,7 +9,8 @@ public class ProjectileView : MonoBehaviour
     MeshRenderer _renderer;
     MaterialPropertyBlock block;
 
-    
+    float damageSec = 0.1f;
+    float checkSec;
 
     void Start()
     {
@@ -26,27 +27,41 @@ public class ProjectileView : MonoBehaviour
 
     public void ResetRenderer()
     {
-        int id = Shader.PropertyToID("_Black");
-        block.SetColor(id, Color.black);
-        _renderer.SetPropertyBlock(block);
+        SetColorOriginal();
     }
 
     public void DamageHit()
     {
-        StartCoroutine(DamageRoutine());
+        checkSec = damageSec;
+
+        SetColorWhite();
     }
 
-    IEnumerator DamageRoutine()
+    private void Update()
+    {
+        if(checkSec > 0)
+        {
+            checkSec -= Time.deltaTime;
+            if(checkSec <=0)
+            {
+                SetColorOriginal();
+            }
+        }
+    }
+
+
+    void SetColorWhite()
     {
         int id = Shader.PropertyToID("_Black");
-        block.SetColor(id,Color.white);
+        block.SetColor(id, Color.white);
         _renderer.SetPropertyBlock(block);
+    }
 
-        yield return new WaitForSeconds(0.1f);
-
-        block.SetColor(id,Color.black); 
-        _renderer.SetPropertyBlock (block);  
-
+    void SetColorOriginal()
+    {
+        int id = Shader.PropertyToID("_Black");
+        block.SetColor(id, Color.black);
+        _renderer.SetPropertyBlock(block);
     }
 
 }

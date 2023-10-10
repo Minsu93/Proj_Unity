@@ -28,7 +28,6 @@ namespace SpaceEnemy
         public Vector2 playerDirection;
         public Transform playerTr;
 
-        public bool guardON { get; set; }   //가드가 On 입니까? (무적 타이밍 공통)
 
         Health health;
         EnemyAction action;
@@ -173,12 +172,6 @@ namespace SpaceEnemy
             if (enemyState == EnemyState.Die)
                 return;
 
-            if (guardON)
-            {
-                //가드가 켜져 있으면 맞았을 때 다른 이펙트를 띄운다. 
-                return;
-            }
-
 
             //데미지를 적용
             if (health.AnyDamage(dmg))
@@ -195,8 +188,10 @@ namespace SpaceEnemy
                 return;
             }
 
+
         }
 
+        /*
         public void KnockBackEvent(Vector2 objPos)
         {
             //가드가 켜져 있으면 넉백 하지 않는다. 
@@ -205,7 +200,7 @@ namespace SpaceEnemy
 
             action.EnemyKnockBack(objPos);
         }
-
+        */
 
 
         public void DeathEvent()

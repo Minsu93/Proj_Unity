@@ -14,6 +14,7 @@ namespace SpaceEnemy
         public float pushTime;          //밀치는 시간
         public float pushSpeed;         //밀치는 힘
         public float attackCoolTime;    //공격(slash)를 사용할 쿨타임
+        public GameObject shieldBodyPart;   //방어 역할을 할 Collider부분.
 
         float preAttackTime;
         PlayerBehavior playerBehavior;
@@ -135,7 +136,7 @@ namespace SpaceEnemy
 
         void Shoot()
         {
-            Vector3 dir = (brain.playerTr.position - gunTip.transform.position).normalized; //발사 각도
+            Vector3 dir = (brain.playerTr.position - gunTip.position).normalized; //발사 각도
             Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * dir;       // 첫 발사 방향을 구한다. 
             Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
 
@@ -145,6 +146,19 @@ namespace SpaceEnemy
             projectile.transform.position = gunTip.position;
             projectile.transform.rotation = targetRotation;
             projectile.GetComponent<Projectile>().init(damage, lifeTime, projectileSpeed);
+
+        }
+
+        protected override void StartGuardEvent()
+        {
+            base.StartGuardEvent();
+            shieldBodyPart.SetActive(true);
+
+        }
+        protected override void StopGuardEvent()
+        {
+            base.StopGuardEvent();
+            shieldBodyPart.SetActive(false);
 
         }
 

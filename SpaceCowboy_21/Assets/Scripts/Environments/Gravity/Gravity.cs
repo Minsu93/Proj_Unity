@@ -11,15 +11,16 @@ public class Gravity : MonoBehaviour
     protected Planet preNearestPlanet;
     protected float currentGravityForce;
     public float gravityMultiplier = 1f;
+    protected float initialG;
 
     public bool activate = true;
-    public int oxygenInt = -1;
 
     protected Rigidbody2D rb;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        initialG = gravityMultiplier;
     }
 
     protected virtual void Update()
@@ -30,8 +31,6 @@ public class Gravity : MonoBehaviour
         //가장 가까이 있는 행성 체크
         nearestPlanet = GetNearestPlanet();
 
-        //산소 체크
-        CheckOxygenState();
 
     }
 
@@ -42,7 +41,7 @@ public class Gravity : MonoBehaviour
 
     }
 
-    Planet GetNearestPlanet()       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
+    public virtual Planet GetNearestPlanet()       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
     {
         Planet targetPlanet = null;
         float minDist = 1000f;
@@ -54,7 +53,7 @@ public class Gravity : MonoBehaviour
 
             Vector2 targetVec = gravityPlanets[i].transform.position - this.transform.position;
 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, targetVec.normalized, 10f, LayerMask.GetMask("Planet"));
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, targetVec.normalized, targetVec.magnitude, LayerMask.GetMask("Planet"));
             if (hit.collider != null)
             {
                 if (hit.distance < minDist)
@@ -79,34 +78,6 @@ public class Gravity : MonoBehaviour
         return targetPlanet;
     }
 
-    void CheckOxygenState()
-    {
-
-         List<PlanetType> types = new List<PlanetType>();
-
-        for (int i = 0; i < gravityPlanets.Count; i++)
-        {
-            if (gravityPlanets[i] == null)
-                continue;
-
-            types.Add(gravityPlanets[i].planetType);
-        }
-        
-
-        if (types.Contains(PlanetType.Green))
-        {   //Green 이 하나라도 있으면
-            oxygenInt = 0;
-        }
-        else if (types.Contains(PlanetType.Red))
-        {   //Green은 없고 Red가 있으면
-            oxygenInt =1;
-
-        }
-        else
-        {   //Blue만 있으면 
-            oxygenInt = 2;
-        }
-    }
 
 
 

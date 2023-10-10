@@ -146,6 +146,7 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   gravityMultiplier: 1
   activate: 1
+  oxygenInt: -1
   nearestPoint: {x: 0, y: 0}
   nearestEdgeCollider: {fileID: 0}
   maxGravDIst: 0
@@ -162,6 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: 0
+  activate: 0
   timeBetweenChecks: 1
   checkRange: 14
   attackRange: 12
@@ -184,7 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chaseSpeed: 3.5
   enemyHeight: 0.51
-  turnSpeedOnLand: 700
+  turnSpeedOnLand: 100
   rotateAngle: 0
   knockBackSpeed: 0
   knockBackTime: 0.5
@@ -196,7 +198,7 @@ MonoBehaviour:
   randomSpreadAngle: 5
   damage: 1
   lifeTime: 5
-  projectileSpeed: 2
+  projectileSpeed: 3
   brain: {fileID: 4367072865476560536}
 --- !u!114 &4367072865476560529
 MonoBehaviour:
@@ -212,6 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   currHealth: 10
+  InvincibleTime: 0
 --- !u!114 &7656926320138262499
 MonoBehaviour:
   m_ObjectHideFlags: 0

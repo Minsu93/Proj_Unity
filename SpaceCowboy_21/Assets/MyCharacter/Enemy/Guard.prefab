@@ -1,5 +1,86 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2776835400244526272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355510209447067742}
+  - component: {fileID: 7505795674437398754}
+  - component: {fileID: 5281533453277348412}
+  m_Layer: 13
+  m_Name: Shield
+  m_TagString: BlockBody
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &355510209447067742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2776835400244526272}
+  m_LocalRotation: {x: -0, y: -0, z: 0.00026800483, w: 1}
+  m_LocalPosition: {x: 0.67474014, y: 0.019483447, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3431096409917588250}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &7505795674437398754
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2776835400244526272}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.7969778, y: -0.18895084}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.87528384, y: 1.9780868}
+  m_EdgeRadius: 0
+--- !u!114 &5281533453277348412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2776835400244526272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1fd8daaed7b64148a34acb96ba14ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonRenderer: {fileID: 7491711226669894683}
+  boneName: arm-R2
+  followXYPosition: 1
+  followZPosition: 1
+  followBoneRotation: 1
+  followSkeletonFlip: 1
+  followLocalScale: 0
+  followParentWorldScale: 0
+  maintainedAxisOrientation: 1
+  initializeOnAwake: 1
 --- !u!1 &3431096409917588254
 GameObject:
   m_ObjectHideFlags: 0
@@ -36,6 +117,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7491711226669894680}
+  - {fileID: 355510209447067742}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -92,6 +174,7 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   gravityMultiplier: 1
   activate: 1
+  oxygenInt: -1
   nearestPoint: {x: 0, y: 0}
   nearestEdgeCollider: {fileID: 0}
   maxGravDIst: 0
@@ -108,9 +191,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: 0
+  activate: 0
   timeBetweenChecks: 0.5
   checkRange: 10
-  attackRange: 3.5
+  attackRange: 5
   attackRangeOn: 1
   visionOn: 0
   filpToPlayerOn: 1
@@ -128,10 +212,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886cfbbc3e38c384888e39099e5a41a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chaseSpeed: 1
+  chaseSpeed: 1.5
   enemyHeight: 1.31
-  turnSpeedOnLand: 700
-  rotateAngle: 0
+  turnSpeedOnLand: 100
   knockBackSpeed: 0
   knockBackTime: 0
   chargeTime: 2
@@ -140,14 +223,15 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6292677011125795810, guid: 5e78769add27dee41805a51a7bbe6471, type: 3}
   gunTip: {fileID: 0}
   randomSpreadAngle: 0
-  damage: 0
-  lifeTime: 0.5
-  projectileSpeed: 2
+  damage: 5
+  lifeTime: 1
+  projectileSpeed: 4
   brain: {fileID: 3431096409917588255}
   pushDistance: 1.3
   pushTime: 0.2
   pushSpeed: 4
   attackCoolTime: 3
+  shieldBodyPart: {fileID: 2776835400244526272}
   skeletonAnimation: {fileID: 7491711226669894683}
   eventName: shoot
   logDebugMessage: 0
@@ -165,6 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 30
   currHealth: 30
+  InvincibleTime: 0
 --- !u!114 &5273161689077657602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,7 +257,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3431096409917588254}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edfc0751c7ba7564680b9606b780d642, type: 3}
   m_Name: 
@@ -326,7 +411,7 @@ MonoBehaviour:
   shoot: {fileID: 11400000, guid: 172755224fbbaa845a506269a2983e1c, type: 2}
   aim: {fileID: 0}
   guard: {fileID: 11400000, guid: 99cc337876353e3458c275493d2702a0, type: 2}
-  die: {fileID: 0}
+  die: {fileID: 11400000, guid: 831712ded8eff8c47840448d157100e7, type: 2}
 --- !u!114 &7491711226669894681
 MonoBehaviour:
   m_ObjectHideFlags: 0

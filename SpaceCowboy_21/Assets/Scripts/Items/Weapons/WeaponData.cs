@@ -73,4 +73,8 @@ public class WeaponData : ScriptableObject
     float knockBackForce;   //³Ë¹é Èû
     public float KnockBackForce { get { return knockBackForce; } }
 
+    [SerializeField]
+    int reflectionCount;   //Æ¨±â´Â È½¼ö
+    public int ReflectionCount { get { return reflectionCount; } }
+
 }
