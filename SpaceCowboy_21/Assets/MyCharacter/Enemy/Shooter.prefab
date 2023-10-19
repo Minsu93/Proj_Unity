@@ -95,6 +95,7 @@ MonoBehaviour:
   nearestPoint: {x: 0, y: 0}
   nearestEdgeCollider: {fileID: 0}
   maxGravDIst: 0
+  oxygenInt: -1
 --- !u!114 &8044899883763029047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,11 +108,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activate: 1
   enemyState: 0
-  activate: 0
   timeBetweenChecks: 1
-  checkRange: 14
-  attackRange: 8
+  checkRange: 16
+  attackRange: 12
   attackRangeOn: 1
   visionOn: 1
   filpToPlayerOn: 1
@@ -132,7 +133,6 @@ MonoBehaviour:
   chaseSpeed: 4
   enemyHeight: 0.76
   turnSpeedOnLand: 100
-  rotateAngle: 0
   knockBackSpeed: 4
   knockBackTime: 0.1
   chargeTime: 1
@@ -157,8 +157,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  currHealth: 10
+  maxHealth: 15
+  currHealth: 15
   InvincibleTime: 0
 --- !u!114 &8562481654179466758
 MonoBehaviour:
@@ -370,11 +370,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyAction: {fileID: 8044899883763029040}
   enemyBrain: {fileID: 8044899883763029047}
+  enemy: {fileID: 0}
   skeletonAnimation: {fileID: 8044899884210209977}
   idle: {fileID: 11400000, guid: 206c4608f4ed63d488e3b0d31782ad55, type: 2}
   chase: {fileID: 11400000, guid: 52419a9e766223643969f7d26bbe14de, type: 2}
   shoot: {fileID: 11400000, guid: 82453ae886538f047b0135125e0d7fb5, type: 2}
   aim: {fileID: 11400000, guid: a0926f41c32a4a14384bc0b9a826ea82, type: 2}
+  hit: {fileID: 0}
   guard: {fileID: 0}
   die: {fileID: 11400000, guid: 5c96d8fdbb56cad4a9d49851c3139d65, type: 2}
 --- !u!114 &8044899884210209925

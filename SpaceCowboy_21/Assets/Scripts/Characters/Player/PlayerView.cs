@@ -15,7 +15,7 @@ namespace SpaceCowboy
         public bool flipOn = true;
         bool turnRight = true;
         bool preTurnRight;
-        bool _changeState;
+        bool _changeState;  //애니메이션 스테이트를 바꿉니다
 
         [Space]
 

@@ -19,6 +19,9 @@ namespace PlanetSpace
         public Transform gravityViewer;
         CircleCollider2D circleColl;
         public float oxygenAmount = 1f;
+        public float lens = 8f;
+
+ 
 
         [Header("Planet Properties")]
         //행성에 등장할 적 리스트
@@ -33,6 +36,8 @@ namespace PlanetSpace
         private void OnValidate()
         {
             edgeColl = GetComponent<EdgeCollider2D>();
+            
+
         }
 
         private void Awake()
@@ -43,6 +48,7 @@ namespace PlanetSpace
 
             //gravityViewer = GetComponentsInChildren<Transform>(true)[2];
             SetViewerMaterial();
+
 
         }
 
@@ -61,6 +67,7 @@ namespace PlanetSpace
             gravityViewer.gameObject.SetActive(false);
         }
 
+        
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
@@ -107,7 +114,7 @@ namespace PlanetSpace
         }
     }
 
-    public enum PlanetSize { XS, S, M, L, XL }
+    public enum PlanetSize { XS, S, SM, M, L, XL }
 
 }
 

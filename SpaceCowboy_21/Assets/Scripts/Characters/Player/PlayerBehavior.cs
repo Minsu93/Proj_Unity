@@ -43,6 +43,7 @@ namespace SpaceCowboy
         Vector2 inputAxis = Vector2.zero;  //움직임 인풋 값
         [SerializeField] bool OnAir;      //디버그 용으로 인스펙터에서 보이게
         public bool onSpace { get; private set; }   //우주에 있습니까?
+        public bool onLessGravity { get; private set; } //낮은 중력에 있습니까?
         public bool faceRight;
         bool reserveChangeFaceRight;        // 행성이 바뀌면 착지할 때 faceRight를 초기화 예약한다.
         bool runON;
@@ -224,10 +225,32 @@ namespace SpaceCowboy
         {
             //플레이어가 우주에 있는지 감지해서 onSpace에 적용
             bool pre = onSpace;
-            onSpace = characterGravity.nearestPlanet == null ? true : false;
+
+            if( characterGravity.nearestPlanet == null)
+            {
+                pre = true;
+            }
+            else
+            {
+                pre = false;
+                //저중력 체크
+                if(characterGravity.nearestPlanet.gravityForce < 400f)
+                {
+                    onLessGravity = true;
+                }
+                else
+                {
+                    onLessGravity = false;
+                }
+            }
+            //onSpace = characterGravity.nearestPlanet == null ? true : false;
+
             //우주에 있는게 달라지면 애니메이션 변경
             if (pre != onSpace)
                 playerView.ChangeState();
+
+            onSpace = pre;
+
         }
 
         public void TryJump()
@@ -779,6 +802,12 @@ namespace SpaceCowboy
 
                 //우주에 있는 동안 총의 Recoil을 적용한다!
                 if (onSpace)
+                {
+                    //aim의 반대 방향으로 반동을 준다
+                    Vector2 recoilDir = aimDirection * -1f;
+                    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+                }
+                else if(onLessGravity && OnAir)
                 {
                     //aim의 반대 방향으로 반동을 준다
                     Vector2 recoilDir = aimDirection * -1f;

@@ -26,6 +26,9 @@ public class PlanetNaming :MonoBehaviour
             case PlanetSize.S:
                 planetSize = "Small";
                 break;
+            case PlanetSize.SM:
+                planetSize = "SMedium";
+                break;
             case PlanetSize.M:
                 planetSize = "Medium";
                 break;

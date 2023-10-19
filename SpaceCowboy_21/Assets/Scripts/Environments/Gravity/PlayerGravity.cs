@@ -39,6 +39,16 @@ public class PlayerGravity : CharacterGravity
 
         preNearestPlanet = nearestPlanet;
         currentGravityForce = nearestPlanet.gravityForce;   //행성별로 다른 중력 적용
+        //행성별 카메라 변경
+        //if(nearestPlanet.gravityForce < 400f)
+        //{
+        //    GameManager.Instance.ChangeCamera(11f);
+        //}
+        //else
+        //{
+        //    GameManager.Instance.ChangeCamera(8f);
+        //}
+        GameManager.Instance.ChangeCamera(nearestPlanet.lens);
 
         oxygenHealth.consumeMultiplier = nearestPlanet.oxygenAmount;
     }

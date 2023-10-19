@@ -16,16 +16,16 @@ MonoBehaviour:
   singleShot: 0
   burstNumber: 1
   burstInterval: 0
-  numberOfProjectiles: 3
-  shootInterval: 0.25
+  numberOfProjectiles: 1
+  shootInterval: 0.1
   projectileSpread: 20
-  randomSpreadAngle: 0
-  recoil: 1
+  randomSpreadAngle: 10
+  recoil: 0.5
   projectilePrefab: {fileID: 8166384816120809469, guid: 5eb2810f24279734e91d234075919489, type: 3}
-  maxAmmo: 30
+  maxAmmo: 45
   reloadTime: 1
-  damage: 4
+  damage: 2
   lifeTime: 1
-  speed: 10
+  speed: 15
   knockBackForce: 0
   reflectionCount: 0

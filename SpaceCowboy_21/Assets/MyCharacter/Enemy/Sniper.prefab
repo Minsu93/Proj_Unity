@@ -146,10 +146,10 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   gravityMultiplier: 1
   activate: 1
-  oxygenInt: -1
   nearestPoint: {x: 0, y: 0}
   nearestEdgeCollider: {fileID: 0}
   maxGravDIst: 0
+  oxygenInt: -1
 --- !u!114 &4367072865476560536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,8 +162,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activate: 1
   enemyState: 0
-  activate: 0
   timeBetweenChecks: 1
   checkRange: 14
   attackRange: 12
@@ -187,7 +187,6 @@ MonoBehaviour:
   chaseSpeed: 3.5
   enemyHeight: 0.51
   turnSpeedOnLand: 100
-  rotateAngle: 0
   knockBackSpeed: 0
   knockBackTime: 0.5
   chargeTime: 3
@@ -371,11 +370,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyAction: {fileID: 2826630234420760982}
   enemyBrain: {fileID: 4367072865476560536}
+  enemy: {fileID: 0}
   skeletonAnimation: {fileID: 8293033498706612437}
   idle: {fileID: 11400000, guid: c2c768ef435dd644f96f39a020281457, type: 2}
   chase: {fileID: 11400000, guid: 390796fa48b5c9045a986e622c7fbaf6, type: 2}
   shoot: {fileID: 11400000, guid: b48dc8dfa60e8324d8bbe5004e1ee040, type: 2}
   aim: {fileID: 11400000, guid: 518daccb56a0ca44b8f6eb9db03ae4d0, type: 2}
+  hit: {fileID: 0}
   guard: {fileID: 0}
   die: {fileID: 11400000, guid: 7221aff99286e6c4f83b711033934269, type: 2}
 --- !u!114 &8293033498706612435

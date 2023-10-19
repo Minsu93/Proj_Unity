@@ -6,11 +6,9 @@ namespace SpaceEnemy
 {
     [SelectionBase]
 
-    public class EnemyBrain : MonoBehaviour
+    public class EnemyBrain : Enemy
     {
         public EnemyState enemyState = EnemyState.Idle;
-
-        public bool activate;
 
         [Space]
 
@@ -29,32 +27,18 @@ namespace SpaceEnemy
         public Transform playerTr;
 
 
-        Health health;
-        EnemyAction action;
-        Collider2D coll;
 
-        private void OnValidate()
-        {
-            if(health == null)
-                health = GetComponent<Health>();
-            health.ResetHealth();
-
-            if(action == null)
-                action = GetComponent<EnemyAction>();
-        }
-
-        private void Start()
+        protected override void Start()
         {
             coll = GetComponent<Collider2D>();  
             playerTr = GameManager.Instance.player;
 
             GameManager.Instance.PlayerDeadEvent += PlayerIsDead;
-            activate = true;
 
         }
 
         // Update is called once per frame
-        void Update()
+        protected override void Update()
         {
             if (!activate)
                 return;
@@ -146,6 +130,7 @@ namespace SpaceEnemy
 
         }
 
+
         void VisionCheck()
         {
             //플레이어가 시야에 보이는지 체크한다
@@ -167,7 +152,8 @@ namespace SpaceEnemy
         }
 
 
-        public void DamageEvent(float dmg)
+
+        public override void DamageEvent(float dmg)
         {
             if (enemyState == EnemyState.Die)
                 return;
@@ -203,7 +189,7 @@ namespace SpaceEnemy
         */
 
 
-        public void DeathEvent()
+        public override void DeathEvent()
         {
             //적을 비활성화 한다.
             
@@ -212,7 +198,7 @@ namespace SpaceEnemy
 
         }
 
-        public void DeadActive()
+        public override void DeadActive()
         {
             //구지 View에서 여기로 죽는 애니메이션이 끝나면 신호를 줘서 비활성화 시킴.
             this.gameObject.SetActive(false);
@@ -220,7 +206,7 @@ namespace SpaceEnemy
 
 
 
-        public void PlayerIsDead()
+        public override void PlayerIsDead()
         {            
             //플레이어가 죽으면 델리케이트를 통해 발동
 
@@ -230,8 +216,21 @@ namespace SpaceEnemy
 
 
 
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, checkRange);
+
+            if (attackRangeOn)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(transform.position, attackRange);
+            }
+
+        }
 
     }
+
 
     public enum EnemyState
     {
@@ -242,5 +241,8 @@ namespace SpaceEnemy
         Stun, //스턴 상태
         Die     //죽었을 때
     }
-    
+
+
 }
+
+

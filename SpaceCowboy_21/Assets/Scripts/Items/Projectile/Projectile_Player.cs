@@ -46,8 +46,8 @@ public class Projectile_Player : Projectile
         //Àû¿¡ ºÎµúÇûÀ» ¶§
         if (collision.CompareTag("Enemy"))
         {
-            if(collision.TryGetComponent<EnemyBrain>(out EnemyBrain brain))
-                brain.DamageEvent(damage);
+            if(collision.TryGetComponent(out Enemy enemy))
+                enemy.DamageEvent(damage);
 
             if (hitDestroyOn)
             {

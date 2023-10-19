@@ -11,12 +11,13 @@ public class EnemyView : MonoBehaviour
 {
     public EnemyAction enemyAction;
     public EnemyBrain enemyBrain;
+    public Enemy enemy;
     public SkeletonAnimation skeletonAnimation;
 
 
     bool preTurnRight;
 
-    public AnimationReferenceAsset idle, chase, shoot, aim, guard, die;
+    public AnimationReferenceAsset idle, chase, shoot, aim, hit, guard, die;
     EnemyState previousEnemyState;
 
     MeshRenderer _renderer;
@@ -61,6 +62,7 @@ public class EnemyView : MonoBehaviour
     {
         if (enemyAction == null) return;
         if (skeletonAnimation == null) return;
+        if (enemyBrain == null) return;      
         if (enemyBrain.enemyState == EnemyState.Die)
             return;
 
@@ -146,6 +148,9 @@ public class EnemyView : MonoBehaviour
 
     IEnumerator DamageRoutine()
     {
+        if(hit != null)
+            skeletonAnimation.AnimationState.SetAnimation(0, hit, false);
+
         //int cID = Shader.PropertyToID("_Color");
         int bID = Shader.PropertyToID("_Black");
         block.SetColor(bID, Color.white);
@@ -196,7 +201,15 @@ public class EnemyView : MonoBehaviour
         }
 
         //이 오브젝트를 비활성화
-        enemyBrain.DeadActive();
+        if (enemyBrain != null)
+        {
+            enemyBrain.DeadActive();
+        }
+        else if ( enemy != null)
+        {
+            enemy.DeadActive();
+        }
+
     }
 
     void FlipScaleX()

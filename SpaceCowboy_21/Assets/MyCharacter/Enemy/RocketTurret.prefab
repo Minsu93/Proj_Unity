@@ -87,10 +87,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activate: 1
   enemyState: 0
-  activate: 0
   timeBetweenChecks: 1
-  checkRange: 8
+  checkRange: 16
   attackRange: 0
   attackRangeOn: 0
   visionOn: 0
@@ -112,7 +112,6 @@ MonoBehaviour:
   chaseSpeed: 0
   enemyHeight: 0.81
   turnSpeedOnLand: 700
-  rotateAngle: 0
   knockBackSpeed: 0
   knockBackTime: 0.5
   chargeTime: 1
@@ -140,8 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  currHealth: 10
+  maxHealth: 20
+  currHealth: 20
   InvincibleTime: 0
 --- !u!114 &8074445839163561381
 MonoBehaviour:
@@ -352,10 +351,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyAction: {fileID: 5713275202376415614}
   enemyBrain: {fileID: 6118528342742052466}
+  enemy: {fileID: 0}
   skeletonAnimation: {fileID: 6509970499631238456}
   idle: {fileID: 11400000, guid: c934c9194badeab418ef43a1fe6aa629, type: 2}
   chase: {fileID: 0}
   shoot: {fileID: 11400000, guid: 6705289e760da1a449c7db587382905c, type: 2}
   aim: {fileID: 0}
+  hit: {fileID: 0}
   guard: {fileID: 0}
   die: {fileID: 11400000, guid: 4c3e4b82c51fd304099edfe2a36905ff, type: 2}

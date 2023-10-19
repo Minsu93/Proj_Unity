@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour
     public PoolManager poolManager;
     public CameraPos cameraPos;
     public CinemachineVirtualCamera virtualCamera;
-    public float lensExpand = 16.0f;
-    public float lensReduce = 8.0f;
+    public float mapLens = 16.0f;
+    public float defaultLens = 8.0f;
     float currLens;
     float targetLens;
     float approx = 0.05f;
@@ -70,7 +70,8 @@ public class GameManager : MonoBehaviour
 
         //Cursor.visible = false;
 
-        currLens = lensReduce;
+        //초기 카메라 
+        currLens = defaultLens;
         targetLens = currLens;
     }
 
@@ -90,7 +91,6 @@ public class GameManager : MonoBehaviour
         {
             currLens = Mathf.Lerp(currLens, targetLens, Time.deltaTime * controlSpeed);
             virtualCamera.m_Lens.OrthographicSize = currLens;
-
         }
         
     }
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
     {
         //cameraLens.LensExpand();
         //virtualCamera.m_Lens.OrthographicSize = lensExpand;
-        targetLens = lensExpand;
+        targetLens = mapLens;
 
         cameraPos.StopCameraFollow();
         
@@ -118,8 +118,14 @@ public class GameManager : MonoBehaviour
     {
         //cameraLens.LensReduce();
         //virtualCamera.m_Lens.OrthographicSize = lensReduce;
-        targetLens = lensReduce;
+        targetLens = defaultLens;
 
         cameraPos.StartCameraFollow();
+    }
+
+    public void ChangeCamera(float orthoSize)
+    {
+        defaultLens = orthoSize;
+        targetLens = defaultLens;
     }
 }
