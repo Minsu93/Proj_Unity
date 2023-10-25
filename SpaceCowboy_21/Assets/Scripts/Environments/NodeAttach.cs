@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
 
-[ExecuteInEditMode]     //이것때문에 Play 모드가 아니어도 실행되는거였음.
+//[ExecuteInEditMode]     //이것때문에 Play 모드가 아니어도 실행되는거였음.
 public class NodeAttach : MonoBehaviour
 {
     public SpriteShapeController spriteShapeController;
@@ -23,7 +23,7 @@ public class NodeAttach : MonoBehaviour
             spline = spriteShapeController.spline;
     }
 
-    
+    /*
     void Update()
     {
         if (EditorApplication.isPlaying)
@@ -85,6 +85,8 @@ public class NodeAttach : MonoBehaviour
         }
         lastSpritePointCount = spline.GetPointCount();
     }
+
+    */
 
     private float Angle(Vector3 a, Vector3 b)
     {

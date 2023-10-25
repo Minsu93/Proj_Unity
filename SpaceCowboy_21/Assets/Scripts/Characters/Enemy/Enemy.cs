@@ -6,12 +6,13 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public bool activate = true;
+    public bool isGrabable = false;
 
     protected Health health;
     protected EnemyAction action;
     protected Collider2D coll;
 
-    private void OnValidate()
+    private void Awake()
     {
         if (health == null)
             health = GetComponent<Health>();
@@ -20,6 +21,7 @@ public class Enemy : MonoBehaviour
         if (action == null)
             action = GetComponent<EnemyAction>();
     }
+
 
     protected virtual void Start()
     {

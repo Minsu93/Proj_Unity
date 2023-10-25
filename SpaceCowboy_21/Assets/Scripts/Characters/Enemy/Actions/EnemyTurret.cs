@@ -60,6 +60,9 @@ public class EnemyTurret : EnemyAction
         //충전 딜레이
         yield return StartCoroutine(ChargeRoutine(chargeTime));
         yield return StartCoroutine(ShootRoutine(shootDelay));
+        yield return StartCoroutine(ShootRoutine(shootDelay));
+        yield return StartCoroutine(ShootRoutine(shootDelay));
+
         yield return StartCoroutine(DelayRoutine(afterShootDelay));
 
         //공격 상태라면 다시 감지 상태로 돌아간다

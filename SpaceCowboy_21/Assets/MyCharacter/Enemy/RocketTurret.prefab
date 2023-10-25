@@ -88,6 +88,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 1
+  isGrabable: 0
   enemyState: 0
   timeBetweenChecks: 1
   checkRange: 16
@@ -115,14 +116,14 @@ MonoBehaviour:
   knockBackSpeed: 0
   knockBackTime: 0.5
   chargeTime: 1
-  shootDelay: 1
+  shootDelay: 0.5
   afterShootDelay: 1
   projectilePrefab: {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
   gunTip: {fileID: 6118528343609071806}
-  randomSpreadAngle: 5
+  randomSpreadAngle: 60
   damage: 1
   lifeTime: 10
-  projectileSpeed: 4
+  projectileSpeed: 5
   brain: {fileID: 6118528342742052466}
   skeletonAnimation: {fileID: 6509970499631238456}
   eventName: fire

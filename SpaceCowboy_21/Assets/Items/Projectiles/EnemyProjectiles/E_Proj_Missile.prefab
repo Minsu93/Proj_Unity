@@ -72,7 +72,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.1484927, y: -0.0011466742}
+  m_Offset: {x: -0.17882043, y: -0.0018360913}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -83,7 +83,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0080266, y: 0.41978937}
+  m_Size: {x: 0.77732444, y: 0.3545735}
   m_EdgeRadius: 0
 --- !u!114 &7771688682484933683
 MonoBehaviour:
@@ -98,8 +98,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 4787116472139122314, guid: 5846ac8c07b97a347893dd1a6272202d, type: 3}
-  knockBackTime: 0.2
-  knockBackForce: 2
   disableDelayTime: 1
   gravityOn: 0
   collideOnPlanet: 1
@@ -121,7 +119,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateBySpeed: 0
+  knockBackTime: 0.2
+  knockBackForce: 2
   rotationSpeed: 2
+  startTimer: 0.5
+  rotationTime: 0
+  distanceLimit: 3
 --- !u!114 &5477442307006051095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 5
   currHealth: 0
   InvincibleTime: 0
 --- !u!1 &7072543532877889989
@@ -220,7 +223,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -864625343
   m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7072543532877889991
 MonoBehaviour:
@@ -301,7 +304,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7072543533629953539}
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.8390001, y: 0, z: 0}
+  m_LocalPosition: {x: -0.719, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

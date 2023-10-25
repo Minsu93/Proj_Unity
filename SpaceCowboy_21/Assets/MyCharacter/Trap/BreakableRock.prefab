@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 6569380534719130085}
   - component: {fileID: 6569380534719130086}
   - component: {fileID: 6569380534719130087}
-  m_Layer: 12
+  - component: {fileID: -3015973289815138214}
+  m_Layer: 11
   m_Name: BreakableRock
-  m_TagString: Enemy
+  m_TagString: Planet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,6 +134,25 @@ MonoBehaviour:
   maxHealth: 20
   currHealth: 20
   InvincibleTime: 0
+--- !u!114 &-3015973289815138214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6569380534719130091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7027b70d49cfac4b83a9f3e011d86e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetSize: 1
+  planetRadius: 2
+  gravityRadius: 4
+  gravityForce: 300
+  gravityViewer: {fileID: 0}
+  oxygenAmount: 1
+  lens: 8
 --- !u!1 &6569380535308772014
 GameObject:
   m_ObjectHideFlags: 0

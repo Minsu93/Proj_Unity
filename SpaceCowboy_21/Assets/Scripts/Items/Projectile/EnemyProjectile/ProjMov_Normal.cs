@@ -32,6 +32,8 @@ public class ProjMov_Normal : ProjectileMovement
         if (!slowProj)
             return;
 
+        return; 
+
         if(timer > 0)
         {
             timer -= Time.deltaTime;

@@ -1244,6 +1244,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: d502e51eda291364caeb6a591c648bb9, type: 2}
     - target: {fileID: 5820961588108856065, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_FillPixelPerUnit
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820961588108856065, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Spline.m_ControlPoints.Array.size
       value: 10
       objectReference: {fileID: 0}

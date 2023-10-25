@@ -7,26 +7,39 @@ public class GravityLassoChecker : MonoBehaviour
     public GravityLasso lasso { get; set; }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (lasso == null)
+            return;
+
         if (collision.CompareTag("Planet"))
         {
-            if(lasso != null)
-            {
-                lasso.TriggerByBig();
-            }
+            lasso.TriggerByBig(null);
         }
         else if (collision.CompareTag("Enemy"))
         {
-            if(lasso != null)
+            if (collision.TryGetComponent<Enemy>(out Enemy enemy))
             {
-                lasso.TriggerByMedium(collision);
+                if (enemy.isGrabable)
+                {
+                    lasso.TriggerByMedium(collision);
+                }
+                else
+                {
+                    lasso.TriggerByBig(collision);
+
+                }
             }
         }
-        else if (collision.CompareTag("Item"))
+        else if (collision.CompareTag("EnemyProjectile"))
         {
-            if(lasso != null)
+            if(collision.TryGetComponent<Projectile>(out Projectile proj))
             {
-                lasso.TriggerBySmall();
+                if (proj.hitByProjectileOn)
+                {
+                    lasso.TriggerByMedium(collision);
+                }
             }
+            
         }
+
     }
 }

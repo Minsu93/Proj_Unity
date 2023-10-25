@@ -15,7 +15,7 @@ public class PlanetNaming :MonoBehaviour
 
     }
 
-
+    /*
     private void OnDrawGizmos()
     {
         switch (planet.planetSize)
@@ -65,4 +65,5 @@ public class PlanetNaming :MonoBehaviour
      
 
     }
+    */
 }

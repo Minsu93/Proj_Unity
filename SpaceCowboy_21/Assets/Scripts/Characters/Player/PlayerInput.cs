@@ -13,19 +13,25 @@ public class PlayerInput : MonoBehaviour
     public string RunButton = "Run";
     Vector2 moveDir = Vector2.zero;
 
-    PlayerBehavior playerBehavior;
-    PlayerWeapon playerWeapon;
+    public PlayerBehavior playerBehavior;
+    public PlayerWeapon playerWeapon;
 
 
-    private void OnValidate()
+
+    private void Awake()
     {
-        if(playerBehavior == null) { playerBehavior = GetComponent<PlayerBehavior>(); }
-        if(playerWeapon == null) { playerWeapon = GetComponent<PlayerWeapon>(); }
+        if (playerBehavior == null) { playerBehavior = GetComponent<PlayerBehavior>(); }
+        if (playerWeapon == null) { playerWeapon = GetComponent<PlayerWeapon>(); }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerBehavior == null)
+            return;
+        if (playerWeapon == null)
+            return;
+
         //Map
         if (Input.GetKeyDown(KeyCode.Tab))
         {
@@ -41,6 +47,10 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetButtonDown(JumpButton))
         {
             playerBehavior.TryJump();
+        }
+        if(Input.GetButtonUp(JumpButton))
+        {
+            playerBehavior.StopJump();
         }
 
         // Shoot
@@ -91,6 +101,10 @@ public class PlayerInput : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (playerBehavior == null)
+            return;
+        if (playerWeapon == null)
+            return;
 
         //Vector2 moveRaw = Vector2.zero;
 

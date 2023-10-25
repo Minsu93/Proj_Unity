@@ -49,6 +49,9 @@ namespace SpaceCowboy
         bool runON;
 
         [Header("EdgeFollow")]
+        public float boasterForce;      //부스터의 파워
+
+        [Header("EdgeFollow")]
         int currentEdgePointIndex = 0; // 현재 따라가고 있는 엣지 콜라이더의 점 인덱스
 
         public event System.Action ShootEvent;
@@ -131,7 +134,8 @@ namespace SpaceCowboy
             //이동 속도를 컨트롤
             SpeedControl();
 
-
+            //공중 부스터 여부
+            AIrJumpFunction();
 
 
 
@@ -261,14 +265,12 @@ namespace SpaceCowboy
 
             if (state == PlayerState.Jumping)
             {
-                if(airJump)
-                    TryAirJump();
+                if(OnAir)
+                    StartAirJump();
                 return;
             }
 
             state = PlayerState.Jumping;
-            //공중 점프가 가능하게 한다. 
-            airJump = true;
 
             lastJumpTime = Time.time;
 
@@ -292,20 +294,27 @@ namespace SpaceCowboy
         }
 
 
-        public void TryAirJump()
+        public void StartAirJump()
+        {
+            airJump = true;
+
+            //Vector2 jumpVector = preJumpVec * jumpForce * 0.8f;
+
+            //rb.velocity = Vector2.zero;
+            //rb.AddForce(jumpVector, ForceMode2D.Impulse);
+        }
+
+        public void StopJump()
         {
             airJump = false;
+        }
 
-            //Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
-            //upVector = upVector.normalized;
+        void AIrJumpFunction()
+        {
+            if (!airJump)
+                return;
 
-            //Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
-            //Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
-            //jumpDir = jumpDir.normalized;
-            Vector2 jumpVector = preJumpVec * jumpForce * 0.8f;
-
-            rb.velocity = Vector2.zero;
-            rb.AddForce(jumpVector, ForceMode2D.Impulse);
+            rb.AddForce(transform.up * boasterForce);
         }
 
 

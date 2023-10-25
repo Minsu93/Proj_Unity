@@ -31,20 +31,17 @@ namespace PlanetSpace
         //행성에 등장할 Neutral Enemy 수
         //행성에 등장할 Neutral Enemy 리스폰 시간
 
-        public EdgeCollider2D edgeColl { get; private set; }
+        public EdgeCollider2D edgeColl;
 
-        private void OnValidate()
-        {
-            edgeColl = GetComponent<EdgeCollider2D>();
-            
 
-        }
 
         private void Awake()
         {
             //CheckGravityAtStart();
             circleColl = GetComponentInChildren<CircleCollider2D>();
             circleColl.radius = gravityRadius;
+
+            edgeColl = GetComponent<EdgeCollider2D>();
 
             //gravityViewer = GetComponentsInChildren<Transform>(true)[2];
             SetViewerMaterial();

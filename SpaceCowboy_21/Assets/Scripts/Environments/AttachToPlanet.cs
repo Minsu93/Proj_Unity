@@ -58,10 +58,12 @@ public class AttachToPlanet : MonoBehaviour
 
     void Update()
     {
-        if(EditorApplication.isPlaying)
+        /*
+        if(Editor8Application.isPlaying)
         {
             this.enabled = false;
         }
+        */
 
         if(coll == null)
         {

@@ -8,12 +8,37 @@ using UnityEngine.Animations;
 public class ProjMov_Guide : ProjectileMovement
 {
     public float rotationSpeed = 1f;
+
+    public float startTimer = 0.5f; //시작하고 몇초동안 유도 기능이 없다.
+    public float rotationTime = 0f;
+    public float distanceLimit = 0f;
+    float stimer;
+    float timer;
+    bool chaseActivate = false;
     bool activate = false;
+    Transform playerTr;
 
     public override void StartMovement(float speed)
     {
         this.speed = speed;
         activate = true;
+
+        if(startTimer > 0)
+        {
+            stimer = startTimer;
+
+        }else
+        {
+            chaseActivate = true;
+
+        }
+
+        timer = rotationTime;
+        //플레이어의 위치를 가져온다. 
+        playerTr = GameManager.Instance.player;
+        //chaseActivate = false;
+        //속도 지정
+        //rb.velocity = transform.right * speed;
     }
 
     public override void StopMovement()
@@ -47,33 +72,58 @@ public class ProjMov_Guide : ProjectileMovement
                 rb.velocity = Vector2.zero;
 
                 knockBackOn = false;
-
+                // rb.velocity = transform.right * speed;
             }
         }
 
-        //플레이어의 위치를 가져온다. 
-        Transform playerTr = GameManager.Instance.player;
-
-        //플레이어에 어느정도 가까워지면 속도가 느려지게 하면 어떨까?
-        float targetDist = (playerTr.position - transform.position).magnitude;
-        if(targetDist < 3f)
+        //시작하고 몇 초후에 유도기능이 켜진다. 
+        if(stimer > 0)
         {
-            //점점 느려진다
-        }
-        else
-        {
-            //점점 빨라진다
+            stimer -= Time.deltaTime;
+            if(stimer <= 0)
+            {
+                chaseActivate = true;
+            }
         }
 
-        //회전값을 구한다. 
-        Vector3 targetVec = (playerTr.position - transform.position).normalized;
-        Vector3 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
-        Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
-        Quaternion rot = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
+        //쏘고 나서 몇초 후에 유도를 정지한다. 만약 rotationTimer수치가 0이라면 계속 쫓는다. 
+        if (rotationTime > 0 && chaseActivate)
+        {
+            if(timer > 0)
+            {
+                timer -= Time.deltaTime;
+            }
+            else
+            {
+                chaseActivate = false;                
+            }
+        }
 
-        //방향을 회전시킨다. 
-        transform.rotation = rot;
+        
+        //플레이어에 어느정도 가까워지면 유도기능을 멈추면  어떨까?
+        if(distanceLimit > 0 && chaseActivate)
+        {
+            float targetDist = (playerTr.position - transform.position).magnitude;
+            if (targetDist < distanceLimit)
+            {
+                //유도를 정지한다
+                chaseActivate = false;
+            }
+        }
 
+        if(chaseActivate)
+        {
+            //회전값을 구한다. 
+            Vector3 targetVec = (playerTr.position - transform.position).normalized;
+            Vector3 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
+            Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
+            Quaternion rot = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
+
+            //방향을 회전시킨다. 
+            //transform.rotation = rot;
+            rb.SetRotation(rot);
+        }
+        
         //움직인다
         rb.velocity = transform.right * speed; 
 

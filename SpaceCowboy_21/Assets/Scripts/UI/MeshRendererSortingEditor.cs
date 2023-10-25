@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -77,3 +78,4 @@ public class MeshRendererSortingEditor : Editor
 // OTHER DEALINGS IN THE SOFTWARE.
 // 
 // For more information, please refer to <http://unlicense.org/>
+#endif
