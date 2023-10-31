@@ -22,7 +22,7 @@ namespace SpaceEnemy
 
         public override void DieAction()
         {
-            StopAllCoroutines();
+            DieEvent();
         }
 
 

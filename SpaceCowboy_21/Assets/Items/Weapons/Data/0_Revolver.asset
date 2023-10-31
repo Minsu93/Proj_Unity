@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 0_Revolver
+  m_EditorClassIdentifier: 
+  skinIndex: 0
+  oneHand: 1
+  singleShot: 1
+  burstNumber: 1
+  burstInterval: 0
+  numberOfProjectiles: 1
+  shootInterval: 0.1
+  projectileSpread: 0
+  randomSpreadAngle: 5
+  recoil: 1
+  gauge: -1
+  artifactLifetime: -1
+  projectilePrefab: {fileID: 6292677011125795810, guid: a6de82b9a4db82843a9b16149c11fd33, type: 3}
+  maxAmmo: 12
+  reloadTime: 1
+  damage: 4
+  lifeTime: 2
+  speed: 10
+  knockBackForce: 0
+  reflectionCount: 0

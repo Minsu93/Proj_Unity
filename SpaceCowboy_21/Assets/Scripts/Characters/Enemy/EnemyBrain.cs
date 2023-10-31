@@ -193,7 +193,7 @@ namespace SpaceEnemy
         {
             //적을 비활성화 한다.
             
-            action.DieEvent();
+            action.DieAction();
             coll.enabled = false;
 
         }

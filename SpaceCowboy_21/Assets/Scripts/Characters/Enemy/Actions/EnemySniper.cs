@@ -20,7 +20,7 @@ public class EnemySniper : EnemyAction
 
     public override void DieAction()
     {
-        StopAllCoroutines();
+        DieEvent();
     }
 
 

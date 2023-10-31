@@ -46,7 +46,7 @@ namespace SpaceCowboy
         public bool onLessGravity { get; private set; } //낮은 중력에 있습니까?
         public bool faceRight;
         bool reserveChangeFaceRight;        // 행성이 바뀌면 착지할 때 faceRight를 초기화 예약한다.
-        bool runON;
+        public bool runON { get; private set; }
 
         [Header("EdgeFollow")]
         public float boasterForce;      //부스터의 파워
@@ -60,18 +60,15 @@ namespace SpaceCowboy
         public event System.Action PlayerHitEvent;
         public event System.Action PlayerDieEvent;
         public event System.Action PlayerReloadEvent;
+        public event System.Action PlayerStopReloadEvent;
+
 
         //public event System.Action PlayerChangeState;
 
         //총기 관련
-        float lastShootTime;
-        float shootInterval = 0.3f;
+
         float gunRecoil;
-        float reloadTime;
-        bool isSingleShot;
-        bool needReload;
-        bool isReloading;
-        Coroutine shootRoutine;
+
         
 
         PlayerWeapon playerWeapon;
@@ -536,7 +533,7 @@ namespace SpaceCowboy
 
             state = PlayerState.Stun;
             //연발 총을 쏘는 도중이라면 루틴을 중단한다. 
-            TryStopShoot();
+            playerWeapon.TryStopShoot();
 
             //플레이어를 뒤로 넉백시킨다. 지상/공중일 때 따로..
             if (OnAir)
@@ -728,151 +725,54 @@ namespace SpaceCowboy
             */
         }
 
-        public void TryStartShoot()
+  
+
+        public void TryShootEvent()  //이벤트 발생을 위해서 > PlayerWeapon, PlayerView 의 ShootEvent를 발생
         {
-            //총 쏘기 이벤트를 시작한다. 단발총인 경우는 한 발만 발사. 연발 총인 경우는 발사 루틴을 지속
 
-            //달리기 중인 경우에는 총을 쏘지 못한다. 
-            if (runON)
-                return;
+            //view 애니메이션 실행
+            playerView.PreShoot();
 
-            //단발총인 경우에는 shootevent를 한번 실행한다. 쿨이 안되서 다시 눌러도 소용없음. 
-            if (isSingleShot)
+            if (ShootEvent != null) ShootEvent();
+
+
+            //우주에 있는 동안 총의 Recoil을 적용한다!
+            if (onSpace)
             {
-                TryShoot();
+                //aim의 반대 방향으로 반동을 준다
+                Vector2 recoilDir = aimDirection * -1f;
+                rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
             }
-            //연발총인 경우에는 계속 쏘기 이벤트를 실행한다. 
-            else
+            else if (onLessGravity && OnAir)
             {
-                shootRoutine = StartCoroutine(ShootRepeater());
-            }
-        }
-        public void TryStopShoot()
-        {
-            //총 쏘기 이벤트를 중단한다. 단발총인 경우는 총 쏘기 초기화. 연발 총의 경우에는 발사 중지. 
-
-            //연발 총인 경우에는 계속 쏘기 이벤트를 중단한다. 
-
-            if (!isSingleShot)
-            {
-                if(shootRoutine != null)
-                {
-                    StopCoroutine(shootRoutine);
-                    shootRoutine = null;
-                }
+                //aim의 반대 방향으로 반동을 준다
+                Vector2 recoilDir = aimDirection * -1f;
+                rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
             }
         }
 
-        IEnumerator ShootRepeater()
+        public void ReloadStart()
         {
-            while (true)
-            {
-                //총알 쿨타임마다 계속 발사한다. 
-                TryShoot();
-                yield return null;
-            }
-        }
-
-
-        public void TryShoot()  //이벤트 발생을 위해서 > PlayerWeapon, PlayerView 의 ShootEvent를 발생
-        {
-            if (state == PlayerState.Die) return;
-            if (state == PlayerState.Stun)
-                return;
-
-            if (isReloading)
-                return;
-
-            //없으면 리로드하기
-            if (needReload)
-            {
-                TryReload();
-                return;
-            }
-
-            //총알 발사구가 행성 내부에 있다면 발사하지 않는다. 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, aimDirection, 1f, LayerMask.GetMask("Planet"));
-            if (hit.collider != null)
-                return;
-
-
-
-            float currentTime = Time.time;
-
-            if (currentTime - lastShootTime > shootInterval)
-            {
-                lastShootTime = currentTime;
-                //view 애니메이션 실행
-                playerView.PreShoot();
-                if (ShootEvent != null) ShootEvent();
-                //총알 발사
-                needReload = playerWeapon.PlayShootEvent();
-
-
-                //우주에 있는 동안 총의 Recoil을 적용한다!
-                if (onSpace)
-                {
-                    //aim의 반대 방향으로 반동을 준다
-                    Vector2 recoilDir = aimDirection * -1f;
-                    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
-                }
-                else if(onLessGravity && OnAir)
-                {
-                    //aim의 반대 방향으로 반동을 준다
-                    Vector2 recoilDir = aimDirection * -1f;
-                    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
-                }
-            }
-        }
-
-        public void TryReload()
-        {
-            //재장전 중이 아닐 때 
-            if (isReloading)
-                return;
-
-            //재장전이 가능할떄 (currAmmo 가 maxAmmo보다 작을때)
-            if (playerWeapon.CanReload())
-            {
-                StartCoroutine(ReloadRoutine());
-            }
-
-        }
-
-        IEnumerator ReloadRoutine()
-        {
-            isReloading = true;
             if (StopAimEvent != null) StopAimEvent();
             if (PlayerReloadEvent != null) PlayerReloadEvent();
-
-            yield return new WaitForSeconds(reloadTime);
-
-
-            playerWeapon.ReloadAmmo();
-            isReloading = false;
-            needReload = false;
-            if (StartAimEvent != null) StartAimEvent();
-
-
         }
+        
+        public void ReloadEnd()
+        {
+            if(PlayerStopReloadEvent != null) PlayerStopReloadEvent();  
+            if (StartAimEvent != null) StartAimEvent();
+        }
+
 
 
         public void TryChangeWeapon(WeaponData _data)
         {
-            //playerWeapon 변수에서 총기Interval 을 가져온다. 
-            shootInterval = _data.ShootInterval;
 
             //1-Handed or 2-Handed 스킨 변경
-            playerView.ChangeHand(_data.OneHand);
+            playerView.ChangeWeapon(_data.SkinIndex, _data.OneHand);
 
             //recoil 변경
             gunRecoil = _data.Recoil;
-
-            //재장전 시간 변경
-            reloadTime = _data.ReloadTime;
-
-            //연발 or 단발 
-            isSingleShot = _data.SingleShot;
 
         }
 

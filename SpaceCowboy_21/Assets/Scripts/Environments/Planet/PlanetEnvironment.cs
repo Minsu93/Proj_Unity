@@ -22,7 +22,6 @@ public class PlanetEnvironment : MonoBehaviour
     public GameObject cloud;   //구름 오브젝트를 담을 변수
 
 
-
     public void GeneratePlanet()
     {
         //spriteshape를 교체한다
@@ -43,14 +42,31 @@ public class PlanetEnvironment : MonoBehaviour
         {
             if (!cloud)
             {
-                cloud = Instantiate(cloudPrefab, transform);
-                cloud.transform.localScale = Vector3.one * planet.gravityRadius;
+                var script = GetComponentInChildren<CloudRotation>();
+                if (script != null)
+                {
+                    cloud = script.gameObject;
+                }
+                else
+                {
+
+                    cloud = Instantiate(cloudPrefab, transform);
+                    cloud.transform.localScale = Vector3.one * planet.gravityRadius;
+                }
+                
             }
 
         }
         else
         {
-            DestroyImmediate(cloud);
+            var script = GetComponentInChildren<CloudRotation>();
+            if (script != null)
+            {
+                cloud = script.gameObject;
+                DestroyImmediate(cloud);
+                cloud = null;
+            }
+
         }
     }
 

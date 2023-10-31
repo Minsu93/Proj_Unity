@@ -8,6 +8,11 @@ public class WeaponData : ScriptableObject
 
     [Header("Weapon Property")]
     [SerializeField]
+    int skinIndex; //어떤 스킨을 사용하느냐
+    public int SkinIndex { get { return skinIndex; } }
+
+
+    [SerializeField]
     bool oneHand ; //한손 총인가요?
     public bool OneHand { get { return oneHand; } }
 
@@ -42,6 +47,16 @@ public class WeaponData : ScriptableObject
     [SerializeField]
     float recoil;   //총기 반동
     public float Recoil { get { return recoil; } }
+
+
+    [SerializeField]
+    float gauge;   //사용하기 위해서 채워야 하는 게이지
+    public float Gauge { get { return gauge; } }
+
+    [SerializeField]
+    float artifactLifetime;   //총기 수명
+    public float ArtifaceLifetime { get { return artifactLifetime; } }
+
 
     [Header ("Projectile Property")]
 

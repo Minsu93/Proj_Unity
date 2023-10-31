@@ -15,8 +15,8 @@ public class OxygenBall : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            OxygenHealth playerHealth = collision.gameObject.GetComponent<OxygenHealth>();
-            playerHealth.GetOxygen(oxygenAmount);
+            //OxygenHealth playerHealth = collision.gameObject.GetComponent<OxygenHealth>();
+            //playerHealth.GetOxygen(oxygenAmount);
 
             //오브젝트 비활성화
             this.gameObject.SetActive(false);

@@ -1,3 +1,4 @@
+using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,14 @@ public class DropItem : MonoBehaviour
     //아이템이 드롭되었을 때, 아이템 별 드롭 확률
     public float[] itemDropRate;
 
+    [SerializeField] float minPow = 3f;
+    [SerializeField] float maxPow = 4f;
+    private void Awake()
+    {
+        EnemyAction enemyAction = GetComponent<EnemyAction>();
+        enemyAction.EnemyDieEvent += GenerateItem;
+    }
+
     public void GenerateItem()
     {
         //dropCount횟수만큼 아이템 드롭을 시도한다
@@ -24,11 +33,14 @@ public class DropItem : MonoBehaviour
             if (Random.value <= itemChance)
             {
                 //아이템을 생성한다
-     
-                GameObject item = Instantiate(items[Choose(itemDropRate)], (Vector2)transform.position, Quaternion.identity);
+
+                //GameObject item = Instantiate(items[Choose(itemDropRate)], (Vector2)transform.position, Quaternion.identity);
+                GameObject item = GameManager.Instance.poolManager.GetItem(items[Choose(itemDropRate)]);
+                item.transform.position = transform.position;
 
                 Vector2 randomUpDir = (transform.up + (transform.right * Random.Range(-1, 1f))).normalized;
-                item.GetComponent<Rigidbody2D>().AddForce(randomUpDir * 2f ,ForceMode2D.Impulse);
+                float randomPow = Random.Range(minPow, maxPow);
+                item.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
             }     
         }
     }

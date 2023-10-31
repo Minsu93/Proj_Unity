@@ -33,6 +33,10 @@ namespace SpaceCowboy
         [SpineSkin] public string _1HandSkin;
         [SpineSkin] public string _2HandSkin;
 
+        [SpineSkin] public string revolver;
+        [SpineSkin] public string bubbleGun;
+        [SpineSkin] public string tripleGun;
+
         Skin characterSkin;
         Skeleton skel;
 
@@ -46,7 +50,7 @@ namespace SpaceCowboy
             playerBehavior.StopAimEvent += StopAim;
             playerBehavior.PlayerDieEvent += Dead;
             playerBehavior.PlayerReloadEvent += Reload;
-
+            playerBehavior.PlayerStopReloadEvent += StopReload;
             PlayAim();
 
             playerBehavior.PlayerHitEvent += DamageHit;
@@ -244,6 +248,10 @@ namespace SpaceCowboy
             skeletonAnimation.AnimationState.SetAnimation(1, reload, false);
         }
 
+        public void StopReload()
+        {
+            skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
+        }
 
         void FlipScaleX()
         {
@@ -257,14 +265,17 @@ namespace SpaceCowboy
             }
         }
 
-        public void ChangeHand(bool oneHanded)
-        {   //스킨 변경
+
+
+        public void ChangeWeapon(int index, bool oneHanded)
+        {
+            //스킨 변경
             Skeleton skeleton = skeletonAnimation.skeleton;
             SkeletonData skeletonData = skeleton.Data;
 
             characterSkin = new Skin(baseSkin);
-            
-            if(oneHanded)
+
+            if (oneHanded)
             {
                 characterSkin.AddSkin(skeletonData.FindSkin(_1HandSkin));
             }
@@ -273,9 +284,30 @@ namespace SpaceCowboy
                 characterSkin.AddSkin(skeletonData.FindSkin(_2HandSkin));
             }
 
+            switch (index)
+            {
+                case 0:
+                    characterSkin.AddSkin(skeletonData.FindSkin(revolver));
+                    break;
+
+                case 1:
+                    characterSkin.AddSkin(skeletonData.FindSkin(bubbleGun));
+                    break;
+
+                case 2:
+                    characterSkin.AddSkin(skeletonData.FindSkin(tripleGun));
+                    break;
+
+
+
+                default:
+                    characterSkin.AddSkin(skeletonData.FindSkin(revolver));
+                    break;
+            }
+
 
             skeleton.SetSkin(characterSkin);
-            //skeleton.SetSlotsToSetupPose();
+            skeleton.SetSlotsToSetupPose();
         }
     }
 }

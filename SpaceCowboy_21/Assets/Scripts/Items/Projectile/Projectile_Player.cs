@@ -9,7 +9,7 @@ public class Projectile_Player : Projectile
     public int reflectCount;    //¹Ý»ç È½¼ö 
                                 //ÇÃ·¹ÀÌ¾îÀÇ ÃÑ¾Ë
 
-    public void init(float damage, float lifeTime, float speed, int reflect)
+    public virtual void init(float damage, float lifeTime, float speed, int reflect)
     {
         this.damage = damage;
         this.lifeTime = lifeTime;
@@ -89,7 +89,7 @@ public class Projectile_Player : Projectile
         }
 
         //ÀûÀÇ ÃÑ¾Ë¿¡ ºÎµúÇûÀ» ¶§ 
-        else if (collision.CompareTag("EnemyProjectile"))
+        else if (collision.CompareTag("EnemyHitableProjectile"))
         {
             if(collision.TryGetComponent(out Projectile_Enemy proj))
             {

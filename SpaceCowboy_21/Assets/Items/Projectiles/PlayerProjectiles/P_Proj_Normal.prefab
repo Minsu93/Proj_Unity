@@ -153,7 +153,6 @@ GameObject:
   - component: {fileID: 5885827282753015796}
   - component: {fileID: 3140605196254949026}
   - component: {fileID: -1193727413953729404}
-  - component: {fileID: 6086370999244632270}
   m_Layer: 9
   m_Name: P_Proj_Normal
   m_TagString: PlayerProjectile
@@ -229,7 +228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 1089958226170938091, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
   disableDelayTime: 0.5
-  gravityOn: 1
+  gravityOn: 0
   collideOnPlanet: 1
   hitDestroyOn: 1
   hitByProjectileOn: 0
@@ -252,25 +251,9 @@ MonoBehaviour:
   rotateBySpeed: 1
   knockBackTime: 0.2
   knockBackForce: 2
-  slowProj: 1
+  slowProj: 0
   slowTimer: 0.4
-  slowSpeed: 5
---- !u!114 &6086370999244632270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6292677011125795810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07f766e084063fc4b9685bf52f0a4a09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gravityPlanets: []
-  nearestPlanet: {fileID: 0}
-  gravityMultiplier: 0.25
-  activate: 1
+  slowSpeed: 0.9
 --- !u!1 &8991112628740824846
 GameObject:
   m_ObjectHideFlags: 0

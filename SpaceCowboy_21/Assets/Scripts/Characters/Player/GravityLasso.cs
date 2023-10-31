@@ -13,6 +13,7 @@ public class GravityLasso : MonoBehaviour
     [Header("Lasso Property")]
 
     public float lassoSize = 0.3f;
+    public float lassoRange = 3f;   //올가미 사정거리
     public float lassoSpeed = 1f;   //올가미 속도
     public float moveTime = 2f;     //올가미 이동 
     public float turnTime = 1f;
@@ -40,7 +41,6 @@ public class GravityLasso : MonoBehaviour
     bool impactAttack;
     public float impactTime = 0.3f;
     float impactTimer;
-    bool middleTrigger;
     Vector2 startEnemyPos;
     Vector2 enemyVelocity;
     Transform target;
@@ -50,9 +50,9 @@ public class GravityLasso : MonoBehaviour
     LineRenderer lineRenderer;
     GameObject lineObj;
     CircleCollider2D lineColl;
+    GravityLassoChecker checker;
 
     Rigidbody2D rb;
-    PlayerGravity playerGravity;
     
 
     private void Awake()
@@ -69,7 +69,7 @@ public class GravityLasso : MonoBehaviour
         Rigidbody2D lineRb = lineObj.AddComponent<Rigidbody2D>();
         lineRb.isKinematic = true;
 
-        GravityLassoChecker checker =  lineObj.AddComponent<GravityLassoChecker>();
+        checker =  lineObj.AddComponent<GravityLassoChecker>();
         checker.lasso = this;
 
         lineRenderer = lineObj.AddComponent<LineRenderer>();
@@ -85,23 +85,11 @@ public class GravityLasso : MonoBehaviour
 
 
         rb = GetComponent<Rigidbody2D>();
-        playerGravity = GetComponent<PlayerGravity>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        /// 중력 올가미는 매 업데이트마다 뭔가와 부딪히지 않았는지 체크한다. 
-        /// 체크한 대상이 소형인 경우 가져온다
-        /// 체크한 대상이 적인 경우 서로의 방향으로 Add Impulse
-        /// 체크한 대상이 대형인 경우(Planet, Boss) 그 방향으로 이동한다. 
-        /// . 
-        /// 일단 마우스 우 클릭을 누르면 올가미를 발사하며
-        /// 발사한 올가미는 쭉 날아가다가 일정 시간, 거리가 되면 돌아온다. 
-        /// 
-
-
         if (lassoActivate)
         {
             if (!lassoBack)
@@ -109,7 +97,10 @@ public class GravityLasso : MonoBehaviour
                 //올가미 움직인다. 
                 timer += Time.deltaTime;
 
-                lassoTip += targetDir * lassoSpeed * Time.deltaTime;
+                //lassoTip += targetDir * lassoSpeed * Time.deltaTime;
+                float percent = timer / moveTime;
+                Vector2 pos = Vector2.Lerp((Vector2)transform.position, (Vector2)transform.position + (targetDir * lassoRange), moveCurve.Evaluate(percent));;
+                lassoTip = pos;
 
                 if (timer > moveTime)
                 {
@@ -125,7 +116,8 @@ public class GravityLasso : MonoBehaviour
                 timer += Time.deltaTime;
 
                 //Vector2 dir = (lassoTip - (Vector2)transform.position);
-                Vector2 pos = Vector2.Lerp(preLassoTip, (Vector2)transform.position, timer/turnTime);
+                float percent = timer / moveTime;
+                Vector2 pos = Vector2.Lerp(preLassoTip, (Vector2)transform.position, moveCurve.Evaluate(percent));
                 lassoTip = pos;
 
                 if(timer > turnTime)
@@ -136,19 +128,23 @@ public class GravityLasso : MonoBehaviour
                     lineObj.SetActive(false);
                 }
             }
-
+            //올가미 위치 업데이트
             UpdateLassoPosition();
         }
         
+        //올가미 처음 발사 
         if(!lassoActivate && !inLassoMovement)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse1))
+            if (Input.GetKeyUp(KeyCode.Mouse1))
             {
                 //Debug.Log("Launch Lasso");
 
                 LassoThrow();
             }
         }
+
+
+
 
         //트리거로 이동 중일때 다시 클릭하면 impactAttack 활성화.
         if (inLassoMovement)
@@ -176,6 +172,7 @@ public class GravityLasso : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //올가미 부딪혔을 때 BigTrigger / MediumTrigger
         if (inLassoMovement)
         {
             SwitchMovement();
@@ -186,6 +183,8 @@ public class GravityLasso : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //행성에 부딪히면 초기화시키기.
+
         //if (!inLassoMovement)
         //    return;
 
@@ -233,15 +232,16 @@ public class GravityLasso : MonoBehaviour
         //라인 렌더러를 업데이트한다.
         lineObj.transform.position = lassoTip;
 
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, lassoTip);
-
-        Vector2 tipDir = lassoTip - (Vector2)transform.position;
+        //올가미 머리를 회전시킨다
+        Vector2 tipDir = (lassoTip - (Vector2)transform.position).normalized;
         Vector3 upVec = Quaternion.Euler(0, 0, 90) * tipDir;
         Quaternion rot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
         lineObj.transform.rotation = rot;
 
-
+        //라인 랜더러 조정
+        Vector2 p = lassoTip + (tipDir * -1f * 0.5f);
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, p);
     }
 
 
@@ -274,7 +274,10 @@ public class GravityLasso : MonoBehaviour
                     inLassoMovement = false;
                     timer = 0;
 
+                    checker.activate = true;
+
                     lineObj.SetActive(false);
+
                     //타겟 활성화
                     if (target != null)
                     {
@@ -305,13 +308,15 @@ public class GravityLasso : MonoBehaviour
                 if (timer > bigTMoveTime)
                 {
                     //목적지에 도착했을 때 
-                    middleTrigger = false;
 
                     lassoActivate = false;
                     inLassoMovement = false;
                     timer = 0;
 
+                    checker.activate = true;
+
                     lineObj.SetActive(false);
+                    
                     //타겟 활성화
                     if (target != null)
                     {
@@ -387,7 +392,6 @@ public class GravityLasso : MonoBehaviour
         startEnemyPos = other.transform.position;
         targetPos = (startPlayerPos + startEnemyPos) / 2f;
 
-        middleTrigger = true;
         timer = 0f;
 
         startVelocity = rb.velocity;
@@ -412,7 +416,7 @@ public class GravityLasso : MonoBehaviour
         {
             target.GetComponent<Enemy>().activate = false;
         }
-        else if (target.CompareTag("EnemyProj"))
+        else if (target.CompareTag("EnemyHitableProjectile"))
         {
 
         }
@@ -425,7 +429,7 @@ public class GravityLasso : MonoBehaviour
         {
             target.GetComponent<Enemy>().activate = true;
         }
-        else if (target.CompareTag("EnemyProj"))
+        else if (target.CompareTag("EnemyHitableProjectile"))
         {
 
         }

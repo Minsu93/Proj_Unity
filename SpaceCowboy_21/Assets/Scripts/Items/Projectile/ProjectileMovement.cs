@@ -19,7 +19,7 @@ public abstract class ProjectileMovement : MonoBehaviour
     public float knockBackForce = 2f;
     protected bool knockBackOn = false;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         proj = GetComponent<Projectile>();

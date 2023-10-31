@@ -10,7 +10,7 @@ public class ProjMov_Guide : ProjectileMovement
     public float rotationSpeed = 1f;
 
     public float startTimer = 0.5f; //시작하고 몇초동안 유도 기능이 없다.
-    public float rotationTime = 0f;
+    public float rotationTime = 0f; //쏘고 나서 몇초 이후에 유도기능이 사라진다
     public float distanceLimit = 0f;
     float stimer;
     float timer;

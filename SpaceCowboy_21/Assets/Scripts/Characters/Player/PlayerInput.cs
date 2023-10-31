@@ -53,17 +53,6 @@ public class PlayerInput : MonoBehaviour
             playerBehavior.StopJump();
         }
 
-        // Shoot
-        if(Input.GetButtonDown(ShootButton))
-        {
-            playerBehavior.TryStartShoot();
-        }
-
-        if (Input.GetButtonUp(ShootButton))
-        {
-            playerBehavior.TryStopShoot();
-
-        }
 
         // Run
         if (Input.GetButtonDown(RunButton))
@@ -75,6 +64,19 @@ public class PlayerInput : MonoBehaviour
             playerBehavior.StopRun();
         }
 
+
+        // Shoot
+        if (Input.GetButtonDown(ShootButton))
+        {
+            playerWeapon.TryStartShoot();
+        }
+
+        if (Input.GetButtonUp(ShootButton))
+        {
+            playerWeapon.TryStopShoot();
+
+        }
+
         // Weapon Change
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -84,15 +86,22 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            // Watergun
+            // bubbleGun
             playerWeapon.ChangeWeapon(1);
 
         }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            // TripleGun
+            playerWeapon.ChangeWeapon(2);
+
+        }
+
 
         // Weapon Reload
         if (Input.GetKeyDown(KeyCode.R))
         {
-            playerBehavior.TryReload();
+            playerWeapon.TryReload();
         }
 
       

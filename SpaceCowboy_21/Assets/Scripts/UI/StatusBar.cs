@@ -5,15 +5,15 @@ using UnityEngine.UI;
 
 public class StatusBar : MonoBehaviour
 {
-    public Image healthBar;
+    public Image Bar;
 
-    private Health playerHealth;
+    private Oxygen pOxygen;
     private bool isActive = false;
 
     private void Awake()
     {
         Transform playerTr = GameManager.Instance.player;
-        playerHealth = playerTr.GetComponent<Health>();
+        pOxygen = playerTr.GetComponent<Oxygen>();
         isActive = true;
 
     }
@@ -25,7 +25,7 @@ public class StatusBar : MonoBehaviour
             return;
 
 
-        healthBar.fillAmount = (float)playerHealth.currHealth / playerHealth.maxHealth;
+        Bar.fillAmount = (float)pOxygen.currOxygen / pOxygen.oxygenMax;
 
         //jetPackBar.fillAmount = movement.jetpackFuel / movement.jetpackFuelMax;
 

@@ -32,7 +32,6 @@ public class ProjMov_Normal : ProjectileMovement
         if (!slowProj)
             return;
 
-        return; 
 
         if(timer > 0)
         {
@@ -40,6 +39,9 @@ public class ProjMov_Normal : ProjectileMovement
             return;
         }
 
+        
+        rb.velocity = rb.velocity * slowSpeed;
+        /*
         //2. 시간이 갈수록 중력을 더 받기
         if (gravity != null)
         {
@@ -47,6 +49,8 @@ public class ProjMov_Normal : ProjectileMovement
             gravMul = Mathf.Clamp(gravMul, 0f, 3f);
             gravity.GravityAdded(gravMul);
         }
+        */
+
 
         //테스트 해볼 것
         //1. 시간이 갈수록 점점 느려지기

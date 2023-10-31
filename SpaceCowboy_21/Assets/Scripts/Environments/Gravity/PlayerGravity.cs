@@ -7,14 +7,14 @@ using UnityEngine;
 public class PlayerGravity : CharacterGravity
 {
     PlayerBehavior playerBehavior;
-    OxygenHealth oxygenHealth;
+    //OxygenHealth oxygenHealth;
 
     protected override void Awake()
     {
         base.Awake();
 
         playerBehavior = GetComponent<PlayerBehavior>();
-        oxygenHealth = GetComponent<OxygenHealth>();
+        //oxygenHealth = GetComponent<OxygenHealth>();
 
     }
     protected override void Update()
@@ -50,7 +50,7 @@ public class PlayerGravity : CharacterGravity
         //}
         GameManager.Instance.ChangeCamera(nearestPlanet.lens);
 
-        oxygenHealth.consumeMultiplier = nearestPlanet.oxygenAmount;
+        //oxygenHealth.consumeMultiplier = nearestPlanet.oxygenAmount;
     }
 
 

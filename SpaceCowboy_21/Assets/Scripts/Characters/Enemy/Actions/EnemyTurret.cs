@@ -51,7 +51,7 @@ public class EnemyTurret : EnemyAction
 
     public override void DieAction()
     {
-        StopAllCoroutines();
+        DieEvent();
     }
 
 
