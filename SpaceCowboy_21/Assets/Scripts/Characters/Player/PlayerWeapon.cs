@@ -434,4 +434,10 @@ public class PlayerWeapon : MonoBehaviour
     }
 
 
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.color= Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 5f);
+    }
 }
