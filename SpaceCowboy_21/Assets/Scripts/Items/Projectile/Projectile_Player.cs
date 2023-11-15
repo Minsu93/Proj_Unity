@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Projectile_Player : Projectile
 {
+    public bool powerChargeProj = false;
     public int reflectCount;    //반사 횟수 
                                 //플레이어의 총알
 
@@ -49,6 +50,11 @@ public class Projectile_Player : Projectile
             if(collision.TryGetComponent(out Enemy enemy))
                 enemy.DamageEvent(damage);
 
+            if(powerChargeProj)
+            {
+                GameManager.Instance.weapon.ChargeGunPower();
+            }
+
             if (hitDestroyOn)
             {
                 //반사횟수가 0회 이하일 때 파괴된다. 
@@ -78,12 +84,10 @@ public class Projectile_Player : Projectile
                 if (reflectCount > 0)
                 {
                     ReflectProjectile(collision);
-
                 }
                 else
                 {
                     AfterHitEvent();
-
                 }
             }
         }
@@ -111,7 +115,6 @@ public class Projectile_Player : Projectile
                     else
                     {
                         AfterHitEvent();
-
                     }
                 }
 
@@ -137,6 +140,32 @@ public class Projectile_Player : Projectile
                 {
                     AfterHitEvent();
 
+                }
+            }
+        }
+
+        else if (collision.CompareTag("FloatingObj"))
+        {
+            if(collision.TryGetComponent<FloatingObj>(out FloatingObj fObj))
+            {
+                if (fObj.IsDamagable)
+                {
+                    fObj.DamageEvent(damage);
+                }
+
+                fObj.KnockBackEvent(rb.velocity);
+
+                if (hitDestroyOn)
+                {
+                    //반사횟수가 0회 이하일 때 파괴된다. 
+                    if (reflectCount > 0)
+                    {
+                        ReflectProjectile(collision);
+                    }
+                    else
+                    {
+                        AfterHitEvent();
+                    }
                 }
             }
         }

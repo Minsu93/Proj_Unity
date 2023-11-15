@@ -13,8 +13,8 @@ public class PlayerInput : MonoBehaviour
     public string RunButton = "Run";
     Vector2 moveDir = Vector2.zero;
 
-    public PlayerBehavior playerBehavior;
-    public PlayerWeapon playerWeapon;
+    PlayerBehavior playerBehavior;
+    PlayerWeapon playerWeapon;
 
 
 
@@ -81,19 +81,19 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             // Revolver
-            playerWeapon.ChangeWeapon(0);
+            playerWeapon.ChangeWeapon(1);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             // bubbleGun
-            playerWeapon.ChangeWeapon(1);
+            playerWeapon.ChangeWeapon(2);
 
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             // TripleGun
-            playerWeapon.ChangeWeapon(2);
+            playerWeapon.ChangeWeapon(3);
 
         }
 

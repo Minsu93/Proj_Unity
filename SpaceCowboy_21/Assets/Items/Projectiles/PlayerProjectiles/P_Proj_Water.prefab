@@ -5026,7 +5026,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 2
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
@@ -5059,8 +5059,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 1089958226170938091, guid: 4e11157af152a94479a5a40a80de5f4f, type: 3}
-  knockBackTime: 0.2
-  knockBackForce: 2
   disableDelayTime: 1
   gravityOn: 1
   collideOnPlanet: 1
@@ -5069,6 +5067,7 @@ MonoBehaviour:
   activate: 0
   ViewObj: {fileID: 8991112628740824846}
   trail: {fileID: 1670229204778518344}
+  reflectCount: 0
 --- !u!114 &-1193727413953729404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5082,6 +5081,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateBySpeed: 1
+  knockBackTime: 0.2
+  knockBackForce: 2
   slowProj: 0
   slowTimer: 0
   slowSpeed: 0
@@ -5101,7 +5102,6 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   gravityMultiplier: 3
   activate: 1
-  oxygenInt: -1
 --- !u!1 &8991112628740824846
 GameObject:
   m_ObjectHideFlags: 0

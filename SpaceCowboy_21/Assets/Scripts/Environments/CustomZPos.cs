@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+[SelectionBase]
 public class CustomZPos : MonoBehaviour
 {
 
     public float customZPos = 10f;
     float baseZPos = 10f;
-    public CinemachineVirtualCamera virtualCam;
+    CinemachineVirtualCamera virtualCam;
 
     public float movementMultiplierBase = 0.5f;
     float defaultLensSize;
+    float defaultFOV;
     Transform cameraTr;
     Vector3 startScale;
     Vector2 startPos;
@@ -20,11 +22,12 @@ public class CustomZPos : MonoBehaviour
 
     void Start()
     {
-        cameraTr = Camera.main.transform;
+        virtualCam = GameManager.Instance.virtualCamera;
+        cameraTr = virtualCam.transform;
         startScale = transform.localScale;
 
         startCamPos = cameraTr.position;
-        defaultLensSize = GameManager.Instance.defaultLens;
+        //defaultLensSize = GameManager.Instance.defaultLens;
 
         //시작 위치 기준 조절
         startPos = transform.position;

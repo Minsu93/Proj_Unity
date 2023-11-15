@@ -33,7 +33,11 @@ public class AimMousePosition : MonoBehaviour
     // Update is called once per frame
     void AimUpdate(ISkeletonAnimation anim)
     {
-        Vector3 mouseWorldPosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 inputPos = Input.mousePosition;
+        inputPos.z = 10;
+
+        Vector3 mouseWorldPosition = cam.ScreenToWorldPoint(inputPos);
+        mouseWorldPosition.z = 0;
         Vector3 mouseVec = mouseWorldPosition - transform.position;
         Vector3 mousePos = transform.position + (mouseVec.normalized * maxDist);
 

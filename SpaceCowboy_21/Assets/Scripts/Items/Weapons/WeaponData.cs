@@ -48,17 +48,29 @@ public class WeaponData : ScriptableObject
     float recoil;   //총기 반동
     public float Recoil { get { return recoil; } }
 
-
     [SerializeField]
-    float gauge;   //사용하기 위해서 채워야 하는 게이지
-    public float Gauge { get { return gauge; } }
+    AudioClip shootSFX;   //총기 사운드
+    public AudioClip ShootSFX { get { return shootSFX; } }
+
+
+
+    [Header ("Power Property")]
 
     [SerializeField]
     float artifactLifetime;   //총기 수명
     public float ArtifaceLifetime { get { return artifactLifetime; } }
 
 
-    [Header ("Projectile Property")]
+    [SerializeField]
+    float powerCost;   //사용하는 파워 게이지
+    public float PowerCost { get { return powerCost; } }
+
+    [SerializeField]
+    bool isAutoShoot;   //자동 발사 무기인가요?
+    public bool IsAutoShoot { get { return isAutoShoot; } }
+
+
+    [Header("Projectile Property")]
 
     [SerializeField]
     GameObject projectilePrefab;    //총알의 종류

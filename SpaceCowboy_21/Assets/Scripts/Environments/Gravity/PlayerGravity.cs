@@ -17,14 +17,7 @@ public class PlayerGravity : CharacterGravity
         //oxygenHealth = GetComponent<OxygenHealth>();
 
     }
-    protected override void Update()
-    {
-        base.Update();
 
-
-        //산소 체크
-        //CheckOxygenState();
-    }
 
 
     protected override void ChangePlanet()
@@ -39,49 +32,12 @@ public class PlayerGravity : CharacterGravity
 
         preNearestPlanet = nearestPlanet;
         currentGravityForce = nearestPlanet.gravityForce;   //행성별로 다른 중력 적용
-        //행성별 카메라 변경
-        //if(nearestPlanet.gravityForce < 400f)
-        //{
-        //    GameManager.Instance.ChangeCamera(11f);
-        //}
-        //else
-        //{
-        //    GameManager.Instance.ChangeCamera(8f);
-        //}
-        GameManager.Instance.ChangeCamera(nearestPlanet.lens);
 
-        //oxygenHealth.consumeMultiplier = nearestPlanet.oxygenAmount;
+        //GameManager.Instance.ChangeCamera(nearestPlanet.lens);
+        GameManager.Instance.ChangeCamera(nearestPlanet.planetFOV);
+
     }
 
 
-    /*
-    void CheckOxygenState()
-    {
 
-        List<PlanetType> types = new List<PlanetType>();
-
-        for (int i = 0; i < gravityPlanets.Count; i++)
-        {
-            if (gravityPlanets[i] == null)
-                continue;
-
-            types.Add(gravityPlanets[i].planetType);
-        }
-
-
-        if (types.Contains(PlanetType.Green))
-        {   //Green 이 하나라도 있으면
-            oxygenInt = 0;
-        }
-        else if (types.Contains(PlanetType.Red))
-        {   //Green은 없고 Red가 있으면
-            oxygenInt = 1;
-
-        }
-        else
-        {   //Blue만 있으면 
-            oxygenInt = 2;
-        }
-    }
-    */
 }

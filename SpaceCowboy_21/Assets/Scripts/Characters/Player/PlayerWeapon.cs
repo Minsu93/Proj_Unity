@@ -10,9 +10,11 @@ public class PlayerWeapon : MonoBehaviour
     int currentWeaponIndex = -1;
     int temporAmmo;    //기본 총알 남아있는것
     public float defaultReloadTime = 0.5f;
-    public float[] gunGaugesMax;
-    public float[] gunGauges;
-    public bool[] gunReadies;
+
+    public float chargeAmount = 0.1f;
+    public float gunPowerMax = 15f;   //POWER 최대 수치
+    public float curGunPower;   //현재 남아있는 gunPower수치
+
 
     WeaponData currentWeaponData;
 
@@ -54,19 +56,6 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Start()
     {
-        //게이지 초기화
-        gunGaugesMax = new float[weapons.Length];
-        gunGauges = new float[weapons.Length];
-        gunReadies = new bool[weapons.Length];
-
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            gunGaugesMax[i] = weapons[i].Gauge;
-            gunGauges[i] = 0f;
-            gunReadies[i] = false;
-
-        }
-
         //기본 총 초기화.
 
         if (currentWeaponIndex < 0)
@@ -106,14 +95,17 @@ public class PlayerWeapon : MonoBehaviour
 
         //연발 총인 경우에는 계속 쏘기 이벤트를 중단한다. 
 
-        if (!isSingleShot)
+        if (shootRoutine != null)
         {
-            if (shootRoutine != null)
-            {
-                StopCoroutine(shootRoutine);
-                shootRoutine = null;
-            }
+            StopCoroutine(shootRoutine);
+            shootRoutine = null;
         }
+    }
+
+    //유물 총 자동 발사 기능
+    public void AutoShoot()
+    {
+        shootRoutine = StartCoroutine(ShootRepeater());
     }
 
     IEnumerator ShootRepeater()
@@ -141,7 +133,6 @@ public class PlayerWeapon : MonoBehaviour
         //무기를 바꾸는 중이면 발사하지 않는다. 
         if(isChanging)
             return;
-        
         
 
         //총알 발사구가 행성 내부에 있다면 발사하지 않는다. 
@@ -213,7 +204,8 @@ public class PlayerWeapon : MonoBehaviour
 
 
             }
-            //AudioManager.instance.PlaySfx(AudioManager.Sfx.Shoot);
+
+            AudioManager.instance.PlaySfx(currentWeaponData.ShootSFX);
 
             if(burstInterval> 0)
                 yield return new WaitForSeconds(burstInterval);
@@ -295,15 +287,25 @@ public class PlayerWeapon : MonoBehaviour
     public void ChangeWeapon(int index)
     {
         Debug.Log("무기 교체 : " + index);
-
+        float cost;
         // index 가 0이라면 상관없이 교체한다.
         //사용 가능한 유물 총인 경우에만 무기를 교체한다.
-        if (index != 0 && !gunReadies[index]) 
+        if (index != 0) 
         {
-            return;
+            cost = weapons[index].PowerCost;
+            if (curGunPower < cost)
+            {
+                return;
+            }
+            else
+            {
+                //power소모 
+                curGunPower -= cost;
+            }
         }
 
-        gunReadies[index] = false;
+        
+        //gunReadies[index] = false;
 
         if (changeRoutine != null)
         {
@@ -327,7 +329,7 @@ public class PlayerWeapon : MonoBehaviour
 
         isChanging = true;
         //총 바꾸는 데 걸리는 시간 
-        yield return new WaitForSeconds(0.5f);
+        yield return null;
 
         isChanging = false;
         changeRoutine = null;
@@ -397,7 +399,8 @@ public class PlayerWeapon : MonoBehaviour
         {
             inArtifact = true;
             currAmmo = maxAmmo;
-            gunGauges[index] = 0;
+
+            AutoShoot();
         }
 
 
@@ -406,18 +409,6 @@ public class PlayerWeapon : MonoBehaviour
     }
 
     #endregion
-
-    public void FillArtifactGauge(int index)
-    {
-
-        float g = gunGauges[index] + 1f;
-        gunGauges[index] = Mathf.Clamp(g, 0f, gunGaugesMax[index]);
-
-        if (gunGauges[index] == gunGaugesMax[index])
-        {
-            gunReadies[index] = true;
-        }
-    }
 
     private void Update()
     {
@@ -433,6 +424,14 @@ public class PlayerWeapon : MonoBehaviour
         }
     }
 
+    public void ChargeGunPower()
+    {
+        curGunPower += chargeAmount;
+        if(curGunPower > gunPowerMax)
+        {
+            curGunPower = gunPowerMax;
+        }
+    }
 
 
 }

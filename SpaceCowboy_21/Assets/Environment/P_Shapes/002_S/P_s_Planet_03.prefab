@@ -1527,6 +1527,10 @@ PrefabInstance:
       propertyPath: gravityViewer
       value: 
       objectReference: {fileID: 2967808141700454512}
+    - target: {fileID: 5820961588108856069, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
 --- !u!4 &2967808141700454512 stripped

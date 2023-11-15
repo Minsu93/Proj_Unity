@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 3_SomethingElseGun
+  m_EditorClassIdentifier: 
+  skinIndex: 2
+  oneHand: 1
+  singleShot: 0
+  burstNumber: 1
+  burstInterval: 0
+  numberOfProjectiles: 3
+  shootInterval: 0.1
+  projectileSpread: 30
+  randomSpreadAngle: 0
+  recoil: 1
+  artifactLifetime: 5
+  powerCost: 6
+  isAutoShoot: 1
+  projectilePrefab: {fileID: 6292677011125795810, guid: 02f7f4de92214ee44a5bdae72edb091b, type: 3}
+  maxAmmo: 16
+  reloadTime: 1
+  damage: 4
+  lifeTime: 2
+  speed: 10
+  knockBackForce: 0
+  reflectionCount: 0

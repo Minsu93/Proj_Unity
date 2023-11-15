@@ -17,13 +17,13 @@ public class ArtifactGaugeBar : MonoBehaviour
     // Update is called once per frame
     private void LateUpdate()
     {
-        float[] gaugeMax = pWeapon.gunGaugesMax;
-        float[] gaugeCur = pWeapon.gunGauges;
+        //float[] gaugeMax = pWeapon.gunGaugesMax;
+        //float[] gaugeCur = pWeapon.gunGauges;
 
-        for(int i = 0; i < gunGaugeImgs.Length; i++)
-        {
-            gunGaugeImgs[i].fillAmount = gaugeCur[i] / gaugeMax[i];
-        }
+        //for(int i = 0; i < gunGaugeImgs.Length; i++)
+        //{
+        //    gunGaugeImgs[i].fillAmount = gaugeCur[i] / gaugeMax[i];
+        //}
     }
   
 }

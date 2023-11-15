@@ -219,7 +219,7 @@ MonoBehaviour:
   m_SplineDetail: 16
   m_AdaptiveUV: 1
   m_StretchUV: 0
-  m_WorldSpaceUV: 1
+  m_WorldSpaceUV: 0
   m_CornerAngleThreshold: 30
   m_ColliderDetail: 16
   m_ColliderOffset: 0
@@ -383,7 +383,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5820961588108854527}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -426,7 +426,8 @@ MonoBehaviour:
   gravityForce: 600
   gravityViewer: {fileID: 880953034114429552}
   oxygenAmount: -1
-  lens: 10
+  planetFOV: 90
+  edgeColl: {fileID: 0}
 --- !u!114 &6740316603023575944
 MonoBehaviour:
   m_ObjectHideFlags: 0

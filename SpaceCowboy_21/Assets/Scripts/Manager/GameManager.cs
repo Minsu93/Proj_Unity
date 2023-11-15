@@ -9,10 +9,12 @@ public class GameManager : MonoBehaviour
     public PoolManager poolManager;
     public CameraPos cameraPos;
     public CinemachineVirtualCamera virtualCamera;
-    public float mapLens = 16.0f;
-    public float defaultLens = 8.0f;
-    float currLens;
-    float targetLens;
+
+    public float mapFOV = 120f;
+    public float defaultFOV = 90f;
+    float currFOV;
+    float targetFOV;
+
     float approx = 0.05f;
     public float controlSpeed = 5.0f;
 
@@ -32,7 +34,11 @@ public class GameManager : MonoBehaviour
     }
 
     public Transform player;
+    public PlayerWeapon weapon;
     //public float worldGravity;
+
+    [Space]
+    public bool playBGM;
 
     public event System.Action PlayerDeadEvent;
 
@@ -66,35 +72,36 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //AudioManager.instance.PlayBgm(true);
+        if(playBGM)
+            AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
 
-        //초기 카메라 
-        currLens = defaultLens;
-        targetLens = currLens;
+        //초기 FOV
+        currFOV = defaultFOV;
+        targetFOV = currFOV;
     }
 
 
     private void Update()
     {
+        //어플리케이션 종료
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
-
 
     }
 
     private void FixedUpdate()
     {
+        //카메라 조절
 
-        if (Mathf.Abs(currLens - targetLens) > approx)
+        if(Mathf.Abs(currFOV - targetFOV) > approx)
         {
-            currLens = Mathf.Lerp(currLens, targetLens, Time.deltaTime * controlSpeed);
-            virtualCamera.m_Lens.OrthographicSize = currLens;
+            currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * controlSpeed);
+            virtualCamera.m_Lens.FieldOfView = currFOV;
         }
-        
-    }
 
+    }
 
 
     // 플레이어가 죽이면 전역에 이벤트 발생
@@ -102,13 +109,15 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerDeadEvent != null)
             PlayerDeadEvent();
+
+        virtualCamera.Follow = null;
     }
 
+
+    //카메라 이벤트
     public void MapOpen()
     {
-        //cameraLens.LensExpand();
-        //virtualCamera.m_Lens.OrthographicSize = lensExpand;
-        targetLens = mapLens;
+        targetFOV = mapFOV;
 
         cameraPos.StopCameraFollow();
         
@@ -116,16 +125,15 @@ public class GameManager : MonoBehaviour
 
     public void MapClose()
     {
-        //cameraLens.LensReduce();
-        //virtualCamera.m_Lens.OrthographicSize = lensReduce;
-        targetLens = defaultLens;
+        targetFOV = defaultFOV;
 
         cameraPos.StartCameraFollow();
     }
 
+    //행성 이동시 기본 FOV 변경
     public void ChangeCamera(float orthoSize)
     {
-        defaultLens = orthoSize;
-        targetLens = defaultLens;
+        defaultFOV = orthoSize;
+        targetFOV = defaultFOV;
     }
 }

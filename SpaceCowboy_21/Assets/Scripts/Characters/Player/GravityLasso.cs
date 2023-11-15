@@ -77,10 +77,13 @@ public class GravityLasso : MonoBehaviour
         lineRenderer.startWidth = .2f;
         lineRenderer.endWidth = .2f;
         lineRenderer.material = lassoMaterial;
+        lineRenderer.sortingLayerName = "Player";
+        lineRenderer.sortingOrder = -10 ;
 
         SpriteRenderer tipSpr = lineObj.AddComponent<SpriteRenderer>();
         tipSpr.sprite = tipSprite;
-
+        tipSpr.sortingLayerName = "Player";
+        tipSpr.sortingOrder = -10;
         lineObj.SetActive(false);
 
 
@@ -97,7 +100,6 @@ public class GravityLasso : MonoBehaviour
                 //올가미 움직인다. 
                 timer += Time.deltaTime;
 
-                //lassoTip += targetDir * lassoSpeed * Time.deltaTime;
                 float percent = timer / moveTime;
                 Vector2 pos = Vector2.Lerp((Vector2)transform.position, (Vector2)transform.position + (targetDir * lassoRange), moveCurve.Evaluate(percent));;
                 lassoTip = pos;
@@ -216,9 +218,12 @@ public class GravityLasso : MonoBehaviour
         UpdateLassoPosition();
         lineColl.enabled = true;
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 inputPos = Input.mousePosition;
+        inputPos.z = 10;    //z는 카메라에서부터의 거리
+        
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(inputPos);
         mousePos.z = 0;
-        targetDir = ((Vector2)mousePos - (Vector2)transform.position).normalized;
+        targetDir = (mousePos - transform.position).normalized;
 
 
 

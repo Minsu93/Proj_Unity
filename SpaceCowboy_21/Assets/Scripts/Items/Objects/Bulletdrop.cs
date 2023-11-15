@@ -44,7 +44,7 @@ public class Bulletdrop : MonoBehaviour
 
     void ConsumeFuction()
     {
-        weapon.FillArtifactGauge(gunIndex);
+        //weapon.FillArtifactGauge(gunIndex);
 
         StartCoroutine(DestroyFuction(delayForDestroy));
 

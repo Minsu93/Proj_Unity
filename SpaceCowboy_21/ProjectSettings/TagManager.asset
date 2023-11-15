@@ -12,6 +12,7 @@ TagManager:
   - BlockBody
   - Item
   - EnemyHitableProjectile
+  - FloatingObj
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - Planet
   - Object
   - BlockBody
-  - Trap
+  - FloatingObj
   - EnemyHitableProj
   - 
   - 

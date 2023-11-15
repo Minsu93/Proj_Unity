@@ -18,8 +18,9 @@ namespace PlanetSpace
         //public LayerMask targetLayer;
         public Transform gravityViewer;
         CircleCollider2D circleColl;
-        public float oxygenAmount = 1f;
-        public float lens = 8f;
+        public float oxygenAmount = 1f;     //나중에 오염된 행성 만들 때 사용하자.
+        //public float lens = 8f;
+        public float planetFOV = 90f;
 
  
 
@@ -32,6 +33,7 @@ namespace PlanetSpace
         //행성에 등장할 Neutral Enemy 리스폰 시간
 
         public EdgeCollider2D edgeColl;
+        Rigidbody2D rb;
 
 
 
@@ -42,6 +44,7 @@ namespace PlanetSpace
             circleColl.radius = gravityRadius;
 
             edgeColl = GetComponent<EdgeCollider2D>();
+            rb = GetComponent<Rigidbody2D>();
 
             //gravityViewer = GetComponentsInChildren<Transform>(true)[2];
             SetViewerMaterial();
@@ -94,7 +97,28 @@ namespace PlanetSpace
         }
 
        
+        public void MovePlanet(Vector2 impulse)
+        {
+            //rb.AddForce(force, ForceMode2D.Impulse);
+            StartCoroutine(MovePlanetRoutine(impulse));   
+            
+        }
 
+        IEnumerator MovePlanetRoutine(Vector2 force)
+        {
+            Debug.Log(force);
+            Vector2 f = force;
+            while(f.magnitude > 0.1f)
+            {
+                rb.MovePosition(rb.position + f * Time.fixedDeltaTime);
+                yield return null;
+                f *= 0.98f;
+            }
+        }
+        public void MovePlanetForce(Vector2 force)
+        {
+            rb.MovePosition(rb.position +  force * Time.fixedDeltaTime);
+        }
 
         private void OnDrawGizmos()
         {

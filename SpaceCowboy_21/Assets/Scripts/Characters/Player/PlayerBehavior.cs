@@ -74,6 +74,7 @@ namespace SpaceCowboy
         PlayerWeapon playerWeapon;
         public  PlayerView playerView;
         CharacterGravity characterGravity;
+        GravityLassoAdvance lassoAdvance;
         Rigidbody2D rb;
         Health health;
         Collider2D coll;
@@ -83,6 +84,7 @@ namespace SpaceCowboy
             rb = GetComponent<Rigidbody2D>();
             characterGravity = GetComponent<CharacterGravity>();
             playerWeapon = GetComponent<PlayerWeapon>();
+            lassoAdvance = GetComponentInChildren<GravityLassoAdvance>();
             //playerView = GetComponent<PlayerView>();
             health = GetComponent<Health>();
             coll = GetComponent<Collider2D>();
@@ -325,6 +327,7 @@ namespace SpaceCowboy
             //플레이어가 넉백중일때는 이동 조작이 불가능. 
             if (state == PlayerState.Stun) return;
 
+            if (lassoAdvance.lassoState == LassoState.OnMove) return;
 
             this.inputAxis = inputAxisRaw;
 
@@ -377,7 +380,7 @@ namespace SpaceCowboy
             }
 
         }
-
+        /*
         void MoveOnAir()
         {
             //근처에 행성이 없다면 공중 이동은 불가능.
@@ -402,6 +405,7 @@ namespace SpaceCowboy
             //rb.MovePosition(rb.position + (preInputAxis.normalized * moveSpeed * Time.fixedDeltaTime));
             //rb.AddForce(preInputAxis.normalized * moveSpeed , ForceMode2D.Force);
         }
+        */
 
         public void TryStop()
         {
@@ -512,11 +516,18 @@ namespace SpaceCowboy
 
 
                 moveDir = moveVector.normalized;
+                float speed = currSpeed;
 
-                Debug.DrawLine(pastPointPos, targetPointPos, Color.red);
+                if(lassoAdvance.lassoState == LassoState.OnGrab)
+                {
+                    float t = lassoAdvance.forceByLasso.magnitude;
+                    speed = currSpeed - t;
+                }
 
+                //Debug.DrawLine(pastPointPos, targetPointPos, Color.red);
                 // 오브젝트를 이동 방향으로 이동
-                rb.MovePosition(rb.position + moveDir * currSpeed * Time.fixedDeltaTime);
+                rb.MovePosition(rb.position + moveDir * speed * Time.fixedDeltaTime);
+
             }
         }
 
@@ -715,7 +726,10 @@ namespace SpaceCowboy
 
         void AimCheck()
         {
-            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 inputPos = Input.mousePosition;
+            inputPos.z = 10;
+
+            mousePos = Camera.main.ScreenToWorldPoint(inputPos);
             mousePos.z = 0;
 
             aimDirection = (mousePos - transform.position).normalized;
@@ -737,18 +751,31 @@ namespace SpaceCowboy
 
 
             //우주에 있는 동안 총의 Recoil을 적용한다!
-            if (onSpace)
+            if (OnAir)
             {
                 //aim의 반대 방향으로 반동을 준다
-                Vector2 recoilDir = aimDirection * -1f;
-                rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+                //Vector2 recoilDir = aimDirection * -1f;
+                //rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+                StartCoroutine(RecoilRoutine());    
+
             }
-            else if (onLessGravity && OnAir)
-            {
-                //aim의 반대 방향으로 반동을 준다
-                Vector2 recoilDir = aimDirection * -1f;
-                rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
-            }
+            //else if (onLessGravity && OnAir)
+            //{
+            //    //aim의 반대 방향으로 반동을 준다
+            //    Vector2 recoilDir = aimDirection * -1f;
+            //    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+            //}
+        }
+
+        IEnumerator RecoilRoutine()
+        {
+            //먼저 한 방향으로 쎄게 준다 
+            Vector2 recoilDir = aimDirection * -1f;
+            rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+            yield return new WaitForSeconds(0.1f);
+            //이후에 반대 방향으로 살짝 준다
+            recoilDir = aimDirection;
+            rb.AddForce(recoilDir * gunRecoil * 0.3f, ForceMode2D.Impulse); ;
         }
 
         public void ReloadStart()

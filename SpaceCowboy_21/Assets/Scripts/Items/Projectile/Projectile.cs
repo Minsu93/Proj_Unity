@@ -95,6 +95,8 @@ public class Projectile : MonoBehaviour
         {
             LifeTimeOver();
         }
+
+        //위치에 따른 검사.
     }
 
     protected virtual void LifeTimeOver()

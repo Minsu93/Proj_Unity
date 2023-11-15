@@ -22,8 +22,10 @@ MonoBehaviour:
   projectileSpread: 0
   randomSpreadAngle: 5
   recoil: 1
-  gauge: 10
+  shootSFX: {fileID: 8300000, guid: 2e1df651eb5f4134282aa86a0300318f, type: 3}
   artifactLifetime: 5
+  powerCost: 3
+  isAutoShoot: 1
   projectilePrefab: {fileID: 6292677011125795810, guid: 3a46fe960ef036c44b3949af952e3b27, type: 3}
   maxAmmo: 3
   reloadTime: 1

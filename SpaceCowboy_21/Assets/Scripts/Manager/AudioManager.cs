@@ -15,8 +15,7 @@ public class AudioManager : MonoBehaviour
     [Header("#SFX")]
     public AudioClip[] sfxClips;
     public float sfxVolume;
-    //생성할 AudioSource의 수
-    public int channels;
+    public int channels;     //생성할 AudioSource의 수
     AudioSource[] sfxPlayers;
     //마지막으로 플레이한 오디오 채널의 index
     int channelIndex;
@@ -69,8 +68,18 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public void PlaySfx(Sfx sfx)
+    public void PlaySfx(AudioClip sfx)
     {
+        int clipIndex = 0;
+
+        for (int i = 0; i < sfxClips.Length; i++)
+        {
+            if (sfxClips[i] == sfx)
+            {
+                clipIndex = i;
+            }
+        }
+
         for (int index = 0; index < sfxPlayers.Length; index++)
         {
             int loopIndex = (index + channelIndex) % sfxPlayers.Length;
@@ -80,7 +89,7 @@ public class AudioManager : MonoBehaviour
 
 
             channelIndex = loopIndex;       //channelindex는 실행한 채널의 넘버
-            sfxPlayers[loopIndex].clip = sfxClips[(int)sfx ];
+            sfxPlayers[loopIndex].clip = sfxClips[clipIndex];
             sfxPlayers[loopIndex].Play();
             break;
         }
