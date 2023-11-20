@@ -18,8 +18,8 @@ public class AimMousePosition : MonoBehaviour
     Bone bone;
 
     //Debug test
-    GameObject testObj;
-    public Sprite testSpr;
+    //GameObject testObj;
+    //public Sprite testSpr;
 
     PlayerBehavior playerBehavior;
     
@@ -39,12 +39,12 @@ public class AimMousePosition : MonoBehaviour
 
         skeletonAnimation.UpdateLocal += AimUpdate; //Spine 애니메이션에서 실행 순서 참고. 본 위치 업데이트를 어디쯤에서 할지 정하는 곳.
 
-        testObj = new GameObject();
-        SpriteRenderer spr = testObj.AddComponent<SpriteRenderer>();
-        spr.sprite = testSpr;
-        spr.sortingLayerName = "Effect";
+        //testObj = new GameObject();
+        //SpriteRenderer spr = testObj.AddComponent<SpriteRenderer>();
+        //spr.sprite = testSpr;
+        //spr.sortingLayerName = "Effect";
 
-        testObj.transform.parent = this.transform;
+        //testObj.transform.parent = this.transform;
     }
 
     // Update is called once per frame
@@ -57,7 +57,7 @@ public class AimMousePosition : MonoBehaviour
 
 
         //testObj.transform.localPosition = skeletonLocalPosition;
-        testObj.transform.position = mousePos;
+        //testObj.transform.position = mousePos;
 
 
         //playerBehavior 에 값 할당
