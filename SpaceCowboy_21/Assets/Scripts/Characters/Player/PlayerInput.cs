@@ -77,25 +77,26 @@ public class PlayerInput : MonoBehaviour
 
         }
 
-        // Weapon Change
+        // Artifact Change
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            // Revolver
+            // Slot1
             playerWeapon.ChangeWeapon(1);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            // bubbleGun
+            // Slot2
             playerWeapon.ChangeWeapon(2);
 
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            // TripleGun
-            playerWeapon.ChangeWeapon(3);
 
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    // Slot3
+        //    playerWeapon.ChangeWeapon(3);
+
+        //}
 
 
         // Weapon Reload

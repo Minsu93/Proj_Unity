@@ -52,7 +52,7 @@ public class StatPanel : MonoBehaviour
 
         artifactCost_A = (int)playerWeapon.weapons[1].PowerCost;
         artifactCost_B = (int)playerWeapon.weapons[2].PowerCost;
-        artifactCost_C = (int)playerWeapon.weapons[3].PowerCost;
+        //artifactCost_C = (int)playerWeapon.weapons[3].PowerCost;
 
     }
 
@@ -114,17 +114,19 @@ public class StatPanel : MonoBehaviour
             if (artifact_B.activeSelf)
                 artifact_B.SetActive(false);
         }
+
+
         //C
-        if (currEnergy >= artifactCost_C)
-        {
-            if (!artifact_C.activeSelf)
-                artifact_C.SetActive(true);
-        }
-        else
-        {
-            if (artifact_C.activeSelf)
-                artifact_C.SetActive(false);
-        }
+        //if (currEnergy >= artifactCost_C)
+        //{
+        //    if (!artifact_C.activeSelf)
+        //        artifact_C.SetActive(true);
+        //}
+        //else
+        //{
+        //    if (artifact_C.activeSelf)
+        //        artifact_C.SetActive(false);
+        //}
 
     }
 

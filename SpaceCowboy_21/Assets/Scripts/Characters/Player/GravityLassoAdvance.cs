@@ -270,7 +270,7 @@ public class GravityLassoAdvance : MonoBehaviour
             rb.AddForce(forceByLasso, ForceMode2D.Force);
             if(grabPlanet)
             {
-                //행성을 던질 때 
+                //행성을 움직일때 
                 if (grabTarget.TryGetComponent(out Planet planet))
                 {
                     planet.MovePlanetForce(normalVec * f * dragForce);
@@ -332,8 +332,6 @@ public class GravityLassoAdvance : MonoBehaviour
             Vector3 size = hit.collider.bounds.size;
             grabObjSize = size.x * size.y;
             
-            Debug.Log(grabObjSize);
-
             if(grabObjSize < 25f)
             {
                 //물체 발사 가능

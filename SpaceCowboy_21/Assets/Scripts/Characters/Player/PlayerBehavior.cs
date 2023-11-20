@@ -108,7 +108,7 @@ namespace SpaceCowboy
             CheckOnAir();
 
             //에임 방향 체크
-            AimCheck();
+            //AimCheck();
         }
 
 
@@ -125,16 +125,20 @@ namespace SpaceCowboy
             //캐릭터 회전
             RotateCharacterToGround();
 
+
+            if (lassoAdvance.lassoState == LassoState.OnMove) return;
+            if (state == PlayerState.Stun) return;
+
+
             //실제 움직임 함수
             MoveUpdate();
 
-            if (state == PlayerState.Stun) return;
 
             //이동 속도를 컨트롤
             SpeedControl();
 
             //공중 부스터 여부
-            AIrJumpFunction();
+            //AIrJumpFunction();
 
 
 
@@ -327,8 +331,6 @@ namespace SpaceCowboy
             //플레이어가 넉백중일때는 이동 조작이 불가능. 
             if (state == PlayerState.Stun) return;
 
-            if (lassoAdvance.lassoState == LassoState.OnMove) return;
-
             this.inputAxis = inputAxisRaw;
 
             //한번씩만 계산하는게 퍼포먼스가 좋을지, 아니면 매턴 변수에 집어넣는게 퍼포먼스가 좋을지 모르겠음. 어차피 검사는 해야하잖아.. 
@@ -349,10 +351,10 @@ namespace SpaceCowboy
                 MoveOnLand();
             }
             //공중에 있을 때 움직임 
-            else
-            {
-                //MoveOnAir();
-            }
+            //else
+            //{
+            //   MoveOnAir();
+            //}
 
 
 
@@ -733,10 +735,7 @@ namespace SpaceCowboy
             mousePos.z = 0;
 
             aimDirection = (mousePos - transform.position).normalized;
-            /*
-            Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * aimDirection;
-            Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);      //aim방향의 쿼터니언 값
-            */
+
         }
 
   

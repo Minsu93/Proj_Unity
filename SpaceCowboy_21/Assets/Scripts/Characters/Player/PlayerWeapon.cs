@@ -72,7 +72,6 @@ public class PlayerWeapon : MonoBehaviour
     public void TryStartShoot()
     {
         //총 쏘기 이벤트를 시작한다. 단발총인 경우는 한 발만 발사. 연발 총인 경우는 발사 루틴을 지속
-
         //달리기 중인 경우에는 총을 쏘지 못한다. 
         if (playerBehavior.runON)
             return;
@@ -82,19 +81,19 @@ public class PlayerWeapon : MonoBehaviour
         {
             TryShoot();
         }
+
         //연발총인 경우에는 계속 쏘기 이벤트를 실행한다. 
         else
         {
             shootRoutine = StartCoroutine(ShootRepeater());
         }
+
     }
 
     public void TryStopShoot()
     {
         //총 쏘기 이벤트를 중단한다. 단발총인 경우는 총 쏘기 초기화. 연발 총의 경우에는 발사 중지. 
-
         //연발 총인 경우에는 계속 쏘기 이벤트를 중단한다. 
-
         if (shootRoutine != null)
         {
             StopCoroutine(shootRoutine);
@@ -181,7 +180,9 @@ public class PlayerWeapon : MonoBehaviour
         yield return null; 
 
         float totalSpread = projectileSpread * (numberOfProjectiles - 1);       //우선 전체 총알이 퍼질 각도를 구한다
-        Vector3 dir = gunTip.right; //발사 각도
+
+        //Vector3 dir = gunTip.right; //발사 각도
+        Vector3 dir = playerBehavior.aimDirection;
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90 - (totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
 
@@ -198,7 +199,7 @@ public class PlayerWeapon : MonoBehaviour
                 Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
                 //총알 생성
                 GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
-                projectile.transform.position = gunTip.position;
+                projectile.transform.position = transform.position + dir * 1f;
                 projectile.transform.rotation = tempRot * randomRotation;
                 projectile.GetComponent<Projectile_Player>().init(damage, lifeTime, speed, reflectionCount);
 
@@ -286,12 +287,13 @@ public class PlayerWeapon : MonoBehaviour
 
     public void ChangeWeapon(int index)
     {
-        Debug.Log("무기 교체 : " + index);
         float cost;
-        // index 가 0이라면 상관없이 교체한다.
-        //사용 가능한 유물 총인 경우에만 무기를 교체한다.
+        TryStopShoot();
+
+        // index 가 0이라면(리볼버) 상관없이 교체한다.
         if (index != 0) 
         {
+            //사용 가능한 유물 총인 경우에만 무기를 교체한다.
             cost = weapons[index].PowerCost;
             if (curGunPower < cost)
             {
@@ -303,9 +305,6 @@ public class PlayerWeapon : MonoBehaviour
                 curGunPower -= cost;
             }
         }
-
-        
-        //gunReadies[index] = false;
 
         if (changeRoutine != null)
         {
@@ -422,6 +421,8 @@ public class PlayerWeapon : MonoBehaviour
                 ChangeWeapon(0);
             }
         }
+
+
     }
 
     public void ChargeGunPower()
@@ -434,10 +435,4 @@ public class PlayerWeapon : MonoBehaviour
     }
 
 
-
-    public void OnDrawGizmos()
-    {
-        Gizmos.color= Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 5f);
-    }
 }

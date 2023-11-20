@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 8044899883763029040}
   - component: {fileID: 8044899883763029054}
   - component: {fileID: 8562481654179466758}
-  - component: {fileID: 5320797862056539491}
   m_Layer: 8
   m_Name: Shooter
   m_TagString: Enemy
@@ -177,28 +176,6 @@ MonoBehaviour:
   stickToPlanet: 0
   yOffset: 0.76
   coll: {fileID: 0}
---- !u!114 &5320797862056539491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044899883763029046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemChance: 1
-  dropCount: 5
-  items:
-  - {fileID: 6651903840639107419, guid: 79f9918165f065d4684f1efb0a5709e8, type: 3}
-  - {fileID: 7791209083436480019, guid: 9022a68b603f3bb4c916a37bb3576afb, type: 3}
-  itemDropRate:
-  - 50
-  - 50
-  minPow: 3
-  maxPow: 4
 --- !u!1 &8044899884092891898
 GameObject:
   m_ObjectHideFlags: 0

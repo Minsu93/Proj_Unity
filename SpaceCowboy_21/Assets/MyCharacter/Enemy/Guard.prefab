@@ -97,7 +97,6 @@ GameObject:
   - component: {fileID: 3764293074562094099}
   - component: {fileID: 3431096409917588246}
   - component: {fileID: 5273161689077657602}
-  - component: {fileID: -3200767010942802143}
   m_Layer: 8
   m_Name: Guard
   m_TagString: Enemy
@@ -267,28 +266,6 @@ MonoBehaviour:
   stickToPlanet: 0
   yOffset: 1.31
   coll: {fileID: 0}
---- !u!114 &-3200767010942802143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3431096409917588254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemChance: 1
-  dropCount: 5
-  items:
-  - {fileID: 6651903840639107419, guid: 79f9918165f065d4684f1efb0a5709e8, type: 3}
-  - {fileID: 7791209083436480019, guid: 9022a68b603f3bb4c916a37bb3576afb, type: 3}
-  itemDropRate:
-  - 50
-  - 50
-  minPow: 3
-  maxPow: 4
 --- !u!1 &7491711226669894687
 GameObject:
   m_ObjectHideFlags: 0
