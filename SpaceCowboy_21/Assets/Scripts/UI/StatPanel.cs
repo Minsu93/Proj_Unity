@@ -88,7 +88,7 @@ public class StatPanel : MonoBehaviour
         int currEnergy = (int)playerWeapon.curGunPower;
         if (panelEnergy != currEnergy)
         {
-            Debug.Log(currEnergy);
+            //Debug.Log(currEnergy);
             ChangeCurEnergy(currEnergy);
         }
 
