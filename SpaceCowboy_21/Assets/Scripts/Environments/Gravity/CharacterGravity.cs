@@ -47,7 +47,7 @@ public class CharacterGravity : Gravity
         float gravDist = (nearestPoint - (Vector2)transform.position).magnitude;        //지면과 가까울수록 더 중력이 강하게 적용
         gravDist = Mathf.Clamp(maxGravDIst / gravDist, 1, maxGravDIst * maxGravDIst);
 
-        rb.AddForce(grav * currentGravityForce * gravityMultiplier * gravDist * Time.deltaTime, ForceMode2D.Force);
+        rb.AddForce(grav * currentGravityForce * gravDist * Time.deltaTime, ForceMode2D.Force);
         return;
     }
 
@@ -57,7 +57,6 @@ public class CharacterGravity : Gravity
         //SendMessage("ChangePlanet", SendMessageOptions.DontRequireReceiver);    //행성 바꿈 이벤트 실행
 
         preNearestPlanet = nearestPlanet;
-        currentGravityForce = nearestPlanet.gravityForce;   //행성별로 다른 중력 적용
     }
 
     void GetNearestPoint()

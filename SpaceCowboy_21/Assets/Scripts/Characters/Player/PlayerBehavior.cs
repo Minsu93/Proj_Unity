@@ -14,12 +14,13 @@ namespace SpaceCowboy
     {
         [Header("Jump Property")]
         public float jumpForce = 10f;
+        public float boosterForce = 2f;
+        public float boosterTimer = 1.0f;
         public float moveForce = 1f;    //PreMoveDir이 점프의 방향을 변화시킨다.
         Vector2 pastPosition = Vector2.zero;
         float lastJumpTime;     //점프 후 잠시동안 onAir 감지 정지.
         bool onFalling; //떨어지고 있는 중.
-        bool airJump;   //공중 점프가 가능한지 여부 
-        Vector2 preJumpVec; //이전 점프 벡터
+        Vector2 jumpVector; //이전 점프 벡터
 
         [Header("Aim Property")]
         public Vector3 mousePos;
@@ -34,7 +35,7 @@ namespace SpaceCowboy
         public float acceleration = 0.25f;      //속도가 바뀔 때 얼마나 빠르게 변할지.
         float currSpeed;    //현재 이동 속도
         float targetSpeed;  //이동 목표가 될 스피드
-        public float runSpeedMultiply = 2f;
+        
         
         [Space]
 
@@ -46,14 +47,13 @@ namespace SpaceCowboy
         public bool onLessGravity { get; private set; } //낮은 중력에 있습니까?
         public bool faceRight;
         bool reserveChangeFaceRight;        // 행성이 바뀌면 착지할 때 faceRight를 초기화 예약한다.
-        public bool runON { get; private set; }
 
-        [Header("EdgeFollow")]
-        public float boasterForce;      //부스터의 파워
+  
 
         [Header("EdgeFollow")]
         int currentEdgePointIndex = 0; // 현재 따라가고 있는 엣지 콜라이더의 점 인덱스
 
+        //애니메이션 이벤트
         public event System.Action ShootEvent;
         public event System.Action StartAimEvent;
         public event System.Action StopAimEvent;
@@ -63,21 +63,21 @@ namespace SpaceCowboy
         public event System.Action PlayerStopReloadEvent;
 
 
-        //public event System.Action PlayerChangeState;
-
         //총기 관련
-
         float gunRecoil;
 
-        
 
         PlayerWeapon playerWeapon;
         public  PlayerView playerView;
+        public JumpTrajectoryViewer jumpViewer;
         CharacterGravity characterGravity;
         GravityLassoAdvance lassoAdvance;
         Rigidbody2D rb;
-        Health health;
+        PlayerHealth health;
         Collider2D coll;
+
+        //점프 루틴
+        Coroutine jumpRoutine;
 
         private void Awake()
         {
@@ -86,7 +86,7 @@ namespace SpaceCowboy
             playerWeapon = GetComponent<PlayerWeapon>();
             lassoAdvance = GetComponentInChildren<GravityLassoAdvance>();
             //playerView = GetComponent<PlayerView>();
-            health = GetComponent<Health>();
+            health = GetComponent<PlayerHealth>();
             coll = GetComponent<Collider2D>();
 
             health.ResetHealth();
@@ -107,8 +107,6 @@ namespace SpaceCowboy
             //공중에 있는지 체크
             CheckOnAir();
 
-            //에임 방향 체크
-            //AimCheck();
         }
 
 
@@ -206,7 +204,6 @@ namespace SpaceCowboy
                     OnAir = false;
                     onFalling = false;
                     rb.velocity = Vector2.zero;
-                    if (airJump) airJump = false;
 
                     state = PlayerState.Idle;
                     GetClosestPoint();
@@ -240,17 +237,8 @@ namespace SpaceCowboy
             else
             {
                 pre = false;
-                //저중력 체크
-                if(characterGravity.nearestPlanet.gravityForce < 400f)
-                {
-                    onLessGravity = true;
-                }
-                else
-                {
-                    onLessGravity = false;
-                }
+
             }
-            //onSpace = characterGravity.nearestPlanet == null ? true : false;
 
             //우주에 있는게 달라지면 애니메이션 변경
             if (pre != onSpace)
@@ -258,6 +246,11 @@ namespace SpaceCowboy
 
             onSpace = pre;
 
+        }
+
+        public void PrepareJump()
+        {
+            jumpViewer.Activate = true;
         }
 
         public void TryJump()
@@ -268,8 +261,6 @@ namespace SpaceCowboy
 
             if (state == PlayerState.Jumping)
             {
-                if(OnAir)
-                    StartAirJump();
                 return;
             }
 
@@ -277,49 +268,66 @@ namespace SpaceCowboy
 
             lastJumpTime = Time.time;
 
-            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
-            OnAir = true;
 
-            Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
-            upVector = upVector.normalized;
-            //Vector2 forwardVector = moveDir.normalized;     //moveDir(현재 이동 방향) 기준으로 앞쪽으로 점프시키므로, moveDir 수치를 천천히 줄여서 점프 방향 수정하는 것도 만들 수 있다. 
-            Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
-            Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
-            jumpDir = jumpDir.normalized;
-            preJumpVec = jumpDir;
-            Vector2 jumpVector = jumpDir * jumpForce;
+            //Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
+            //upVector = upVector.normalized;
+            ////Vector2 forwardVector = moveDir.normalized;     //moveDir(현재 이동 방향) 기준으로 앞쪽으로 점프시키므로, moveDir 수치를 천천히 줄여서 점프 방향 수정하는 것도 만들 수 있다. 
+            //Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
+            //Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
+            //jumpDir = jumpDir.normalized;
+            //preJumpVec = jumpDir;
+            //Vector2 jumpVector = jumpDir * jumpForce;
+
+            //각도 조절. 행성 표면에 있는 경우 각도는 플레이어 위 기준 - 60 ~ +60
+            if(!OnAir)
+            {
+                Vector2 upVec = transform.up;
+                float angle = Vector2.SignedAngle(upVec, aimDirection);
+                angle = Mathf.Clamp(angle, -60f, 60f);
+
+
+                jumpVector = Quaternion.AngleAxis(angle, Vector3.forward) * upVec;
+            }
+            else
+            {
+                jumpVector = aimDirection;
+            }
+            
+
 
             rb.velocity = Vector2.zero;
-            rb.AddForce(jumpVector, ForceMode2D.Impulse);
+            rb.AddForce(jumpVector * jumpForce, ForceMode2D.Impulse);
+
+            jumpRoutine = StartCoroutine(BoosterRoutine());
+
+            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
+            OnAir = true;
+            jumpViewer.Activate = false;
 
             //점프 사운드 출력
             //AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         }
 
-
-        public void StartAirJump()
-        {
-            airJump = true;
-
-            //Vector2 jumpVector = preJumpVec * jumpForce * 0.8f;
-
-            //rb.velocity = Vector2.zero;
-            //rb.AddForce(jumpVector, ForceMode2D.Impulse);
-        }
-
         public void StopJump()
         {
-            airJump = false;
+            if(jumpRoutine != null)
+            {
+                StopCoroutine(jumpRoutine);
+                jumpRoutine = null;
+            }
         }
 
-        void AIrJumpFunction()
+        IEnumerator BoosterRoutine()
         {
-            if (!airJump)
-                return;
+            float timer = boosterTimer;
+            while(timer > 0)
+            {
+                timer -= Time.deltaTime;
+                rb.AddForce(jumpVector * boosterForce, ForceMode2D.Force);
+                yield return null;
+            }
 
-            rb.AddForce(transform.up * boasterForce);
         }
-
 
         #region Movement
 
@@ -335,14 +343,7 @@ namespace SpaceCowboy
 
             //한번씩만 계산하는게 퍼포먼스가 좋을지, 아니면 매턴 변수에 집어넣는게 퍼포먼스가 좋을지 모르겠음. 어차피 검사는 해야하잖아.. 
 
-            if (runON)
-            {
-                targetSpeed = moveSpeed * runSpeedMultiply;
-            }
-            else
-            {
-                targetSpeed = moveSpeed;
-            }
+            targetSpeed = moveSpeed;
 
 
             //지상에 있을 동안의 움직임 
@@ -520,11 +521,11 @@ namespace SpaceCowboy
                 moveDir = moveVector.normalized;
                 float speed = currSpeed;
 
-                if(lassoAdvance.lassoState == LassoState.OnGrab)
-                {
-                    float t = lassoAdvance.forceByLasso.magnitude;
-                    speed = currSpeed - t;
-                }
+                //if(lassoAdvance.lassoState == LassoState.OnGrab)
+                //{
+                //    float t = lassoAdvance.forceByLasso.magnitude;
+                //    speed = currSpeed - t;
+                //}
 
                 //Debug.DrawLine(pastPointPos, targetPointPos, Color.red);
                 // 오브젝트를 이동 방향으로 이동
@@ -546,7 +547,7 @@ namespace SpaceCowboy
 
             state = PlayerState.Stun;
             //연발 총을 쏘는 도중이라면 루틴을 중단한다. 
-            playerWeapon.TryStopShoot();
+            playerWeapon.StopShoot();
 
             //플레이어를 뒤로 넉백시킨다. 지상/공중일 때 따로..
             if (OnAir)
@@ -700,22 +701,7 @@ namespace SpaceCowboy
         #endregion
 
 
-        public void TryRun()
-        {   //input에서 실행
-            runON = true;
-            //에임 중지
-            if (StopAimEvent != null)
-                StopAimEvent();
 
-        }
-
-        public void StopRun()
-        {   //input에서 실행
-            runON = false;
-            //에임 다시 시작
-            if (StartAimEvent != null)
-                StartAimEvent();
-        }
 
 
 
@@ -726,17 +712,7 @@ namespace SpaceCowboy
 
         #region Shoot
 
-        void AimCheck()
-        {
-            Vector3 inputPos = Input.mousePosition;
-            inputPos.z = 10;
 
-            mousePos = Camera.main.ScreenToWorldPoint(inputPos);
-            mousePos.z = 0;
-
-            aimDirection = (mousePos - transform.position).normalized;
-
-        }
 
   
 
@@ -750,14 +726,14 @@ namespace SpaceCowboy
 
 
             //우주에 있는 동안 총의 Recoil을 적용한다!
-            if (OnAir)
-            {
-                //aim의 반대 방향으로 반동을 준다
-                //Vector2 recoilDir = aimDirection * -1f;
-                //rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
-                StartCoroutine(RecoilRoutine());    
+            //if (OnAir)
+            //{
+            //    aim의 반대 방향으로 반동을 준다
+            //    Vector2 recoilDir = aimDirection * -1f;
+            //    rb.AddForce(recoilDir * gunRecoil, ForceMode2D.Impulse);
+            //    StartCoroutine(RecoilRoutine());
 
-            }
+            //}
             //else if (onLessGravity && OnAir)
             //{
             //    //aim의 반대 방향으로 반동을 준다

@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public CameraPos cameraPos;
     public CinemachineVirtualCamera virtualCamera;
 
+    //중력관련
+    public float worldGravity = 900f;
+
+    //카메라 관련
     public float mapFOV = 120f;
     public float defaultFOV = 90f;
     float currFOV;

@@ -35,7 +35,6 @@ public class Projectile_Player : Projectile
             projectileGravity.activate = true;
             //행성 리스트 초기화
             projectileGravity.gravityPlanets.Clear();
-            projectileGravity.ResetGravityMultiplier();
         }
 
         projectileMovement.StartMovement(speed);
@@ -50,10 +49,10 @@ public class Projectile_Player : Projectile
             if(collision.TryGetComponent(out Enemy enemy))
                 enemy.DamageEvent(damage);
 
-            if(powerChargeProj)
-            {
-                GameManager.Instance.weapon.ChargeGunPower();
-            }
+            //if(powerChargeProj)
+            //{
+            //    GameManager.Instance.weapon.ChargeGunPower();
+            //}
 
             if (hitDestroyOn)
             {

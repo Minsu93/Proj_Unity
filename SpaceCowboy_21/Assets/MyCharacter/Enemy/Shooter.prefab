@@ -90,7 +90,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
-  gravityMultiplier: 1
   activate: 1
   nearestPoint: {x: 0, y: 0}
   nearestEdgeCollider: {fileID: 0}
@@ -158,8 +157,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 15
-  currHealth: 15
+  maxHealth: 10
+  currHealth: 10
   InvincibleTime: 0
 --- !u!114 &8562481654179466758
 MonoBehaviour:

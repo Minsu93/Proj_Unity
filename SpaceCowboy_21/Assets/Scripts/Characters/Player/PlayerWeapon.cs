@@ -8,7 +8,7 @@ public class PlayerWeapon : MonoBehaviour
 {
     public WeaponData[] weapons;
     int currentWeaponIndex = -1;
-    int temporAmmo;    //기본 총알 남아있는것
+    float temporAmmo;    //기본 총알 남아있는것
     public float defaultReloadTime = 0.5f;
 
     public float chargeAmount = 0.1f;
@@ -28,9 +28,9 @@ public class PlayerWeapon : MonoBehaviour
     //float recoil;   //총기 반동
     GameObject projectilePrefab;    //총알의 종류
     float damage, lifeTime, speed, knockBackForce;  // Projectile 수치들
-    public int maxAmmo { get; private set; }    //총알 탄창의 max수치
+    public float maxAmmo { get; private set; }    //총알 탄창의 max수치
 
-    public int currAmmo { get; private set; }     //현재 총의 총알
+    public float currAmmo { get; private set; }     //현재 총의 총알
     int reflectionCount;    //반사 회수
 
     bool isSingleShot;      //단발식인가요?
@@ -39,13 +39,18 @@ public class PlayerWeapon : MonoBehaviour
 
     //리로드 관련
     bool isReloading;
+    public float reloadTimer = 1.0f;    //발사 후 충전 시작까지 걸리는 시간 
+    public float reloadSpeed = 3.0f;    //충전 속도
+    float rTimer;
 
     //유물 무기를 사용중인가요?
     bool inArtifact;
-    public float artifactLifeTime;
 
     //무기를 바꾸는 중인가요?
-    bool isChanging; 
+    bool isChanging;
+
+    //총 쏘기 시작
+    bool shootON;
 
     public Transform[] gunTips; 
     Transform gunTip;
@@ -57,7 +62,6 @@ public class PlayerWeapon : MonoBehaviour
     private void Start()
     {
         //기본 총 초기화.
-
         if (currentWeaponIndex < 0)
         {
             temporAmmo = weapons[0].MaxAmmo;
@@ -66,74 +70,83 @@ public class PlayerWeapon : MonoBehaviour
         ChangeWeapon(0);
     }
 
-    #region Shoot Function
-
-
-    public void TryStartShoot()
+    private void Update()
     {
-        //총 쏘기 이벤트를 시작한다. 단발총인 경우는 한 발만 발사. 연발 총인 경우는 발사 루틴을 지속
-        //달리기 중인 경우에는 총을 쏘지 못한다. 
-        if (playerBehavior.runON)
-            return;
-
-        //단발총인 경우에는 shootevent를 한번 실행한다. 쿨이 안되서 다시 눌러도 소용없음. 
-        if (isSingleShot)
-        {
-            TryShoot();
-        }
-
-        //연발총인 경우에는 계속 쏘기 이벤트를 실행한다. 
-        else
-        {
-            shootRoutine = StartCoroutine(ShootRepeater());
-        }
-
-    }
-
-    public void TryStopShoot()
-    {
-        //총 쏘기 이벤트를 중단한다. 단발총인 경우는 총 쏘기 초기화. 연발 총의 경우에는 발사 중지. 
-        //연발 총인 경우에는 계속 쏘기 이벤트를 중단한다. 
-        if (shootRoutine != null)
-        {
-            StopCoroutine(shootRoutine);
-            shootRoutine = null;
-        }
-    }
-
-    //유물 총 자동 발사 기능
-    public void AutoShoot()
-    {
-        shootRoutine = StartCoroutine(ShootRepeater());
-    }
-
-    IEnumerator ShootRepeater()
-    {
-        while (true)
-        {
-            //총알 쿨타임마다 계속 발사한다. 
-            TryShoot();
-            yield return null;
-        }
-    }
+        //currAmmo는 계속 회복된다
 
 
-    public void TryShoot()  //이벤트 발생을 위해서 > PlayerWeapon, PlayerView 의 ShootEvent를 발생
-    {
         PlayerState currState = playerBehavior.state;
         if (currState == PlayerState.Die) return;
-        if (currState == PlayerState.Stun)
+        if (currState == PlayerState.Stun) return;
+
+        if (!shootON & inArtifact)
+        {
+            //총알 충전(리로드)
+            if (currAmmo < maxAmmo)
+            {
+                if (rTimer > 0)
+                {
+                    rTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    currAmmo += Time.deltaTime * reloadSpeed ;
+                }
+            }
             return;
+        }
 
         //리로드 중이면 발사하지 않는다.
         if (isReloading)
             return;
 
         //무기를 바꾸는 중이면 발사하지 않는다. 
-        if(isChanging)
+        if (isChanging)
             return;
-        
 
+        //총알이 없는 경우 발사하지 않는다. 
+        if(currAmmo < 1)
+        {
+            return;
+        }
+
+        //총 발사 주기
+        if (Time.time - lastShootTime < shootInterval)
+        {
+            return;
+        }
+
+        if (isSingleShot)
+        {
+            //단발식
+            TryShoot();
+            //발사 중지
+            StopShoot();
+        }
+        else
+        {
+            //연사
+            TryShoot();
+        }
+    }
+
+    #region Shoot Function
+
+    public void StartShoot()
+    {
+        shootON = true;
+    }
+    public void StopShoot()
+    {
+        if (shootON)
+        {
+            shootON = false;
+        } 
+    }
+
+
+    public void TryShoot()  //이벤트 발생을 위해서 > PlayerWeapon, PlayerView 의 ShootEvent를 발생
+    {
         //총알 발사구가 행성 내부에 있다면 발사하지 않는다. 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
@@ -142,43 +155,31 @@ public class PlayerWeapon : MonoBehaviour
         if (hit.collider != null)
             return;
 
+        //쏠 때마다 총알 한발씩 제거
+        currAmmo -= 1;
 
+        lastShootTime = Time.time;
+        rTimer = reloadTimer;
 
-        float currentTime = Time.time;
+        //발사
+        Shoot();
 
-        if (currentTime - lastShootTime > shootInterval)
+        //PlayerView 의 애니메이션 실행 
+        playerBehavior.TryShootEvent();
+
+        // 총알을 다 쓴 경우 
+        if (currAmmo <= 0)
         {
-            //총알 발사
-            if (currAmmo > 0)
-            {
-                //쏠 때마다 총알 한발씩 제거
-                currAmmo -= 1;
-
-                lastShootTime = currentTime;
-
-                StartCoroutine(ShootRoutine());
-                playerBehavior.TryShootEvent();
-            }
-            else
-            {
-                //기본 총인 경우 총알이 없으면 리로드 시작
-                if (!inArtifact)
-                {
-                    TryReload();
-                    return;
-                }
-            }
+            //기본 총으로 돌아간다
+            inArtifact = false;
+            ChangeWeapon(0);
         }
+
+
     }
 
-
-
-
-
-    IEnumerator ShootRoutine()
+    void Shoot()
     {
-        yield return null; 
-
         float totalSpread = projectileSpread * (numberOfProjectiles - 1);       //우선 전체 총알이 퍼질 각도를 구한다
 
         //Vector3 dir = gunTip.right; //발사 각도
@@ -190,120 +191,43 @@ public class PlayerWeapon : MonoBehaviour
         float randomAngle = Random.Range(-randomSpreadAngle * 0.5f, randomSpreadAngle * 0.5f);
         Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
 
-       //Burst
-        for (int index = 0; index < burstNumber; index++)
+        //멀티샷
+        for (int i = 0; i < numberOfProjectiles; i++)
         {
-            //멀티샷
-            for (int i = 0; i < numberOfProjectiles; i++)
-            {
-                Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
-                //총알 생성
-                GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
-                projectile.transform.position = transform.position + dir * 1f;
-                projectile.transform.rotation = tempRot * randomRotation;
-                projectile.GetComponent<Projectile_Player>().init(damage, lifeTime, speed, reflectionCount);
-
-
-            }
-
-            AudioManager.instance.PlaySfx(currentWeaponData.ShootSFX);
-
-            if(burstInterval> 0)
-                yield return new WaitForSeconds(burstInterval);
-
-
+            Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
+            //총알 생성
+            GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
+            projectile.transform.position = transform.position + dir * 1f;
+            projectile.transform.rotation = tempRot * randomRotation;
+            projectile.GetComponent<Projectile_Player>().init(damage, lifeTime, speed, reflectionCount);
         }
-        yield return null;
 
-        //총알을 다 쓴 경우
-        if (currAmmo <= 0)
-        {
-            //기본 총의 경우에는 
-            if (currentWeaponIndex == 0)
-            {
-                //자동으로 리로드를 한다
-                TryReload();
-            }
-            //그 외의 총인 경우에는
-            else
-            {
-                //총 바꾸기 타임 
-                //기본 총으로 돌아간다
-                inArtifact = false;
-                ChangeWeapon(0);
-            }
-        }
+        AudioManager.instance.PlaySfx(currentWeaponData.ShootSFX);
     }
 
     #endregion
 
-    #region Reload
-    public void TryReload()
-    {
-        //재장전 중이 아닐 때 
-        if (isReloading)
-            return;
-
-        //재장전이 가능할떄 (currAmmo 가 maxAmmo보다 작을때)
-        if (currAmmo < maxAmmo)
-        {
-            reloadRoutine = StartCoroutine(ReloadRoutine());
-        }
-
-    }
-
-    void StopReload()
-    {
-        if (!isReloading)
-            return;
-
-        StopCoroutine(reloadRoutine);
-        reloadRoutine = null;
-
-        isReloading = false;
-
-        //리로드 애니메이션 정지
-        playerBehavior.ReloadEnd();
-
-
-    }
-
-    IEnumerator ReloadRoutine()
-    {
-        isReloading = true;
-        playerBehavior.ReloadStart();
-
-        yield return new WaitForSeconds(defaultReloadTime);
-
-        currAmmo = maxAmmo;
-
-        StopReload();
-
-
-    }
-    #endregion
-
+   
     #region ChangeWeapon
 
     public void ChangeWeapon(int index)
     {
         float cost;
-        TryStopShoot();
 
         // index 가 0이라면(리볼버) 상관없이 교체한다.
         if (index != 0) 
         {
-            //사용 가능한 유물 총인 경우에만 무기를 교체한다.
-            cost = weapons[index].PowerCost;
-            if (curGunPower < cost)
-            {
-                return;
-            }
-            else
-            {
-                //power소모 
-                curGunPower -= cost;
-            }
+            ////사용 가능한 유물 총인 경우에만 무기를 교체한다.
+            //cost = weapons[index].PowerCost;
+            //if (curGunPower < cost)
+            //{
+            //    return;
+            //}
+            //else
+            //{
+            //    //power소모 
+            //    curGunPower -= cost;
+            //}
         }
 
         if (changeRoutine != null)
@@ -342,11 +266,8 @@ public class PlayerWeapon : MonoBehaviour
         if (inArtifact)
             return;
 
-        //현재 발사중이면 총 쏘기를 정지
-        TryStopShoot();
-
         //리로드 중이면 리로드를 취소하고 진행
-        StopReload();
+        //StopReload();
 
         //현재 총이 기본 총인 경우, 현재 총알을 temporAmmo에 넣는다
         if (currentWeaponIndex == 0)
@@ -381,8 +302,6 @@ public class PlayerWeapon : MonoBehaviour
         speed = currentWeaponData.Speed;
         reflectionCount = currentWeaponData.ReflectionCount;
 
-        //유물무기 타이머 초기화
-        artifactLifeTime = currentWeaponData.ArtifaceLifetime;
 
         //총알을 초기화
         maxAmmo = currentWeaponData.MaxAmmo;
@@ -399,7 +318,6 @@ public class PlayerWeapon : MonoBehaviour
             inArtifact = true;
             currAmmo = maxAmmo;
 
-            AutoShoot();
         }
 
 
@@ -409,30 +327,16 @@ public class PlayerWeapon : MonoBehaviour
 
     #endregion
 
-    private void Update()
-    {
-        //유물무기 타이머
-        if(artifactLifeTime > 0)
-        {
-            artifactLifeTime -= Time.deltaTime;
-
-            if(artifactLifeTime <= 0)
-            {
-                ChangeWeapon(0);
-            }
-        }
 
 
-    }
-
-    public void ChargeGunPower()
-    {
-        curGunPower += chargeAmount;
-        if(curGunPower > gunPowerMax)
-        {
-            curGunPower = gunPowerMax;
-        }
-    }
+    //public void ChargeGunPower()
+    //{
+    //    curGunPower += chargeAmount;
+    //    if(curGunPower > gunPowerMax)
+    //    {
+    //        curGunPower = gunPowerMax;
+    //    }
+    //}
 
 
 }

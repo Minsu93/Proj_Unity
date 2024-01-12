@@ -10,8 +10,6 @@ public class Gravity : MonoBehaviour
     public Planet nearestPlanet;
     protected Planet preNearestPlanet;
     protected float currentGravityForce;
-    public float gravityMultiplier = 1f;
-    protected float initialG;
 
     public bool activate = true;
 
@@ -20,7 +18,7 @@ public class Gravity : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        initialG = gravityMultiplier;
+        currentGravityForce = GameManager.Instance.worldGravity;
     }
 
     protected virtual void Update()

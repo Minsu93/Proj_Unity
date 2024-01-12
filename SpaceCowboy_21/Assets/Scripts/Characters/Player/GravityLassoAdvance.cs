@@ -14,6 +14,7 @@ public class GravityLassoAdvance : MonoBehaviour
     [SerializeField] float lassoLength = 3f;     //올가미 길이
 
     [SerializeField] float moveSpeed;   // 대상 쪽으로 움직일 때의 속도
+    [SerializeField] float maxLassoDistance; //올가미 끊어지기 전까지 최대 길이 
     [SerializeField] AnimationCurve throwCurve; //던질 때 커브
     [SerializeField] AnimationCurve pullCurve;  //당길 때 커브
 
@@ -23,10 +24,12 @@ public class GravityLassoAdvance : MonoBehaviour
     float timer;
     Vector2 throwStartPos;
     Transform grabTarget;
+    Weight grabWeight;
     Vector3 grabLocalPos;
     float grabObjSize;
     bool grabPlanet;
     bool canLaunch;
+    float lassoDist;    //올가미 길이 
     Vector2 targetDir;
     Vector2 preLassoTipPos;
     Vector2 moveStartVelocity;
@@ -52,52 +55,87 @@ public class GravityLassoAdvance : MonoBehaviour
         {
             if(lassoState == LassoState.OnGrab)
             {
-                if (canLaunch)
-                {
-                    //대상을 던진다. 
-                    LaunchGrabObj();
-                }
-                //올가미는 돌아온다.
-                grabTarget = null;
-                //올가미 당기기 시작 위치 설정
-                preLassoTipPos = lassoTip.transform.position;
-                //타이머 초기화
-                timer = 0;
-                //Grab힘 초기화
-                forceByLasso = Vector2.zero;
-                //올가미 상태를 당기는 것으로 변경한다. 
-                lassoState = LassoState.PullBack;
+                //대상을 던진다. 
+                LaunchGrabObj();
+
+                //if (canLaunch)
+                //{
+                //    //대상을 던진다. 
+                //    LaunchGrabObj();
+                //}
+
+                ////올가미는 돌아온다.
+                //grabTarget = null;
+                ////올가미 당기기 시작 위치 설정
+                //preLassoTipPos = lassoTip.transform.position;
+                ////타이머 초기화
+                //timer = 0;
+                ////Grab힘 초기화
+                //forceByLasso = Vector2.zero;
+                ////올가미 상태를 당기는 것으로 변경한다. 
+                //lassoState = LassoState.PullBack;
             }
+        }
+
+        if(Input.GetKeyDown(KeyCode.E) && lassoState == LassoState.OnGrab)
+        {
+            ////올가미는 돌아온다.
+            //grabTarget = null;
+            ////올가미 당기기 시작 위치 설정
+            //preLassoTipPos = lassoTip.transform.position;
+            ////타이머 초기화
+            //timer = 0;
+            ////Grab힘 초기화
+            //forceByLasso = Vector2.zero;
+            ////올가미 상태를 당기는 것으로 변경한다. 
+            //lassoState = LassoState.PullBack;
+            ReleaseLasso();
         }
 
 
         if (Input.GetMouseButtonDown(1))
         {
-            switch (lassoState)
+            if(lassoState == LassoState.Disable)
             {
-                case LassoState.Disable:
-                    //올가미 위치를 초기화한다.
-                    InitializeLasso();
-                    //타이머를 초기화한다
-                    timer = 0;
-                    //올가미 상태를 던지는 것으로 변경한다.
-                    lassoState = LassoState.Throw;
-                    break;
-                    
+                //올가미 위치를 초기화한다.
+                InitializeLasso();
+                //타이머를 초기화한다
+                timer = 0;
+                //올가미 상태를 던지는 것으로 변경한다.
+                lassoState = LassoState.Throw;
+
+            }
+            //switch (lassoState)
+            //{
+            //    case LassoState.Disable:
+            //      //올가미 위치를 초기화한다.
+                    //InitializeLasso();
+            //      //타이머를 초기화한다
+            //      timer = 0;
+            //      //올가미 상태를 던지는 것으로 변경한다.
+            //      lassoState = LassoState.Throw;
+            //}
+        }
+
+        if( Input.GetMouseButtonUp(1))
+        {
+            switch(lassoState)
+            {
                 case LassoState.Throw:
                     //올가미를 던지는 중이라면, 움직임을 취소하고 다시 돌아오게 만든다.
-                    //올가미 당기기 시작 위치 설정
-                    preLassoTipPos = lassoTip.transform.position;
-                    //타이머 초기화
-                    timer = 0;
-                    //올가미 상태를 당기는 것으로 변경한다. 
-                    lassoState = LassoState.PullBack;
+                    ////올가미 당기기 시작 위치 설정
+                    //preLassoTipPos = lassoTip.transform.position;
+                    ////타이머 초기화
+                    //timer = 0;
+                    ////올가미 상태를 당기는 것으로 변경한다. 
+                    //lassoState = LassoState.PullBack;
+                    ReleaseLasso();
                     break;
 
                 case LassoState.OnGrab:
                     //타이머 초기화
                     timer = 0;
-                    forceByLasso = Vector2.zero;
+                    //forceByLasso = Vector2.zero;
 
                     //필요한 정보들
                     moveStartVelocity = rb.velocity;
@@ -124,26 +162,34 @@ public class GravityLassoAdvance : MonoBehaviour
                 break;
             case LassoState.OnGrab:
                 //lassoTip의 로컬 위치를 업데이트한다. 
-                if (grabPlanet)
-                {
-                    lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
-                }
-                else
-                {
-                    lassoTip.transform.position = grabTarget.transform.position;
-                }
-                
+
+                lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
+
+                //if (grabPlanet)
+                //{
+                //    lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
+                //}
+                //else
+                //{
+                //    lassoTip.transform.position = grabTarget.transform.position;
+                //}
+                //일정 거리 이상 멀어지면 끊어짐. 
+                CheckLassoDistance();
+
+
                 break;
             case LassoState.OnMove:
                 //lassoTip의 위치를 업데이트
-                if (grabPlanet)
-                {
-                    lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
-                }
-                else
-                {
-                    lassoTip.transform.position = grabTarget.transform.position;
-                }
+                lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
+
+                //if (grabPlanet)
+                //{
+                //    lassoTip.transform.position = grabTarget.TransformPoint(grabLocalPos);
+                //}
+                //else
+                //{
+                //    lassoTip.transform.position = grabTarget.transform.position;
+                //}
                 break;
 
             case LassoState.Disable:
@@ -159,7 +205,7 @@ public class GravityLassoAdvance : MonoBehaviour
         switch(lassoState)
         {
             case LassoState.OnGrab:
-                OnGrab();
+                // OnGrab();
                 break;
             case LassoState.OnMove: 
                 MoveToGrabPoint(moveStartPosition, moveStartVelocity);
@@ -171,14 +217,15 @@ public class GravityLassoAdvance : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Enemy") || collision.collider.CompareTag("Planet") || collision.collider.CompareTag("FloatingObj"))
+        if (collision.collider.CompareTag("Planet"))
         {
             Debug.Log("Off Grab");
 
-            timer = 0;
-            //DisableLasso();
-            forceByLasso = Vector2.zero;
-            lassoState = LassoState.PullBack;
+            //timer = 0;
+            ////DisableLasso();
+            //forceByLasso = Vector2.zero;
+            //lassoState = LassoState.PullBack;
+            ReleaseLasso();
         }
     }
 
@@ -209,6 +256,7 @@ public class GravityLassoAdvance : MonoBehaviour
         if (grabTarget)
         {
             grabTarget = null;
+            grabWeight = null;
             grabLocalPos = Vector3.zero;
         }
 
@@ -227,12 +275,34 @@ public class GravityLassoAdvance : MonoBehaviour
         //아무것도 충돌하지 않고 최대 거리에 도착하면
         if (timer > throwTime)
         {
-            timer = 0;
-            //올가미 당기기 시작 위치 설정
-            preLassoTipPos = lassoTip.transform.position;
+            //timer = 0;
+            ////올가미 당기기 시작 위치 설정
+            //preLassoTipPos = lassoTip.transform.position;
 
-            lassoState = LassoState.PullBack;
+            //lassoState = LassoState.PullBack;
+            ReleaseLasso();
         }
+    }
+
+    private void ReleaseLasso()
+    {
+        //올가미는 돌아온다.
+        grabTarget = null;
+
+        if (grabWeight)
+        {
+            grabWeight.ReleaseOBJ();
+            grabWeight = null;
+        }
+
+        //올가미 당기기 시작 위치 설정
+        preLassoTipPos = lassoTip.transform.position;
+        //타이머 초기화
+        timer = 0;
+        //Grab힘 초기화
+        //forceByLasso = Vector2.zero;
+        //올가미 상태를 당기는 것으로 변경한다. 
+        lassoState = LassoState.PullBack;
     }
 
     //올가미를 당긴다, 취소한다. 
@@ -255,6 +325,7 @@ public class GravityLassoAdvance : MonoBehaviour
         }
     }
 
+
     //올가미가 잡은 상태로 유지될 떄 
     private void OnGrab()
     {
@@ -266,20 +337,21 @@ public class GravityLassoAdvance : MonoBehaviour
             float dragForce = grabForce / Mathf.Sqrt(grabObjSize);
             
 
-            forceByLasso = -1f * f * grabForce * normalVec;
-            rb.AddForce(forceByLasso, ForceMode2D.Force);
-            if(grabPlanet)
-            {
-                //행성을 움직일때 
-                if (grabTarget.TryGetComponent(out Planet planet))
-                {
-                    planet.MovePlanetForce(normalVec * f * dragForce);
-                }
-            }
-            else
-            {
-                grabTargetRb.AddForce(normalVec * f * dragForce, ForceMode2D.Force);
-            }
+            //forceByLasso = -1f * f * grabForce * normalVec;
+            //rb.AddForce(forceByLasso, ForceMode2D.Force);
+
+            //if(grabPlanet)
+            //{
+            //    //행성을 움직일때 
+            //    if (grabTarget.TryGetComponent(out Planet planet))
+            //    {
+            //        planet.MovePlanetForce(normalVec * f * dragForce);
+            //    }
+            //}
+            //else
+            //{
+            //    grabTargetRb.AddForce(normalVec * f * dragForce, ForceMode2D.Force);
+            //}
         }
 
         ////잡아 끄는 방향에 일치하도록 회전시킨다.
@@ -288,6 +360,15 @@ public class GravityLassoAdvance : MonoBehaviour
         //var impulse = (-1f * 0.1f *  angle * Mathf.Deg2Rad) * grabTargetRb.inertia;
         //grabTargetRb.AddTorque(impulse, ForceMode2D.Force);
 
+    }
+
+    void CheckLassoDistance()
+    {
+        //올가미 길이가 너무 길면 끊어짐. 
+        if(lassoDist > maxLassoDistance)
+        {
+            ReleaseLasso();
+        }
     }
 
 
@@ -329,43 +410,54 @@ public class GravityLassoAdvance : MonoBehaviour
 
         if(hit)
         {
-            Vector3 size = hit.collider.bounds.size;
-            grabObjSize = size.x * size.y;
+            if(hit.transform.TryGetComponent(out Weight weight))
+            {
+                //무게comp가 있을 때 
+                grabWeight = weight;
+                grabWeight.GrabOBJ();
+
+                //뭔가랑 충돌했다! 
+                timer = 0;
+                //충돌한 대상의 transform을 가져온다
+                grabTarget = hit.transform;
+                //로컬 포즈를 구한다. 
+                grabLocalPos = hit.transform.InverseTransformPoint(hit.point); ;
+
+                //상태를onGrab으로 변경한다
+                lassoState = LassoState.OnGrab;
+            }
+
+            //Vector3 size = hit.collider.bounds.size;
+            //grabObjSize = size.x * size.y;
             
-            if(grabObjSize < 25f)
-            {
-                //물체 발사 가능
-                canLaunch = true;
-            }
-            else
-            {
-                canLaunch = false;
-            }
+            //if(grabObjSize < 25f)
+            //{
+            //    //물체 발사 가능
+            //    canLaunch = true;
+            //}
+            //else
+            //{
+            //    canLaunch = false;
+            //}
 
 
-            if (hit.collider.CompareTag("Planet"))
-            {
-                grabPlanet = true;
-            }
-            else
-            {
-                grabPlanet = false;
-            }
+            //if (hit.collider.CompareTag("Planet"))
+            //{
+            //    grabPlanet = true;
+            //}
+            //else
+            //{
+            //    grabPlanet = false;
+            //}
 
-            //뭔가랑 충돌했다! 
-            timer = 0;
-            //충돌한 대상의 transform을 가져온다
-            grabTarget = hit.transform;
-            //로컬 포즈를 구한다. 
-            grabLocalPos = hit.transform.InverseTransformPoint(hit.point);;
+           
             //충돌시의 올가미 길이를 구한다. 
             //grabDist = (transform.position - hit.transform.position).magnitude;
             //충돌한 대상의 Rigidbody2D를 가져온다. 
-            grabTargetRb = grabTarget.GetComponent<Rigidbody2D>();
+            //grabTargetRb = grabTarget.GetComponent<Rigidbody2D>();
 
 
-            //상태를onGrab으로 변경한다
-            lassoState = LassoState.OnGrab;
+
         }
         else
         {
@@ -382,23 +474,28 @@ public class GravityLassoAdvance : MonoBehaviour
         mousePos.z = 0;
 
         Vector2 launchVec = (mousePos - grabTarget.position).normalized;
-        float launchForce = 25f / Mathf.Sqrt(grabObjSize);
+        //float launchForce = 50f / Mathf.Sqrt(grabObjSize);
 
-        if (grabPlanet)
+        if (grabWeight)
         {
-            //행성을 던질 때 
-            if(grabTarget.TryGetComponent(out Planet planet))
-            {
-                planet.MovePlanet(launchVec * launchForce);
-            }
-        }
-        else
-        {
-            //행성 이외의 것을 던질 때 
-            grabTargetRb.AddForce(launchVec * launchForce, ForceMode2D.Impulse);
+            grabWeight.ThrowCharge(launchVec);
         }
 
-        canLaunch = false;
+        //if (grabPlanet)
+        //{
+        //    //행성을 던질 때 
+        //    //if(grabTarget.TryGetComponent(out Planet planet))
+        //    //{
+        //    //    planet.MovePlanet(launchVec * launchForce);
+        //    //}
+        //}
+        //else
+        //{
+        //    //행성 이외의 것을 던질 때 
+        //    //grabTargetRb.AddForce(launchVec * launchForce, ForceMode2D.Impulse);
+        //}
+
+        //canLaunch = false;
     }
 
     //linerenderer 업데이트
@@ -406,26 +503,36 @@ public class GravityLassoAdvance : MonoBehaviour
     {
 
         //올가미 머리를 회전시킨다
-        Vector2 tipDir = (lassoTip.transform.position - transform.position).normalized;
+        Vector2 tipVec = lassoTip.transform.position - transform.position;
+        lassoDist = tipVec.magnitude;
+
+        Vector2 tipDir = tipVec.normalized;
+
         Vector3 upVec = Quaternion.Euler(0, 0, 90) * tipDir;
         Quaternion rot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
         lassoTip.transform.rotation = rot;
 
         Vector2 p;
-        //대상이 있을 때 
-        if (grabTarget && !grabPlanet)
-        {
-            p = grabTarget.transform.position;
-            lineRenderer.SetPosition(0, transform.position);
-            lineRenderer.SetPosition(1, p);
-        }
-        else
-        {
-            //라인 랜더러 조정
-            p = (Vector2)lassoTip.transform.position + (tipDir * -1f * 0.5f);
-            lineRenderer.SetPosition(0, transform.position);
-            lineRenderer.SetPosition(1, p);
-        }
+        ////대상이 있을 때 
+        //if (grabTarget && !grabPlanet)
+        //{
+        //    p = grabTarget.transform.position;
+        //    lineRenderer.SetPosition(0, transform.position);
+        //    lineRenderer.SetPosition(1, p);
+        //}
+        //else
+        //{
+        //    //라인 랜더러 조정
+        //    p = (Vector2)lassoTip.transform.position + (tipDir * -1f * 0.5f);
+        //    lineRenderer.SetPosition(0, transform.position);
+        //    lineRenderer.SetPosition(1, p);
+        //}
+        
+
+        //라인 랜더러 조정
+        p = (Vector2)lassoTip.transform.position + (tipDir * -1f * 0.5f);
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, p);
 
     }
 }

@@ -76,7 +76,6 @@ public class Projectile : MonoBehaviour
             projectileGravity.activate = true;
             //행성 리스트 초기화
             projectileGravity.gravityPlanets.Clear();
-            projectileGravity.ResetGravityMultiplier();
         }
 
         projectileMovement.StartMovement(speed);

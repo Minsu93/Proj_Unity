@@ -14,7 +14,6 @@ namespace PlanetSpace
         [Header("Gravity Properties")]
         public float planetRadius = 2f;
         public float gravityRadius = 4f;
-        public float gravityForce = 300f;
         //public LayerMask targetLayer;
         public Transform gravityViewer;
         CircleCollider2D circleColl;
@@ -97,28 +96,29 @@ namespace PlanetSpace
         }
 
        
-        public void MovePlanet(Vector2 impulse)
-        {
-            //rb.AddForce(force, ForceMode2D.Impulse);
-            StartCoroutine(MovePlanetRoutine(impulse));   
+        //public void MovePlanet(Vector2 impulse)
+        //{
+        //    //rb.AddForce(force, ForceMode2D.Impulse);
+        //    StartCoroutine(MovePlanetRoutine(impulse));   
             
-        }
+        //}
 
-        IEnumerator MovePlanetRoutine(Vector2 force)
-        {
-            Debug.Log(force);
-            Vector2 f = force;
-            while(f.magnitude > 0.1f)
-            {
-                rb.MovePosition(rb.position + f * Time.fixedDeltaTime);
-                yield return null;
-                f *= 0.98f;
-            }
-        }
-        public void MovePlanetForce(Vector2 force)
-        {
-            rb.MovePosition(rb.position +  force * Time.fixedDeltaTime);
-        }
+        //IEnumerator MovePlanetRoutine(Vector2 force)
+        //{
+        //    Debug.Log(force);
+        //    Vector2 f = force;
+        //    while(f.magnitude > 0.1f)
+        //    {
+        //        rb.MovePosition(rb.position + f * Time.fixedDeltaTime);
+        //        yield return null;
+        //        f *= 0.98f;
+        //    }
+        //}
+
+        //public void MovePlanetForce(Vector2 force)
+        //{
+        //    rb.MovePosition(rb.position +  force * Time.fixedDeltaTime);
+        //}
 
         private void OnDrawGizmos()
         {

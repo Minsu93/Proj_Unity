@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour
     public string VerticalAxis = "Vertical";
     public string JumpButton = "Jump";
     public string ShootButton = "Fire1";
-    public string RunButton = "Run";
+    //public string RunButton = "Run";
     Vector2 moveDir = Vector2.zero;
 
     PlayerBehavior playerBehavior;
@@ -46,34 +46,23 @@ public class PlayerInput : MonoBehaviour
         // Jump
         if (Input.GetButtonDown(JumpButton))
         {
-            playerBehavior.TryJump();
+            playerBehavior.PrepareJump();
         }
         if(Input.GetButtonUp(JumpButton))
         {
-            playerBehavior.StopJump();
-        }
-
-
-        // Run
-        if (Input.GetButtonDown(RunButton))
-        {
-            playerBehavior.TryRun();
-        }
-        if (Input.GetButtonUp(RunButton))
-        {
-            playerBehavior.StopRun();
+            playerBehavior.TryJump();
         }
 
 
         // Shoot
         if (Input.GetButtonDown(ShootButton))
         {
-            playerWeapon.TryStartShoot();
+            playerWeapon.StartShoot();
         }
 
         if (Input.GetButtonUp(ShootButton))
         {
-            playerWeapon.TryStopShoot();
+            playerWeapon.StopShoot();
 
         }
 
@@ -100,10 +89,10 @@ public class PlayerInput : MonoBehaviour
 
 
         // Weapon Reload
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            playerWeapon.TryReload();
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    playerWeapon.TryReload();
+        //}
 
       
 

@@ -19,7 +19,6 @@ public class ProjectileGravity : Gravity
         if (nearestPlanet != preNearestPlanet)       //Planet이 바뀌면 한번만 발동한다.
         {
             preNearestPlanet = nearestPlanet;
-            currentGravityForce = nearestPlanet.gravityForce;
         }
 
         float totalGrav = 0f;
@@ -49,7 +48,7 @@ public class ProjectileGravity : Gravity
         }
 
         Vector2 gravDir = (nearestPlanet.transform.position - this.transform.position).normalized;
-        rb.AddForce(gravDir * totalGrav * currentGravityForce * gravityMultiplier * Time.deltaTime, ForceMode2D.Force);
+        rb.AddForce(gravDir * totalGrav * currentGravityForce * Time.deltaTime, ForceMode2D.Force);
 
         //Vector2 currDir = rb.velocity;
         //float vel = currDir.magnitude;
@@ -58,15 +57,7 @@ public class ProjectileGravity : Gravity
         //rb.velocity = currDir.normalized * vel;
     }
 
-    public void ResetGravityMultiplier()
-    {
-        gravityMultiplier = initialG;
-    }
 
-    public void GravityAdded(float amount)
-    {
-        gravityMultiplier = initialG + amount;
-    }
 
     public override Planet GetNearestPlanet()       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
     {

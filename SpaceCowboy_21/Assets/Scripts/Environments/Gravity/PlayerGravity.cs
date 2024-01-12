@@ -21,19 +21,19 @@ public class PlayerGravity : CharacterGravity
 
 
     protected override void ChangePlanet()
-    {   //행성이 바뀔 때 실행
-        //행성이 없으면 실행 x
-        //중력 표시를 끈다
-        if (preNearestPlanet != null) preNearestPlanet.graviteyViewOff();
+    {   
+        //중력 범위 표시
+        if (preNearestPlanet != null)
+        {
+            preNearestPlanet.graviteyViewOff();
+        }
         nearestPlanet.graviteyViewOn();
 
         //SendMessage("ChangePlanet", SendMessageOptions.DontRequireReceiver);    //행성 바꿈 이벤트 실행
         playerBehavior.ChangePlanet();
 
         preNearestPlanet = nearestPlanet;
-        currentGravityForce = nearestPlanet.gravityForce;   //행성별로 다른 중력 적용
 
-        //GameManager.Instance.ChangeCamera(nearestPlanet.lens);
         GameManager.Instance.ChangeCamera(nearestPlanet.planetFOV);
 
     }

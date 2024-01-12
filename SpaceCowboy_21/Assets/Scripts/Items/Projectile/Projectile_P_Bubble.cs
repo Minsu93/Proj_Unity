@@ -41,7 +41,6 @@ public class Projectile_P_Bubble : Projectile_Player
             projectileGravity.activate = true;
             //행성 리스트 초기화
             projectileGravity.gravityPlanets.Clear();
-            projectileGravity.ResetGravityMultiplier();
         }
 
         projectileMovement.StartMovement(speed * rb.mass);
