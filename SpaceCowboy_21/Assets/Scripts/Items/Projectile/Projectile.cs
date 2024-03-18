@@ -4,159 +4,168 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public abstract class Projectile : MonoBehaviour
 {
-
     [Header("Default Projectile Properties")]
-    public GameObject hitEffect;
+    public ParticleSystem hitEffect;
     protected float damage;
+    protected float range;
     protected float lifeTime;
-    protected float time;
+    protected bool infiniteLifeTime;
     public float speed { get; set; }
 
-
+    protected Vector2 startPos;
 
     [Space]
-
-    //부서지기 전 딜레이
-    public float disableDelayTime = 0.5f;
-
-    [Header("Optional Properties")]
+    public float disableDelayTime = 0.5f;    //부서지기 전 딜레이
+    float delayTimer;
 
     //public bool rotateOn;       //속도에 따라 회전하는가
-    public bool gravityOn;      //중력의 영향을 받는가
-    public bool collideOnPlanet;      //지면(Planet)과 충돌하는가
-    public bool hitDestroyOn;   //타겟과 충돌 시 제거되는가, 관통 여부
-    public bool hitByProjectileOn;  //플레이어 총알에 맞는가
+    //public bool gravityOn;      //중력의 영향을 받는가
+    //public bool collideOnPlanet;      //지면(Planet)과 충돌하는가
+    //public bool hitDestroyOn;   //타겟과 충돌 시 제거되는가, 관통 여부
+    //public bool hitByProjectileOn;  //플레이어 총알에 맞는가
 
-    public bool activate; // 총알이 작동 정지되었음을 알리는 변수
+    [Space]
+    protected bool activate; // 총알이 작동 정지되었음을 알리는 변수
 
     protected Rigidbody2D rb;
-    protected ProjectileGravity projectileGravity;
     protected ProjectileMovement projectileMovement;
     protected Collider2D coll;
-
     public GameObject ViewObj;
     public TrailRenderer trail;
 
-    public event System.Action ResetProjectile;
+    public event System.Action ProjectileInitEvent;
+    public event System.Action DeactivateProjectileEvent;
     public event System.Action ProjectileHitEvent;
+
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         projectileMovement = GetComponent<ProjectileMovement>();
         coll = GetComponent<Collider2D>();
 
-        if (gravityOn)
-        {
-            projectileGravity = GetComponent<ProjectileGravity>();
-        }
-
     }
 
-    public virtual void init(float damage, float lifeTime, float speed)
-    {
-        this.damage = damage;
-        this.lifeTime = lifeTime;
-        this.speed = speed;
-        time = 0;
-
-        activate = true;
-        coll.enabled = true;
-        ViewObj.SetActive(true);
-
-        if (trail != null){
-            trail.enabled = true;
-            trail.Clear();
-        }
+    //총알 생성
+    public abstract void init(float damage, float speed, float range, float lifeTime);
 
 
-        if (gravityOn)
-        {
-            projectileGravity.activate = true;
-            //행성 리스트 초기화
-            projectileGravity.gravityPlanets.Clear();
-        }
 
-        projectileMovement.StartMovement(speed);
-       
-    }
+    //총알이 맞았을 때 
+    protected abstract void OnTriggerEnter2D(Collider2D collision);
 
 
     protected virtual void Update()
     {
         if (!activate)
+        {
+            if(delayTimer > 0)
+            {
+                delayTimer -= Time.deltaTime;
+                if(delayTimer<= 0)
+                {
+                    DisableObject();
+                }
+            }
             return;
+        }
 
-        //lifeTime이 0이 되었을 때
-        time += Time.deltaTime;
-        if (time >= lifeTime)
+        if (!infiniteLifeTime)
+        {
+            //총알에 수명이 있을 때 
+            LifeTimeCheck();
+        }
+        else
+        {
+            //총알에 수명이 없을 때 
+            RangeCheck();
+        }
+
+    }
+
+
+    void LifeTimeCheck()
+    {
+        lifeTime -= Time.deltaTime;
+    
+        if (lifeTime <= 0)
         {
             LifeTimeOver();
         }
-
-        //위치에 따른 검사.
     }
 
+    //총알 수명이 끝났을 때 > 사라지느냐, 혹은 그 자리에서 터지느냐.
     protected virtual void LifeTimeOver()
-    {   //총알 수명이 끝났을 때 벌어질 일
+    {
         AfterHitEvent();
     }
 
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    //거리 측정
+    void RangeCheck()
     {
-       
+        float dist = Vector2.Distance(startPos, transform.position);
+        if (dist > range)
+            AfterHitEvent();
     }
 
+    //충돌 이펙트
+    protected void ShowHitEffect()
+    {
+        //이펙트 표시
+        //Instantiate(hitEffect, transform.position, transform.rotation);
+        ParticleHolder.instance.GetParticle(hitEffect, transform.position, transform.rotation);
+    }
 
+    //충돌 후처리
     protected virtual void AfterHitEvent()
     {
-        //후처리
-        Instantiate(hitEffect, transform.position, Quaternion.identity);
-
-
         //움직임을 정지
         projectileMovement.StopMovement();
-
+                
         activate = false;
         coll.enabled = false;
         ViewObj.SetActive(false);
 
-        if (gravityOn)
-            projectileGravity.activate = false;
+        //다른 스크립트들에 이벤트 실행 
+        HitFeedBack();
 
-        //rb.velocity = Vector2.zero;
-
-
-        StartCoroutine(DisableDelay());
+        //최종 제거 딜레이 초기화 
+        delayTimer = disableDelayTime;
+        
     }
 
-
-    IEnumerator DisableDelay()
+    //딜레이 후 오브젝트를 완전히 제거 
+    void DisableObject()
     {
-        yield return new WaitForSeconds(disableDelayTime);
         if(trail != null)
             trail.enabled = false;
         gameObject.SetActive(false);
-
     }
 
 
-    //Projectile View 에 전달하는 이벤트들
 
+    //총알 충돌 시 
     protected void HitFeedBack()
     {
         if (ProjectileHitEvent != null)
             ProjectileHitEvent();
     }
 
-    protected void ProjectileViewReset()
+    //총알 비활성화시 
+    protected void DeactivateProjectile()
     {
-        if (ResetProjectile != null)
-            ResetProjectile();
+        if (DeactivateProjectileEvent != null)
+            DeactivateProjectileEvent();
+    }
+
+    //총알 시작 시 
+    protected void InitProjectile()
+    {
+        if(ProjectileInitEvent != null) 
+            ProjectileInitEvent();
     }
 
 
-
-    
 }

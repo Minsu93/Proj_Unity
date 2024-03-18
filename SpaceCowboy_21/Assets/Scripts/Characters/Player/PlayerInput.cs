@@ -10,18 +10,24 @@ public class PlayerInput : MonoBehaviour
     public string VerticalAxis = "Vertical";
     public string JumpButton = "Jump";
     public string ShootButton = "Fire1";
-    //public string RunButton = "Run";
+    public string DashButton = "Dash";
+    public string InteractButton = "Interact";
+    public string CancelButton = "Cancel";
     Vector2 moveDir = Vector2.zero;
 
     PlayerBehavior playerBehavior;
-    PlayerWeapon playerWeapon;
 
+    //¹æ¾î±â test
+    public GrabLasso grabLasso;
+    public CounterShield counterShield;
+
+    bool moveON = false;
+    public bool inputDisabled = false;
 
 
     private void Awake()
     {
         if (playerBehavior == null) { playerBehavior = GetComponent<PlayerBehavior>(); }
-        if (playerWeapon == null) { playerWeapon = GetComponent<PlayerWeapon>(); }
     }
 
     // Update is called once per frame
@@ -29,18 +35,27 @@ public class PlayerInput : MonoBehaviour
     {
         if (playerBehavior == null)
             return;
-        if (playerWeapon == null)
+
+        if (Input.GetButtonDown(CancelButton))
+        {
+            GameManager.Instance.InteractCancel();
+        }
+
+
+        if (inputDisabled)
             return;
 
         //Map
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            GameManager.Instance.MapOpen();
+            //CameraManager.instance.MapOpen();
+            //¿ùµå¸Ê ¿ÀÇÂ
 
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
-            GameManager.Instance.MapClose();
+            //CameraManager.instance.MapClose();
+            //¿ùµå¸Ê Å¬·ÎÁî
         }
 
         // Jump
@@ -57,44 +72,39 @@ public class PlayerInput : MonoBehaviour
         // Shoot
         if (Input.GetButtonDown(ShootButton))
         {
-            playerWeapon.StartShoot();
+            playerBehavior.StartShoot();
+
         }
 
         if (Input.GetButtonUp(ShootButton))
         {
-            playerWeapon.StopShoot();
+            playerBehavior.StopShoot();
 
         }
 
-        // Artifact Change
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            // Slot1
-            playerWeapon.ChangeWeapon(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            // Slot2
-            playerWeapon.ChangeWeapon(2);
-
-        }
-
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //Dash
+        //if(Input.GetButtonDown(DashButton))
         //{
-        //    // Slot3
-        //    playerWeapon.ChangeWeapon(3);
-
+        //    playerBehavior.TryDash();
         //}
 
+        //CounterShield
+        if (Input.GetMouseButtonDown(1))
+        {
+            counterShield.TryShieldOn();
+        }
 
-        // Weapon Reload
-        //if (Input.GetKeyDown(KeyCode.R))
+        //Lasso
+        //if (Input.GetMouseButtonDown(1))
         //{
-        //    playerWeapon.TryReload();
+        //    grabLasso.TryThrowLasso();
         //}
 
-      
+        //Interact
+        if (Input.GetButtonDown(InteractButton))
+        {
+            GameManager.Instance.InteractSomething();
+        }
 
     }
 
@@ -102,9 +112,16 @@ public class PlayerInput : MonoBehaviour
     {
         if (playerBehavior == null)
             return;
-        if (playerWeapon == null)
-            return;
 
+        if (inputDisabled)
+        {
+            if (moveON)
+            {
+                moveON = false;
+                playerBehavior.TryStop();
+            }
+            return;
+        }
         //Vector2 moveRaw = Vector2.zero;
 
         moveDir.x = Input.GetAxisRaw(HorizontalAxis);
@@ -112,13 +129,16 @@ public class PlayerInput : MonoBehaviour
         
         if (moveDir.x != 0 || moveDir.y != 0)
         {
-            //moveRaw.x = Mathf.Sign(moveDir.x);
-            //moveRaw.y = Mathf.Sign(moveDir.y);
             playerBehavior.TryMove(moveDir);
+            if(!moveON) moveON = true;
         }
         else
         {
-            playerBehavior.TryStop();
+            if(moveON)
+            {
+                moveON = false;
+                playerBehavior.TryStop();
+            }
         }
     }
 }

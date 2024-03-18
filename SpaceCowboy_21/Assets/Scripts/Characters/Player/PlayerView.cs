@@ -1,8 +1,11 @@
 using SpaceEnemy;
 using Spine;
 using Spine.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace SpaceCowboy
@@ -16,50 +19,56 @@ namespace SpaceCowboy
         bool turnRight = true;
         bool preTurnRight;
         bool _changeState;  //애니메이션 스테이트를 바꿉니다
+        int preAimInt = -1;
 
         [Space]
 
-        public AnimationReferenceAsset idle, onJump, onSpace, runForward, runBackward, shoot, aim, reload, die;
+        public AnimationReferenceAsset idle, jumpStart, onJump, runForward, runBackward, shoot, die;
 
         PlayerState previousState;
+        int previousFaceRight;
         MeshRenderer _renderer;
         MaterialPropertyBlock block;
 
-        [Space]
 
-        [Header("Skins")]
+        Skeleton skeleton;
+        SkeletonData skeletonData;
 
-        [SpineSkin] public string baseSkin;
-        [SpineSkin] public string _1HandSkin;
-        [SpineSkin] public string _2HandSkin;
+        Skin curSkin;
 
-        [SpineSkin] public string revolver;
-        [SpineSkin] public string bubbleGun;
-        [SpineSkin] public string tripleGun;
+        Bone bone;
+        Slot slot;
+        PointAttachment curPoint;
+        Vector2 pointVec;
+
+       
 
         Skin characterSkin;
-        Skeleton skel;
+
+        //임시
+        public GunType gunType;
 
         // Start is called before the first frame update
         void Start()
         {
 
             if (playerBehavior == null) return;
-            playerBehavior.ShootEvent += PlayShoot;
-            playerBehavior.StartAimEvent += PlayAim;
-            playerBehavior.StopAimEvent += StopAim;
-            playerBehavior.PlayerDieEvent += Dead;
-            playerBehavior.PlayerReloadEvent += Reload;
-            playerBehavior.PlayerStopReloadEvent += StopReload;
-            PlayAim();
 
+            playerBehavior.ShootEvent += PlayShoot;
+            playerBehavior.PlayerDieEvent += Dead;
             playerBehavior.PlayerHitEvent += DamageHit;
+            playerBehavior.PlayerJumpStartEvent += PlayJumpStart;
+            playerBehavior.PlayerJumpEvent += PlayJump;
+           
             _renderer = GetComponent<MeshRenderer>();
             block = new MaterialPropertyBlock();
             _renderer.SetPropertyBlock(block);
 
-            skel = skeletonAnimation.skeleton;
+            skeleton = skeletonAnimation.skeleton;
+            skeletonData = skeleton.Data;
 
+            //SetSkin(gunType);
+            //Debug.Log(gunType.skinName + "," + gunType.boneName + "," + gunType.slotName + "," + gunType.attachmentName);
         }
 
         // Update is called once per frame
@@ -74,97 +83,83 @@ namespace SpaceCowboy
             if (state == PlayerState.Die)
                 return;
 
-            if (state != previousState || _changeState)
+            //state가 Idle이 될 때 
+            if(state == PlayerState.Idle && previousState != PlayerState.Idle)
             {
-                _changeState = false;
-                PlayStableAnimation();
+                skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
+                previousState = PlayerState.Idle;
+                
+                //러닝 변수 초기화
+                preAimInt = -1;
             }
+
+            //state가 Running 이 될 때 
+            if(state == PlayerState.Running)
+            {
+                bool aimRight;
+                int aimInt;
+                Vector2 upVec = transform.parent.up;
+                Vector2 aimVec = playerBehavior.aimDirection;
+
+                aimRight = Vector2.SignedAngle(aimVec, upVec) < 0 ? true : false;
+
+                if(playerBehavior.faceRight == aimRight)
+                {
+                    aimInt = 1;
+                }
+                else
+                {
+                    aimInt = 0;
+                }
+
+
+                if(aimInt != preAimInt)
+                {
+                    Spine.Animation animation;
+                    animation = aimInt == 0 ? runForward : runBackward;
+
+                    skeletonAnimation.AnimationState.SetAnimation(0, animation, true);
+
+                    preAimInt = aimInt;
+                }
+            }
+
             previousState = state;
 
             //캐릭터 반전. 실제로 돌아가는게 아니라 view의 skeleton만 돌아간다.
             FlipScaleX();
+
+            GetGunTipPos();
         }
 
-        void PlayStableAnimation()
-        {   //state가 바뀔 때 마다 실행하는것. 
-            PlayerState currentState = playerBehavior.state;
-            Spine.Animation animation;
-            switch (currentState)
-            {
-                case PlayerState.Idle:
-                    animation = idle;
-
-                    break;
-
-                case PlayerState.Running:
-
-                    if (playerBehavior.faceRight && Vector2.SignedAngle(transform.up, playerBehavior.aimDirection) < 0)
-                    {
-                        animation = runForward;
-                    }
-                    else
-                    {
-                        animation = runBackward;
-                    }
-
-                    break;
-
-                case PlayerState.Jumping:
-                    if (playerBehavior.onSpace)
-                    {
-                        animation = onSpace;
-                    } 
-                    else
-                    {
-                        animation = onJump;
-                    }
-                    break;
-
-                default:
-                    animation = idle;
-                    break;
-            }
 
 
-            skeletonAnimation.AnimationState.SetAnimation(0, animation, true);
-        }
-
-        public void ChangeState()
+        public void PlayJumpStart()
         {
-            _changeState = true;
+            skeletonAnimation.AnimationState.SetAnimation(0, jumpStart, false);
+        }
+
+        public void PlayJump()
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, onJump, true);
+
         }
 
         public void PreShoot()
         {
             //자세 초기화
             skeletonAnimation.AnimationState.ClearTrack(1);
-            skel.SetToSetupPose();
+            skeleton.SetToSetupPose();
 
         }
         public void PlayShoot()
         {
-            //skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
-
             TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
             //entry.AttachmentThreshold = 1;
             //entry.MixDuration = 0;
             //skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
 
-
         }
-
-        public void PlayAim()
-        {
-            TrackEntry aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, true);
-            //aimTrack.AttachmentThreshold = 1;
-            //aimTrack.MixDuration = 0;
-        }
-
-        public void StopAim()
-        {
-            skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0.5f, 0.1f);
-        }
-
 
         public void DamageHit()
         {
@@ -199,59 +194,16 @@ namespace SpaceCowboy
                 block.SetColor(id, Color.white);
                 _renderer.SetPropertyBlock(block);
             }
-            
-
-            //yield return new WaitForSeconds(0.04f);
-
-            //block.SetColor(cID, Color.white);
-            //_renderer.SetPropertyBlock(block);
-
-
         }
 
 
         public void Dead()
         {
-            StartCoroutine(DeadRoutine());
-
-        }
-
-        IEnumerator DeadRoutine()
-        {
             skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
-            skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0f, 0f);
+            //skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0f, 0f);
             TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(0, die, false);
-
-            yield return new WaitForSeconds(1f);
-            //애니메이션이 끝나면
-
-            /*
-            float alpha = 1;
-            int cID = Shader.PropertyToID("_Color");
-
-            while (alpha > 0)
-            {
-                alpha -= Time.deltaTime;
-
-                Color deadColor = new Color(1, 1, 1, alpha);
-                block.SetColor(cID, deadColor);
-                _renderer.SetPropertyBlock(block);
-
-                yield return null;
-            }
-            */
-
         }
 
-        public void Reload()
-        {
-            skeletonAnimation.AnimationState.SetAnimation(1, reload, false);
-        }
-
-        public void StopReload()
-        {
-            skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
-        }
 
         void FlipScaleX()
         {
@@ -267,48 +219,51 @@ namespace SpaceCowboy
 
 
 
-        public void ChangeWeapon(int index, bool oneHanded)
+        void GetGunTipPos()
         {
-            //스킨 변경
-            Skeleton skeleton = skeletonAnimation.skeleton;
-            SkeletonData skeletonData = skeleton.Data;
-
-            characterSkin = new Skin(baseSkin);
-
-            if (oneHanded)
+            if (curPoint != null)
             {
-                characterSkin.AddSkin(skeletonData.FindSkin(_1HandSkin));
+                pointVec = curPoint.GetWorldPosition(slot, transform);
+
+                //float rotation2D = curPoint.ComputeWorldRotation(slot.Bone) + skeletonAnimation.transform.rotation.eulerAngles.z;
+
+                playerBehavior.gunTipPos = pointVec;
             }
-            else
-            {
-                characterSkin.AddSkin(skeletonData.FindSkin(_2HandSkin));
-            }
-
-            switch (index)
-            {
-                case 0:
-                    characterSkin.AddSkin(skeletonData.FindSkin(revolver));
-                    break;
-
-                case 1:
-                    characterSkin.AddSkin(skeletonData.FindSkin(bubbleGun));
-                    break;
-
-                case 2:
-                    characterSkin.AddSkin(skeletonData.FindSkin(tripleGun));
-                    break;
-
-
-
-                default:
-                    characterSkin.AddSkin(skeletonData.FindSkin(revolver));
-                    break;
-            }
-
-
-            skeleton.SetSkin(characterSkin);
-            skeleton.SetSlotsToSetupPose();
         }
+
+
+        public void SetSkin(GunType gunType)
+        {
+            curSkin = skeletonData.FindSkin(gunType.skinName);
+            skeleton.SetSkin(curSkin);
+            skeletonAnimation.Skeleton.SetSlotsToSetupPose();
+            skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton);
+
+            GetPoint(gunType);
+        }
+
+        void GetPoint(GunType gunType)
+        {
+            slot = skeleton.FindSlot(gunType.slotName);
+            int slotIndex = skeletonData.FindSlot(gunType.slotName).Index;
+            curPoint = curSkin.GetAttachment(slotIndex, gunType.attachmentName) as PointAttachment;
+            bone = skeleton.FindBone(gunType.boneName);
+        }
+
+
+    }
+
+    [System.Serializable]
+    public class GunType
+    {
+        public string skinName;
+
+        public string boneName;
+
+        public string slotName;
+
+        public string attachmentName;
+
     }
 }
 

@@ -1,0 +1,64 @@
+using Spine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ParticleHolder : MonoBehaviour
+{
+    /// <summary>
+    /// ParticlePool 클래스를 이용한 풀링 시스템. 재미있어서 계속 놔 둠. 
+    /// </summary>
+    /// 
+
+    public static ParticleHolder instance;
+    public ParticleSystem[] effects;
+    ParticlePool[] particlePool;
+
+    void Start()
+    {
+        instance = this;
+
+        if (effects.Length <= 0)
+            return; 
+
+        particlePool = new ParticlePool[effects.Length];
+        for(int i = 0; i < effects.Length; i++)
+        {
+            particlePool[i] = new ParticlePool(effects[i], this.transform, 5);
+        }
+
+    }
+
+    //리스트에서 순서 찾기
+    public void GetParticle(ParticleSystem particle, Vector3 pos, Quaternion rot)
+    {
+        int index = 0;
+
+        for (int i = 0; i < effects.Length; i++)
+        {
+            if (effects[i] == particle)
+            {
+                index = i;
+            }
+        }
+
+        playParticle(index, pos, rot);
+    }
+
+    //해당 파티클 출력하기
+    void playParticle(int index , Vector3 particlePos, Quaternion particleRot)
+    {
+        ParticleSystem particleToPlay = particlePool[index].getAvailabeParticle();
+
+        if (particleToPlay != null)
+        {
+            if (particleToPlay.isPlaying)
+                particleToPlay.Stop();
+
+            particleToPlay.transform.position = particlePos;
+            particleToPlay.transform.rotation = particleRot;
+            particleToPlay.Play();
+        }
+
+    }
+}

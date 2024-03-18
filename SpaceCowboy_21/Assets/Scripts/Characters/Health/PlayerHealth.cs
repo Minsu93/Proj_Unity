@@ -9,11 +9,12 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth = 1;
     public float currHealth {  get; private set; }
 
-    public float maxShield = 1;
+    public float maxShield = 10;
     public float currShield { get; private set; }
     public float delayToRegeneration = 1.0f;
     float dTimer;
     public float regenerateTime = 2.0f;
+    public float regenSpeed = 3.0f;
     float rTimer;
 
 
@@ -51,7 +52,7 @@ public class PlayerHealth : MonoBehaviour
         }
         else if (currHealth > 0) 
         {
-            currHealth -= dmg;
+            currHealth -= 1;
             if (currHealth < 0) currHealth = 0;
         }
 
@@ -65,6 +66,18 @@ public class PlayerHealth : MonoBehaviour
         }
 
         return isHit;
+    }
+
+    public void RecoverShield(float amount)
+    {
+        if (currShield < maxShield)
+        {
+            Debug.Log("Recovered");
+            //실드를 회복한다
+            currShield += amount;
+
+            if (currShield >= maxShield) currShield = maxShield;
+        }
     }
 
     public bool IsDead()
@@ -109,17 +122,14 @@ public class PlayerHealth : MonoBehaviour
             case HealthState.OnRegen: 
                 if(currShield < maxShield)
                 {
-                    //실드를 주기적으로 회복한다
-                    rTimer += Time.deltaTime;
-                    if(rTimer > regenerateTime)
-                    {
-                        rTimer = 0;
-                        currShield++;
-                    }
+
+                    //실드를 회복한다
+                    currShield += regenSpeed * Time.deltaTime;
 
                     //실드가 다 찼으면 기본 상태로 돌아간다
                     if (currShield >= maxShield)
                     {
+                        currShield = maxShield;
                         healthState = HealthState.Default;
                     }
                 }

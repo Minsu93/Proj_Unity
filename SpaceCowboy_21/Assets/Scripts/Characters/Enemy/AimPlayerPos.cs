@@ -14,7 +14,7 @@ public class AimPlayerPos : MonoBehaviour
     Bone bone;
 
     // Start is called before the first frame update
-    void OnValidate()
+    void Awake()
     {
         if (skeletonAnimation == null)
             skeletonAnimation = GetComponent<SkeletonAnimation>();
@@ -33,7 +33,7 @@ public class AimPlayerPos : MonoBehaviour
         Vector3 playerPosition = GameManager.Instance.player.position;
         Vector3 skeletonLocalPosition = skeletonAnimation.transform.InverseTransformPoint(playerPosition);
         skeletonLocalPosition.x *= skeletonAnimation.skeleton.ScaleX;
-        skeletonLocalPosition.y *= skeletonAnimation.skeleton.ScaleY;
+        //skeletonLocalPosition.y *= skeletonAnimation.skeleton.ScaleY;
         bone.SetLocalPosition(skeletonLocalPosition);
         //bone.SetPositionSkeletonSpace(skeletonLocalPosition);
 

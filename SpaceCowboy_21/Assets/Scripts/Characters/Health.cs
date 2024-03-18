@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
 {
     [Header("Health Properties")]
     public float maxHealth = 10;
-    public float currHealth;    //확인용
+    public float currHealth { get; set; }    //확인용
 
     public float InvincibleTime;
     float _invincibleTimer;

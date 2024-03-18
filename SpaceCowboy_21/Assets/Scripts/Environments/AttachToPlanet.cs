@@ -1,32 +1,36 @@
+using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [ExecuteInEditMode]
 public class AttachToPlanet : MonoBehaviour
 {
-    public bool stickToPlanet = false;
-    public float yOffset;
-    [SerializeField] Collider2D coll;
+    [Header("Stick To Planet!")]
+    public bool activate;
+    
+    [Header("Properties")]
+    public bool isOrbital = false;
+    public float range = 10f;
 
-    private void Awake()
-    {
-        GetNearestPlanet();
-    }
 
-    public void MyEvent()
-    {
-        Debug.Log("My Event");
-    }
+    public float yOffset = 0.5f;
+    public float zRotation = 0;
 
+    public PolygonCollider2D coll;
+    public Planet currPlanet;
+
+
+
+    [ContextMenu("GetNearestPlanet")]
     public void GetNearestPlanet()
     {
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 5f, Vector2.right, 0f, LayerMask.GetMask("Planet"));
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, range, Vector2.right, 0f, LayerMask.GetMask("Planet"));
 
         if(hits.Length >0)
         {
-            Collider2D minColl = null;
+            Transform nearestPlanet = null;
             float min = Mathf.Infinity;
 
             foreach(RaycastHit2D hit in hits)
@@ -35,53 +39,51 @@ public class AttachToPlanet : MonoBehaviour
                 Vector2 check = closestPoint - (Vector2)transform.position;
                 if (check.magnitude < min)
                 {
-                    minColl = hit.collider;
+                    nearestPlanet = hit.transform;
                     min = check.magnitude;
                 }
             }
 
-            coll = minColl;
+            coll = nearestPlanet.GetComponent<PolygonCollider2D>();
+            currPlanet = nearestPlanet.GetComponent<Planet>();
+
         }
     }
-
-    public void UpdatePosition()
+    private void Awake()
     {
-        if (stickToPlanet)
-        {
-            stickToPlanet = false;
-        }
-        else
-        {
-            stickToPlanet = true;
-        }
+        GetNearestPlanet();
     }
 
     void Update()
     {
-        /*
-        if(Editor8Application.isPlaying)
+        if (Application.isPlaying)
         {
-            this.enabled = false;
+            activate = false;
         }
-        */
 
+        if(!activate) { return; }
+
+        GetNearestPlanet();
+  
         if(coll == null)
-        {
-            return;
-        }
-
-        if (!stickToPlanet)
             return;
 
         Vector2 point = coll.ClosestPoint(transform.position);
-
+       
         //노말을 구하고 
         Vector2 targetVec = ((Vector2)transform.position - point).normalized;
 
-        //캐릭터를 point로 옮기고 yOffset만큼 위로 이동시킨다
-        transform.position = point + (targetVec * yOffset);
+
+        if (!isOrbital)
+        {
+            //캐릭터를 point로 옮기고 yOffset만큼 위로 이동시킨다
+            transform.position = point + (targetVec * yOffset);
+        }
         //캐릭터를 회전시키고
-        transform.rotation = Quaternion.LookRotation(Vector3.forward, targetVec);
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, targetVec) * Quaternion.Euler(0,0,zRotation);
 
     }
+
+
 }
+

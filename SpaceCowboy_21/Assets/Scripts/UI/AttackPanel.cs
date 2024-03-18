@@ -12,7 +12,7 @@ public class AttackPanel : MonoBehaviour
 
     private void Awake()
     {
-        playerWeapon = GameManager.Instance.weapon;
+        playerWeapon = GameManager.Instance.player.GetComponent<PlayerWeapon>();
     }
 
     private void LateUpdate()

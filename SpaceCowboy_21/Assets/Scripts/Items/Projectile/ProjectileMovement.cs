@@ -23,25 +23,19 @@ public abstract class ProjectileMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         proj = GetComponent<Projectile>();
-        if (proj.gravityOn)
-        {
-            gravity = GetComponent<ProjectileGravity>();
-        }
+        gravity = GetComponent<ProjectileGravity>();
+
     }
 
+    //움직이기 시작할 때 
     public abstract void StartMovement(float speed);
 
 
     public abstract void StopMovement();
 
 
-    protected virtual void Update()
-    {
-        if(rotateBySpeed)
-        {
-            RotateBySpeed();
-        }    
-    }
+    public abstract void Update();
+
 
     protected void RotateBySpeed()
     {
@@ -51,13 +45,13 @@ public abstract class ProjectileMovement : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
         transform.rotation = targetRotation;
-
     }
 
-
-    public virtual void KnockBackEvent(Vector2 objVel)
+    public virtual void KnockBackEvent(Vector2 vec)
     {
 
     }
+
+
 
 }

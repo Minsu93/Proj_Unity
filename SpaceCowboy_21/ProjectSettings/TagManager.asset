@@ -9,10 +9,13 @@ TagManager:
   - Enemy
   - Planet
   - Object
-  - BlockBody
   - Item
   - EnemyHitableProjectile
+  - Shield
   - FloatingObj
+  - SpaceBorder
+  - Obstacle
+  - Drop
   layers:
   - Default
   - TransparentFX
@@ -27,14 +30,14 @@ TagManager:
   - EnemyProj
   - Planet
   - Object
-  - BlockBody
-  - FloatingObj
+  - Shield
+  - SpaceBorder
   - EnemyHitableProj
+  - Obstacle
+  - PhysicsBody
   - 
   - 
-  - 
-  - 
-  - 
+  - Minimap
   - 
   - 
   - 
@@ -53,15 +56,18 @@ TagManager:
   - name: Background
     uniqueID: 1049714653
     locked: 0
-  - name: Environment
+  - name: Vegetation
     uniqueID: 3704318823
     locked: 0
-  - name: Enemy
+  - name: Planet
     uniqueID: 3735515261
     locked: 0
-  - name: Player
+  - name: Characters
     uniqueID: 3143116335
     locked: 0
-  - name: Effect
+  - name: FrontEnvironment
     uniqueID: 3430341953
+    locked: 0
+  - name: Effect
+    uniqueID: 320622911
     locked: 0

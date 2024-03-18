@@ -4,21 +4,27 @@ using UnityEngine;
 
 public class PoolManager : MonoBehaviour
 {
+    public static PoolManager instance;
+
     //풀링 오브젝트들을 보관할 장소
     public GameObject[] playerProjectiles;
     public GameObject[] enemyProjectiles;
     public GameObject[] dropItems;
+    public GameObject[] enemies;
 
-
-    //만들어진 각각의 풀링 오브젝트들을 보관할 List 
+    //만들어진 각각의 풀링 오브젝트 List들을 보관할 List 
     List<GameObject>[] playerProjPools;
     List<GameObject>[] enemyProjPools;
     List<GameObject>[] dropItemPools;
+    List<GameObject>[] enemyPools;
 
 
 
     private void Awake()
     {
+        instance = this;
+                
+
         //초기화
         playerProjPools = new List<GameObject>[playerProjectiles.Length];
 
@@ -40,6 +46,12 @@ public class PoolManager : MonoBehaviour
         for(int t = 0; t < dropItems.Length; t++)
         {
             dropItemPools[t] = new List<GameObject>();
+        }
+
+        enemyPools = new List<GameObject>[enemies.Length];
+        for (int t = 0; t < enemies.Length; t++)
+        {
+            enemyPools[t] = new List<GameObject>();
         }
     }
 
@@ -150,6 +162,44 @@ public class PoolManager : MonoBehaviour
         {
             select = Instantiate(dropItems[index], transform);
             dropItemPools[index].Add(select);
+
+        }
+
+        return select;
+    }
+
+
+
+    public GameObject GetEnemy(GameObject enemy)
+    {
+        int index = 0;
+        GameObject select = null;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            if (enemies[i] == enemy)
+            {
+                index = i;
+            }
+        }
+
+
+
+        //리스트에서 놀고 있는게 있다면 그것을 불러온다
+        foreach (GameObject item in enemyPools[index])
+        {
+            if (!item.activeSelf)
+            {
+                select = item;
+                select.SetActive(true);
+                break;
+            }
+        }
+        //없으면 새로 생성한다
+        if (!select)
+        {
+            select = Instantiate(enemies[index], transform);
+            enemyPools[index].Add(select);
 
         }
 

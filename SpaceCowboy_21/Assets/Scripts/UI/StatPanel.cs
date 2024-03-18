@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatPanel : MonoBehaviour
 {
@@ -18,32 +19,15 @@ public class StatPanel : MonoBehaviour
     int panelHealth;
     int panelMaxHealth;
 
+    public Image LeftShieldImg;
+    public Image RightShieldImg;
     public GameObject shieldPrefab;
     public List<GameObject> shieldList = new List<GameObject>();
     public Transform shieldLayout;
-    int panelShield;
-    int panelMaxShield;
+    float panelShield;
+    float panelMaxShield;
 
-    [Space] 
 
-    public GameObject energyPrefab;
-    public List<GameObject> energyList = new List<GameObject>();
-    public Transform energyLayout;
-    int panelEnergy;
-    int panelMaxEnergy;
-
-    [Space]
-
-    int artifactCost_A;
-    int artifactCost_B;
-    int artifactCost_C;
-    public GameObject artifact_A;
-    public GameObject artifact_B;
-    public GameObject artifact_C;
-
-    //테스트용
-    //public int currHealth;
-    //public int maxHealth;
 
     PlayerHealth playerHealth;
     PlayerWeapon playerWeapon;
@@ -56,9 +40,6 @@ public class StatPanel : MonoBehaviour
         playerHealth = playerTr.GetComponent<PlayerHealth>();
         playerWeapon = playerTr.GetComponent<PlayerWeapon>();
 
-        //artifactCost_A = (int)playerWeapon.weapons[1].PowerCost;
-        //artifactCost_B = (int)playerWeapon.weapons[2].PowerCost;
-        //artifactCost_C = (int)playerWeapon.weapons[3].PowerCost;
 
     }
 
@@ -84,14 +65,14 @@ public class StatPanel : MonoBehaviour
         }
 
         //최대 실드
-        int maxShield = (int)playerHealth.maxShield;
+        float maxShield = playerHealth.maxShield;
         if (panelMaxShield != maxShield)
         {
             ChangeMaxShield(maxShield);
         }
 
         //현재 실드
-        int currShield = (int)playerHealth.currShield;
+        float currShield = playerHealth.currShield;
         if (panelShield != currShield)
         {
             ChangeCurShield(currShield);
@@ -200,52 +181,60 @@ public class StatPanel : MonoBehaviour
     }
 
 
-    void ChangeMaxShield(int _maxShield)
+    void ChangeMaxShield(float _maxShield)
     {
-        if (panelMaxShield > _maxShield)
-        {
-            //최대 체력이 줄어들었으면 줄어든 만큼 리스트에서 제거
-            for (int i = panelMaxShield; i > _maxShield; i--)
-            {
-                Destroy(shieldList[i - 1]);
-                shieldList.RemoveAt(i - 1);
-            }
-            panelMaxShield = _maxShield;
-        }
-        else
-        {
-            //최대 체력이 늘어났으면 늘어난 만큼 리스트에 추가
-            for (int i = panelMaxShield; i < _maxShield; i++)
-            {
-                GameObject shield = Instantiate(shieldPrefab, shieldLayout);
-                shield.SetActive(false);
-                shieldList.Insert(i, shield);
-            }
-            panelMaxShield = _maxShield;
-        }
+        panelMaxShield = _maxShield;
+
+        //if (panelMaxShield > _maxShield)
+        //{
+        //    //최대 체력이 줄어들었으면 줄어든 만큼 리스트에서 제거
+        //    for (int i = panelMaxShield; i > _maxShield; i--)
+        //    {
+        //        Destroy(shieldList[i - 1]);
+        //        shieldList.RemoveAt(i - 1);
+        //    }
+        //    panelMaxShield = _maxShield;
+        //}
+        //else
+        //{
+        //    //최대 체력이 늘어났으면 늘어난 만큼 리스트에 추가
+        //    for (int i = panelMaxShield; i < _maxShield; i++)
+        //    {
+        //        GameObject shield = Instantiate(shieldPrefab, shieldLayout);
+        //        shield.SetActive(false);
+        //        shieldList.Insert(i, shield);
+        //    }
+        //    panelMaxShield = _maxShield;
+        //}
     }
 
-    void ChangeCurShield(int _currShield)
+    void ChangeCurShield(float _currShield)
     {
-        if (panelShield < _currShield)
-        {
-            //현재 체력이 늘어났으면 표시되는 체력을 늘린다
-            for (int i = panelShield; i < _currShield; i++)
-            {
-                shieldList[i].SetActive(true);
-            }
-            panelShield = _currShield;
-        }
-        else
-        {
-            //현재 체력이 줄어들었으면 표시되는 체력을 줄인다
-            for (int i = panelShield; i > _currShield; i--)
-            {
-                shieldList[i - 1].SetActive(false);
-            }
-            panelShield = _currShield;
-        }
+        panelShield = _currShield;
+
+        LeftShieldImg.fillAmount = panelShield / panelMaxShield;
+        RightShieldImg.fillAmount = panelShield / panelMaxShield;
+
+        //if (panelShield < _currShield)
+        //{
+        //    //현재 체력이 늘어났으면 표시되는 체력을 늘린다
+        //    for (int i = panelShield; i < _currShield; i++)
+        //    {
+        //        shieldList[i].SetActive(true);
+        //    }
+        //    panelShield = _currShield;
+        //}
+        //else
+        //{
+        //    //현재 체력이 줄어들었으면 표시되는 체력을 줄인다
+        //    for (int i = panelShield; i > _currShield; i--)
+        //    {
+        //        shieldList[i - 1].SetActive(false);
+        //    }
+        //    panelShield = _currShield;
+        //}
     }
+
     //void ChangeMaxEnergy(int _maxEnergy)
     //{
     //    if (panelMaxEnergy > _maxEnergy)

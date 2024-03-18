@@ -6,150 +6,101 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Security.Cryptography;
+using SpaceCowboy;
+using System.Reflection;
 
 public class EnemyView : MonoBehaviour
 {
     public EnemyAction enemyAction;
     public EnemyBrain enemyBrain;
-    public Enemy enemy;
     public SkeletonAnimation skeletonAnimation;
 
 
     bool preTurnRight;
+    bool seePlayer;
 
-    public AnimationReferenceAsset idle, chase, shoot, aim, hit, guard, die;
+    public AnimationReferenceAsset idle, run, attack, die, aimOn;
     EnemyState previousEnemyState;
 
     MeshRenderer _renderer;
     MaterialPropertyBlock block;
+    
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-
         if (enemyAction == null) return;
-        if (shoot != null)
+        if (attack != null)
         {
-            enemyAction.EnemyShootEvent += PlayShoot;
+            enemyAction.EnemyAttackEvent += PlayAttack;
         }     
-        if(aim != null)
-        {
-            enemyAction.EnemyStartAimEvent += PlayAim;
-            enemyAction.EnemyStopAImEvent += StopAim;
-        }
-        if (guard != null)
-        {
-            enemyAction.EnemyStartGuardEvent += StartGuard;
-            enemyAction.EnemyStopGuardEvent += StopGuard;
-        }
         if( die != null)
         {
             enemyAction.EnemyDieEvent += Dead;
         }
-
-
+        enemyAction.EnemyStartIdle += StartIdle;
+        enemyAction.EnemyStartRun += StartRun;
         enemyAction.EnemyHitEvent += DamageHit;
+        enemyAction.EnemyAimOnEvent += AimOn;
+        enemyAction.EnemyAimOffEvent += AimOff;
+        enemyAction.EnemySeePlayerOnceEvent += SeePlayerOnce;
+        enemyAction.EnemySeeDirection += FlipScaleXToDirection;
+
         _renderer = GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();
         _renderer.SetPropertyBlock(block);
 
         preTurnRight = true; //시작시 오른쪽을 보고 있나요?
 
+        Initialize();
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (enemyAction == null) return;
-        if (skeletonAnimation == null) return;
-        if (enemyBrain == null) return;      
-        if (enemyBrain.enemyState == EnemyState.Die)
-            return;
-
-        EnemyState state = enemyBrain.enemyState;
-
-        if (state != previousEnemyState)
-        {
-            PlayStableAnimation();
-        }
-        previousEnemyState = state;
-
-
-        if (enemyBrain.filpToPlayerOn)
-        {
-            //캐릭터 반전. 실제로 돌아가는게 아니라 view의 skeleton만 돌아간다.
-            if (enemyBrain.enemyState == EnemyState.Chase || enemyBrain.enemyState == EnemyState.Attack)
-            {
-                FlipScaleX();
-            }
-        }
-    }
-
-    void PlayStableAnimation()
+    //자손마다 다른 활동
+    protected virtual void Initialize()
     {
 
-        EnemyState currentState = enemyBrain.enemyState;
-        Spine.Animation animation;
-
-        if (currentState == EnemyState.Chase)
-        {
-            animation = chase;
-
-        }
-        else
-        {
-            animation = idle;
-        }
-
-        skeletonAnimation.AnimationState.SetAnimation(0, animation, true);
     }
 
-    public void PlayShoot()
+
+    void StartRun()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, run, true);
+    }
+
+    void StartIdle()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
+        
+        int cID = Shader.PropertyToID("_Color");
+        Color deadColor = Color.white;
+        block.SetColor(cID, deadColor);
+        _renderer.SetPropertyBlock(block);
+    }
+
+
+    void PlayAttack()
     {
         //skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
 
-        TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
+        TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(1, attack, false);
         entry.AttachmentThreshold = 1;
         entry.MixDuration = 0;
         skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
-
-
     }
 
-    public void PlayAim()
-    {
-        TrackEntry aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, true);
-        //aimTrack.AttachmentThreshold = 1;
-        //aimTrack.MixDuration = 0;
-    }
-
-    public void StopAim()
-    {
-        skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0.5f, 0.1f);
-    }
-
-    public void StartGuard()
-    {
-        TrackEntry aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, guard, true);
-
-    }
-
-    public void StopGuard()
-    {
-        skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0.5f, 0.1f);
-
-    }
-
-
-    public void DamageHit()
+    void DamageHit()
     {
         StartCoroutine(DamageRoutine());
     }
 
+
     IEnumerator DamageRoutine()
     {
-        if(hit != null)
-            skeletonAnimation.AnimationState.SetAnimation(0, hit, false);
+        //if(hit != null)
+        //    skeletonAnimation.AnimationState.SetAnimation(0, hit, false);
 
         //int cID = Shader.PropertyToID("_Color");
         int bID = Shader.PropertyToID("_Black");
@@ -158,24 +109,16 @@ public class EnemyView : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        //block.SetColor(cID, Color.black);
         block.SetColor(bID, Color.black);
         _renderer.SetPropertyBlock(block);
-
-        //yield return new WaitForSeconds(0.04f);
-
-        //block.SetColor(cID, Color.white);
-        //_renderer.SetPropertyBlock(block);
-
-
     }
 
 
-    public void Dead()
+    void Dead()
     {
         StartCoroutine(DeadRoutine());
-
     }
+
 
     IEnumerator DeadRoutine()
     {
@@ -201,15 +144,22 @@ public class EnemyView : MonoBehaviour
         }
 
         //이 오브젝트를 비활성화
-        if (enemyBrain != null)
-        {
-            enemyBrain.DeadActive();
-        }
-        else if ( enemy != null)
-        {
-            enemy.DeadActive();
-        }
+        transform.parent.gameObject.SetActive(false);
 
+    }
+
+    void AimOn()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(2, aimOn, true);
+    }
+    void AimOff()
+    {
+        skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0f, 0f);
+    }
+
+    void SeePlayerOnce()
+    {
+        FlipScaleX();
     }
 
     void FlipScaleX()
@@ -222,4 +172,13 @@ public class EnemyView : MonoBehaviour
             preTurnRight = turnRight;
         }
     }
+
+    void FlipScaleXToDirection()
+    {
+        // 적이 움직여야 할 방향은 어디인가
+        // 해당 방향으로 고개를 틀어라. 
+        bool faceRight = enemyAction.faceRight;
+        skeletonAnimation.skeleton.ScaleX = faceRight ? 1 : -1;
+    }
+
 }

@@ -1,26 +1,46 @@
 using Cinemachine;
+using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
-    public PoolManager poolManager;
-    public CameraPos cameraPos;
-    public CinemachineVirtualCamera virtualCamera;
+    public Transform player;
+    PlayerInput playerInput;
+    //Rigidbody2D _playerRb;
+    //public Rigidbody2D playerRb
+    //{
+    //    get 
+    //    { 
+    //        if(_playerRb == null)
+    //        {
+    //            _playerRb = player.GetComponent<Rigidbody2D>(); 
+    //        }
+    //        return _playerRb; 
+    //    }
+    //}
+    PlayerBehavior _playerBehavior;
+    public PlayerBehavior PlayerBehavior
+    {
+        get
+        {
+            if(_playerBehavior == null)
+            {
+                _playerBehavior = player.GetComponent<PlayerBehavior>();
+            }
+            return _playerBehavior;
+        }
+    }
+
+    public InteractableOBJ curObj;
 
     //중력관련
     public float worldGravity = 900f;
 
-    //카메라 관련
-    public float mapFOV = 120f;
-    public float defaultFOV = 90f;
-    float currFOV;
-    float targetFOV;
 
-    float approx = 0.05f;
-    public float controlSpeed = 5.0f;
 
     public static GameManager Instance
     {
@@ -31,14 +51,13 @@ public class GameManager : MonoBehaviour
             {
                 // 해당 오브젝트를 찾아 할당한다.
                 _instance = FindObjectOfType<GameManager>();
-                DontDestroyOnLoad(_instance.gameObject);
+                //DontDestroyOnLoad(_instance.gameObject);
             }
             return _instance;
         }
     }
 
-    public Transform player;
-    public PlayerWeapon weapon;
+
     //public float worldGravity;
 
     [Space]
@@ -49,41 +68,27 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // 이제는 이 조건이 2가지를 시사하게 된다.
-        if (_instance != null)
-        {
-            // (1) 다른 게임 오브젝트가 있다면
-            if (_instance != this)
-            {
-                // 하나의 게임 오브젝트만 남도록 삭제한다.
-                Destroy(gameObject);
-            }
+        //if (_instance != null)
+        //{
+        //    if (_instance != this)
+        //    {
+        //        Destroy(gameObject);
+        //    }
 
+        //    return;
+        //}
 
-            // (2) Awake() 호출 전 할당된 인스턴스가 자기 자신이라면
-            // 아무것도 하지 않는다.
-            return;
-        }
-
-        // 이 아래의 경우는 SingletonBahaviour가 운이 좋게
-        // Instance 참조 전 Awake()가 실행되는 경우이다.
         _instance = GetComponent<GameManager>();
-        DontDestroyOnLoad(gameObject);
-
-
+        //DontDestroyOnLoad(gameObject);
     }
 
 
     private void Start()
     {
-        if(playBGM)
-            AudioManager.instance.PlayBgm(true);
+        //if(playBGM) AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
 
-        //초기 FOV
-        currFOV = defaultFOV;
-        targetFOV = currFOV;
     }
 
 
@@ -95,49 +100,61 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-        //카메라 조절
 
-        if(Mathf.Abs(currFOV - targetFOV) > approx)
-        {
-            currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * controlSpeed);
-            virtualCamera.m_Lens.FieldOfView = currFOV;
-        }
-
-    }
-
-
-    // 플레이어가 죽이면 전역에 이벤트 발생
+    // 플레이어가 죽으면 전역에 이벤트 발생
     public void PlayerIsDead()
     {
         if (PlayerDeadEvent != null)
             PlayerDeadEvent();
-
-        virtualCamera.Follow = null;
     }
 
-
-    //카메라 이벤트
-    public void MapOpen()
+    public void LoadScene(int num)
     {
-        targetFOV = mapFOV;
-
-        cameraPos.StopCameraFollow();
-        
+        SceneManager.LoadScene(num);
+    }
+    public void Loadscene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
     }
 
-    public void MapClose()
-    {
-        targetFOV = defaultFOV;
+    
 
-        cameraPos.StartCameraFollow();
+    //플레이어 입력 관련 
+    public void DisablePlayerInput()
+    {
+        if(playerInput == null)
+        {
+            playerInput = player.GetComponent<PlayerInput>();
+        }
+        playerInput.inputDisabled = true;
+    }
+    public void EnablePlayerInput()
+    {
+        if (playerInput == null)
+        {
+            playerInput = player.GetComponent<PlayerInput>();
+        }
+        playerInput.inputDisabled = false;
     }
 
-    //행성 이동시 기본 FOV 변경
-    public void ChangeCamera(float orthoSize)
+    //상호작용 관련
+    public void InteractSomething()
     {
-        defaultFOV = orthoSize;
-        targetFOV = defaultFOV;
+        Debug.Log("oh");
+        if (curObj == null)
+            return;
+
+        //플레이어 Cancel만 가능하도록 조작 변경.
+        DisablePlayerInput();
+        curObj.InteractAction();
+    }
+
+    public void InteractCancel()
+    {
+        if (curObj == null)
+            return;
+
+        EnablePlayerInput();
+        curObj.CancelAction();
     }
 }

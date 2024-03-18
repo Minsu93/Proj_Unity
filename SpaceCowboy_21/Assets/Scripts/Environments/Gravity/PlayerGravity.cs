@@ -1,4 +1,3 @@
-using PlanetSpace;
 using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,7 +33,7 @@ public class PlayerGravity : CharacterGravity
 
         preNearestPlanet = nearestPlanet;
 
-        GameManager.Instance.ChangeCamera(nearestPlanet.planetFOV);
+        CameraManager.instance.ChangeCamera(nearestPlanet.planetFOV);
 
     }
 

@@ -1,4 +1,5 @@
 using SpaceEnemy;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,71 +7,79 @@ using UnityEngine;
 public class DropItem : MonoBehaviour
 {
 
-    //드롭이 시작되었을 때 아이템이 나올 확률
-    [Range(0f, 1f)]
-    public float itemChance;
-    //총 반복 횟수
-    public int dropCount;
-    //나올 아이템의 목록
-    public GameObject[] items;
-    //아이템이 드롭되었을 때, 아이템 별 드롭 확률
-    public float[] itemDropRate;
+    public int dropRepeat;       //총 반복 횟수
 
-    [SerializeField] float minPow = 3f;
-    [SerializeField] float maxPow = 4f;
+    [Range(0f, 1f)]
+    public float itemChance;    //아이템이 나올 확률
+    public DropTable[] dropTable;
+
+    [SerializeField] float launchPowerMin = 3f;
+    [SerializeField] float launchPowerMax = 4f;
     private void Awake()
     {
         EnemyAction enemyAction = GetComponent<EnemyAction>();
-        enemyAction.EnemyDieEvent += GenerateItem;
+        if(enemyAction != null )
+            enemyAction.EnemyDieEvent += GenerateItem;
     }
 
     public void GenerateItem()
     {
         //dropCount횟수만큼 아이템 드롭을 시도한다
-        for(int i = 0; i < dropCount; i++)
+        for(int i = 0; i < dropRepeat; i++)
         {
             //아이템 찬스 내부면
-            if (Random.value <= itemChance)
+            if (UnityEngine.Random.value <= itemChance)
             {
                 //아이템을 생성한다
-
-                //GameObject item = Instantiate(items[Choose(itemDropRate)], (Vector2)transform.position, Quaternion.identity);
-                GameObject item = GameManager.Instance.poolManager.GetItem(items[Choose(itemDropRate)]);
+                GameObject item = PoolManager.instance.GetItem(Choose());
                 item.transform.position = transform.position;
 
-                Vector2 randomUpDir = (transform.up + (transform.right * Random.Range(-1, 1f))).normalized;
-                float randomPow = Random.Range(minPow, maxPow);
+                //아이템을 발사한다
+                Vector2 randomUpDir = (transform.up + (transform.right * UnityEngine.Random.Range(-1, 1f))).normalized;
+                float randomPow = UnityEngine.Random.Range(launchPowerMin, launchPowerMax);
                 item.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
             }     
         }
     }
 
-    int Choose(float[] probs)
+    GameObject Choose()
     {
-
         float total = 0;
+        int length = dropTable.Length;
 
-        foreach (float elem in probs)
+        for(int j = 0; j < length; j++)
         {
-            total += elem;
+            total += dropTable[j].dropRate;
         }
 
-        float randomPoint = Random.value * total;
+        float randomPoint = UnityEngine.Random.value * total;
 
-        for (int i = 0; i < probs.Length; i++)
+        for (int i = 0; i < length; i++)
         {
-            if (randomPoint < probs[i])
+            if (randomPoint < dropTable[i].dropRate)
             {
-                return i;
+                return dropTable[i].item;
             }
             else
             {
-                randomPoint -= probs[i];
+                randomPoint -= dropTable[i].dropRate;
             }
         }
-        return probs.Length - 1;
+        return dropTable[length - 1].item;    //randomPoint = total인 경우
     }
 
 
 
+}
+[System.Serializable]
+public struct DropTable
+{
+    public GameObject item;
+    public float dropRate;
+
+    public DropTable(GameObject item, float dropRate)
+    {
+        this.item = item;
+        this.dropRate = dropRate;
+    }
 }

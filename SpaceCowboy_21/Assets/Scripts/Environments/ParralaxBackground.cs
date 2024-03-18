@@ -23,10 +23,9 @@ public class ParralaxBackground : MonoBehaviour
         lastCameraPosition = cameraTransform.position;
 
 
-        virtualCam = GameManager.Instance.virtualCamera;
+        virtualCam = CameraManager.instance.virtualCamera;
         startScale = transform.localScale;
-        //defaultLensSize = GameManager.Instance.defaultLens;
-        defaultFOV = GameManager.Instance.defaultFOV;
+        defaultFOV = CameraManager.instance.defaultFOV;
 
         //시작 위치 살짝 잡아주기
 
