@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 15
   InvincibleTime: 0
 --- !u!114 &7974901006276670713
 MonoBehaviour:
@@ -151,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 1
   isOrbital: 0
+  range: 10
   yOffset: 1
   zRotation: 0
   coll: {fileID: 0}

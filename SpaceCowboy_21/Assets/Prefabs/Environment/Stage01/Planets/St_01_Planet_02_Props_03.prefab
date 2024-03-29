@@ -5,7 +5,6 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 852344631181611976, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
@@ -866,11 +865,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1016940996164447681, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1462199922156266795, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1817497010263225362, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_Points.Array.size
@@ -2758,7 +2757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8982009002155988123, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_RootOrder
-      value: 18
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8982009002155988123, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2804,57 +2803,9 @@ PrefabInstance:
       propertyPath: polyCollider
       value: 
       objectReference: {fileID: 8050078666902945746}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].planet
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].planet
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].bridgeIndex
-      value: 37
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].bridgeIndex
-      value: 52
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].bridgeIndex
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].targetVector.x
-      value: -6.3899837
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].targetVector.y
-      value: -42.448006
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].targetVector.x
-      value: 7.468749
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].targetVector.y
-      value: -3.544363
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].targetVector.x
-      value: 13.872412
-      objectReference: {fileID: 0}
-    - target: {fileID: 8982009002155988124, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].targetVector.y
-      value: 23.592466
-      objectReference: {fileID: 0}
     - target: {fileID: 8982009002155989863, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_Name
-      value: St_01_Planet_02_Props_02 Variant
+      value: St_01_Planet_02_Props_03
       objectReference: {fileID: 0}
     - target: {fileID: 9050133561539302921, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
       propertyPath: m_Points.m_Paths.Array.size
@@ -3481,9 +3432,6 @@ PrefabInstance:
       value: -0.31202078
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
 --- !u!60 &8050078666902945746 stripped
 PolygonCollider2D:

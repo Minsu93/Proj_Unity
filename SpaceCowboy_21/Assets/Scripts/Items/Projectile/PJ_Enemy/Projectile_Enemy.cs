@@ -6,8 +6,12 @@ using UnityEngine;
 
 public class Projectile_Enemy : Projectile
 {
-    public bool hitByProjectileOn = false; 
+    public bool hitByProjectileOn = false;
+    public bool isOrbital = false;
+
     protected Health health;
+    protected ProjMov_Orbital orbitMov;
+
 
     protected override void Awake()
     {
@@ -17,6 +21,8 @@ public class Projectile_Enemy : Projectile
         {
             health = GetComponent<Health>();
         }
+
+        if(isOrbital) orbitMov = GetComponent<ProjMov_Orbital>();
     }
 
     public override void init(float damage, float speed, float range, float lifeTime)
@@ -42,10 +48,43 @@ public class Projectile_Enemy : Projectile
         InitProjectile();
 
         projectileMovement.StartMovement(speed);
+        if (health != null) health.ResetHealth();
+    }
+
+    public override void init(float damage, float speed, float range, float lifeTime, Planet planet, bool isRight)
+    {
+        this.damage = damage;
+        this.speed = speed;
+        this.range = range;
+        this.lifeTime = lifeTime;
+        startPos = transform.position;
+
+        activate = true;
+        coll.enabled = true;
+
+        ViewObj.SetActive(true);
+
+        if (trail != null)
+        {
+            trail.enabled = true;
+            trail.Clear();
+        }
+
+        //초기화 이벤트   >>view나 Gravity모두에게 전달
+        InitProjectile();
+
+        if (isOrbital)
+        {
+            orbitMov.centerPlanet = planet;
+            orbitMov.isRight = isRight;
+        }
+
+        projectileMovement.StartMovement(speed);
+
 
         //Projectile 체력 초기화
         if (health != null)
-        {   
+        {
             health.ResetHealth();
         }
     }
@@ -77,7 +116,7 @@ public class Projectile_Enemy : Projectile
             if(collision.TryGetComponent(out PlayerBehavior behavior))
             {
                 //플레이어가 죽으면 통과
-                if (behavior.state == PlayerState.Die)
+                if (!behavior.activate)
                     return;
 
                 //데미지 전달

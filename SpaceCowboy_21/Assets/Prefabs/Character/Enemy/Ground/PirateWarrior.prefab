@@ -42,25 +42,6 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -362,25 +343,6 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -404,12 +366,6 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -428,10 +384,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
-  activate: 1
   nearestPoint: {x: 0, y: 0}
   nearestCollider: {fileID: 0}
-  maxGravDist: 0
+  activate: 1
 --- !u!114 &-4536517421502048709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,16 +399,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5e53059e5146942a0f674eba12311a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyState: 1
+  enemyState: 0
   activate: 1
+  doTotalRangeCheck: 0
+  doAttackRangeCheck: 0
+  doVisionCheck: 0
+  doPlanetCheck: 0
   timeBetweenChecks: 0.5
   checkRange: 16
   attackRange: 3
-  minRange: 2
-  inChaseRange: 0
+  hitEffect: {fileID: 0}
+  deadEffect: {fileID: 0}
+  inDetectRange: 0
   inAttackRange: 0
-  playerIsVisible: 0
-  playerIsInOtherPlanet: 0
+  isVisible: 0
+  inOtherPlanet: 0
+  playerIsRight: 0
 --- !u!114 &9060648827312696956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,15 +427,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8437bed6e2e9bd4eb5f2849f3442a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activate: 0
   moveSpeed: 5
   enemyHeight: 1
   turnSpeedOnLand: 100
   knockBackSpeed: 4
   knockBackTime: 0.1
   preAttackDelay: 0.1
-  AttackDelay: 0.1
   afterAttackDelay: 1
   attackCoolTime: 3
+  predictionAccuracy: 0
   projectileStructs: []
   hitCollObject: {fileID: 3801981428217401286}
   iconUI: {fileID: 7679429027935871109}
@@ -491,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 28
+  maxHealth: 25
   InvincibleTime: 0
 --- !u!114 &7641589588371047453
 MonoBehaviour:

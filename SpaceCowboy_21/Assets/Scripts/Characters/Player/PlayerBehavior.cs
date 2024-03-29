@@ -3,76 +3,98 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.WSA;
 
 
 namespace SpaceCowboy
 {
     public class PlayerBehavior : MonoBehaviour
     {
-        [Header("Jump Property")]
+        [Header("State")]
+        public PlayerState playerState = PlayerState.Idle;
+
+        [Header("Jump")]
         public float jumpForce = 10f;
-        public float boosterForce = 2f;
-        public float boostTime = 1.0f;
-        public float moveForce = 1f;    //PreMoveDir이 점프의 방향을 변화시킨다.
-        public float onAirVelocityRotateSpeed = 1f; //공중에 오래 있는 캐릭터의 진행 방향을 지면으로 회전시킬때의 속도 
+        public float superJumpForce = 18f;
+        float lastJumpTime;     
         Vector2 pastPosition = Vector2.zero;
-        float lastJumpTime;     //점프 후 잠시동안 onAir 감지 정지.
-        float bTimer;
-        float jumpF;
         Vector2 jumpVector; //이전 점프 벡터
 
-        [Space]
-        [Header("Charge Jump Property")] 
-        public float jumpChargeTimeSpent = 3f;  //완충까지 걸리는 시간 
-        public float timeToStartChargeJump = 1f;    //차지점프 시작하기 까지 시간 
-        public float maxChargePower = 3f;     //차징으로 늘어나는 점프 파워
-        float chargePressTimer;  //누르고 있는 시간 
-        public float chargedPower { get; set; } //충전된 힘
-        float chargedTimer; //충전에 걸리는 시간
+        //부스터
+        [Header("Booster")]
+        public float boosterForce = 2f;
+        public float boostTime = 1.0f;
+        float bTimer;
+
+        [Header("Charge Jump")]
+        public float maxChargeTime = 3f;  //완충까지 걸리는 시간 
+        public float chargeStateSpeedMultiplier = 0.3f;     //충전 상태에서 플레이어 움직임 속도 조절
+        //public float minimumChargeTime = 1f;    //차지점프 시작하기 까지 시간 
+        //public float maxChargePower = 3f;     //차징으로 늘어나는 점프 파워
+        //float chargePressTimer;  //누르고 있는 시간 
+        //public float chargedPower { get; set; } //충전된 힘
+        public float curChargedTime { get; set; } //충전을 누르고 있었던 시간
         bool startCharge;   //챠징을 시작한다. 
         bool jumpReady;
+        bool sJumpReady;    //슈퍼점프 레디
 
-        public float chargeStateSpeedMultiplier = 0.3f;     //충전 상태에서 플레이어 움직임 속도 조절
 
+        [Header("Movement")]
+        public float moveSpeed;
+        public float acceleration = 0.25f;      //속도가 바뀔 때 얼마나 빠르게 변할지.
+        public float inputResetTime = 0.5f; //인풋이 초기화될 타이머
+
+        float currSpeed;    //현재 이동 속도
+        float targetSpeed;  //이동 목표가 될 스피드
+        float speedMultiplier = 1.0f;
+        int currentEdgePointIndex = 0; // 현재 따라가고 있는 엣지 콜라이더의 점 인덱스
+        float inputResetTimer; //입력하지 않으면 input값을 초기화하는 용도의 타이머
+
+        Vector2[] planetPoints;     //받아온 현재 행성의 points 
+        Vector2 preInputAxis = Vector2.zero;  //이전 프레임에 조작했던 인풋 값
+        Vector2 moveDir = Vector2.zero;     //이동중인 방향
+        Vector2 inputAxis = Vector2.zero;  //움직임 인풋 값
+
+        [Header("Sliding")]
+        public float slideSpeed;
+        bool slideON;
+
+        [Header("OnAir")]
+        public float turnSpeedOnLand = 100f;
+        public float onAirTime = 1f;   //공중 표류 시간 타임 리미트.
+        public float onAirVelocityRotateSpeed = 1f; //공중에 오래 있는 캐릭터의 진행 방향을 지면으로 회전시킬때의 속도 
+       
+        [SerializeField] bool OnAir;      //디버그 용으로 인스펙터에서 보이게
+        float airTimer;
+
+        [Header("KnockBack")]
+        public float knockBackForce = 5f;
+        public float stunTime = 1f;
+        float _sTime; 
+
+        //참조 변수
         public Vector3 mousePos { get; set; }
         public float mouseDist { get; set; }
         public Vector2 aimDirection { get; set; }
         public Vector3 gunTipPos { get; set; }
-
-
-        [Header("PlayerProperty")]
-        public PlayerState state = PlayerState.Idle;
-        Vector2 preInputAxis = Vector2.zero;  //이전 프레임에 조작했던 인풋 값
-        Vector2 moveDir = Vector2.zero;     //이동중인 방향
-        public float moveSpeed;
-        public float acceleration = 0.25f;      //속도가 바뀔 때 얼마나 빠르게 변할지.
-        float currSpeed;    //현재 이동 속도
-        float targetSpeed;  //이동 목표가 될 스피드
-        public float inputResetTime = 0.5f; //인풋이 초기화될 타이머
-        
-        
-        [Space]
-
-        public float turnSpeedOnLand = 100f;
-        Vector2 inputAxis = Vector2.zero;  //움직임 인풋 값
-        [SerializeField] bool OnAir;      //디버그 용으로 인스펙터에서 보이게
-        public float onAirTime = 1f;   //공중 표류 시간 타임 리미트.
-        float airTimer;
-
         public bool onSpace { get; private set; }   //우주에 있습니까?
-        public bool faceRight;
+        public bool faceRight { get; set; }         //오른쪽을 보고 있습니까?
+        public bool aimRight { get; set; }          //오른쪽으로 겨냥하고 있습니까? 
         bool planetChanged;        // 행성이 바뀌었습니까? 행성이 바뀌면 착지할 때 faceRight를 초기화 예약한다.
+        public Vector2 playerVelocity { get; private set; }  //적 예측샷을 위한 플레이어 속도값 
+        public bool activate { get; private set;}
 
-  
+        [Header("VFX")]
+        //이펙트들
+        public ParticleSystem shieldhitEffect;  //실드가 맞았을 때 출력할 이펙트
+        public ParticleSystem slidingEffect;    //슬라이딩할때 출력할 이펙트
+        public TrailRenderer sJumpTrail;    //슈퍼점프 트레일
 
-        [Header("EdgeFollow")]
-        int currentEdgePointIndex = 0; // 현재 따라가고 있는 엣지 콜라이더의 점 인덱스
+        [Header("WeaponDatas")]
+        public WeaponData[] weapons;
 
         //애니메이션 이벤트
         public event System.Action PlayerIdleEvent;
-        public event System.Action PlayerRunForwardEvent;
-        public event System.Action PlayerRunBackwardEvent;
-
         public event System.Action ShootEvent;
         public event System.Action PlayerHitEvent;
         public event System.Action PlayerDieEvent;
@@ -80,16 +102,16 @@ namespace SpaceCowboy
         public event System.Action PlayerJumpEvent;
 
 
+        [Header("Scripts")]
+        //본인 스크립트들
         PlayerWeapon playerWeapon;
         public  PlayerView playerView;
         public JumpTrajectoryViewer jumpViewer;
         CharacterGravity characterGravity;
         Rigidbody2D rb;
         PlayerHealth health;
+        //StarMagicGun stargun;
 
-        float inputResetTimer; //입력하지 않으면 input값을 초기화하는 용도의 타이머
-        //For Debug
-        public Vector2 playerVelocity;
 
         private void Awake()
         {
@@ -97,6 +119,7 @@ namespace SpaceCowboy
             characterGravity = GetComponent<CharacterGravity>();
             playerWeapon = GetComponent<PlayerWeapon>();
             health = GetComponent<PlayerHealth>();
+            //stargun = GetComponent<StarMagicGun>();
 
             GameManager.Instance.player = this.transform;
         }
@@ -104,17 +127,24 @@ namespace SpaceCowboy
         private void Start()
         {
             health.ResetHealth();
-            TryChangeWeapon(playerWeapon.baseWeapon);
-
-            chargePressTimer = timeToStartChargeJump;
+            TryChangeWeapon(0);
+            
+            activate = true;
         }
 
 
-        // Update is called once per frame
         void Update()
         {
-            if (state == PlayerState.Die)
-                return;
+            if(_sTime > 0 && playerState != PlayerState.Die)
+            {
+                _sTime -= Time.deltaTime;
+                if(_sTime <= 0)
+                {
+                    activate = true;
+                }
+            }
+
+            if (!activate) return;
 
             //입력 리셋 타이머
             //if(inputResetTimer > 0)
@@ -125,20 +155,32 @@ namespace SpaceCowboy
             //        InputReset();
             //    }
             //}
-            
+
             //차지가 시작될 때 
             if (startCharge)
             {
-                //차지 점프 타이머
-                if (chargePressTimer < timeToStartChargeJump)
+                if (curChargedTime < maxChargeTime)
                 {
-                    chargePressTimer += Time.deltaTime;
+                    curChargedTime += Time.deltaTime;
+                    if(curChargedTime > maxChargeTime)
+                    {
+                        curChargedTime = maxChargeTime;
+                        sJumpReady = true;
+                    }
                 }
-                else if(chargedTimer < jumpChargeTimeSpent)
-                {
-                    chargedTimer += Time.deltaTime;
-                    chargedPower = maxChargePower / jumpChargeTimeSpent * chargedTimer;
-                }
+
+                //chargedTimer += Time.deltaTime;
+                //chargePressTimer += Time.deltaTime;
+
+                ////차지 점프 타이머
+                //if (chargePressTimer < minimumChargeTime)
+                //{
+                //    chargePressTimer = minimumChargeTime;
+                //}
+                //else if(chargedTimer < maxChargeTime)
+                //{
+                //    chargedPower = maxChargePower / maxChargeTime * chargedTimer;
+                //}
             }
 
             //공중에 있는지 체크
@@ -153,10 +195,13 @@ namespace SpaceCowboy
                 }
             }
 
-
             //JumpViewer 업데이트
             if (jumpViewer.Activate)
-                jumpF = UpdateJumpForce();
+                UpdateJumpForce();
+
+
+            //캐릭터 방향 업데이트 
+            aimRight = Vector2.SignedAngle(transform.up, aimDirection) < 0 ? true : false;
 
         }
 
@@ -164,18 +209,13 @@ namespace SpaceCowboy
 
         private void FixedUpdate()
         {
+            if (!activate) return;
+
             //적AI에서 읽어오는 값
             playerVelocity = moveDir * currSpeed;
 
-            if (state == PlayerState.Die)
-                return;
-
-
             //캐릭터 회전
             RotateCharacterToGround();
-
-
-            if (state == PlayerState.Stun) return;
 
             if(bTimer > 0)
             {
@@ -228,7 +268,7 @@ namespace SpaceCowboy
 
         void CheckOnAir()
         {
-            if (state != PlayerState.Jumping) return;
+            if (playerState != PlayerState.Jumping) return;
             
             //체크 시작할 때 딜레이를 주자. 
             if (Time.time - lastJumpTime < 0.1f)
@@ -246,7 +286,7 @@ namespace SpaceCowboy
                     jumpViewer.Activate = false;
                     
 
-                    state = PlayerState.Idle;
+                    playerState = PlayerState.Idle;
                     
                     
                     if (planetChanged)
@@ -257,6 +297,14 @@ namespace SpaceCowboy
                     }
 
                     GetClosestPoint();
+
+                    if (sJumpReady)
+                    {
+                        sJumpReady = false;
+                        sJumpTrail.emitting = false;
+                    }
+
+                    if (slideON) TrySlide();
                 }
                 else
                 {
@@ -298,54 +346,47 @@ namespace SpaceCowboy
 
         public void PrepareJump()
         {
-            if (state == PlayerState.Die) return;
-            if (state == PlayerState.Stun) return;
-            if (state == PlayerState.Jumping) return;
+            if (!activate) return;
+            if (playerState == PlayerState.Jumping) return;
+            if (OnAir) { return; }
+
+            //슬라이딩 중일 때는 슬라이딩 취소
+            if(playerState == PlayerState.Sliding) { StopSlide(); }
 
             //점프 표시 생성, 공중 점프 가능하게?
-            if (!OnAir)
-            {
-                UpdateJumpForce();  //이전 값 초기화
-                jumpViewer.Activate = true;
+            UpdateJumpForce();  //이전 값 초기화
+            jumpViewer.Activate = true;
 
-                startCharge = true;
-                chargePressTimer = 0f;
-                chargedTimer = 0f;
+            startCharge = true;
 
-                //점프 준비 애니메이션 실행 
-                TryJumpStartEvent();
+            //점프 준비 애니메이션 실행 
+            TryJumpStartEvent();
 
-                //상태 변경
-                state = PlayerState.JumpReady;
-
-                //점프 변수 
-                jumpReady = true;
-            }
+            playerState = PlayerState.JumpReady;
+            jumpReady = true;
+            speedMultiplier = chargeStateSpeedMultiplier;
         }
 
         public void TryJump()
         {
-            if (state == PlayerState.Die) return;
-            if (state == PlayerState.Stun) return;
-            if (state == PlayerState.Jumping) return;
-            if (!jumpReady) return; 
+            if (!activate) return;
+            if (playerState == PlayerState.Jumping) return;
+            if (!jumpReady) return;
 
-            state = PlayerState.Jumping;
+            playerState = PlayerState.Jumping;
 
             lastJumpTime = Time.time;
 
 
-            //Vector2 upVector = (Vector2)transform.position - characterGravity.nearestPoint;
-            //upVector = upVector.normalized;
-            ////Vector2 forwardVector = moveDir.normalized;     //moveDir(현재 이동 방향) 기준으로 앞쪽으로 점프시키므로, moveDir 수치를 천천히 줄여서 점프 방향 수정하는 것도 만들 수 있다. 
-            //Vector2 forwardVector = faceRight ? transform.right : transform.right * -1;
-            //Vector2 jumpDir = upVector + (forwardVector * moveForce * currSpeed);
-            //jumpDir = jumpDir.normalized;
-            //preJumpVec = jumpDir;
-            //Vector2 jumpVector = jumpDir * jumpForce;
-
             rb.velocity = Vector2.zero;
-            rb.AddForce(jumpVector * (jumpF + chargedPower), ForceMode2D.Impulse);
+            if (sJumpReady)
+            {
+                TrySuperJump();
+            }
+            else
+            {
+                rb.AddForce(jumpVector * jumpForce, ForceMode2D.Impulse);
+            }
 
             //부스터 기능
             bTimer = boostTime;
@@ -357,8 +398,51 @@ namespace SpaceCowboy
 
             //충전 점프 관련 변수 초기화
             startCharge = false;
-            chargedPower = 0f;
+            //chargedPower = 0f;
             jumpReady = false;
+            //sJumpReady = false;
+            curChargedTime = 0f;
+
+
+            //점프 준비 관련 변수 초기화
+            speedMultiplier = 1.0f;
+
+            //점프 애니메이션 출력
+            TryJumpEvent();
+
+            //점프 사운드 출력
+            //AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
+        }
+
+        public void TrySpeedJump()
+        {
+            if (!activate) return;
+            if (playerState == PlayerState.Jumping) return;
+            if (OnAir) { return; }
+
+            //점프 표시 생성, 공중 점프 가능하게?
+            UpdateJumpForce();  //이전 값 초기화
+
+            rb.velocity = Vector2.zero;
+
+            //슬라이딩 중일 때는 슬라이딩 취소
+            if (playerState == PlayerState.Sliding)
+            {
+                StopSlide();
+                sJumpReady = true;
+                TrySuperJump();
+            }
+            else
+            {
+                rb.AddForce(jumpVector * jumpForce, ForceMode2D.Impulse);
+            }
+
+            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
+            OnAir = true;
+            //jumpViewer.Activate = false;
+            airTimer = 0;
+            lastJumpTime = Time.time;
+            playerState = PlayerState.Jumping;
 
             //점프 애니메이션 출력
             TryJumpEvent();
@@ -392,15 +476,44 @@ namespace SpaceCowboy
                 jumpVector = aimDirection;
             }
 
-            jumpViewer.trajectoryLength = force + chargedPower;
+            jumpViewer.trajectoryLength = jumpForce;
+            //jumpViewer.trajectoryLength = force + chargedPower;
             jumpViewer.trajectoryVector = jumpVector;
 
             return force;
         }
 
+        void TrySuperJump()
+        {
+            rb.AddForce(jumpVector * superJumpForce, ForceMode2D.Impulse);
+            sJumpTrail.emitting = true;
+        }
+
         void SelfBoost()
         {
             rb.AddForce(jumpVector * boosterForce, ForceMode2D.Force);
+        }
+
+        public void LauchPlayer(Vector2 Vec, float force)
+        {
+            if (playerState == PlayerState.Sliding) { StopSlide(); }
+
+            playerState = PlayerState.Jumping;
+
+            rb.velocity = Vector2.zero;
+            rb.AddForce(Vec * force, ForceMode2D.Impulse);
+
+            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
+            OnAir = true;
+            airTimer = 0;
+            lastJumpTime = Time.time;
+
+
+            //점프 애니메이션 출력
+            TryJumpEvent();
+
+            //점프 사운드 출력
+            //AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         }
 
         #endregion
@@ -447,7 +560,7 @@ namespace SpaceCowboy
         }
         IEnumerator EmergencyHop()
         {
-            state = PlayerState.Jumping;
+            playerState = PlayerState.Jumping;
 
             lastJumpTime = Time.time;
             OnAir = true;
@@ -488,8 +601,50 @@ namespace SpaceCowboy
         }
         #endregion
 
-        #region Movement
+        #region Sliding
 
+        public void ToggleSlide()
+        {
+            if (!slideON) TrySlide();
+            else TryStopSlide();
+        }
+        public void TrySlide()
+        {
+            slideON = true;
+
+            if (!activate) return;
+            if (OnAir) return;
+
+            playerState = PlayerState.Sliding;
+
+            targetSpeed = slideSpeed;
+            
+            slidingEffect.Play();
+            slidingEffect.transform.localScale = new Vector3(faceRight? 1 : -1 , 1, 1);
+
+            MoveOnLand();
+        }
+
+        public void TryStopSlide()
+        {
+            slideON = false;
+            StopSlide();
+        }
+
+        public void StopSlide()
+        {
+            if(playerState != PlayerState.Sliding) { return; }
+
+            //state = PlayerState.Idle;
+            playerState = PlayerState.Running;
+            targetSpeed = 0;
+            
+            slidingEffect.Stop();
+        }
+
+        #endregion
+
+        #region Movement
 
         //void InputReset()
         //{
@@ -499,9 +654,9 @@ namespace SpaceCowboy
 
         public void TryMove(Vector2 inputAxisRaw)
         {
-            if (state == PlayerState.Die) return;
-            //플레이어가 넉백중일때는 이동 조작이 불가능. 
-            if (state == PlayerState.Stun) return;
+            if (!activate) return;
+            if (playerState == PlayerState.Sliding) return;
+            if (playerState == PlayerState.Jumping) return;
 
             this.inputAxis = inputAxisRaw;
 
@@ -509,6 +664,19 @@ namespace SpaceCowboy
 
             targetSpeed = moveSpeed;
 
+            //상태를 달리기로 변경(Idle인 경우에만)
+            if (playerState == PlayerState.Idle)
+            {
+                //달리기 수정되면서 한번 실행.
+                playerState = PlayerState.Running;
+
+            }
+            //if (state != PlayerState.Running && state != PlayerState.JumpReady)
+            //{
+            //    //달리기 수정되면서 한번 실행.
+            //    state = PlayerState.Running;
+
+            //}
 
             //지상에 있을 동안의 움직임 
             if (!OnAir)
@@ -520,6 +688,8 @@ namespace SpaceCowboy
 
         public void TryStop()
         {
+            if (playerState == PlayerState.Sliding) return;
+
             targetSpeed = 0;
             //inputResetTimer = inputResetTime;
         }
@@ -540,14 +710,8 @@ namespace SpaceCowboy
                 //inputResetTimer = -1f;
             }
 
-            if (state != PlayerState.Running && state != PlayerState.JumpReady)
-            {
-                //달리기 수정되면서 한번 실행.
-                state = PlayerState.Running;
-
-            }
-
         }
+
         /*
         void MoveOnAir()
         {
@@ -575,40 +739,39 @@ namespace SpaceCowboy
         }
         */
 
-
-
-
-
         //이동을 시작할 때 실행
         private void GetClosestPoint()
         {
+            currentEdgePointIndex = characterGravity.nearestPlanet.GetClosestIndex(transform.position);
 
-            int closestPointIndex = 0;
-            float closestDistance = float.MaxValue;
+            //int closestPointIndex = 0;
+            //float closestDistance = float.MaxValue;
 
-            // 엣지 콜라이더의 모든 포인트들을 순회하며 가장 가까운 포인트의 인덱스와 거리를 구함
-            for (int i = 0; i < characterGravity.nearestCollider.points.Length; i++)
-            {
-                Vector2 pointPosition = characterGravity.nearestCollider.transform.TransformPoint(characterGravity.nearestCollider.points[i]);
-                bool right = Vector2.SignedAngle(transform.up, pointPosition - rb.position) < 0 ? true : false;
-                if (faceRight != right) continue; //캐릭터 진행방향과 다르면 제외한다
-                float distance = Vector2.Distance(rb.position, pointPosition);
+            //// 엣지 콜라이더의 모든 포인트들을 순회하며 가장 가까운 포인트의 인덱스와 거리를 구함
+            //for (int i = 0; i < characterGravity.nearestCollider.points.Length; i++)
+            //{
+            //    Vector2 pointPosition = planetPoints[i];
+            //    bool right = Vector2.SignedAngle(transform.up, pointPosition - rb.position) < 0 ? true : false;
+            //    if (faceRight != right) continue; //캐릭터 진행방향과 다르면 제외한다
+            //    float distance = Vector2.Distance(rb.position, pointPosition);
 
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestPointIndex = i;
-                }
-            }
-            currentEdgePointIndex = closestPointIndex;
+            //    if (distance < closestDistance)
+            //    {
+            //        closestDistance = distance;
+            //        closestPointIndex = i;
+            //    }
+            //}
+            //Debug.Log(closestPointIndex);
+            //currentEdgePointIndex = closestPointIndex;
+
         }
-
 
         public void ChangePlanet()  
-        {   //행성이 바뀌면 right 방향을 재계산. CharacterGravity에서 신호를 받는다.
+        {   //행성이 바뀌면 이벤트 발생. CharacterGravity에서 신호를 받는다.
             planetChanged = true;
-        }
 
+            planetPoints = characterGravity.nearestPlanet.GetPoints(0.51f);
+        }
 
         void SpeedControl()
         {
@@ -623,7 +786,7 @@ namespace SpaceCowboy
             }
 
             //움직이는 중에 속도가 0으로 가까워질 때
-            if(currSpeed < 0.1f && state == PlayerState.Running)
+            if(currSpeed < 0.1f && playerState == PlayerState.Running)
             {
                 currSpeed = 0;
 
@@ -631,7 +794,7 @@ namespace SpaceCowboy
                 //preMoveDir = Vector2.zero;
                 moveDir = Vector2.zero;
 
-                state = PlayerState.Idle;
+                playerState = PlayerState.Idle;
 
                 preInputAxis = Vector2.zero;
 
@@ -644,35 +807,22 @@ namespace SpaceCowboy
             if (currSpeed < acceleration)
                 return;
 
-            if (state == PlayerState.Running || state == PlayerState.Stun || state == PlayerState.JumpReady)
+            if (playerState == PlayerState.Running || playerState == PlayerState.JumpReady || playerState == PlayerState.Sliding)
             {
                 //움직임
-                int faceInt;
+                int faceInt = faceRight ? 1 : -1;
                 Vector2 targetPointPos;
-                Vector2 pastPointPos;
-                int pastPoint;
-                Vector2 direction;
                 Vector2 moveVector;
                 float moveDist;
                 PolygonCollider2D coll = characterGravity.nearestCollider;
-
+                
                 //목표로 할 포인트를 구한다.
                 do
                 {
-                    faceInt = faceRight ? 1 : -1;
-                    targetPointPos = coll.transform.TransformPoint(coll.points[currentEdgePointIndex % (coll.points.Length - 1)]);   //콜라이더의 마지막  point 는 곧 0과 같다. 그래서 제외.
+                    targetPointPos = planetPoints[currentEdgePointIndex];
 
-                    pastPoint = (currentEdgePointIndex - faceInt + (coll.points.Length - 1)) % (coll.points.Length - 1);
-                    pastPointPos = coll.transform.TransformPoint(coll.points[pastPoint]);
-                    direction = (targetPointPos - pastPointPos) * faceInt;
-                    Vector2 normal = new Vector2(-direction.y, direction.x).normalized;
-
-                    moveVector = targetPointPos + (normal * 0.51f);         //플레이어의 높이다. 타겟 포인트에서 노말방향 * 플레이어 높이를 목표로 움직임.
-                    moveVector -= rb.position;
+                    moveVector = targetPointPos - rb.position;
                     moveDist = moveVector.magnitude;
-
-                    Debug.DrawRay(rb.position, moveVector, Color.cyan, 0.5f);
-
 
                     if (moveDist < currSpeed * Time.fixedDeltaTime)
                     {
@@ -683,13 +833,8 @@ namespace SpaceCowboy
 
                 moveDir = moveVector.normalized;
 
-                //플레이어가 JumpReady인 상태일 때는 0.3배의 속도로 움직인다. 나머지 상태에서는 1의 상태로 움직인다. 
-                float speedMultiplier = state == PlayerState.JumpReady ? chargeStateSpeedMultiplier : 1.0f;
-
-                float speed = currSpeed;
-
                 // 오브젝트를 이동 방향으로 이동
-                rb.MovePosition(rb.position + moveDir * speed * speedMultiplier * Time.fixedDeltaTime);
+                rb.MovePosition(rb.position + moveDir * currSpeed * speedMultiplier * Time.fixedDeltaTime);
 
             }
         }
@@ -710,33 +855,27 @@ namespace SpaceCowboy
         #endregion
 
         #region KnockBack
-        public void PlayerKnockBack(Vector2 hitPoint, float knockBackTime, float knockBackSpeed)
+        void PlayerKnockBack(Vector2 hitPoint, float force)
         {
-            if (state == PlayerState.Die) return;
-            if (state == PlayerState.Stun)
-                return;
+            //스턴 시간
+            if (activate) activate = false;
+            _sTime = stunTime;
 
-            state = PlayerState.Stun;
-            //연발 총을 쏘는 도중이라면 루틴을 중단한다. 
-            StopShoot();
-
-            //플레이어를 뒤로 넉백시킨다. 지상/공중일 때 따로..
             if (OnAir)
             {
-                Debug.Log("Knockback On Air");
                 Vector2 dir = (Vector2)transform.position - hitPoint;
                 dir = dir.normalized;
 
-                rb.AddForce(dir * knockBackSpeed * 2f, ForceMode2D.Impulse);
-                StartCoroutine(KnockBackOnAirRoutine(knockBackTime));
+                rb.AddForce(dir * force, ForceMode2D.Impulse);
             }
             else
             {
-                Debug.Log("Knockback On Land");
-                //움직임, 슈팅 등의 루틴들을 정지한다. 
-                //if (characterGravity == null) return;
+                //hit포인트가 좌/우 어디에 있는지 검사 후 반대 방향으로 튕겨나간다. 
+                int hitIndex = Vector2.SignedAngle(transform.up, hitPoint - (Vector2)transform.position) > 0 ? 1: -1;
 
-                StartCoroutine(KnockBackRoutine(hitPoint, knockBackTime, knockBackSpeed));
+                //Vector2 dir = (((Vector2)transform.position - hitPoint).normalized + (Vector2)transform.up ) * 0.71f;
+                Vector2 dir = (transform.right * hitIndex + transform.up) * 0.71f;
+                LauchPlayer(dir, force);
             }
 
 
@@ -777,7 +916,7 @@ namespace SpaceCowboy
             playerView.flipOn = true;
 
             //playerState 를 회복한다. 움직이는 상태에서 자연스럽게 속도가 줄어들기 위해서 running으로. 
-            state = PlayerState.Running;
+            playerState = PlayerState.Running;
 
             //조작을 초기화한다.
             inputAxis = Vector2.zero;
@@ -792,12 +931,12 @@ namespace SpaceCowboy
 
             if (OnAir)
             {
-                state = PlayerState.Jumping;
+                playerState = PlayerState.Jumping;
 
             }
             else
             {
-                state = PlayerState.Idle;
+                playerState = PlayerState.Idle;
 
             }
         }
@@ -807,19 +946,49 @@ namespace SpaceCowboy
         #region Damage and Die
         public void DamageEvent(float dmg)
         {
-            if (state == PlayerState.Die)
-                return;
+            if (!activate) return;
 
-           
 
             //데미지를 적용
             if (health.AnyDamage(dmg))
             {
-                //맞았으면 내부 실행
-                if (PlayerHitEvent != null)
+                if (health.currShield > 0) shieldhitEffect.Play();
+                else
                 {
-                    PlayerHitEvent();
+                    if (PlayerHitEvent != null) PlayerHitEvent();
                 }
+                //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
+            }
+
+            //죽었나요?
+            if (health.IsDead())
+            {
+                DeadEvent();
+                return;
+            }
+        }
+
+        public void DamageEvent(float dmg, Vector2 hitPoint)
+        {
+
+            //데미지를 적용
+            if (health.AnyDamage(dmg))
+            {
+                PlayerKnockBack(hitPoint, knockBackForce);
+                if (health.currShield > 0)
+                {
+                    //실드가 닳은 경우
+                    shieldhitEffect.Play();
+                }
+                else
+                {
+                    //체력이 닳은 경우
+                    if (PlayerHitEvent != null)
+                    {
+                        PlayerHitEvent();
+                    }
+                }
+
 
                 //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
             }
@@ -834,11 +1003,10 @@ namespace SpaceCowboy
 
         }
 
-
         public void DeadEvent()
         {
             //true 인 경우 체력이 0 이하로 떨어졌다는 뜻.
-            state = PlayerState.Die;
+            playerState = PlayerState.Die;
 
             //죽는 모션 실행
             if (PlayerDieEvent != null)
@@ -854,6 +1022,10 @@ namespace SpaceCowboy
 
             //충돌 판정을 멈춘다
             //coll.enabled = false;
+            StopShoot();
+            activate = false;
+
+            health.healthState = PlayerHealth.HealthState.Dead;
 
             //전역 이벤트 발동. 적들에게 캐릭터가 죽었다고 전달. 
             GameManager.Instance.PlayerIsDead();
@@ -879,12 +1051,24 @@ namespace SpaceCowboy
             }
         }
 
+        public void TryChangeWeapon(int index)
+        {
+            WeaponData data = weapons[index];
+            //PlayerView와 PlayerWeapon 무기 변경
+            playerWeapon.ChangeWeapon(data);
+            playerView.SetSkin(data.GunType);
+        }
         public void TryChangeWeapon(WeaponData data)
         {
             //PlayerView와 PlayerWeapon 무기 변경
             playerWeapon.ChangeWeapon(data);
             playerView.SetSkin(data.GunType);
         }
+
+        //public void TryMagicShoot()
+        //{
+        //    stargun.MagicShoot();
+        //}
         #endregion
 
         #region Events
@@ -892,16 +1076,6 @@ namespace SpaceCowboy
         public void TryIdleEvent()
         {
             if (PlayerIdleEvent != null) PlayerIdleEvent();
-        }
-
-        public void TryRunForwardEvent()
-        {
-            if(PlayerRunForwardEvent != null) PlayerRunForwardEvent();
-        }
-
-        public void TryRunBackwardEvent()
-        {
-            if(PlayerRunBackwardEvent != null) PlayerRunBackwardEvent();
         }
 
         public void TryJumpEvent()
@@ -932,11 +1106,11 @@ namespace SpaceCowboy
     public enum PlayerState
     {
         Idle,
-        Stun,
         Running,
         JumpReady,
         Jumping, 
         Die,
+        Sliding
         //ChangeState     //state가 바뀔 필요가 있을때마다 실행시키는것? 
     }
 }

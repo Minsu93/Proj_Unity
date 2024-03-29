@@ -10,18 +10,6 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     public Transform player;
     PlayerInput playerInput;
-    //Rigidbody2D _playerRb;
-    //public Rigidbody2D playerRb
-    //{
-    //    get 
-    //    { 
-    //        if(_playerRb == null)
-    //        {
-    //            _playerRb = player.GetComponent<Rigidbody2D>(); 
-    //        }
-    //        return _playerRb; 
-    //    }
-    //}
     PlayerBehavior _playerBehavior;
     public PlayerBehavior PlayerBehavior
     {
@@ -34,6 +22,7 @@ public class GameManager : MonoBehaviour
             return _playerBehavior;
         }
     }
+    public Planet playerNearestPlanet;
 
     public InteractableOBJ curObj;
 

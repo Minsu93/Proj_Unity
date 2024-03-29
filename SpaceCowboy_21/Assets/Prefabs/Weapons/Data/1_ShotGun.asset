@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 1_ShotGun
+  m_EditorClassIdentifier: 
+  gunType:
+    skinName: guns/rifle
+    boneName: gun_2h
+    slotName: guntip_2h
+    attachmentName: guntip_2h
+  chargeGauge: 0
+  burstNumber: 1
+  burstInterval: 0
+  numberOfProjectiles: 5
+  shootInterval: 0.7
+  projectileSpread: 5
+  randomSpreadAngle: 0
+  shootSFX: {fileID: 8300000, guid: 2e1df651eb5f4134282aa86a0300318f, type: 3}
+  projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
+  damage: 20
+  maxAmmo: 99
+  speed: 45
+  range: 0
+  lifeTime: 0.1
+  reflectionCount: 0

@@ -16,12 +16,12 @@ public class Health : MonoBehaviour
     //데미지 공식이 복잡해질 수 있다. 
     //방어력 관련, 속성 관련
 
-    public void ResetHealth()
+    public virtual void ResetHealth()
     {
         currHealth = maxHealth;
     }
 
-    public bool AnyDamage(float dmg)
+    public virtual bool AnyDamage(float dmg)
     {   //맞아서 데미지를 입었는지 검사
         bool isHit = false;
 

@@ -23,7 +23,7 @@ namespace SpaceCowboy
 
         [Space]
 
-        public AnimationReferenceAsset idle, jumpStart, onJump, runForward, runBackward, shoot, die;
+        public AnimationReferenceAsset idle, jumpStart, onJump, runForward, runBackward, shoot, slide, die;
 
         PlayerState previousState;
         int previousFaceRight;
@@ -75,59 +75,54 @@ namespace SpaceCowboy
         void Update()
         {
             if (playerBehavior == null) return;
+            if (!playerBehavior.activate) return;
             if (skeletonAnimation == null) return;
 
 
-            PlayerState state = playerBehavior.state;
+            PlayerState state = playerBehavior.playerState;
 
-            if (state == PlayerState.Die)
-                return;
-
-            //state가 Idle이 될 때 
-            if(state == PlayerState.Idle && previousState != PlayerState.Idle)
-            {
-                skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
-                previousState = PlayerState.Idle;
-                
-                //러닝 변수 초기화
-                preAimInt = -1;
-            }
 
             //state가 Running 이 될 때 
             if(state == PlayerState.Running)
             {
-                bool aimRight;
                 int aimInt;
-                Vector2 upVec = transform.parent.up;
-                Vector2 aimVec = playerBehavior.aimDirection;
 
-                aimRight = Vector2.SignedAngle(aimVec, upVec) < 0 ? true : false;
-
-                if(playerBehavior.faceRight == aimRight)
-                {
-                    aimInt = 1;
-                }
-                else
-                {
-                    aimInt = 0;
-                }
-
+                if (playerBehavior.faceRight == playerBehavior.aimRight) aimInt = 1;
+                else aimInt = -1;
 
                 if(aimInt != preAimInt)
                 {
-                    Spine.Animation animation;
-                    animation = aimInt == 0 ? runForward : runBackward;
-
-                    skeletonAnimation.AnimationState.SetAnimation(0, animation, true);
+                    skeletonAnimation.AnimationState.SetAnimation(0, aimInt == -1 ? runForward : runBackward, true);
 
                     preAimInt = aimInt;
                 }
+
             }
 
-            previousState = state;
+            if(state != previousState)
+            {
+                switch (state)
+                {
+                    case PlayerState.Idle:
+                        skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
+
+                        //러닝 변수 초기화
+                        preAimInt = 0;
+
+                        break;
+
+                    case PlayerState.Sliding:
+                        skeletonAnimation.AnimationState.SetAnimation(0, slide, true);
+
+                        break;
+                }
+
+                previousState = state;
+            }
 
             //캐릭터 반전. 실제로 돌아가는게 아니라 view의 skeleton만 돌아간다.
-            FlipScaleX();
+            if (state != PlayerState.Sliding)
+                FlipScaleX();
 
             GetGunTipPos();
         }
@@ -144,6 +139,7 @@ namespace SpaceCowboy
             skeletonAnimation.AnimationState.SetAnimation(0, onJump, true);
 
         }
+
 
         public void PreShoot()
         {

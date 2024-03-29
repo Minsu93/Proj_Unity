@@ -3,39 +3,50 @@ using SpaceEnemy;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
 using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
 public class EA_Ground : EnemyAction
 {
+    //점프 
     public float jumpForce = 10f;
-    //공중에 떠 있는 시간 
-    float airTime;
-    float maxAirTime = 1.0f;
-    bool onJump;
-    float lastJumpTime;
-    Vector2[] ppoints; //위치, 회전, 크기가 적용된 points리스트, 행성 바뀔 때만 한번씩 가져오면 된다. 
+    
+    bool startJump; //점프 시작 시 한번만 실행
+    bool onChaseMode;  //점프 준비
+    bool onJumpMode;
 
-    Coroutine chaseRoutine;
-    EnemyView_Shooter enemyview_s;
+    //Move
+    protected int targetIndex;
+    protected int nextIndex;
+    protected int closestIndex;
+    protected int dirIndex;
+
+    float mTimer;
+    float jTimer;
+
+    Vector2 closestTargetPoint;
+    protected Vector2[] ppoints; //위치, 회전, 크기가 적용된 points리스트, 행성 바뀔 때만 한번씩 가져오면 된다. 
+
+    //공중
+    public float maxAirTime = 1.0f;
+    float airTime;
+    protected float lastJumpTime;
+
+    
+    
+    //스크립트
+    protected EnemyView_Shooter enemyview_s;
+
     protected override void Awake()
     {
         base.Awake();
 
-        enemyview_s = GetComponentInChildren<EnemyView_Shooter>();
+        enemyview_s = GetComponentInChildren<EnemyView_Shooter>();  //>> view말고 따로 스크립트 빼야겠다.
     }
 
-    //protected override void OnEnable()
-    //{
-    //    base.OnEnable();
-    //    gravity.PlanetChangedEvent += GetPlanetPoints;
-    //}
-
-    //private void Start()
-    //{
-    //    gravity.PlanetChangedEvent += GetPlanetPoints;
-    //}
 
     protected override void Update()
     {
@@ -47,69 +58,111 @@ public class EA_Ground : EnemyAction
             if (airTime < maxAirTime)
             {
                 airTime += Time.deltaTime;
-
-                if (airTime > maxAirTime) MoveUpdateOnAir();
             }
+            else MoveUpdateOnAir();
         }
 
         RotateCharacterToGround();
 
         if (onAir) return;
 
-        base.Update();
+        EnemyState currState = brain.enemyState;
+        if (currState != preState)
+        {
+            StopAction(preState);
+            DoAction(currState);
+            preState = currState;
+        }
+
+        if (!activate) return;
+
+        if (attackCool)
+        {
+            atTimer += Time.deltaTime;
+            if (atTimer > attackCoolTime)
+            {
+                attackCool = false;
+                atTimer = 0;
+            }
+        }
+
+        //공격 쿨타임 동안에는 행동을 멈춘다. 공격중에 이동하고 싶으면 Update를 수정해라.
+        if (attackCool) return;
+
+        if (onAttack)
+        {
+            OnAttackAction();
+        }
+
+        if (onChase)
+        {
+            OnChaseAction();
+        }
     }
 
-    public override void DoAction (EnemyState state)
+    protected override void StopAction(EnemyState preState)
     {
-        switch (state)
+        switch (preState)
         {
-            case EnemyState.Ambush:
-                AmbushStartEvent();
+            case EnemyState.Sleep:
+                WakeUpEvent();
                 break;
-
-            case EnemyState.Idle:
-                StartIdleView();
-                break;
-
             case EnemyState.Chase:
-                StopAllCoroutines();
-                StartCoroutine(ChaseRepeater());
+                onChase = false;
                 break;
-
-            case EnemyState.ToJump:
-                StopAllCoroutines();
-                StartCoroutine(StartToJump());
-                break;
-
             case EnemyState.Attack:
-                StopAllCoroutines();
-                StartCoroutine(AttackCoroutine());
-                break;
-
-            case EnemyState.Wait:
-                //Wait상태로 넘어갈 때는 하던 모든 행동을 멈추고 가만히 있는다. 
-                StopAllCoroutines();
-                break;
-
-            case EnemyState.Die:
-                StopAllCoroutines();
-                DieView();
-
-                //총알에 맞는 Enemy Collision 해제
-                hitCollObject.SetActive(false);
-                //DelayedDying(2f);
+                onAttack = false;
                 break;
         }
     }
 
-    
+    //매 프레임 업데이트
+    protected override void OnChaseAction()
+    {
+        //0.5초마다 타겟 업데이트
+        if (mTimer > 0)
+        {
+            mTimer -= Time.deltaTime;
+        }
+        else
+        {
+            mTimer = 0.5f;
+            if (brain.OnOtherPlanetCheck())
+            {
+                onChaseMode = false;
+                PrepareJump();
+            }
+            else
+            {
+                onChaseMode = true;
+                PrepareChase();
+            }
+        }
+
+        //매 프레임 실행 
+        if (!onChaseMode)
+        {
+            if (MoveToTarget()) JumpToPlanet();
+        }
+        else
+        {
+            MoveToTarget();
+        }
+
+    }
+
+    protected override void OnAttackAction()
+    {
+        attackCool = true;
+        StartCoroutine(AttackCoroutine());
+    }
+
 
     #region OnAir
 
     void RotateCharacterToGround()
     {
-        if (gravity.nearestPlanet == null)
-            return;
+        if (gravity.nearestPlanet == null) return;
 
         Vector2 upVec = ((Vector2)transform.position - gravity.nearestPoint).normalized;
         RotateToVector(upVec, turnSpeedOnLand);
@@ -122,67 +175,59 @@ public class EA_Ground : EnemyAction
 
         //normal과 transform.upward 사이의 값 차이가 크면 보정을 가해준다. 
         float rotateAngle = Vector2.Angle(transform.up, normal);
-
         turnspeedMultiplier = Mathf.Clamp(Mathf.RoundToInt(rotateAngle * 0.1f), 1, 10);
-
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: vectorToTarget);
 
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnspeedMultiplier * turnSpeed * Time.deltaTime);
     }
 
 
-
+    //플레이어가 공중에 있을 때, 떠 있는 시간이 길어지면 행성 방향으로 점점 가까워진다. 
     void MoveUpdateOnAir()
     {
-        //플레이어가 공중에 있을 때, 떠 있는 시간이 길어지면 행성 방향으로 점점 가까워진다. 
-        if (gravity.nearestPlanet)
-        {
-            Vector2 vec = gravity.nearestPointGravityVector;
-            float vel = rb.velocity.magnitude;
-
-
-            rb.velocity = Vector2.Lerp(rb.velocity, vec * vel, 1f * Time.fixedDeltaTime);
-        }
+        if (gravity.nearestPlanet == null) return;
+        
+        Vector2 vec = gravity.nearestPointGravityVector;
+        float vel = rb.velocity.magnitude;
+        rb.velocity = Vector2.Lerp(rb.velocity, vec * vel, 1f * Time.fixedDeltaTime);
     }
 
     void CheckOnAir()
     {
         if (!onAir) return;
 
-        //체크 시작할 때 딜레이를 주자. 
+        //점프 시작 딜레이
         if (Time.time - lastJumpTime < 0.1f)
             return;
 
-        //캐릭터의 중심에서, 발 밑으로 레이를 쏴서 캐릭터가 공중에 떠 있는지 검사한다.
+        //착지 시
         RaycastHit2D footHit = Physics2D.CircleCast(transform.position, enemyHeight, transform.up * -1, 0.1f, LayerMask.GetMask("Planet"));
         if (footHit.collider != null)
         {
             onAir = false;
             rb.velocity = Vector2.zero;
-            if (onJump)
+
+            airTime = 0;
+
+            if (brain.OnOtherPlanetCheck())
             {
-                //gravity.activate = true;
-                onJump = false;
+                onChaseMode = false;
+                PrepareJump();
             }
+            else
+            {
+                onChaseMode = true;
+                PrepareChase();
+            }
+
         }
 
     }
 
     #endregion
 
-    #region ChaseMethods
-
-    protected IEnumerator ChaseRepeater()
-    {
-        while (true)
-        {
-            StartChase();
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-
-    void StartChase()
+    #region ChaseMethods  
+    void PrepareChase()
     {
         //먼저 플레이어가 보이는 Collider2D 상의 포인트들의 값을 알아낸다.
         List<int> visiblePoints = new List<int>();
@@ -192,6 +237,7 @@ public class EA_Ground : EnemyAction
 
         int pointCounts = ppoints.Length - 1;
         Vector2 playerPos = brain.playerTr.position;
+        float maxF = float.MaxValue;
 
         for (int i = 0; i < pointCounts; i++)
         {
@@ -204,20 +250,17 @@ public class EA_Ground : EnemyAction
             float dist = dir.magnitude;
             dir = dir.normalized;
 
-            //사정거리 내부의 점들만 체크한다
-            if (dist > brain.attackRange)
-                continue;
-
             //적AI가 서 있는 행성의 Point 중에서 플레이어가 보이는 Point 들만 뽑아낸다. 
             RaycastHit2D hit = Physics2D.Raycast(pointVector, dir, dist, LayerMask.GetMask("Planet"));
             if (hit.collider == null)
             {
                 visiblePoints.Add(i);
+                if(dist < maxF)
+                {
+                    maxF = dist;
+                    targetIndex = i;
+                }
                 Debug.DrawRay(pointVector, dir * dist, Color.green, 0.5f);
-            }
-            else
-            {
-                Debug.DrawRay(pointVector, dir * dist, Color.red, 0.5f);
             }
         }
 
@@ -227,227 +270,116 @@ public class EA_Ground : EnemyAction
             return;
         }
 
-
-        //적AI의 현재 위치를 구한다. 
-        float closestDistance = Mathf.Infinity;
-        int closestIndex = -1;
-
-        for (int i = 0; i < pointCounts; i++)
-        {
-            Vector2 v2 = ppoints[i];
-            float distance = Vector2.Distance(transform.position, v2);
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestIndex = i;
-            }
-        }
-
-
-        // VisiblePoints 중에서 적 AI에게 가까운 포인트들을 구한다. 
-        List<int> closePointsInVisiblePoints = new List<int>();
-
-        for (int i = 0; i < 6; i++)
-        {
-            int min = int.MaxValue; // 현재까지의 최솟값을 저장할 변수를 초기화합니다.
-            int minIndex = -1; // 최솟값의 인덱스를 저장할 변수를 초기화합니다.
-
-            // 리스트를 순회하면서 최솟값을 찾습니다.
-            for (int j = 0; j < visiblePoints.Count; j++)
-            {
-                int pos = (visiblePoints[j] - closestIndex + pointCounts) % pointCounts;
-                int neg = (closestIndex - visiblePoints[j] + pointCounts) % pointCounts;
-                int betweenIndex = pos < neg ? pos : neg;
-
-
-                if (betweenIndex < min)
-                {
-                    min = betweenIndex;
-                    minIndex = j;
-                }
-            }
-
-            // 최솟값을 찾았으므로 결과 리스트에 추가하고 원래 리스트에서 제거합니다.
-            if (minIndex != -1)
-            {
-                closePointsInVisiblePoints.Add(visiblePoints[minIndex]);
-                visiblePoints.RemoveAt(minIndex);
-            }
-        }
-
-
-        //이중 랜덤 포인트를 구한다
-        int randomInt = UnityEngine.Random.Range(0, closePointsInVisiblePoints.Count);
-        int targetIndex = closePointsInVisiblePoints[randomInt];
-
-
-        //이동 애니메이션
-        StartRunView();
-
-        //이동 재시작.
-        if(chaseRoutine != null)
-        {
-            StopCoroutine(chaseRoutine);
-            chaseRoutine = null;
-        }
-
-        chaseRoutine = StartCoroutine(MoveRoutine(targetIndex, closestIndex));
-    }
-
-    IEnumerator MoveRoutine(int targetIndex, int closestIndex)
-    {
-        int pointCounts = gravity.nearestCollider.points.Length - 1;
+        //현재와 다음 인덱스 위치를 구한다. 
+        closestIndex = gravity.nearestPlanet.GetClosestIndex(transform.position);
 
         //방향 index를 구한다.
-        int dirIndex;
         int positive = (targetIndex - closestIndex + pointCounts) % pointCounts;
         int negative = (closestIndex - targetIndex + pointCounts) % pointCounts;
 
         //+방향(positive)이 가까우면 1, -방향(negative)이 가까우면 -1
         dirIndex = positive < negative ? 1 : -1;
+        nextIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
 
-        //적들이 바라보는 방향은 dirIndex에 따라 달라진다. 
+
+        //이동 방향을 바라본다.
         faceRight = dirIndex > 0f ? true : false;
         FlipToDirectionView();
 
+        ////이동 애니메이션
+        //StartRunView();
 
-        //타겟이 있는 MoveRoutine
-        int currIndex = closestIndex;
-        int nextIndex = (currIndex + dirIndex + pointCounts) % pointCounts;
-        float currTime = Time.time;
-        float randomF = UnityEngine.Random.Range(0.0f, 0.5f);
+    }
 
+    bool MoveToTarget()
+    {
+        if (targetIndex < 0) return false;
 
+        int pointCounts = ppoints.Length - 1;
 
-        while (Time.time - currTime < 10)
+        Vector2 movePos = ppoints[nextIndex];
+        Vector2 moveDir = (movePos - rb.position).normalized;
+        float moveDist = (movePos - rb.position).magnitude;
+
+        // 움직일 거리가 거의 가까워졌으면 타겟을 바꾼다.
+        if (moveDist < moveSpeed * Time.fixedDeltaTime)
         {
-            //Vector2 targetPointPos = ppoints[targetIndex];
-            //Vector2 pastPointPos = ppoints[currIndex];
-
-            ////움직일 장소의 노말을 구한다.
-            //Vector2 direction = targetPointPos - pastPointPos;
-            //Vector2 normal = Vector2.Perpendicular(direction).normalized * dirIndex;
-
-            //최종 움직일 장소는 타겟 + 노말방향으로 키만큼 높은데 있는 장소
-            Vector2 movePos = ppoints[nextIndex];
-
-            Vector2 moveDir = (movePos - rb.position).normalized;
-            float moveDist = (movePos - rb.position).magnitude;
-
-            Debug.DrawRay(rb.position, movePos - rb.position, Color.cyan, 0.5f);
-
-            // 오브젝트를 이동 방향으로 이동
-            rb.MovePosition(rb.position + moveDir * moveSpeed * Time.fixedDeltaTime);
-
-            //targetIndex에 어느정도 가까이 오면 중지한다. 
-            if (Vector2.Distance(ppoints[targetIndex], (Vector2)transform.position) < randomF )
-            {
-                //애니메이션 정지
-                StartIdleView();
-
-                yield break;
-            }
-
-            // 움직일 거리가 거의 가까워졌으면 타겟을 바꾼다.
-            if (moveDist < moveSpeed * Time.fixedDeltaTime)
-            {
-                currIndex = (currIndex + dirIndex + pointCounts) % pointCounts;
-                nextIndex = (currIndex + dirIndex + pointCounts) % pointCounts;
-            }
-
-            yield return null;
+            closestIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
+            nextIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
+        }
+        // 목적지에 가까이 도착하면 종료한다.
+        if (Vector2.Distance(ppoints[targetIndex], (Vector2)transform.position) < 0.1f)
+        {
+            //onChase = false;
+            return true;
         }
 
-
-        //애니메이션 정지
-        StartIdleView();
+        // 오브젝트를 이동 방향으로 이동
+        rb.MovePosition(rb.position + moveDir * moveSpeed * Time.fixedDeltaTime);
+        return false;
+        
     }
 
-    void GetPlanetPoints()
-    {
-        ppoints = gravity.nearestPlanet.GetPoints(enemyHeight);
-    }
-    //Vector2 GetPointPos(int pointIndex)
-    //{
-    //    Vector3 localPoint = gravity.nearestCollider.points[pointIndex];
-    //    Vector2 pointPos = gravity.nearestCollider.transform.TransformPoint(localPoint);
-    //    return pointPos;
-    //}
-
+    
 
     #endregion
 
     #region JumpMethod
 
-    protected IEnumerator StartToJump()
+    void PrepareJump()
     {
         //행성 바뀔 때만 한번씩 가져오면 된다. 
         ppoints = gravity.nearestPlanet.GetPoints(enemyHeight);
 
-        
         int pointCounts = gravity.nearestCollider.points.Length - 1;
-        Planet playerPlanet = brain.playerTr.GetComponent<CharacterGravity>().nearestPlanet;
+        Planet playerPlanet = GameManager.Instance.playerNearestPlanet;
+        //PlanetBridge bridge = gravity.nearestPlanet.GetjumpPoint(playerPlanet);
+        //if (bridge.planet == null) { return; }
 
-
-        PlanetBridge bridge = gravity.nearestPlanet.GetjumpPoint(playerPlanet);
-        if(bridge.planet == null) { yield break; }
-
-        int jumpPointIndex = bridge.bridgeIndex;
-        Vector2 closestPoint = bridge.targetVector;
-
-        //적 캐릭터의 현재 위치를 구한다. 
-        float closestDistance = float.MaxValue;
-        int closestIndex = -1;
-
-        for (int i = 0; i < pointCounts; i++)
+        bool findBridge = gravity.nearestPlanet.GetjumpPoint(playerPlanet, out PlanetBridge _bridge);
+        if (!findBridge)
         {
-            Vector2 worldEdgePoint = ppoints[i];
-            float distance = Vector2.Distance(transform.position, worldEdgePoint);
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestIndex = i;
-            }
+            targetIndex = -1;
+            return;
         }
 
+        targetIndex = _bridge.bridgeIndex;
+        closestTargetPoint = _bridge.targetVector;
+        closestIndex = gravity.nearestPlanet.GetClosestIndex(transform.position);
 
-        //이동
-        StartRunView();
+        //방향 index를 구한다.
+        int positive = (targetIndex - closestIndex + pointCounts) % pointCounts;
+        int negative = (closestIndex - targetIndex + pointCounts) % pointCounts;
 
-        yield return StartCoroutine(MoveRoutine(jumpPointIndex, closestIndex));
+        //+방향(positive)이 가까우면 1, -방향(negative)이 가까우면 -1
+        dirIndex = positive < negative ? 1 : -1;
+        nextIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
 
-        //점프
-        StartCoroutine(JumpToPlanet(closestPoint));
-
+        //이동 방향을 바라본다.
+        faceRight = dirIndex > 0f ? true : false;
+        FlipToDirectionView();
     }
 
-    IEnumerator JumpToPlanet(Vector2 jumpPoint)
+    void JumpToPlanet()
     {
-        //애니메이션 정지
-        StartIdleView();
-
-        //잠시 대기
-        yield return new WaitForSeconds(0.3f);
+        ////애니메이션 정지
+        //StartIdleView();
 
         //gravity.activate = false;
         onAir = true;
-        onJump = true;
+        //startJump = true;
         lastJumpTime = Time.time;
+        airTime = 0;
 
         //점프
-        Vector2 dir = jumpPoint - (Vector2)transform.position;
+        Vector2 dir = closestTargetPoint - (Vector2)transform.position;
         rb.AddForce(dir.normalized * jumpForce, ForceMode2D.Impulse);
-
-
-
     }
 
 
     #endregion
 
-    #region KnockBackMethod
+    //#region KnockBackMethod
     //public void EnemyKnockBack(Vector2 hitPoint)
     //{
     //    //움직임, 슈팅 등의 루틴들을 정지한다. 
@@ -485,32 +417,29 @@ public class EA_Ground : EnemyAction
     //    StartCoroutine(MoveRoutine(closestIndex, dirInt, pointCounts, knockBackTime, knockBackSpeed));
 
     //}
-    #endregion
+    //#endregion
 
 
     protected virtual IEnumerator AttackCoroutine()
     {
-        attackOn = true;
-        attackCool = true;
+        //캐릭터 위치로 회전.
+        faceRight = Vector2.SignedAngle(transform.up, brain.playerDirection) < 0 ? true : false;
+        FlipToDirectionView();
 
         //조준 시작
         AimOnView();
 
         yield return StartCoroutine(DelayRoutine(preAttackDelay));
-
-        //gunTipRot, gunTipPos 업데이트
+        
         var guntip = enemyview_s.GetGunTipPos();
-
-        yield return StartCoroutine(ShootRoutine(guntip.Item1, guntip.Item2, 0 ,AttackDelay));
-
-        //조준 완료
-        AimOffView();
+        ShootAction(guntip.Item1, guntip.Item2, 0);
 
         yield return StartCoroutine(DelayRoutine(afterAttackDelay));
 
-        brain.ChangeState(EnemyState.Chase, 0f);
-        attackOn = false;
+        //조준 완료
+        AimOffView();
     }
+
 
 
 }

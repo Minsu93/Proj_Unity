@@ -86,7 +86,7 @@ public class Projectile_Player : Projectile
 
         else if (collision.CompareTag("EnemyHitableProjectile"))
         {
-            if(collision.TryGetComponent(out Projectile_Enemy proj))
+            if(collision.transform.parent.TryGetComponent(out Projectile_Enemy proj))
             {
                 proj.DamageEvent(damage, rb.velocity);
                 ShowHitEffect();

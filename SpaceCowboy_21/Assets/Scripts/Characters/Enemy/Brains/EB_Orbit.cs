@@ -13,54 +13,49 @@ public class EB_Orbit : EnemyBrain
 
     EA_Orbit orbitAction;
 
-    public override void Initialize()
+    protected override void Awake()
     {
+        base.Awake();
         orbitAction = (EA_Orbit)action;
     }
-    public override void DetectSiutation()
-    {
-        //항시 적용
-        TotalRangeCheck();
 
+    public override void BrainStateChange()
+    {
         //상태에 따른 활동 
         switch (enemyState)
         {
-            case EnemyState.Idle:
-
-                if (inChaseRange)
-                {
-                    ChangeState(EnemyState.Chase, 0f);
-                }
-
-                break;
-
+            //case EnemyState.Sleep:
+            //    if (inDetectRange)
+            //    {
+            //        WakeUp();
+            //    }
+            //    break;
 
             case EnemyState.Chase:
-
-                if (inAttackRange) action.AimStart();
-                else action.AimStop();
-
-                if (inAttackRange)
+                if (inAttackRange && isVisible)
                 {
-                    inAttackOnce = true;
                     ChangeState(EnemyState.Attack, 0);
                 }
-
-                if ( inAttackOnce && NeedTurnCheck())
+                
+                if (!inAttackRange && !isVisible)
                 {
-                    orbitAction.ChangeDirection();
-                    inAttackOnce = false;
+                    //플레이어 방향을 감지하고 회전하기
+                    if(playerIsRight)
+                    {
+                        orbitAction.ChangeDirectionToRight(true);
+                    }
+                    else
+                    {
+                        orbitAction.ChangeDirectionToRight(false);
+                    }
                 }
-
 
                 break;
 
             case EnemyState.Attack:
 
-                if (!inAttackRange)
+                if (!inAttackRange || !isVisible) 
                 {
-                    observedPos = playerTr.position;
-                    prePlayerDistance = (observedPos - (Vector2)transform.position).magnitude;
                     ChangeState(EnemyState.Chase, 0);
                 }
 
@@ -68,50 +63,13 @@ public class EB_Orbit : EnemyBrain
         }
     }
 
-
-    //플레이어까지의 거리를 비교해서 멀어지고 있으면 방향을 바꾸고, 가까워지고 있으면 방향을 유지한다. 
-    bool NeedTurnCheck() 
+    protected override void AfterHitEvent()
     {
-        bool needTurn = false;
-
-        float currPlayerDistance = (observedPos - (Vector2)transform.position).magnitude;
-        if (currPlayerDistance > prePlayerDistance)
-        {
-            needTurn = true;
-        }
-
-        return needTurn;
+        return;
     }
 
-    
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected override void WhenDieEvent()
     {
-        if (collision.CompareTag("Planet"))
-        {
-            //orbitAction.IsInsidePlanet();
-            orbitAction.ChangeDirection();
-        }
-        else if (collision.CompareTag("SpaceBorder"))
-        {
-            //반대 방향으로 돌기
-            orbitAction.ChangeDirection();
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        //if (collision.CompareTag("Planet"))
-        //{
-        //    orbitAction.IsOutsidePlanet();
-        //}
-    }
-
-
-    public override void WakeUp()
-    {
-        timeBetweenChecks = 0.5f;
-        //잠시 대기 후
-        enemyState = EnemyState.Chase;
+        return;
     }
 }

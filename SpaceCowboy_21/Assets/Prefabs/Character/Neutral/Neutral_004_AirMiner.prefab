@@ -117,8 +117,8 @@ MonoBehaviour:
   enemyState: 1
   activate: 1
   timeBetweenChecks: 0.5
-  checkRange: 16
-  attackRange: 16
+  checkRange: 20
+  attackRange: 20
   minRange: 0
   inChaseRange: 0
   inAttackRange: 0
@@ -149,10 +149,10 @@ MonoBehaviour:
   projectileStructs:
   - projectile: {fileID: 6292677011125795810, guid: aae67d0f8a7aef54da700465bb0510ce, type: 3}
     damage: 5
-    speed: 2
+    speed: 4
     spreadAngle: 0
     range: 0
-    lifeTime: 60
+    lifeTime: 12
   hitCollObject: {fileID: 6516387629473620981}
   iconUI: {fileID: 6040927677109241085}
 --- !u!114 &4675185033650875292
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 40
   InvincibleTime: 0
 --- !u!114 &8254151463229695979
 MonoBehaviour:

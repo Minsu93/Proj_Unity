@@ -5,18 +5,21 @@ using UnityEngine;
 
 public class Gravity : MonoBehaviour
 {
-    public List<Planet> gravityPlanets = new List<Planet>();
-    public Planet nearestPlanet;
-    protected Planet preNearestPlanet;
-    protected float currentGravityForce;
+    public bool activate = true;
 
+    protected float currentGravityForce;    //월드 중력
+
+    //참조
     public Vector2 nearestPoint;
     public Vector2 nearestPointGravityVector { get; private set; }  //지표면 방향 벡터
     public float nearestPointFloorMagnitude { get; private set; }   //지표면과의 거리
+
+    public List<Planet> gravityPlanets = new List<Planet>();
+
+    //스크립트들
+    public Planet nearestPlanet;
+    protected Planet preNearestPlanet;
     public PolygonCollider2D nearestCollider;
-
-    public bool activate = true;
-
     protected Rigidbody2D rb;
 
     protected virtual void Awake()
@@ -24,6 +27,11 @@ public class Gravity : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         currentGravityForce = GameManager.Instance.worldGravity;
     }
+    //private void OnEnable()
+    //{
+    //    nearestPlanet = GetNearestPlanet();
+    //    Debug.Log("Enable :" + gravityPlanets.Count);
+    //}
 
     protected virtual void Update()
     {
@@ -49,32 +57,6 @@ public class Gravity : MonoBehaviour
         rb.AddForce(gravVec.normalized * currentGravityForce * nearestPlanet.gravityMultiplier * Time.deltaTime, ForceMode2D.Force);
     }
 
-
-    //public virtual Planet GetNearestPlanet()       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
-    //{
-    //    Planet targetPlanet = null;
-    //    float minDist = 1000f;
-
-    //    for (int i = 0; i < gravityPlanets.Count; i++)
-    //    {
-    //        if (gravityPlanets[i] == null)
-    //            continue;
-
-    //        Vector2 targetVec = gravityPlanets[i].transform.position - this.transform.position;
-
-    //        RaycastHit2D hit = Physics2D.Raycast(transform.position, targetVec.normalized, targetVec.magnitude, LayerMask.GetMask("Planet"));
-    //        if (hit.collider != null)
-    //        {
-    //            if (hit.distance < minDist)
-    //            {
-    //                minDist = hit.distance;
-    //                targetPlanet = gravityPlanets[i];
-    //            }
-    //        }
-
-    //    }
-    //    return targetPlanet;
-    //}
 
     void GetNearestPoint()
     {
@@ -113,6 +95,21 @@ public class Gravity : MonoBehaviour
         return targetPlanet;
     }
 
+    public void AddToGravityList(Planet planet)
+    {
+        foreach(var gravity in gravityPlanets)
+        {
+            if (gravity == planet)
+                return;
+        }
 
+        gravityPlanets.Add(planet);
+        nearestPlanet = GetNearestPlanet();
+    }
+
+    public void RemoveFromGravityList(Planet planet)
+    {
+        gravityPlanets.Remove(planet);
+    }
 
 }

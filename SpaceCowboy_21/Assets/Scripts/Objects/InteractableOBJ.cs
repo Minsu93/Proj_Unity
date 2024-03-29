@@ -36,7 +36,7 @@ public abstract class InteractableOBJ : MonoBehaviour
             spr.SetPropertyBlock(block);
             pressButton.SetActive(false);
 
-            GameManager.Instance.curObj = null;
+            GameManager.Instance.curObj = null; 
         }
     }
 

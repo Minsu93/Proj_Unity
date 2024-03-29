@@ -5,8 +5,14 @@ using UnityEngine;
 public class CameraPos : MonoBehaviour
 {
     public GameObject ReticleOBJ;
-    public float threshold;
+    public float movementInfluence;
+    public float camSpeed { get; set; }
+    public float threshold { get; set; }
+
     public Sprite reticleSprite;
+
+    Vector2 prePlayerPos;
+    Vector2 currCamPos;
 
     Transform player;
     GameObject reticle;
@@ -29,7 +35,7 @@ public class CameraPos : MonoBehaviour
         //위치 초기화
         reticle.transform.position = player.position;
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if (!activate)
         {
@@ -39,6 +45,12 @@ public class CameraPos : MonoBehaviour
             return;
         }
 
+
+        //플레이어 움직임수치 카메라 추가
+        Vector2 movementVec = SeePlayerFront();
+        //movementVec.y = movementVec.y * 0.1f;
+            
+        //Reticle 위치 보정
         Vector3 inputPos = Input.mousePosition;
         Vector3 mousePos;
         inputPos.z = 10;    //z는 카메라에서부터의 거리
@@ -47,7 +59,7 @@ public class CameraPos : MonoBehaviour
 
         reticle.transform.position = mousePos;
 
-
+        //카메라 위치 보정
         Vector2 ret = Camera.main.ScreenToViewportPoint(Input.mousePosition);
         ret *= 2;
         ret -= Vector2.one;
@@ -57,8 +69,17 @@ public class CameraPos : MonoBehaviour
         {
             ret = ret.normalized;
         }
+        Vector2 camPos= ret * threshold + movementVec * movementInfluence + (Vector2)player.position;
+        currCamPos = Vector2.Lerp(currCamPos, camPos, Time.deltaTime * camSpeed);
 
-        this.transform.position = ret * threshold + (Vector2)player.position;
+        transform.position = currCamPos;
+    }
+
+    Vector2 SeePlayerFront()
+    {
+        Vector2 front = (Vector2)player.position - prePlayerPos;
+        prePlayerPos = player.position;
+        return front;
     }
 
     public void StopCameraFollow()

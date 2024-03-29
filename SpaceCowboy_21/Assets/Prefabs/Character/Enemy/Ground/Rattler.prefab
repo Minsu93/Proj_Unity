@@ -42,25 +42,6 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -331,6 +312,7 @@ GameObject:
   - component: {fileID: 4557118518462468323}
   - component: {fileID: 6951396894992373160}
   - component: {fileID: 8721608555199352720}
+  - component: {fileID: 1148393070827104007}
   m_Layer: 17
   m_Name: Rattler
   m_TagString: Enemy
@@ -366,25 +348,6 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -408,12 +371,6 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -430,12 +387,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ff04b74e9a7d24ea606c371393be31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityPlanets: []
-  nearestPlanet: {fileID: 0}
   activate: 1
   nearestPoint: {x: 0, y: 0}
+  gravityPlanets: []
+  nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
-  maxGravDist: 0
+  characterGravityMultiplier: 1
 --- !u!114 &2126895824065346569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,16 +405,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5e53059e5146942a0f674eba12311a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyState: 1
+  enemyState: 0
   activate: 1
+  doTotalRangeCheck: 1
+  doAttackRangeCheck: 1
+  doVisionCheck: 1
+  doPlanetCheck: 1
   timeBetweenChecks: 0.5
-  checkRange: 14
+  limitRange: 50
   attackRange: 8
-  minRange: 0
-  inChaseRange: 0
+  hitEffect: {fileID: 0}
+  deadEffect: {fileID: 0}
+  inDetectRange: 0
   inAttackRange: 0
-  playerIsVisible: 0
-  playerIsInOtherPlanet: 0
+  isVisible: 0
+  inOtherPlanet: 0
+  playerIsRight: 0
 --- !u!114 &4557118518462468323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,25 +433,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47c521a034a1123478ecd2fb154c7e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7.5
+  activate: 0
+  moveSpeed: 6.5
   enemyHeight: 0.5
   turnSpeedOnLand: 100
-  knockBackSpeed: 4
-  knockBackTime: 0.1
-  preAttackDelay: 0.25
-  AttackDelay: 0.1
-  afterAttackDelay: 1
+  preAttackDelay: 0.5
+  afterAttackDelay: 0.1
   attackCoolTime: 3
+  predictionAccuracy: 0
+  bodyDamage: 3
   projectileStructs:
   - projectile: {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
-    damage: 1
-    speed: 3
+    damage: 2
+    speed: 8
     spreadAngle: 10
-    range: 7
+    range: 0
     lifeTime: 3
   hitCollObject: {fileID: 3494284998494332715}
   iconUI: {fileID: 6209331470942679261}
   jumpForce: 10
+  maxAirTime: 1
 --- !u!114 &6951396894992373160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -501,7 +465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 10
   InvincibleTime: 0
 --- !u!114 &8721608555199352720
 MonoBehaviour:
@@ -522,3 +486,22 @@ MonoBehaviour:
   zRotation: 0
   coll: {fileID: 0}
   currPlanet: {fileID: 0}
+--- !u!114 &1148393070827104007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6951396894992373152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropRepeat: 4
+  itemChance: 1
+  dropTable:
+  - item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    dropRate: 100
+  launchPowerMin: 4
+  launchPowerMax: 8

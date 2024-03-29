@@ -36,16 +36,15 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2482136860153590361, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4045485038870477491, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4083433014974948542, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_RootOrder
@@ -1356,6 +1355,18 @@ PrefabInstance:
       value: 1.7001214
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_ShapeTexture
       value: 
       objectReference: {fileID: 2800000, guid: 59b1099e74190a84eabce0f70a7293f3, type: 3}
@@ -1449,7 +1460,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: planetFOV
-      value: 90
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: planetSize
@@ -2472,12 +2483,6 @@ PrefabInstance:
       value: -0.015664518
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 5820961588108856067, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9194303551836501342}
-    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
 --- !u!4 &4260267022934748959 stripped
 Transform:

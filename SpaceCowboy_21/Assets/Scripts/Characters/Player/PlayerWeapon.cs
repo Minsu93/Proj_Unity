@@ -9,17 +9,21 @@ public class PlayerWeapon : MonoBehaviour
 {
     public WeaponData baseWeapon;   //기본 총기
 
+
+    public bool infiniteBullets;    //총알이 무한
     float baseAmmo; //기본 무기의 총알 수 
     float subAmmo; //특수 무기의 총알 수 
     bool isSubWeapon; //특수 무기인가요?
 
     //리로드 관련
     bool reloadOn = true;  //리로드를 진행하나요?
+    [Tooltip("발사 후 충전 시작까지 걸리는 시간")]
     public float reloadTimer = 1.0f;    //발사 후 충전 시작까지 걸리는 시간 
+    [Tooltip("충전 속도")]
     public float reloadSpeed = 3.0f;    //충전 속도
     float rTimer;
 
-    //총기 관련 Scriptable Object 
+    //총기 관련
     int burstNumber; //한번 누를 때 연속 발사 수
     int numberOfProjectiles;    //한번 누를 때 멀티샷 수
     float shootInterval;    //발사 쿨타임
@@ -42,7 +46,6 @@ public class PlayerWeapon : MonoBehaviour
 
 
     PlayerBehavior playerBehavior;
-    PlayerState currState;
 
     private void Awake()
     {
@@ -53,10 +56,7 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()   
     {
         //baseAmmo는 계속 회복된다
-
-        currState = playerBehavior.state;
-        if (currState == PlayerState.Die) return;
-        if (currState == PlayerState.Stun) return;
+        if (!playerBehavior.activate) return;
 
         if (!shootON)
         {
@@ -96,8 +96,8 @@ public class PlayerWeapon : MonoBehaviour
             return;
         }
 
-        //단발식
         TryShoot();
+
         //발사 중지
         //shootON = false;
 
@@ -121,7 +121,7 @@ public class PlayerWeapon : MonoBehaviour
     public void TryShoot()  //이벤트 발생을 위해서 > PlayerWeapon, PlayerView 의 ShootEvent를 발생
     {
         //쏠 때마다 총알 한발씩 제거
-        currAmmo -= 1;
+        if(!infiniteBullets) currAmmo -= 1;
 
         lastShootTime = Time.time;
         rTimer = reloadTimer;
@@ -180,6 +180,7 @@ public class PlayerWeapon : MonoBehaviour
     public void ChangeWeapon(WeaponData weaponData)
     {
         isSubWeapon = weaponData != baseWeapon;
+        lastShootTime = 0f;
 
         //원하는 총으로 바꿔준다.
         InitializeWeapon(weaponData);

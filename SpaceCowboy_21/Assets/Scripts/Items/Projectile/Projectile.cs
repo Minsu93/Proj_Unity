@@ -13,6 +13,7 @@ public abstract class Projectile : MonoBehaviour
     protected float lifeTime;
     protected bool infiniteLifeTime;
     public float speed { get; set; }
+    protected Planet planetToOrbit;
 
     protected Vector2 startPos;
 
@@ -44,14 +45,20 @@ public abstract class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         projectileMovement = GetComponent<ProjectileMovement>();
-        coll = GetComponent<Collider2D>();
+        coll = GetComponentsInChildren<Collider2D>()[0];
 
     }
 
     //총알 생성
-    public abstract void init(float damage, float speed, float range, float lifeTime);
+    public virtual void init(float damage, float speed, float range, float lifeTime)
+    {
+        return;
+    }
 
-
+    public virtual void init(float damage, float speed, float range, float lifeTime, Planet planet, bool isRight)
+    {
+        return;
+    }
 
     //총알이 맞았을 때 
     protected abstract void OnTriggerEnter2D(Collider2D collision);

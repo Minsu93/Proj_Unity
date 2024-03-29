@@ -14,12 +14,13 @@ public class Planet : MonoBehaviour
 
     [Header("Gravity Properties")]
     public float gravityMultiplier = 1f;    // 중력배수
-    public bool isGrabProjectile = false;   //총알을 끌어당기나요?
+    //public bool isGrabProjectile = false;   //총알을 끌어당기나요?
 
     public float planetRadius = 2f;
     public float gravityRadius = 4f;
     public float planetFOV = 90f;
 
+    //스크립트
     public Transform gravityViewer;
     public PolygonCollider2D polyCollider;
 
@@ -28,12 +29,15 @@ public class Planet : MonoBehaviour
 
     [Header("Planet Properties")]
    
-    public List<EnemyBrain> enemyList = new List<EnemyBrain>();
-    public List<Vector3> enemyStartPos = new List<Vector3>();
+    //public List<EnemyBrain> enemyList = new List<EnemyBrain>();
+    //public List<Vector3> enemyStartPos = new List<Vector3>();
     public List<PlanetBridge> linkedPlanetList = new List<PlanetBridge>();
+    public event System.Action PlanetWakeUpEvent;
+
 
     public Vector2[] worldPoints;   //행성Coll points 의 월드 값. 
     public Vector2[] pointsNormal;  //points의 노말방향 값들. 
+
 
     private void OnValidate()
     {
@@ -51,13 +55,21 @@ public class Planet : MonoBehaviour
 
         SetViewerMaterial();
 
+        int targetLayer = 1 << LayerMask.NameToLayer("Enemy");
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, gravityRadius, Vector2.right, 0f, targetLayer);
+        if(hits.Length > 0)
+        {
+            foreach(RaycastHit2D hit in hits)
+            {
+                hit.transform.GetComponentInParent<Gravity>().AddToGravityList(this);
+            }
+        }
+
         //시작 시 Points 계산 (회전하지 않는다는 가정 하에)
         worldPoints = new Vector2[polyCollider.points.Length];
         pointsNormal = new Vector2[polyCollider.points.Length];
         worldPoints = GetPointsWorldPositions(polyCollider.points);
         pointsNormal = GetPointsNormals(worldPoints);
-
-        
     }
 
     void SetViewerMaterial()
@@ -75,33 +87,38 @@ public class Planet : MonoBehaviour
         gravityViewer.gameObject.SetActive(false);
     }
 
-    //void SetEnemyStartPosition()
+    private void Update()
+    {
+        //행성이 화면 안에 들어오는지 확인한다. 
+        //화면 안에 들어오면 행성을 깨운다. 
+        if (activate) return;   //행성 활성화 여부 체크
+
+        if (PlanetBoundIsInScreen())
+        {
+            if (PlanetWakeUpEvent != null) PlanetWakeUpEvent();
+            activate = true;
+        }
+    }
+
+    #region Gravity
+
+    //private void OnCollisionEnter2D(Collision2D collision)
     //{
-    //    if (enemyList.Count > 0)
+    //    if (activate)
+    //        return;
+
+    //    if (collision.collider.CompareTag("Player"))
     //    {
-    //        for (int i = 0; i < enemyList.Count; i++)
-    //        {
-    //            enemyStartPos[i] = enemyList[i].transform.position;
-    //        }
+    //        WakeUpPlanet();
     //    }
     //}
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (activate)
-            return;
-
-        if (collision.collider.CompareTag("Player"))
-        {
-            WakeUpPlanet();
-        }
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
         {
-            gravity.gravityPlanets.Add(this);
+            gravity.AddToGravityList(this);
         }
     }
 
@@ -109,7 +126,7 @@ public class Planet : MonoBehaviour
     {
         if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
         {
-            gravity.gravityPlanets.Remove(this);
+            gravity.RemoveFromGravityList(this);
         }
     }
 
@@ -124,28 +141,52 @@ public class Planet : MonoBehaviour
         gravityViewer.gameObject.SetActive(false);
     }
 
+    #endregion
 
-    //총에 맞거나 플레이어가 행성 위로 올라서면 해당 행성의 Idle, Ambush 상태 적들을 모두 깨운다. 행성 이벤트도 실행한다. 
-    public void WakeUpPlanet()
+    #region Planet Events
+
+    bool PlanetBoundIsInScreen()
     {
-        if (activate)
-            return;
+        Bounds bounds = polyCollider.bounds;
 
+        Vector3[] corners = new Vector3[4];
+        corners[0] = new Vector3(bounds.min.x, bounds.min.y, 0); // Bottom-left
+        corners[1] = new Vector3(bounds.max.x, bounds.min.y, 0); // Bottom-right
+        corners[2] = new Vector3(bounds.max.x, bounds.max.y, 0); // Top-right
+        corners[3] = new Vector3(bounds.min.x, bounds.max.y, 0); // Top-left
 
-        activate = true;
-
-        WakeUpEnemies();
-
-        StartPlanetEvent();
-
-        //링크 된 행성들의 LinkedWakeUp을 실행시킨다.
-        if (linkedPlanetList.Count > 0)
+        foreach (var corner in corners)
         {
-            foreach (PlanetBridge linkedPlanet in linkedPlanetList)
+            Vector3 screenPoint = Camera.main.WorldToScreenPoint(corner);
+
+            if (screenPoint.x > 0 && screenPoint.x < Screen.width && screenPoint.y > 0 && screenPoint.y < Screen.height)
             {
-                linkedPlanet.planet.LinkedWakeUp();
+                return true; // One of the corners is outside the screen
             }
         }
+
+        return false; // All corners are inside the screen
+    }
+
+    void WakeUpPlanet()
+    {
+        if (activate) return;     
+        activate = true;
+
+        //적 움직임 시작 이벤트 실행
+        if (PlanetWakeUpEvent != null) PlanetWakeUpEvent();
+        //WakeUpEnemies();
+
+        //StartPlanetEvent();
+
+        //링크 된 행성들의 LinkedWakeUp을 실행시킨다.
+        //if (linkedPlanetList.Count > 0)
+        //{
+        //    foreach (PlanetBridge linkedPlanet in linkedPlanetList)
+        //    {
+        //        linkedPlanet.planet.LinkedWakeUp();
+        //    }
+        //}
     }
 
     public void LinkedWakeUp()
@@ -164,13 +205,13 @@ public class Planet : MonoBehaviour
     //Idle, Ambush 적들을 깨운다. 
     void WakeUpEnemies()
     {
-        if (enemyList.Count > 0)
-        {
-            foreach (EnemyBrain brain in enemyList)
-            {
-                brain.WakeUp();
-            }
-        }
+        //if (enemyList.Count > 0)
+        //{
+        //    foreach (EnemyBrain brain in enemyList)
+        //    {
+        //        brain.WakeUp();
+        //    }
+        //}
     }
 
 
@@ -180,36 +221,47 @@ public class Planet : MonoBehaviour
 
     }
 
+    #endregion
 
+    #region Get JumpPoints
 
-    //특정 행성 방향으로 가는 출구 index를 구한다. 
-    public PlanetBridge GetjumpPoint(Planet planet)
+    //플레이어 추격 시, 특정 행성 방향으로 가는 출구 index를 구한다. 
+    public bool GetjumpPoint(Planet planet, out PlanetBridge _bridge)
     {
-        PlanetBridge pb = new PlanetBridge();
+        bool hasBridge = false;
+
+        _bridge = new PlanetBridge();
+
+        if (linkedPlanetList.Count == 0) return hasBridge;
 
         foreach(PlanetBridge bridge in linkedPlanetList)
         {
             if(bridge.planet == planet)
             {
-                pb = bridge; break;
+                hasBridge = true;
+                _bridge = bridge; 
+                break;
             }
         }
 
         //연결된 행성이 없으면
-        if(pb.planet == null)
+        if(_bridge.planet == null)
         {
             foreach(PlanetBridge bridge in linkedPlanetList)
             {
-                if(bridge.planet.GetLinkedJumpPoint(planet, this))
+                if (bridge.planet.GetLinkedJumpPoint(planet, this))
                 {
-                    pb = bridge; break;
+                    hasBridge = true;
+                    _bridge = bridge; 
+                    break;
                 }
             }
         }
-        return pb;
+
+        return hasBridge;
     }
 
-    //linkedPlanet에서 실행됨
+    //연결된 행성에서 JumpPoints를 가져온다
     public bool GetLinkedJumpPoint(Planet targetPlanet, Planet startPlanet)
     {
         if (linkedPlanetList.Count <= 1) return false;
@@ -244,14 +296,11 @@ public class Planet : MonoBehaviour
                 }
                 if (findPlayer) break;
             }
-            
         }
-
-
-
         return findPlayer;
     }
 
+    #endregion
 
     //void ResetEnemy()
     //{
@@ -269,15 +318,20 @@ public class Planet : MonoBehaviour
 
     #region Points Positions & Normals
 
+    //게임 시작 시 계산
     Vector2[] GetPointsWorldPositions(Vector2[] points)
     {
         Vector3[] ppoints = new Vector3[points.Length];
         ppoints = points.toVector3Array();
-        transform.TransformPoints(ppoints);
+        for (int i = 0;  i < ppoints.Length; i++)
+        {
+            ppoints[i] = transform.TransformPoint(ppoints[i]);
+        }
+        //transform.TransformPoints(ppoints);
         Vector2[] v2 = ppoints.toVector2Array();
         return v2;
     }
-
+    //게임 시작 시 계산
     Vector2[] GetPointsNormals(Vector2[] points)
     {
         Vector2[] v2 = new Vector2[points.Length];
@@ -289,7 +343,7 @@ public class Planet : MonoBehaviour
         return v2;
     }
 
-
+    //포인트 가져오기
     public Vector2[] GetPoints(float height)
     {
         Vector2[] v2 = new Vector2[worldPoints.Length];
@@ -299,15 +353,66 @@ public class Planet : MonoBehaviour
         }
         return v2;
     }
+
+    //pos에서 가장 가까운 포인트 Index를 구한다.
+    public int GetClosestIndex(Vector2 pos)
+    {
+        int index;
+        int approxIndex = 0;
+        int secondIndex;
+        float closestDistance = float.MaxValue;
+        Vector2 pointPosition;
+        float distance;
+
+        // 1. 월드 포인트를 10으로 나눠서 가장 가까운 포인트를 구한다. 
+        for (int i = 0; i < worldPoints.Length; i++)
+        {
+            if (i % 10 != 0) continue;
+
+            pointPosition = worldPoints[i];
+            distance = Vector2.Distance(pos, pointPosition);
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                approxIndex = i;
+            }
+        }
+        index = approxIndex;
+        //closestDistance = float.MaxValue;
+
+        // 2. approxIndex의 앞뒤로 -5 ~ +4 사이 점들에서 비교한다.(10개) 
+        for (int j = -5; j < 5; j++)
+        {
+            secondIndex = (approxIndex + j + worldPoints.Length) % worldPoints.Length;
+            pointPosition = worldPoints[secondIndex];
+            distance = Vector2.Distance(pos, pointPosition);
+
+            if(distance < closestDistance)
+            {
+                closestDistance = distance;
+                index = secondIndex;
+            }
+
+            Debug.DrawLine(pos, pointPosition, Color.cyan,1f);
+        }
+        return index;
+    }
     #endregion
 
-    Vector2 GetPointPos(int pointIndex)
+    [ContextMenu("Clear Linked Planets")]
+    void ClearLinkedPlanets()
     {
-        Vector3 localPoint = polyCollider.points[pointIndex];
-        Vector2 pointPos = polyCollider.transform.TransformPoint(localPoint);
-        return pointPos;
+        linkedPlanetList.Clear();
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, planetRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, gravityRadius);
+    }
 }
 
 [System.Serializable]

@@ -16,63 +16,17 @@ public class EA_Ground_ShieldBug : EA_Ground
 
         animator = GetComponentInChildren<Animator>();
     }
-    public override void DoAction(EnemyState state)
+
+    protected override void OnDieAction()
     {
-        switch (state)
-        {
-            case EnemyState.Ambush:
-                AmbushStartEvent();
-                break;
+        base.OnDieAction();
 
-            case EnemyState.Idle:
-                StartIdleView();
-                break;
-
-            case EnemyState.Chase:
-                StopAllCoroutines();
-                StartCoroutine(ChaseRepeater());
-                break;
-
-            case EnemyState.ToJump:
-                StopAllCoroutines();
-                StartCoroutine(StartToJump());
-                break;
-
-            case EnemyState.Attack:
-                StopAllCoroutines();
-
-                ShieldExplode();
-
-                break;
-
-            case EnemyState.Wait:
-                //Wait상태로 넘어갈 때는 하던 모든 행동을 멈추고 가만히 있는다. 
-                StopAllCoroutines();
-                break;
-
-            case EnemyState.Die:
-                StopAllCoroutines();
-                DieView();
-
-                ShieldExplode();
-
-                //총알에 맞는 Enemy Collision 해제
-                hitCollObject.SetActive(false);
-                break;
-        }
-    }
-
-    void ShieldExplode()
-    {
-        //캐릭터 비활성화
-        activate = false;
         StartCoroutine(ShieldExplodeRoutine());
     }
 
+
     IEnumerator ShieldExplodeRoutine()
     {
-        //애니메이션 실행 
-        animator.SetTrigger("Explode");
         //1초후 폭발
         yield return new WaitForSeconds(1f);
 

@@ -16,10 +16,14 @@ public class CameraManager : MonoBehaviour
     float targetFOV;
 
     float approx = 0.05f;
-    public float controlSpeed = 5.0f;
-    float cSpeed;
+    public float defaultFovControlSpd = 5.0f;
+    float fovControlSpd;
 
     bool changeCam = false;
+
+    //CameraPos관련
+    public float defaultCamSpeed = 3f;
+    public float defaultThreshold = 2f;
 
 
     private void Awake()
@@ -32,7 +36,9 @@ public class CameraManager : MonoBehaviour
         //초기 FOV
         currFOV = defaultFOV;
         targetFOV = currFOV;
-        cSpeed = controlSpeed;
+        fovControlSpd = defaultFovControlSpd;
+        //초기 threshold, spd
+        ResetCameraThreshold();
 
         GameManager.Instance.PlayerDeadEvent += PlayerIsDead;
     }
@@ -43,7 +49,7 @@ public class CameraManager : MonoBehaviour
 
         if (Mathf.Abs(currFOV - targetFOV) > approx)
         {
-            currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * cSpeed);
+            currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * fovControlSpd);
             virtualCamera.m_Lens.FieldOfView = currFOV;
         }
 
@@ -70,17 +76,35 @@ public class CameraManager : MonoBehaviour
     {
         defaultFOV = fov;
         targetFOV = defaultFOV;
-        cSpeed = controlSpeed;
+        fovControlSpd = defaultFovControlSpd;
 
     }
 
+    //느리게, 혹은 빠르게 카메라 확대,축소 용도
     public void ChangeCamera(float fov, float spd)
     {
         defaultFOV = fov;
         targetFOV = defaultFOV;
-        cSpeed = spd;
+        fovControlSpd = spd;
     }
 
+
+    //카메라 Threshold변경
+    public void ChangeCameraThreshold(float threshold, float camSpd)
+    {
+        cameraPos.threshold = threshold;
+        cameraPos.camSpeed = camSpd;
+
+        targetFOV = mapFOV;
+    }
+    public void ResetCameraThreshold()
+    {
+        cameraPos.threshold = defaultThreshold;
+        cameraPos.camSpeed = defaultCamSpeed;
+
+        targetFOV = defaultFOV;
+
+    }
 
 
     public void PlayerIsDead()

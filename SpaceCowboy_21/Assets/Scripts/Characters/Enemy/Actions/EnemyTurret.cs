@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyTurret : EnemyAction_Shooter
+public class EnemyTurret : EnemyAction
 {
     public SkeletonAnimation skeletonAnimation;
     [SpineEvent(dataField: "skeletonAnimation", fallbackToTextField: true)]
@@ -39,5 +39,13 @@ public class EnemyTurret : EnemyAction_Shooter
         }
     }
 
+    protected override void OnChaseAction()
+    {
+        throw new System.NotImplementedException();
+    }
 
+    protected override void OnAttackAction()
+    {
+        throw new System.NotImplementedException();
+    }
 }

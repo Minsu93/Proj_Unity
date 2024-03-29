@@ -36,7 +36,6 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1805767907835567130, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
@@ -73,7 +72,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
     - target: {fileID: 2482136860153590361, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2862766322230021200, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_SpriteShape
@@ -645,7 +644,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4045485038870477491, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045485038870477491, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: maxLinkedDistance
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4083433014974948542, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_RootOrder
@@ -1142,6 +1145,10 @@ PrefabInstance:
     - target: {fileID: 5820961588108856064, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Points.Array.data[60].y
       value: -0.015650678
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820961588108856065, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Creator
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856065, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_ColliderSegment.Array.size
@@ -1789,7 +1796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: planetFOV
-      value: 80
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: planetRadius
@@ -1805,7 +1812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: linkedPlanetList.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856068, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: linkedPlanetList.Array.data[0].bridgeIndex
@@ -2320,12 +2327,6 @@ PrefabInstance:
       value: -0.015650678
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 5820961588108856067, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7104952894271452906}
-    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
 --- !u!4 &257342791875140890 stripped
 Transform:

@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour
     public string VerticalAxis = "Vertical";
     public string JumpButton = "Jump";
     public string ShootButton = "Fire1";
-    public string DashButton = "Dash";
+    public string SlideButton = "Dash";
     public string InteractButton = "Interact";
     public string CancelButton = "Cancel";
     Vector2 moveDir = Vector2.zero;
@@ -18,8 +18,8 @@ public class PlayerInput : MonoBehaviour
     PlayerBehavior playerBehavior;
 
     //방어기 test
-    public GrabLasso grabLasso;
-    public CounterShield counterShield;
+    //public GrabLasso grabLasso;
+    //public CounterShield counterShield;
 
     bool moveON = false;
     public bool inputDisabled = false;
@@ -61,12 +61,13 @@ public class PlayerInput : MonoBehaviour
         // Jump
         if (Input.GetButtonDown(JumpButton))
         {
-            playerBehavior.PrepareJump();
+            //playerBehavior.PrepareJump();
+            playerBehavior.TrySpeedJump();
         }
-        if(Input.GetButtonUp(JumpButton))
-        {
-            playerBehavior.TryJump();
-        }
+        //if(Input.GetButtonUp(JumpButton))
+        //{
+        //    playerBehavior.TryJump();
+        //}
 
 
         // Shoot
@@ -82,23 +83,52 @@ public class PlayerInput : MonoBehaviour
 
         }
 
-        //Dash
-        //if(Input.GetButtonDown(DashButton))
+        //// MagicShoot
+        //if (Input.GetMouseButtonDown(1))
         //{
-        //    playerBehavior.TryDash();
+        //    playerBehavior.TryMagicShoot();
         //}
 
-        //CounterShield
-        if (Input.GetMouseButtonDown(1))
+        // Slide
+        if (Input.GetButtonDown(SlideButton))
         {
-            counterShield.TryShieldOn();
+            playerBehavior.ToggleSlide();
+
+            //playerBehavior.TrySlide();
         }
 
+        if (Input.GetButtonUp(SlideButton))
+        {
+            //playerBehavior.TryStopSlide();
+        }
+
+        //무기 교체
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            playerBehavior.TryChangeWeapon(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            playerBehavior.TryChangeWeapon(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            playerBehavior.TryChangeWeapon(2);
+        }
         //Lasso
         //if (Input.GetMouseButtonDown(1))
         //{
         //    grabLasso.TryThrowLasso();
         //}
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            CameraManager.instance.ChangeCameraThreshold(12f, 8f);
+        }
+        if(Input.GetMouseButtonUp(1))
+        {
+            CameraManager.instance.ResetCameraThreshold();
+        }
 
         //Interact
         if (Input.GetButtonDown(InteractButton))

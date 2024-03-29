@@ -6,16 +6,15 @@ public class PlayerHealth : MonoBehaviour
 {
     public HealthState healthState = HealthState.Default;
 
-    public float maxHealth = 1;
+    public float maxHealth = 10;
     public float currHealth {  get; private set; }
 
     public float maxShield = 10;
     public float currShield { get; private set; }
     public float delayToRegeneration = 1.0f;
-    float dTimer;
-    public float regenerateTime = 2.0f;
-    public float regenSpeed = 3.0f;
-    float rTimer;
+    public float dTimer { get; private set; }
+    //public float regenerateTime = 2.0f;
+    //public float regenSpeed = 3.0f;
 
 
     public float InvincibleTime;
@@ -29,6 +28,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currHealth = maxHealth;
         currShield = maxShield;
+        healthState = HealthState.Default;
     }
 
     public bool AnyDamage(float dmg)
@@ -52,7 +52,7 @@ public class PlayerHealth : MonoBehaviour
         }
         else if (currHealth > 0) 
         {
-            currHealth -= 1;
+            currHealth -= dmg;
             if (currHealth < 0) currHealth = 0;
         }
 
@@ -60,8 +60,7 @@ public class PlayerHealth : MonoBehaviour
 
         if(isHit)
         {
-            dTimer = delayToRegeneration;
-            rTimer = 0;
+            dTimer = 0;
             healthState = HealthState.OnHit;
         }
 
@@ -72,7 +71,6 @@ public class PlayerHealth : MonoBehaviour
     {
         if (currShield < maxShield)
         {
-            Debug.Log("Recovered");
             //실드를 회복한다
             currShield += amount;
 
@@ -107,33 +105,36 @@ public class PlayerHealth : MonoBehaviour
 
        switch(healthState)
         {
-            case HealthState.Default: break;
-            case HealthState.OnHit: 
+            case HealthState.Default:
+                if (currHealth < maxHealth) healthState = HealthState.OnHit;
+                break;
+
+            case HealthState.OnHit:
+
                 //맞으면 딜레이동안 기다리고 OnRegen상태로 넘어간다
-                if(dTimer > 0)
+                dTimer += Time.deltaTime / delayToRegeneration;
+                if (dTimer >= 1)
                 {
-                    dTimer -= Time.deltaTime;
-                    if(dTimer <= 0)
-                    {
-                        healthState = HealthState.OnRegen;
-                    }
+                    dTimer = 0;
+                    currShield = maxShield;
+                    healthState = HealthState.Default;
                 }
                 break;
-            case HealthState.OnRegen: 
-                if(currShield < maxShield)
-                {
+            //case HealthState.OnRegen: 
+            //    if(currShield < maxShield)
+            //    {
 
-                    //실드를 회복한다
-                    currShield += regenSpeed * Time.deltaTime;
+            //        //실드를 회복한다
+            //        currShield += regenSpeed * Time.deltaTime;
 
-                    //실드가 다 찼으면 기본 상태로 돌아간다
-                    if (currShield >= maxShield)
-                    {
-                        currShield = maxShield;
-                        healthState = HealthState.Default;
-                    }
-                }
-                break;
+            //        //실드가 다 찼으면 기본 상태로 돌아간다
+            //        if (currShield >= maxShield)
+            //        {
+            //            currShield = maxShield;
+            //            healthState = HealthState.Default;
+            //        }
+            //    }
+            //    break;
             case HealthState.Dead: break;
         }
     }

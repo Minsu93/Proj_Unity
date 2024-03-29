@@ -16,48 +16,50 @@ namespace SpaceEnemy
         /// Brain의 State가 느리게 변하기 때문에, Action에서는 행동의 변화가 천천히 일어날 것으로 기대된다. 
         /// 각 유닛마다 다른 Action을 하겠지만, 큰 틀에서는 비슷하기 때문에 동일한 Action을 상속받아 사용하더라도 문제가 없도록 만들려고 한다. 
         /// </summary>
+        public bool activate;
 
         [Header("Move Property")]
         public float moveSpeed = 5f;
         public float enemyHeight = 0.51f;
         public float turnSpeedOnLand = 100f;
 
-        [Header("KnockBack Property")]
-        public float knockBackSpeed = 4f;
-        public float knockBackTime = 0.5f;
-
         [Header("Attack Property")]
-        public float preAttackDelay = 1.0f;
-        public float AttackDelay = 0.1f;
-        public float afterAttackDelay = 3.0f;
+        public float preAttackDelay = 0f;
+        public float afterAttackDelay = 0f;
         public float attackCoolTime = 3.0f;
         public float predictionAccuracy = 0f;
-        protected float timer;
+        protected float atTimer;
+        public bool onAttack { get; set; }  //공격중일 때 
+        public bool attackCool { get; set; }    //공격 쿨타임
 
+        [Header("BodyAttack")]
+        public float bodyDamage = 3.0f;
+
+        //총알
         public List<ProjectileStruct> projectileStructs = new List<ProjectileStruct>();
-
+        
+        //로컬 변수
         bool isAimOn = false;   //조준 중인가요
+        protected bool onChase = false;   //chase 중인가요
+        protected bool startChase;        //chase 시작 시 한번만 실행.
 
+        protected EnemyState preState = EnemyState.Die;
+        protected Coroutine attackRoutine;
+
+        public bool faceRight { get; set; }  //캐릭터가 오른쪽을 보고 있습니까? 
+        public bool onAir { get; set; } //공중에 있는가
+
+
+        //스크립트
         protected EnemyBrain brain { get; set; }
         protected CharacterGravity gravity;
         protected Rigidbody2D rb;
         public GameObject hitCollObject;    //피격 처리를 하는 Collider
-
-        //중요
-        EnemyState preState = EnemyState.Die;
-
-        [Header("Icon Property")]
         public GameObject iconUI;
-
-        public bool faceRight { get; set; }  //캐릭터가 오른쪽을 보고 있습니까? 
-        public bool attackOn { get; set; }  //공격중일 때 
-        public bool attackCool { get; set; }    //공격 쿨타임
-        public bool onAir { get; set; } //공중에 있는가
-        protected bool activate;  //활성화
+       
 
 
-        protected Coroutine attackRoutine;
-
+        //이벤트
         public event System.Action EnemyStartRun;
         public event System.Action EnemyStartIdle;
         public event System.Action EnemyAttackEvent;
@@ -73,17 +75,9 @@ namespace SpaceEnemy
 
         protected virtual void Awake()
         {
-            if (gravity == null)
-                gravity = GetComponent<CharacterGravity>();
-            if (rb == null)
-                rb = GetComponent<Rigidbody2D>();
-            if (brain == null)
-            {
-                brain = GetComponent<EnemyBrain>();
-            }
-            //enemyColl = GetComponents<Collider2D>()[1];
-            activate = true;
-
+            gravity = GetComponent<CharacterGravity>();
+            rb = GetComponent<Rigidbody2D>();
+            brain = GetComponent<EnemyBrain>();
         }
 
         protected virtual void OnEnable()
@@ -99,55 +93,115 @@ namespace SpaceEnemy
         {
             activate = true;
             attackCool = false;
-            attackOn = false;
-            timer = 0;
+            onAttack = false;
+            atTimer = 0;
             onAir = true;
             hitCollObject.SetActive(true);
-
-            DoAction(EnemyState.Idle);
         }
 
         protected virtual void Update()
         {
-            if (!activate) return;
-
             EnemyState currState = brain.enemyState;
 
             if (currState != preState)
             {
+                StopAction(preState);
                 DoAction(currState);
                 preState = currState;
             }
 
-            if (preState == EnemyState.Die) activate = false;
+            if (!activate) return;
 
             if (attackCool)
             {
-                timer += Time.deltaTime;
-                if (timer > attackCoolTime)
+                atTimer += Time.deltaTime;
+                if (atTimer > attackCoolTime)
                 {
                     attackCool = false;
-                    timer = 0;
+                    atTimer = 0;
                 }
+            }
+
+            //공격 쿨타임 동안에는 행동을 멈춘다. 공격중에 이동하고 싶으면 Update를 수정해라.
+            if (attackCool) return; 
+
+            if(onAttack)
+            {
+                OnAttackAction();
+            }
+
+            if(onChase)
+            {
+                OnChaseAction();
             }
         }
 
         //상태가 바뀔 때 한번만 실행 
-        public abstract void DoAction(EnemyState state);
-
-
-        #region ShootMethod
-        protected IEnumerator ShootRoutine(Vector2 pos, Quaternion Rot, int projIndex, float delay)
+        protected virtual void DoAction(EnemyState state)
         {
-            //gunTipRot, gunTipPos 업데이트
+            switch (state)
+            {
+                case EnemyState.Sleep:
+                    OnSleepEvent();
+                    StartIdleView();
+                    break;
+
+                case EnemyState.Chase:
+                    onChase = true;
+                    break;
+
+                case EnemyState.Attack:
+                    onAttack = true;
+                    break;
+
+                case EnemyState.Die:
+                    OnDieAction();
+
+                    break;
+            }
+        }
+        //이전 하던 행동을 리셋.
+        protected virtual void StopAction(EnemyState preState)
+        {
+            switch (preState)
+            {
+                case EnemyState.Sleep:
+                    WakeUpEvent();
+                    break;
+                case EnemyState.Chase:
+                    onChase = false;
+                    break;
+                case EnemyState.Attack:
+                    onAttack = false;
+                    break;
+            }
+        }
+
+        protected abstract void OnChaseAction();
+        protected abstract void OnAttackAction();
+        protected virtual void OnDieAction()
+        {
+            StopAllCoroutines();
+            DieView();
+
+            activate = false;
+            iconUI.SetActive(false);
+            hitCollObject.SetActive(false);
+
+            StartCoroutine(DieRoutine(3.0f));
+        }
+
+        #region Basic Actions
+        protected void ShootAction(Vector2 pos, Quaternion Rot, int projIndex)
+        {
             Vector2 gunTipPos = pos;
-            //Quaternion gunTipRot = Rot;
+            Quaternion gunTipRot = Rot;
 
             //플레이어 움직임 반영
-            PlayerBehavior pb = GameManager.Instance.PlayerBehavior;
-            Vector2 playerPredictedPos = (Vector2)pb.transform.position + (pb.playerVelocity * predictionAccuracy);
-            Vector2 upVec = Quaternion.Euler(0, 0, 90) * (playerPredictedPos - (Vector2)transform.position).normalized ;
-            Quaternion gunTipRot = Quaternion.LookRotation(Vector3.forward, upVec);
+            //PlayerBehavior pb = GameManager.Instance.PlayerBehavior;
+            //Vector2 playerPredictedPos = (Vector2)pb.transform.position + (pb.playerVelocity * predictionAccuracy);
+            //Vector2 upVec = Quaternion.Euler(0, 0, 90) * (playerPredictedPos - (Vector2)transform.position).normalized ;
+            //Quaternion gunTipRot = Quaternion.LookRotation(Vector3.forward, upVec);
             
             Quaternion targetRotation = gunTipRot;
 
@@ -163,23 +217,80 @@ namespace SpaceEnemy
 
             //View에서 애니메이션 실행
             AttackView();
+        }
 
-            yield return new WaitForSeconds(delay);
+        protected void ShootAction(Vector2 pos, Quaternion Rot, int projIndex, Planet planet, bool isRight)
+        {
+            Vector2 gunTipPos = pos;
+            Quaternion gunTipRot = Rot;
+
+            //플레이어 움직임 반영
+            //PlayerBehavior pb = GameManager.Instance.PlayerBehavior;
+            //Vector2 playerPredictedPos = (Vector2)pb.transform.position + (pb.playerVelocity * predictionAccuracy);
+            //Vector2 upVec = Quaternion.Euler(0, 0, 90) * (playerPredictedPos - (Vector2)transform.position).normalized ;
+            //Quaternion gunTipRot = Quaternion.LookRotation(Vector3.forward, upVec);
+
+            Quaternion targetRotation = gunTipRot;
+
+            //랜덤 각도 추가
+            float randomAngle = Random.Range(-projectileStructs[projIndex].spreadAngle * 0.5f, projectileStructs[projIndex].spreadAngle * 0.5f);
+            Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
+
+            //총알 생성
+            GameObject projectile = PoolManager.instance.GetEnemyProj(projectileStructs[projIndex].projectile);
+            projectile.transform.position = gunTipPos;
+            projectile.transform.rotation = targetRotation * randomRotation;
+            projectile.GetComponent<Projectile>().init(projectileStructs[projIndex].damage, projectileStructs[projIndex].speed, projectileStructs[projIndex].range, projectileStructs[projIndex].lifeTime, planet, isRight);
+
+            //View에서 애니메이션 실행
+            AttackView();
         }
 
 
-        #endregion
-
-        #region DelayMethod
         protected IEnumerator DelayRoutine(float delay)
         {
             yield return new WaitForSeconds(delay);
         }
 
+        //Start에서 Sleep상태일 때. 적은 안 보이거나, 움직이지 않는다. 
+        protected void OnSleepEvent()
+        {
+            activate = false;
+            hitCollObject.SetActive(false);
+        }
+
+        //Brain 에서 Sleep > Idle 상태일 때 한 번만 실행. 
+        public virtual void WakeUpEvent()
+        {
+            activate = true;
+            hitCollObject.SetActive(true);
+        }
+
+        IEnumerator DieRoutine(float sec)
+        {
+            yield return new WaitForSeconds(sec);
+            gameObject.SetActive(false);
+        }
+
         #endregion
 
+        #region Collide with Player
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (bodyDamage == 0) return;
 
-        #region AnimationEvents
+            if (other.CompareTag("Player"))
+            {
+                if (other.TryGetComponent<PlayerBehavior>(out PlayerBehavior pb))
+                {
+                    pb.DamageEvent(bodyDamage, transform.position);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Animation View Events
         protected void StartRunView()
         {
             if (EnemyStartRun != null)
@@ -232,26 +343,6 @@ namespace SpaceEnemy
             if (EnemyDieEvent != null)
                 EnemyDieEvent();
 
-            iconUI.SetActive(false);
-        }
-
-        public void AmbushStartEvent()
-        {
-            //잠복 시작 시 
-            //충돌 처리 x 
-            hitCollObject.SetActive(false);
-            //gravity.activate = false;
-        }
-
-        public virtual void AmbushEndEvent()
-        {
-            //잠복 종료 시 
-            //충돌 처리 o
-            hitCollObject.SetActive(true);
-            //gravity.activate = true;
-            //애니메이션 실행 시작
-
-
         }
 
         public void AttackModeEvent()
@@ -259,9 +350,6 @@ namespace SpaceEnemy
             if (EnemyAttackTransitionEvent != null)
                 EnemyAttackTransitionEvent();
         }
-
-        #endregion
-
         public void AimStart()
         {
             if (!isAimOn)
@@ -269,9 +357,7 @@ namespace SpaceEnemy
                 isAimOn = true;
                 AimOnView();
             }
-
         }
-
         public void AimStop()
         {
             if (isAimOn)
@@ -280,34 +366,15 @@ namespace SpaceEnemy
                 AimOffView();
             }
         }
+        #endregion
 
-        public void DelayedDying(float sec)
-        {
-            StartCoroutine(DyeRoutine(sec)); 
-        }
-        IEnumerator DyeRoutine(float sec)
-        {
-            yield return new WaitForSeconds(sec);
-            gameObject.SetActive(false);
-        }
 
         private void OnDrawGizmos()
         {
-            //drawString(preState.ToString(), transform.position, Color.green);
             UnityEditor.Handles.color = Color.white;
             UnityEditor.Handles.Label(transform.position, preState.ToString());
         }
 
-        static void drawString(string text, Vector3 worldPos, Color? colour = null)
-        {
-            UnityEditor.Handles.BeginGUI();
-            if (colour.HasValue) GUI.color = colour.Value;
-            var view = UnityEditor.SceneView.currentDrawingSceneView;
-            Vector3 screenPos = view.camera.WorldToScreenPoint(worldPos);
-            Vector2 size = GUI.skin.label.CalcSize(new GUIContent(text));
-            GUI.Label(new Rect(screenPos.x - (size.x / 2), -screenPos.y + view.position.height + 4, size.x, size.y), text);
-            UnityEditor.Handles.EndGUI();
-        }
     }
 
 

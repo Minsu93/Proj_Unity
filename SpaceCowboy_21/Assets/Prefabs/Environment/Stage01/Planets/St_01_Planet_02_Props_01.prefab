@@ -472,6 +472,10 @@ PrefabInstance:
       value: St_01_Planet_02_Props_01
       objectReference: {fileID: 0}
     - target: {fileID: 257342791875140888, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
+      propertyPath: m_Creator
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 257342791875140888, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
       propertyPath: m_Spline.m_ControlPoints.Array.data[0].position.x
       value: -2.2308705
       objectReference: {fileID: 0}
@@ -1158,42 +1162,6 @@ PrefabInstance:
     - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
       propertyPath: gravityRadius
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].bridgeIndex
-      value: 17
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].bridgeIndex
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].bridgeIndex
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].targetVector.x
-      value: 7.500914
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[0].targetVector.y
-      value: 12.381456
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].targetVector.x
-      value: 2.138989
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[1].targetVector.y
-      value: -0.77628857
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].targetVector.x
-      value: 9.069795
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
-      propertyPath: linkedPlanetList.Array.data[2].targetVector.y
-      value: 3.0712323
       objectReference: {fileID: 0}
     - target: {fileID: 5356211549604366851, guid: b59eefa18d80b8d4d9b1bc7206a077b8, type: 3}
       propertyPath: m_ShapeTexture

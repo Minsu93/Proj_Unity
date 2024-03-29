@@ -17,7 +17,24 @@ public class PlayerGravity : CharacterGravity
 
     }
 
+    protected override void FixedUpdate()
+    {
+        if (!activate)
+            return;
 
+        if (nearestPlanet == null)
+            return;
+
+        Vector2 gravVec = nearestPoint - (Vector2)transform.position;
+
+        rb.AddForce(gravVec.normalized * currentGravityForce * nearestPlanet.gravityMultiplier * characterGravityMultiplier * Time.deltaTime, ForceMode2D.Force);
+
+        if (nearestPlanet != preNearestPlanet)       //Planet이 바뀌면 한번만 발동한다.
+        {
+            GameManager.Instance.playerNearestPlanet = nearestPlanet;
+            ChangePlanet();
+        }
+    }
 
     protected override void ChangePlanet()
     {   
@@ -26,14 +43,20 @@ public class PlayerGravity : CharacterGravity
         {
             preNearestPlanet.graviteyViewOff();
         }
-        nearestPlanet.graviteyViewOn();
+        if(nearestPlanet != null)
+        {
+            nearestPlanet.graviteyViewOn();
 
-        //SendMessage("ChangePlanet", SendMessageOptions.DontRequireReceiver);    //행성 바꿈 이벤트 실행
-        playerBehavior.ChangePlanet();
+            //SendMessage("ChangePlanet", SendMessageOptions.DontRequireReceiver);    //행성 바꿈 이벤트 실행
+            playerBehavior.ChangePlanet();
 
-        preNearestPlanet = nearestPlanet;
+            preNearestPlanet = nearestPlanet;
 
-        CameraManager.instance.ChangeCamera(nearestPlanet.planetFOV);
+            CameraManager.instance.ChangeCamera(nearestPlanet.planetFOV);
+        }
+        
+
+
 
     }
 

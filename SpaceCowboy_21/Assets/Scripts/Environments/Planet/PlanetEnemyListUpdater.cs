@@ -13,7 +13,7 @@ public class PlanetEnemyListUpdater : MonoBehaviour
 
     private void Start()
     {
-        ResetEnemyList();
+        //ResetEnemyList();
     }
 
     //private void Update()
@@ -47,6 +47,6 @@ public class PlanetEnemyListUpdater : MonoBehaviour
         }
 
         //planet.enemyList.Clear();
-        planet.enemyList = enemies;
+       // planet.enemyList = enemies;
     }
 }

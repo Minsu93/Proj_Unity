@@ -15,7 +15,7 @@ public class Proj_E_AirMine : Projectile_Enemy
             if (collision.TryGetComponent(out PlayerBehavior behavior))
             {
                 //플레이어가 죽으면 통과
-                if (behavior.state == PlayerState.Die)
+                if (behavior.activate)
                     return;
 
                 //데미지 전달

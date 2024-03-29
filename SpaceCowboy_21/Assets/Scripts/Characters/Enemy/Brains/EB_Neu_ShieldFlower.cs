@@ -6,48 +6,34 @@ using UnityEngine;
 public class EB_Neu_ShieldFlower : EnemyBrain
 {
     public float recoverAmount = 1f;
+    public float recoverCool = 0.5f;
+    float coolTime;
+
     [SerializeField] PlayerHealth pHealth;
 
-    public override void DetectSiutation()
+    protected override void Update()
     {
-        if (pHealth != null)
+        if (!activate) return;
+        if (pHealth == null) return;
+
+        if(coolTime < recoverCool)
+        {
+            coolTime += Time.deltaTime;
+        }
+        else
         {
             pHealth.RecoverShield(recoverAmount);
+            coolTime = 0f;
         }
     }
-
-
-    public override void DamageEvent(float dmg)
-    {
-        if (enemyState == EnemyState.Die)
-            return;
-
-        //데미지를 적용
-        if (health.AnyDamage(dmg))
-        {
-            //맞는 효과 
-            //action.HitView();
-
-            if (health.IsDead())
-            {
-                //죽은 경우 
-                enemyState = EnemyState.Die;
-
-                gameObject.SetActive(false);
-            }
-        }
-    }
-
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             pHealth = collision.GetComponent<PlayerHealth>();
+            coolTime = 0f;
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -55,6 +41,21 @@ public class EB_Neu_ShieldFlower : EnemyBrain
             pHealth = null;
         }
     }
+    public override void BrainStateChange()
+    {
+        return;
+    }
+
+    protected override void AfterHitEvent()
+    {
+        return;
+    }
+
+    protected override void WhenDieEvent()
+    {
+        return;
+    }
+
 
 
 }

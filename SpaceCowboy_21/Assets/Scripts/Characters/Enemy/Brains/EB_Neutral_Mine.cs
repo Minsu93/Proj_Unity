@@ -7,7 +7,8 @@ using UnityEngine;
 public class EB_Neutral_Mine : EB_Neutral
 {
     public float mineDamage = 3f;
-    public ParticleSystem hitEffect;
+
+    //플레이어가 밟으면 터진다. 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -16,30 +17,5 @@ public class EB_Neutral_Mine : EB_Neutral
             DamageEvent(99f);
         }
     }
-    public override void DamageEvent(float dmg)
-    {
-        if (enemyState == EnemyState.Die)
-            return;
 
-        //데미지를 적용
-        if (health.AnyDamage(dmg))
-        {
-            //맞는 효과 
-            //action.HitView();
-
-            if (health.IsDead())
-            {
-                //StopAllCoroutines();
-                //죽은 경우 
-                enemyState = EnemyState.Die;
-
-                if(hitEffect != null)
-                {
-                    ParticleHolder.instance.GetParticle(hitEffect, transform.position, transform.rotation);
-                }
-
-                gameObject.SetActive(false);
-            }
-        }
-    }
 }

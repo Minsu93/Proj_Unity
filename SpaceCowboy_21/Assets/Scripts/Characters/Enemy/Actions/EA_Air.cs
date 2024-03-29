@@ -25,16 +25,11 @@ public class EA_Air : EnemyAction
     bool once = false;      //한대만 때리자.
     
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     protected override void Update()
     {
         base.Update();
 
-        if (!attackOn || once) return;
+        if (!onAttack || once) return;
 
         if (CheckHitPlayer())
         {
@@ -51,7 +46,7 @@ public class EA_Air : EnemyAction
             return;
         }
 
-        if(!attackOn) return;
+        if(!onAttack) return;
 
         attimer += Time.deltaTime;
 
@@ -61,14 +56,11 @@ public class EA_Air : EnemyAction
         rb.MovePosition(startPos + moveVec);
     }
 
-    public override void DoAction(EnemyState state)
+    protected override void DoAction(EnemyState state)
     {
         switch (state)
         {
-            case EnemyState.Ambush:
-                break;
-
-            case EnemyState.Idle:
+            case EnemyState.Sleep:
                 StartIdleView();
                 break;
 
@@ -86,7 +78,7 @@ public class EA_Air : EnemyAction
             case EnemyState.Die:
 
                 StopAllCoroutines();
-                attackOn = false;
+                onAttack = false;
                 DieView();
                 hitCollObject.SetActive(false);
                 gameObject.SetActive(false);
@@ -97,7 +89,7 @@ public class EA_Air : EnemyAction
     void AttackAction()
     {
         RotateToPlayer();
-        attackOn = true;
+        onAttack = true;
         startPos = transform.position;
         Vector2 dir = Quaternion.Euler(0,0,90f) * (brain.playerTr.position - transform.position).normalized;
         moveRot = Quaternion.LookRotation(Vector3.forward, dir);
@@ -112,7 +104,7 @@ public class EA_Air : EnemyAction
     }
 
 
-    public override void AmbushEndEvent()
+    public override void WakeUpEvent()
     {
         hitCollObject.SetActive(false);
     }
@@ -135,6 +127,14 @@ public class EA_Air : EnemyAction
         transform.rotation = Quaternion.LookRotation(Vector3.forward, upVec);
     }
 
+    protected override void OnChaseAction()
+    {
+        throw new NotImplementedException();
+    }
 
+    protected override void OnAttackAction()
+    {
+        throw new NotImplementedException();
+    }
 }
 

@@ -13,24 +13,39 @@ public class StatPanel : MonoBehaviour
 
     [Space]
 
-    public GameObject healthPrefab;
-    public List<GameObject> healthList = new List<GameObject>();
-    public Transform healthLayout;
-    int panelHealth;
-    int panelMaxHealth;
+    //public GameObject healthPrefab;
+    //public List<GameObject> healthList = new List<GameObject>();
+    //public Transform healthLayout;
+    //int panelHealth;
+    //int panelMaxHealth;
+
+    public Image LeftHealthImg;
+    public Image RightHealthImg;
+
+    float panelHealth;
+    float panelMaxHealth;
+
+    [Space]
 
     public Image LeftShieldImg;
     public Image RightShieldImg;
-    public GameObject shieldPrefab;
-    public List<GameObject> shieldList = new List<GameObject>();
-    public Transform shieldLayout;
+
+    //public GameObject shieldPrefab;
+    //public List<GameObject> shieldList = new List<GameObject>();
+    //public Transform shieldLayout;
+
     float panelShield;
     float panelMaxShield;
 
 
+    [Space]
+
+    public Image LeftRegenImg;
+    public Image RightRegenImg;
+
+    float preShieldRegenTimer;
 
     PlayerHealth playerHealth;
-    PlayerWeapon playerWeapon;
 
     
 
@@ -38,17 +53,12 @@ public class StatPanel : MonoBehaviour
     {
         var playerTr = GameManager.Instance.player;
         playerHealth = playerTr.GetComponent<PlayerHealth>();
-        playerWeapon = playerTr.GetComponent<PlayerWeapon>();
-
-
     }
 
     private void LateUpdate()
     {
-        if (!activate)
-        {
-            return;
-        }
+        if (!activate) return;
+        if (playerHealth == null) return;
 
         //최대 체력을 조절
         int maxHealth = (int)playerHealth.maxHealth;
@@ -78,134 +88,79 @@ public class StatPanel : MonoBehaviour
             ChangeCurShield(currShield);
         }
 
+        //실드 리젠 게이지. get한 값은 0 ~ 1 사이. 
+        float ShieldRegenTimer = playerHealth.dTimer;
+        if(ShieldRegenTimer != preShieldRegenTimer)
+        {
+            ShieldRegen(ShieldRegenTimer);
 
-        ////최대 에너지를 조절
-        //int maxEnergy = (int)playerWeapon.gunPowerMax;
-        //if (panelMaxEnergy != maxEnergy)
-        //{
-        //    ChangeMaxEnergy(maxEnergy);
-        //}
-
-        ////현재 에너지를 조절
-        //int currEnergy = (int)playerWeapon.curGunPower;
-        //if (panelEnergy != currEnergy)
-        //{
-        //    //Debug.Log(currEnergy);
-        //    ChangeCurEnergy(currEnergy);
-        //}
-
-        ////현재 에너지에 따라 무기를 활성화
-        //if (currEnergy >= artifactCost_A)
-        //{
-        //    if(!artifact_A.activeSelf)
-        //        artifact_A.SetActive(true);
-        //}
-        //else
-        //{
-        //    if(artifact_A.activeSelf)
-        //        artifact_A.SetActive(false);
-        //}
-        ////B
-        //if (currEnergy >= artifactCost_B)
-        //{
-        //    if (!artifact_B.activeSelf)
-        //        artifact_B.SetActive(true);
-        //}
-        //else
-        //{
-        //    if (artifact_B.activeSelf)
-        //        artifact_B.SetActive(false);
-        //}
-
-
-        //C
-        //if (currEnergy >= artifactCost_C)
-        //{
-        //    if (!artifact_C.activeSelf)
-        //        artifact_C.SetActive(true);
-        //}
-        //else
-        //{
-        //    if (artifact_C.activeSelf)
-        //        artifact_C.SetActive(false);
-        //}
-
+        }
     }
 
 
-    void ChangeMaxHealth(int _maxHealth)
+    //void ChangeMaxHealth(int _maxHealth)
+    //{
+    //    if (panelMaxHealth > _maxHealth)
+    //    {
+    //        //최대 체력이 줄어들었으면 줄어든 만큼 리스트에서 제거
+    //        for (int i = panelMaxHealth; i > _maxHealth; i--)
+    //        {
+    //            Destroy(healthList[i - 1]);
+    //            healthList.RemoveAt(i - 1);
+    //        }
+    //        panelMaxHealth = _maxHealth;
+    //    }
+    //    else
+    //    {
+    //        //최대 체력이 늘어났으면 늘어난 만큼 리스트에 추가
+    //        for (int i = panelMaxHealth; i < _maxHealth; i++)
+    //        {
+    //            GameObject health = Instantiate(healthPrefab, healthLayout);
+    //            health.SetActive(false);
+    //            healthList.Insert(i, health);
+    //        }
+    //        panelMaxHealth = _maxHealth;
+    //    }
+    //}
+
+    //void ChangeCurHealth(int _currHealth)
+    //{
+    //    if (panelHealth < _currHealth)
+    //    {
+    //        //현재 체력이 늘어났으면 표시되는 체력을 늘린다
+    //        for (int i = panelHealth; i < _currHealth; i++)
+    //        {
+    //            healthList[i].SetActive(true);
+    //        }
+    //        panelHealth = _currHealth;
+    //    }
+    //    else
+    //    {
+    //        //현재 체력이 줄어들었으면 표시되는 체력을 줄인다
+    //        for (int i = panelHealth; i > _currHealth; i--)
+    //        {
+    //            healthList[i - 1].SetActive(false);
+    //        }
+    //        panelHealth = _currHealth;
+    //    }
+    //}
+
+    void ChangeMaxHealth(float _maxHealth)
     {
-        if (panelMaxHealth > _maxHealth)
-        {
-            //최대 체력이 줄어들었으면 줄어든 만큼 리스트에서 제거
-            for (int i = panelMaxHealth; i > _maxHealth; i--)
-            {
-                Destroy(healthList[i - 1]);
-                healthList.RemoveAt(i - 1);
-            }
-            panelMaxHealth = _maxHealth;
-        }
-        else
-        {
-            //최대 체력이 늘어났으면 늘어난 만큼 리스트에 추가
-            for (int i = panelMaxHealth; i < _maxHealth; i++)
-            {
-                GameObject health = Instantiate(healthPrefab, healthLayout);
-                health.SetActive(false);
-                healthList.Insert(i, health);
-            }
-            panelMaxHealth = _maxHealth;
-        }
+        panelMaxHealth = _maxHealth;
     }
 
-    void ChangeCurHealth(int _currHealth)
+    void ChangeCurHealth(float _currHealth)
     {
-        if (panelHealth < _currHealth)
-        {
-            //현재 체력이 늘어났으면 표시되는 체력을 늘린다
-            for (int i = panelHealth; i < _currHealth; i++)
-            {
-                healthList[i].SetActive(true);
-            }
-            panelHealth = _currHealth;
-        }
-        else
-        {
-            //현재 체력이 줄어들었으면 표시되는 체력을 줄인다
-            for (int i = panelHealth; i > _currHealth; i--)
-            {
-                healthList[i - 1].SetActive(false);
-            }
-            panelHealth = _currHealth;
-        }
-    }
+        panelHealth = _currHealth;
 
+        LeftHealthImg.fillAmount = panelHealth / panelMaxHealth;
+        RightHealthImg.fillAmount = panelHealth / panelMaxHealth;
+    }
 
     void ChangeMaxShield(float _maxShield)
     {
         panelMaxShield = _maxShield;
-
-        //if (panelMaxShield > _maxShield)
-        //{
-        //    //최대 체력이 줄어들었으면 줄어든 만큼 리스트에서 제거
-        //    for (int i = panelMaxShield; i > _maxShield; i--)
-        //    {
-        //        Destroy(shieldList[i - 1]);
-        //        shieldList.RemoveAt(i - 1);
-        //    }
-        //    panelMaxShield = _maxShield;
-        //}
-        //else
-        //{
-        //    //최대 체력이 늘어났으면 늘어난 만큼 리스트에 추가
-        //    for (int i = panelMaxShield; i < _maxShield; i++)
-        //    {
-        //        GameObject shield = Instantiate(shieldPrefab, shieldLayout);
-        //        shield.SetActive(false);
-        //        shieldList.Insert(i, shield);
-        //    }
-        //    panelMaxShield = _maxShield;
-        //}
     }
 
     void ChangeCurShield(float _currShield)
@@ -214,25 +169,6 @@ public class StatPanel : MonoBehaviour
 
         LeftShieldImg.fillAmount = panelShield / panelMaxShield;
         RightShieldImg.fillAmount = panelShield / panelMaxShield;
-
-        //if (panelShield < _currShield)
-        //{
-        //    //현재 체력이 늘어났으면 표시되는 체력을 늘린다
-        //    for (int i = panelShield; i < _currShield; i++)
-        //    {
-        //        shieldList[i].SetActive(true);
-        //    }
-        //    panelShield = _currShield;
-        //}
-        //else
-        //{
-        //    //현재 체력이 줄어들었으면 표시되는 체력을 줄인다
-        //    for (int i = panelShield; i > _currShield; i--)
-        //    {
-        //        shieldList[i - 1].SetActive(false);
-        //    }
-        //    panelShield = _currShield;
-        //}
     }
 
     //void ChangeMaxEnergy(int _maxEnergy)
@@ -282,4 +218,10 @@ public class StatPanel : MonoBehaviour
     //    }
     //}
 
+    void ShieldRegen(float _currTimer)
+    {
+        preShieldRegenTimer = _currTimer;
+        LeftRegenImg.fillAmount = _currTimer;
+        RightRegenImg.fillAmount = _currTimer;
+    }
 }

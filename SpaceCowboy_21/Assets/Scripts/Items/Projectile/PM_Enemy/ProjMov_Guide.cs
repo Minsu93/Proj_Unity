@@ -46,7 +46,7 @@ public class ProjMov_Guide : ProjectileMovement
         rb.velocity = Vector2.zero;
     }
 
-    public override void Update()
+    public void Update()
     {
         if (!activate)
             return; 

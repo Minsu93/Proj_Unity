@@ -9,27 +9,26 @@ public class EA_Orbit : EnemyAction
 {
 
     [Header("Orbit")]
-    public OrbitType orbitType = OrbitType.Attack;
-
     public bool moveRight;          //회전 방향
     public bool pauseOnAttackMode;  //공격시 정지.
-    public float pauseTimer = 0.2f; //피격 시 정지 시간
+    public float pauseTimer = 0.1f; //피격 시 정지 시간
+
+    [Header("Orbit Attack")]
+    public int burstNumber = 3;
+    public float burstDelay = 0.5f;
     
-    public ParticleSystem boosterParticle;
-
-    [Header("Shuttle")]
-    public GameObject enemyPrefab;  //스폰할 적
-    public Transform SpawnPoint;   //스폰 위치
-
+    //변수
     float moveSpeedMultiplier = 1f; //적 발견 시 빠르게 움직임 
     float moveSpd = 0f;
     float pTime;
-    int direction;
-
+    protected int direction;
     bool moveUpdate = true;
-    bool attackMode = false;
     Vector3 center;
+    
+    //파티클
+    public ParticleSystem boosterParticle;
 
+    //스크립트
     AttachToPlanet attachToPlanet;
     EV_OrbitCannon enemyview_s;
     
@@ -41,20 +40,16 @@ public class EA_Orbit : EnemyAction
         base.Awake();
 
         enemyview_s = GetComponentInChildren<EV_OrbitCannon>();
-
         attachToPlanet = GetComponent<AttachToPlanet>();
-
     }
-    private void Start()
+
+    protected void Start()
     {
         center = attachToPlanet.coll.transform.position;
-
     }
 
     private void FixedUpdate()
     {
- 
-
         //스턴 시간
         if(pTime > 0)
         {
@@ -71,7 +66,6 @@ public class EA_Orbit : EnemyAction
                 moveSpd += Time.deltaTime * 10f;
                 if (moveSpd >= 1) moveSpd = 1;
             }
-                
         }
         else
         {
@@ -82,111 +76,54 @@ public class EA_Orbit : EnemyAction
                 if(moveSpd <= 0) { moveSpd = 0; }
             }
         }
+
         if(moveSpd > 0)
             transform.RotateAround(center, Vector3.forward, direction * moveSpeed * moveSpeedMultiplier * Time.deltaTime);
     }
 
-    public override void DoAction(EnemyState state)
+
+    protected override void OnChaseAction()
     {
-        switch (state)
-        {
-            case EnemyState.Ambush:
-                AmbushStartEvent();
-                moveUpdate = false;
-                break;
-
-            case EnemyState.Idle:
-                StartIdleView();
-                ChangeDirection();
-                if(boosterParticle != null) boosterParticle.Play();
-
-                break;
-
-            case EnemyState.Chase:
-                if (!attackMode)
-                {
-                    attackMode = true;
-                    AttackModeEvent();
-                    moveSpeedMultiplier = 2.0f;
-                }
-                if (pauseOnAttackMode) 
-                {
-                    moveUpdate = true;
-                } 
-                StopAllCoroutines();
-
-                break;
-
-            case EnemyState.Attack:
-                if (pauseOnAttackMode) moveUpdate = false;
-
-                StopAllCoroutines();
-                StartCoroutine(AttackRepeater());
-                break;
-
-
-            case EnemyState.Die:
-                moveUpdate = false;
-
-                StopAllCoroutines();
-                DieView();
-                if (boosterParticle != null) boosterParticle.Stop();
-
-                hitCollObject.SetActive(false);
-                gameObject.SetActive(false);
-                moveSpeedMultiplier = 1f;
-                break;
-        }
+        return;
     }
 
-    IEnumerator AttackRepeater()
+    protected override void OnAttackAction()
     {
-        while (true)
-        {
-            yield return StartCoroutine(AttackCoroutine());
-            yield return new WaitForSeconds(attackCoolTime);
-        }
+        attackCool = true;
+        StartCoroutine(AttackCoroutine());
     }
 
-    protected IEnumerator AttackCoroutine()
+    protected virtual IEnumerator AttackCoroutine()
     {
-        attackOn = true;
-
         yield return StartCoroutine(DelayRoutine(preAttackDelay));
 
-        //enemyview가 총구가 있을 때
-        if(orbitType == OrbitType.Attack)
-        {
-            var guntip = enemyview_s.GetGunTipPos();
+        int burst = burstNumber;
+        //if (enemyview_s != null)
+        //{
+        //    var guntip = enemyview_s.GetGunTipPos();
+        //    ShootAction(guntip.Item1, guntip.Item2, 0);
+        //}
 
-            yield return StartCoroutine(ShootRoutine(guntip.Item1, guntip.Item2, 0, AttackDelay));
-        }
-        else if(orbitType == OrbitType.Shuttle)
+        while (burst > 0)
         {
-            SummonAction();
-        }
-        yield return StartCoroutine(DelayRoutine(afterAttackDelay));
+            burst--;
 
-        attackOn = false;
+            Vector2 pos = transform.position;
+            Vector2 vec = Quaternion.Euler(0, 0, 90) * brain.playerDirection;
+            Quaternion rot = Quaternion.LookRotation(Vector3.forward, vec);
+
+            ShootAction(pos, rot, 0);
+
+            yield return new WaitForSeconds(burstDelay);
+        }
     }
 
-    void SummonAction()
-    {
-        //gunTipRot, gunTipPos 업데이트
-        Vector2 pos = SpawnPoint.position;
-        Quaternion rot = transform.rotation;
 
-        GameObject enemy = PoolManager.instance.GetEnemy(enemyPrefab);
-        enemy.transform.position = pos;
-        enemy.transform.rotation = rot;
-        enemy.GetComponent<EnemyBrain>().ResetEnemyBrain();
 
-        //View에서 애니메이션 실행
-        //AttackView();
-    }
 
     public override void HitView()
     {
+        //애니메이션 이벤트
         base.HitView();
 
         //약간 경직? 
@@ -195,50 +132,34 @@ public class EA_Orbit : EnemyAction
     
 
 
-    public override void AmbushEndEvent()
+    public override void WakeUpEvent()
     {
-        hitCollObject.SetActive(true);
+        base.WakeUpEvent();
+
         //움직이기 시작 
         moveUpdate = true;
-
-        ChangeDirection();
-    }
-    
-    //행성 안에 있을 때
-    public void IsInsidePlanet()
-    {
-        //하던 공격을 중단한다. 
-        attackOn = false;
-        attackMode = false;
-        AimStop();
-        StopAllCoroutines();
-        brain.ChangeState(EnemyState.Idle, 0);
+        if (boosterParticle != null) boosterParticle.Play();
+        ChangeDirectionToRight(moveRight);
     }
 
-    //행성 밖으로 나왔을 때
-    public void IsOutsidePlanet()
+    protected override void OnDieAction()
     {
-        brain.ChangeState(EnemyState.Chase, 0);
+        base.OnDieAction();
+
+        moveUpdate = false;
+        if (boosterParticle != null) boosterParticle.Stop();
+
     }
 
-    public void ChangeDirection()
+    public virtual void ChangeDirectionToRight(bool right)
     {
-        //moveRight만 조절.
-        //반전
-        moveRight = !moveRight;
 
-        faceRight = moveRight ? true : false;
+        faceRight = right ? true : false;
         FlipToDirectionView();
 
-        direction = moveRight ? -1 : 1;
+        direction = right ? -1 : 1;
 
-        //임시 viewObj 회전
-        if (ViewObj != null)
-        {
-            ViewObj.transform.localScale = new Vector3(-direction * 2, 2, 2);
-        }
+
     }
 
 }
-
-public enum OrbitType { Attack, Shuttle}

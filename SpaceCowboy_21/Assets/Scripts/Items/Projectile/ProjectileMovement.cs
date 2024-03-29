@@ -34,7 +34,6 @@ public abstract class ProjectileMovement : MonoBehaviour
     public abstract void StopMovement();
 
 
-    public abstract void Update();
 
 
     protected void RotateBySpeed()
@@ -49,7 +48,7 @@ public abstract class ProjectileMovement : MonoBehaviour
 
     public virtual void KnockBackEvent(Vector2 vec)
     {
-
+        return;
     }
 
 

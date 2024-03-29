@@ -16,7 +16,6 @@ public class ProjectileGravity : Gravity
         projectile = GetComponent<Projectile>();
 
         projectile.ProjectileInitEvent += ResetPlanet;
-        
     }
     protected override void FixedUpdate()
     {

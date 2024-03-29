@@ -11,31 +11,17 @@ public class EB_Neu_BoomMushroom : EnemyBrain
     public GameObject projectilePrefab;
     public float damage, speed, range, lifeTime;
 
-    public override void DetectSiutation()
+    public override void BrainStateChange()
     {
         return;
     }
-
-    public override void DamageEvent(float dmg)
+    protected override void AfterHitEvent()
     {
-        if (enemyState == EnemyState.Die)
-            return;
-
-        //데미지를 적용
-        if (health.AnyDamage(dmg))
-        {
-            //맞는 효과 
-            //action.HitView();
-
-            if (health.IsDead())
-            {
-                //죽은 경우 
-                enemyState = EnemyState.Die;
-
-                GenerateBullets();
-                gameObject.SetActive(false);
-            }
-        }
+        return;
+    }
+    protected override void WhenDieEvent()
+    {
+        GenerateBullets();
     }
 
     void GenerateBullets()

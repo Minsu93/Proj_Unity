@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class PlanetLinker : MonoBehaviour
 {
-    
+    bool activeLinker = false;
     public Planet planet;
     public float maxLinkedDistance = 5f;
 
@@ -14,30 +13,30 @@ public class PlanetLinker : MonoBehaviour
     float TimeBetweens = 1.0f;
     float timer;
 
-    private void Awake()
+    private void Start()
     {
-        if (planet == null)
-            return;
+        if (planet == null) GetComponent<Planet>();
 
         GetLinkedPlanets();
+        activeLinker = true;
     }
 
-    void Update()
-    {
-        if (Application.isPlaying)
-            this.enabled = false;
+    //void Update()
+    //{
+    //    if (Application.isPlaying)
+    //        this.enabled = false;
 
-        if (planet == null)
-            return;
+    //    if (planet == null)
+    //        return;
 
-        timer += Time.deltaTime;
-        if(timer > TimeBetweens)
-        {
-            timer = 0;
-            GetLinkedPlanets();
-        }
+    //    timer += Time.deltaTime;
+    //    if(timer > TimeBetweens)
+    //    {
+    //        timer = 0;
+    //        GetLinkedPlanets();
+    //    }
         
-    }
+    //}
 
 
     [ContextMenu("Get Linked Planets")]
@@ -48,39 +47,35 @@ public class PlanetLinker : MonoBehaviour
         planet.linkedPlanetList.Clear();
 
         //어느정도 가까이 있는 행성을 구한다 
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, maxLinkedDistance, Vector2.right, 0f, LayerMask.GetMask("Planet"));
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 30f, Vector2.right, 0f, LayerMask.GetMask("Planet"));
 
         if (hits.Length > 0)
         {
-            //각 hits들에게 ray를 쏜다 
             foreach (RaycastHit2D hit in hits)
             {
                 //자기 자신은 제외한다
                 if (hit.transform == this.transform) continue;
 
-                //행성을 추가해도 될지 계산한다.
                 PlanetBridge bridge = new PlanetBridge();
-
+                
+                //사이에 장애물이 있으면 제외한다
                 Transform target = hit.collider.transform;
                 Vector2 vec = target.position - transform.position;
-                //행성이 SpaceBorder에 가리지 않으면 추가한다. 
-                
                 RaycastHit2D ray = Physics2D.Raycast(transform.position, vec.normalized, vec.magnitude, LayerMask.GetMask("SpaceBorder"));
                 if (ray.collider != null) continue;
 
                 Planet targetP = target.GetComponent<Planet>();
-                bridge.planet = targetP;
 
                 //행성에 가장 가까운 Index를 고른다. 
                 PolygonCollider2D coll = target.GetComponent<PolygonCollider2D>();
                 float dist = float.MaxValue;
                 int bridgeIndex = 0;
                 Vector2 targetVector = Vector2.zero;
-
                 int Counts = planet.polyCollider.points.Length - 1;
 
                 for (int i = 0; i < Counts; i++)
                 {
+                    if (i % 2 != 0) continue;
                     Vector2 from = GetPointPos(i);
                     Vector2 to = coll.ClosestPoint(from);
                     float distan = Vector2.Distance(from, to);
@@ -92,6 +87,9 @@ public class PlanetLinker : MonoBehaviour
                     }
                 }
 
+                if (dist >= maxLinkedDistance) continue;
+
+                bridge.planet = targetP;
                 bridge.bridgeIndex = bridgeIndex;
                 bridge.targetVector = targetVector;
 
@@ -103,10 +101,12 @@ public class PlanetLinker : MonoBehaviour
     {
         //Gizmos.color = Color.gray;
         //Gizmos.DrawWireSphere(this.transform.position, gravityRadius);
-        Gizmos.color = new Color(0, 1, 1, 0.3f);
-        Gizmos.DrawWireSphere(this.transform.position, planet.planetRadius);
-        Gizmos.color = new Color(0, 0, 1, 0.5f);
-        Gizmos.DrawWireSphere(this.transform.position, planet.gravityRadius);
+        //Gizmos.color = new Color(0, 1, 1, 0.3f);
+        //Gizmos.DrawWireSphere(this.transform.position, planet.planetRadius);
+        //Gizmos.color = new Color(0, 0, 1, 0.5f);
+        //Gizmos.DrawWireSphere(this.transform.position, planet.gravityRadius);
+        if (!activeLinker) return;
+
 
         if (planet.linkedPlanetList.Count > 0)
         {
