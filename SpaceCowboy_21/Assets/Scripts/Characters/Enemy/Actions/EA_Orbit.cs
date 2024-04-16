@@ -61,8 +61,8 @@ public class EA_Orbit : EnemyAction
 
         if (onChase)
         {
-            if (chase != null)
-                chase.OnChaseAction();
+            if (chase != null) chase.OnChaseAction();
+
         }
     }
 
