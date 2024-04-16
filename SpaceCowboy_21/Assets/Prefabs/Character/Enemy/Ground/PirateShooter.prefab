@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 494461757288810318}
   - component: {fileID: 5402388286648553178}
   - component: {fileID: 494461757288810312}
+  - component: {fileID: 1598114305261714884}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -138,14 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec873496e084eae40bbfe4b969d6e63e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyAction: {fileID: -7530958711495705422}
-  enemyBrain: {fileID: 7762146820271754592}
   skeletonAnimation: {fileID: 494461757288810318}
-  idle: {fileID: 11400000, guid: 748a5b5e3804db645ba22de2672cdcd4, type: 2}
-  run: {fileID: 11400000, guid: cc645c699f5a3e341aa7c7a3b116d0a0, type: 2}
-  attack: {fileID: 11400000, guid: 7d30a9cb27a88d74da083cefcfe1800d, type: 2}
-  die: {fileID: 11400000, guid: 00a0f294153e6c543ba9853b3cd1670d, type: 2}
-  aimOn: {fileID: 11400000, guid: 18bbbadae00a07843bf2d2b266878b9d, type: 2}
   skinName: shooter
   boneName: guntip
   slotName: guntip
@@ -164,6 +158,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skeletonAnimation: {fileID: 494461757288810318}
   boneName: aim_target_IK
+--- !u!114 &1598114305261714884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494461757288810314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a96274568fbdd7243b326e8ea2d62af4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyAction: {fileID: -7530958711495705422}
+  enemyBrain: {fileID: 7762146820271754592}
+  skeletonAnimation: {fileID: 494461757288810318}
+  idle: {fileID: 11400000, guid: 748a5b5e3804db645ba22de2672cdcd4, type: 2}
+  run: {fileID: 11400000, guid: cc645c699f5a3e341aa7c7a3b116d0a0, type: 2}
+  attack: {fileID: 11400000, guid: 4d65fa783f948bd41b48bbd1f9ac110f, type: 2}
+  die: {fileID: 11400000, guid: 00a0f294153e6c543ba9853b3cd1670d, type: 2}
+  aimOn: {fileID: 11400000, guid: 18bbbadae00a07843bf2d2b266878b9d, type: 2}
+  boost: {fileID: 11400000, guid: 5e9d3fd4027fd35459d0975d59ae87f8, type: 2}
 --- !u!1 &3957556133272027459
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,10 +277,12 @@ GameObject:
   - component: {fileID: 4366261071164999796}
   - component: {fileID: 7762146820271754592}
   - component: {fileID: -7530958711495705422}
+  - component: {fileID: 1423748881765916512}
+  - component: {fileID: 6420697008794989757}
   - component: {fileID: 4366261071164999801}
   - component: {fileID: 2731751136049779265}
   - component: {fileID: 2194943413800418210}
-  m_Layer: 17
+  m_Layer: 8
   m_Name: PirateShooter
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -300,7 +317,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -339,8 +356,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ff04b74e9a7d24ea606c371393be31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate: 1
+  activate: 0
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
@@ -389,22 +407,60 @@ MonoBehaviour:
   moveSpeed: 5
   enemyHeight: 1
   turnSpeedOnLand: 100
-  preAttackDelay: 0.5
-  afterAttackDelay: 0.1
-  attackCoolTime: 2
-  predictionAccuracy: 0.5
   bodyDamage: 3
+  strikeSpeed: 10
+  distanceFromStrikePoint: 3
   projectileStructs:
   - projectile: {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
     damage: 3
     speed: 15
     spreadAngle: 5
-    range: 0
     lifeTime: 5
+  hitColl: {fileID: 6769198538435257408}
   hitCollObject: {fileID: 6651936169225812656}
   iconUI: {fileID: 3957556133272027459}
   jumpForce: 15
   maxAirTime: 1
+  airTime: 0
+  lastJumpTime: 0
+--- !u!114 &1423748881765916512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4366261071164999793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc37288e3a5a3e4aa754c435a2722f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCoolTime: 3
+  preAttackDelay: 0.1
+  afterAttackDelay: 0.1
+  damage: 3
+  speed: 15
+  lifeTime: 5
+  randomAngle: 5
+  numberOfProjectiles: 1
+  anglePerProjectile: 0
+  burstNumber: 1
+  burstDelay: 0
+  projectile: {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
+--- !u!114 &6420697008794989757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4366261071164999793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919738f6eba21cb489a614d0798b26f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  jumpForce: 15
 --- !u!114 &4366261071164999801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,7 +523,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3096307507880773408}
   - component: {fileID: 6769198538435257408}
-  m_Layer: 8
+  m_Layer: 17
   m_Name: HitCollider
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -499,9 +555,9 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.2
+  m_Radius: 1

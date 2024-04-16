@@ -24,16 +24,16 @@ public class EV_OrbitCannon : EnemyView
     [SpineAttachment]
     public string attachmentName;
 
-    protected override void Initialize()
-    {
-        //애니메이션 관련
-        enemyAction.EnemyAttackTransitionEvent += AttackModeTransition;
+    //protected override void Initialize()
+    //{
+    //    //애니메이션 관련
+    //    enemyAction.EnemyAttackTransitionEvent += AttackModeTransition;
 
-        //GunTipPos 관련 
-        skeleton = skeletonAnimation.skeleton;
-        skeletonData = skeleton.Data;
-        GetPoint();     //애너미의 포인트 감지.
-    }
+    //    //GunTipPos 관련 
+    //    skeleton = skeletonAnimation.skeleton;
+    //    skeletonData = skeleton.Data;
+    //    GetPoint();     //애너미의 포인트 감지.
+    //}
 
 
     //포인트 감지 (Start에서 한번만 실행)

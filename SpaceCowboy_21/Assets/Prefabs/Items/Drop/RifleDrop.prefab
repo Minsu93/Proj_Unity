@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5209636571235192149
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1558956853960136941, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: weaponData
+      value: 
+      objectReference: {fileID: 11400000, guid: ee89880111b2d7a4abca658d4855d6ca, type: 2}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393674821486671704, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4714240275919088406, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
+      propertyPath: m_Name
+      value: RifleDrop
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}

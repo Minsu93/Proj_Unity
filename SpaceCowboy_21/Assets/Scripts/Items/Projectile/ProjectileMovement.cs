@@ -9,7 +9,6 @@ public abstract class ProjectileMovement : MonoBehaviour
 
     protected Rigidbody2D rb;
     protected Projectile proj;
-    protected ProjectileGravity gravity;
 
     [Space]
 
@@ -23,7 +22,6 @@ public abstract class ProjectileMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         proj = GetComponent<Projectile>();
-        gravity = GetComponent<ProjectileGravity>();
 
     }
 

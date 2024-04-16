@@ -8,6 +8,8 @@ public class CameraManager : MonoBehaviour
     public static CameraManager instance;
     public CameraPos cameraPos;
     public CinemachineVirtualCamera virtualCamera;
+    public GameObject miniMapCam;
+    public GameObject worldMapCam;
 
     //카메라 관련
     public float mapFOV = 120f;
@@ -18,8 +20,6 @@ public class CameraManager : MonoBehaviour
     float approx = 0.05f;
     public float defaultFovControlSpd = 5.0f;
     float fovControlSpd;
-
-    bool changeCam = false;
 
     //CameraPos관련
     public float defaultCamSpeed = 3f;
@@ -58,17 +58,21 @@ public class CameraManager : MonoBehaviour
     //카메라 이벤트
     public void MapOpen()
     {
-        targetFOV = mapFOV;
+        //targetFOV = mapFOV;
 
         cameraPos.StopCameraFollow();
+        miniMapCam.SetActive(false);
+        worldMapCam.SetActive(true);
 
     }
 
     public void MapClose()
     {
-        targetFOV = defaultFOV;
+        //targetFOV = defaultFOV;
 
         cameraPos.StartCameraFollow();
+        miniMapCam.SetActive(true);
+        worldMapCam.SetActive(false);
     }
 
     //행성 이동시 기본 FOV 변경

@@ -1,5 +1,4 @@
 using SpaceCowboy;
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,8 +12,8 @@ public class EB_Neutral_Mine : EB_Neutral
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerBehavior>().DamageEvent(mineDamage);
-            DamageEvent(99f);
+            collision.GetComponent<PlayerBehavior>().DamageEvent(mineDamage, transform.position);
+            DamageEvent(99f, Vector2.zero);
         }
     }
 

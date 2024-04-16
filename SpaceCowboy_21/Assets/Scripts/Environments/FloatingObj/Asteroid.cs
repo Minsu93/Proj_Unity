@@ -1,65 +1,98 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Asteroid : Obstacle
+public class Asteroid : MonoBehaviour, IGravitable
 {
-    float checkInterval = 0.2f;
-    float timer;
+    /// <summary>
+    /// 중력 총에 맞으면 지상으로 떨어진다. 
+    /// </summary>
+    /// 
+    public float collideDamage = 20f;
+    public float collideSpeed = 1.0f;
+    public float explodeDamage = 10f;
+    public float explodeRange = 3f;
 
-    protected override void HitEvent()
+    public ParticleSystem hitParticle;
+    public ParticleSystem explodeParticle;
+    public GameObject viewObj;
+
+    Gravity gravity;
+    Rigidbody2D rb;
+    private HashSet<GameObject> hitTargets = new HashSet<GameObject>();
+
+    private void Awake()
     {
-        //피격 이펙트
+        gravity = GetComponent<Gravity>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    protected override void DestroyEvent()
+    public void GravityOnEvent()
     {
-        coll.enabled = false;
+        gravity.FixedGravityFunction(GameManager.Instance.playerNearestPlanet, collideSpeed);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // 적과 충돌했는지 확인
+        if (collision.CompareTag("Enemy"))
+        {
+            // 이미 맞춘 적이 아니라면 처리
+            if (!hitTargets.Contains(collision.gameObject))
+            {
+                // 피해 로직을 여기에 구현
+                if (collision.TryGetComponent<IHitable>(out IHitable hitable))
+                {
+                    hitable.DamageEvent(collideDamage, transform.position);
+                    ShowHitEffect(hitParticle, collision.transform.position, collision.transform.rotation);
+                }
+
+                // 적을 맞춘 리스트에 추가
+                hitTargets.Add(collision.gameObject);
+            }
+        }
+
+        //폭발 데미지
+        if (collision.CompareTag("Planet"))
+        {
+            gravity.CancelFixedGravity();
+            rb.velocity = Vector3.zero;
+            //폭발 생성
+            ExplodeAsteroid();
+            StartCoroutine(DestroyRoutine(0.5f));
+        }
+    }
+
+    void ExplodeAsteroid()
+    {
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, explodeRange, Vector2.right, 0f, LayerMask.GetMask("Enemy"));
+        
+        foreach(RaycastHit2D hit in hits)
+        {
+            if(hit.transform.TryGetComponent<IHitable>(out IHitable hitable))
+            {
+                hitable.DamageEvent(explodeDamage, transform.position);
+                ShowHitEffect(hitParticle, hit.transform.position, hit.transform.rotation);
+            }
+        }
+
+        ShowHitEffect(explodeParticle, transform.position, transform.rotation);
+    }
+
+    protected void ShowHitEffect(ParticleSystem particle, Vector2 pos, Quaternion rot)
+    {
+        if (particle != null)
+            ParticleHolder.instance.GetParticle(particle, pos, rot);
+    }
+
+    IEnumerator DestroyRoutine(float time)
+    {
+        viewObj.SetActive(false);
+        yield return new WaitForSeconds(time);
+
         gameObject.SetActive(false);
     }
-
-    private void FixedUpdate()
-    {
-        timer += Time.fixedDeltaTime;
-        if(timer > checkInterval)
-        {
-            timer = 0f;
-            MoveAwayFromPlanet();
-        }
-    }
-    //행성과 너무 가까우면 살짝 멀어지려는 노력 
-    void MoveAwayFromPlanet()
-    {
-        //행성과의 거리 측정 
-        float checkRadius = 3f;
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, Vector2.right, 0f, LayerMask.GetMask("Planet"));
-
-        if(hits.Length > 0 )
-        {
-            float minDist = float.MaxValue;
-            Collider2D closestColl;
-            Vector2 closestPoint = transform.position;
-
-            foreach(RaycastHit2D hit in hits )
-            {
-                Collider2D coll = hit.transform.GetComponent<Collider2D>();
-                Vector2 point = coll.ClosestPoint(transform.position);
-                float dist = Vector2.Distance(point, transform.position);
-                if(dist < minDist)
-                {
-                    minDist = dist;
-                    closestColl = coll;
-                    closestPoint = point;
-                }
-            }
-
-            Vector2 dir = (Vector2)transform.position - closestPoint;
-            float d = dir.magnitude;
-            if(d > 0f)
-            {
-                rb.AddForce(dir.normalized, ForceMode2D.Force);
-            }
-        }
-    }
+   
 }

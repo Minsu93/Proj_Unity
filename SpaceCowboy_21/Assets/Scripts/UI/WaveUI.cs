@@ -9,22 +9,21 @@ public class WaveUI : MonoBehaviour
     public TextMeshProUGUI waveIndexText;
     public Image waveImg;
     float curGauge;
+    float preGauge;
     float maxGauge;
-    int curWave;
 
 
     private void LateUpdate()
     {
         curGauge = WaveManager.instance.gameTime;
-        maxGauge = WaveManager.instance.waveTime;
 
-        waveImg.fillAmount = curGauge / maxGauge;
+        waveImg.fillAmount = (curGauge - preGauge) / (maxGauge - preGauge);
+    }
 
-        int waveIndex = WaveManager.instance.waveIndex;
-        if(waveIndex != curWave)
-        {
-            curWave = waveIndex;
-            waveIndexText.text = waveIndex.ToString();
-        }
+    public void UpdateProgressBar(float waveTime, float gameTime, int waveLevel)
+    {
+        maxGauge = waveTime;
+        preGauge = gameTime;
+        waveIndexText.text = waveLevel.ToString();
     }
 }

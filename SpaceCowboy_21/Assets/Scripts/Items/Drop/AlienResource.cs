@@ -43,13 +43,6 @@ public class AlienResource : Collectable
     //플레이어 위치로 자동으로 날아가는 로직. 
     void AutoCollect()
     {
-        //Vector2 targetVec = GameManager.Instance.player.position - transform.position;
-        //Vector2 move = targetVec.normalized * collectSpeed ;
-        //rb.MovePosition(rb.position + move);
-        //rb.AddForce(move, ForceMode2D.Force);
-
-        //float lerp = 1 - Mathf.Lerp(0f, 1f, Mathf.Cos(collectTimer * Mathf.PI * 0.5f));
-        
         float lerp = EaseOut(0, 1, ref collectTimer, collectDuration);
         lerp = Mathf.Clamp01(lerp);
         Vector2 _dest = GameManager.Instance.player.position;
@@ -57,7 +50,6 @@ public class AlienResource : Collectable
         Vector2 _pos = Vector2.Lerp(_from, _dest, lerp);
         
         rb.MovePosition(_pos);
-
     }
 
     float _easeBaseSpeed = 1.5F; //initial acceleration

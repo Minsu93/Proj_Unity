@@ -1,5 +1,4 @@
 using SpaceCowboy;
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,10 +14,7 @@ public class EB_Neu_BoomMushroom : EnemyBrain
     {
         return;
     }
-    protected override void AfterHitEvent()
-    {
-        return;
-    }
+
     protected override void WhenDieEvent()
     {
         GenerateBullets();
@@ -42,7 +38,7 @@ public class EB_Neu_BoomMushroom : EnemyBrain
             GameObject projectile = PoolManager.instance.GetEnemyProj(projectilePrefab);
             projectile.transform.position = transform.position;
             projectile.transform.rotation = tempRot;
-            projectile.GetComponent<Projectile>().init(damage, speed, range, lifeTime);
+            projectile.GetComponent<Projectile>().Init(damage, speed, lifeTime);
         }
 
         //AudioManager.instance.PlaySfx(shootSFX);

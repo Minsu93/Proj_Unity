@@ -4854,9 +4854,12 @@ GameObject:
   - component: {fileID: 2967013171502460232}
   - component: {fileID: 3485153491677312891}
   - component: {fileID: 3485153491677312890}
+  - component: {fileID: 652078404442559525}
+  - component: {fileID: 1131099544882004073}
   - component: {fileID: 2967013171502460229}
   - component: {fileID: 3485153491677312893}
-  m_Layer: 17
+  - component: {fileID: -6576936656445985474}
+  m_Layer: 8
   m_Name: Orbit_001_Cannon
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -4933,6 +4936,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 0
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
@@ -4978,30 +4982,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  moveSpeed: 20
   enemyHeight: 0.7
   turnSpeedOnLand: 100
-  preAttackDelay: 0.5
-  afterAttackDelay: 0
-  attackCoolTime: 3
-  predictionAccuracy: 0
   bodyDamage: 3
-  projectileStructs:
-  - projectile: {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
-    damage: 1
-    speed: 8
-    spreadAngle: 0
-    range: 0
-    lifeTime: 5
-  hitCollObject: {fileID: 8134351543699796422}
+  strikeSpeed: 10
+  distanceFromStrikePoint: 1
   iconUI: {fileID: 7508925075503968073}
-  moveRight: 0
-  pauseOnAttackMode: 0
   pauseTimer: 0.1
+  boosterParticle: {fileID: 8810903381058341265}
+--- !u!114 &652078404442559525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2967013171502460237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc37288e3a5a3e4aa754c435a2722f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCoolTime: 3
+  preAttackDelay: 0.1
+  afterAttackDelay: 0.1
+  damage: 1
+  speed: 8
+  lifeTime: 5
+  randomAngle: 0
+  numberOfProjectiles: 1
+  anglePerProjectile: 0
   burstNumber: 3
   burstDelay: 0.5
-  boosterParticle: {fileID: 8810903381058341265}
-  ViewObj: {fileID: 0}
+  projectile: {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
+--- !u!114 &1131099544882004073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2967013171502460237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebed76bc7442fad43a740158ffb0dd19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 20
+  highAltitude: 4
+  lowAltitude: 3
+  altitude: 0
 --- !u!114 &2967013171502460229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5035,6 +5063,25 @@ MonoBehaviour:
   zRotation: 0
   coll: {fileID: 0}
   currPlanet: {fileID: 0}
+--- !u!114 &-6576936656445985474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2967013171502460237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropRepeat: 4
+  itemChance: 0.7
+  dropTable:
+  - item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    dropRate: 100
+  launchPowerMin: 4
+  launchPowerMax: 8
 --- !u!1 &7508925075503968073
 GameObject:
   m_ObjectHideFlags: 0
@@ -5131,8 +5178,9 @@ GameObject:
   - component: {fileID: 7996702944756414968}
   - component: {fileID: 7996702944756414971}
   - component: {fileID: 7996702944756414970}
-  - component: {fileID: 7996702944756414918}
+  - component: {fileID: 4243838957325654144}
   - component: {fileID: 7996702944756414969}
+  - component: {fileID: 1360428137366203128}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -5245,7 +5293,7 @@ MonoBehaviour:
   _animationName: idle
   loop: 1
   timeScale: 1
---- !u!114 &7996702944756414918
+--- !u!114 &4243838957325654144
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5254,7 +5302,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7996702944756414972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a532754cc7619734abc358207c366c00, type: 3}
+  m_Script: {fileID: 11500000, guid: a96274568fbdd7243b326e8ea2d62af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemyAction: {fileID: 3485153491677312890}
@@ -5265,11 +5313,7 @@ MonoBehaviour:
   attack: {fileID: 11400000, guid: c5ddd3e2fbd0da845895bdf0550f7a26, type: 2}
   die: {fileID: 11400000, guid: e25f2e54a8c52454789fd5529669289d, type: 2}
   aimOn: {fileID: 11400000, guid: 50a8cc38130441245962afaeb3ff1a88, type: 2}
-  startAttackMode: {fileID: 11400000, guid: 4c00d4ee5b5122445abbb59e01169824, type: 2}
-  skinName: default
-  boneName: gun
-  slotName: guntip
-  attachmentName: guntip
+  boost: {fileID: 0}
 --- !u!114 &7996702944756414969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5284,6 +5328,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skeletonAnimation: {fileID: 7996702944756414970}
   boneName: aimtarget
+--- !u!114 &1360428137366203128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7996702944756414972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec873496e084eae40bbfe4b969d6e63e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonAnimation: {fileID: 7996702944756414970}
+  skinName: default
+  boneName: gun
+  slotName: guntip
+  attachmentName: guntip
 --- !u!1 &8134351543699796422
 GameObject:
   m_ObjectHideFlags: 0
@@ -5295,7 +5356,7 @@ GameObject:
   - component: {fileID: 4365862391954462973}
   - component: {fileID: 6632735361442200854}
   - component: {fileID: 734733578332888012}
-  m_Layer: 8
+  m_Layer: 17
   m_Name: HitCollider
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -5327,7 +5388,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

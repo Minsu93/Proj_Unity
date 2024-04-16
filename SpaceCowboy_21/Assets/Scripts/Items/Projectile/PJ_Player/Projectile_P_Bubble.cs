@@ -4,116 +4,116 @@ using UnityEngine;
 
 public class Projectile_P_Bubble : Projectile_Player
 {
-    [Header("Bubble")]
-    public float awakeTimer = 0.5f;
-    public float checkRadius = 5f;
-    public int numberOfProjectiles = 6;
-    public GameObject projectilePrefab;
-    public LayerMask autoTargetLayer;
-    RaycastHit2D[] targetHits;
+    //[Header("Bubble")]
+    //public float awakeTimer = 0.5f;
+    //public float checkRadius = 5f;
+    //public int numberOfProjectiles = 6;
+    //public GameObject projectilePrefab;
+    //public LayerMask autoTargetLayer;
+    //RaycastHit2D[] targetHits;
 
-    public override void init(float damage, float speed, float range, float lifeTime)
-    {
-        this.damage = damage;
-        this.lifeTime = lifeTime;
-        this.speed = speed;
+    //public override void init(float damage, float speed, float range, float lifeTime)
+    //{
+    //    this.damage = damage;
+    //    this.lifeTime = lifeTime;
+    //    this.speed = speed;
 
-        activate = true;
-        coll.enabled = false;
-        ViewObj.SetActive(true);
+    //    activate = true;
+    //    coll.enabled = false;
+    //    ViewObj.SetActive(true);
 
-        if (trail != null)
-        {
-            trail.enabled = true;
-            trail.Clear();
-        }
+    //    if (trail != null)
+    //    {
+    //        trail.enabled = true;
+    //        trail.Clear();
+    //    }
 
-        InitProjectile();
+    //    InitProjectile();
 
-        projectileMovement.StartMovement(speed * rb.mass);
+    //    projectileMovement.StartMovement(speed * rb.mass);
 
-        StartCoroutine(LaunchRoutine(awakeTimer));
-    }
+    //    StartCoroutine(LaunchRoutine(awakeTimer));
+    //}
 
-    protected override void LifeTimeOver()
-    {
-        ShootProcess();
-        AfterHitEvent();
-    }
+    //protected override void LifeTimeOver()
+    //{
+    //    ShootProcess();
+    //    AfterHitEvent();
+    //}
 
-    protected override void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerProjectile"))
-        {
-            ShootProcess();
-            AfterHitEvent();
-        }
-    }
-
-
-    IEnumerator LaunchRoutine(float sec)
-    {
-        yield return new WaitForSeconds(sec);
-
-        coll.enabled = true;
-    }
-
-    void ShootProcess()
-    {
-        targetHits = CheckTarget();
-        AimShoot(targetHits.Length);
-        RandomShoot(numberOfProjectiles - targetHits.Length);
-    }
+    //protected override void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("PlayerProjectile"))
+    //    {
+    //        ShootProcess();
+    //        AfterHitEvent();
+    //    }
+    //}
 
 
-    RaycastHit2D[] CheckTarget()
-    {
-        //주변에 적이 있는지 체크
+    //IEnumerator LaunchRoutine(float sec)
+    //{
+    //    yield return new WaitForSeconds(sec);
 
-        RaycastHit2D[] hits;
-        hits = Physics2D.CircleCastAll(transform.position, checkRadius, Vector2.right, 0f, autoTargetLayer);
+    //    coll.enabled = true;
+    //}
 
-        return hits;
-    }
+    //void ShootProcess()
+    //{
+    //    targetHits = CheckTarget();
+    //    AimShoot(targetHits.Length);
+    //    RandomShoot(numberOfProjectiles - targetHits.Length);
+    //}
 
-    void AimShoot(int num)
-    {
-        //적을 겨냥한 총알 발사
-        for (int i = 0; i < num; i++)
-        {
-            Vector2 targetVec = (targetHits[i].transform.position - transform.position).normalized;
-            Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
-            Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
 
-            //총알 생성
-            GameObject projectile = PoolManager.instance.Get(projectilePrefab);
-            projectile.transform.position = transform.position;
-            projectile.transform.rotation = targetRot;
-            projectile.GetComponent<Projectile_Player>().init(1, 1, 10, 0);
-        }
-    }
+    //RaycastHit2D[] CheckTarget()
+    //{
+    //    //주변에 적이 있는지 체크
 
-    void RandomShoot(int num)
-    {
+    //    RaycastHit2D[] hits;
+    //    hits = Physics2D.CircleCastAll(transform.position, checkRadius, Vector2.right, 0f, autoTargetLayer);
 
-        //랜덤 방향으로 총알 발사
-        for (int i = 0; i < num; i++)
-        {
+    //    return hits;
+    //}
 
-            Quaternion randomRot = Quaternion.Euler(0, 0, Random.Range(-180, 180f));
+    //void AimShoot(int num)
+    //{
+    //    //적을 겨냥한 총알 발사
+    //    for (int i = 0; i < num; i++)
+    //    {
+    //        Vector2 targetVec = (targetHits[i].transform.position - transform.position).normalized;
+    //        Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
+    //        Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
 
-            //총알 생성
-            GameObject projectile = PoolManager.instance.Get(projectilePrefab);
-            projectile.transform.position = transform.position;
-            projectile.transform.rotation = randomRot;
-            projectile.GetComponent<Projectile_Player>().init(1, 1, 10, 0);
-        }
-    }
+    //        //총알 생성
+    //        GameObject projectile = PoolManager.instance.Get(projectilePrefab);
+    //        projectile.transform.position = transform.position;
+    //        projectile.transform.rotation = targetRot;
+    //        projectile.GetComponent<Projectile_Player>().init(1, 1, 10, 0);
+    //    }
+    //}
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(transform.position, checkRadius);
-    }
+    //void RandomShoot(int num)
+    //{
+
+    //    //랜덤 방향으로 총알 발사
+    //    for (int i = 0; i < num; i++)
+    //    {
+
+    //        Quaternion randomRot = Quaternion.Euler(0, 0, Random.Range(-180, 180f));
+
+    //        //총알 생성
+    //        GameObject projectile = PoolManager.instance.Get(projectilePrefab);
+    //        projectile.transform.position = transform.position;
+    //        projectile.transform.rotation = randomRot;
+    //        projectile.GetComponent<Projectile_Player>().init(1, 1, 10, 0);
+    //    }
+    //}
+
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.white;
+    //    Gizmos.DrawWireSphere(transform.position, checkRadius);
+    //}
 
 }

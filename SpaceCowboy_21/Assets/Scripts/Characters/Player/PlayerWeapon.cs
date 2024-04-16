@@ -10,18 +10,18 @@ public class PlayerWeapon : MonoBehaviour
     public WeaponData baseWeapon;   //기본 총기
 
 
-    public bool infiniteBullets;    //총알이 무한
-    float baseAmmo; //기본 무기의 총알 수 
-    float subAmmo; //특수 무기의 총알 수 
-    bool isSubWeapon; //특수 무기인가요?
+    bool infiniteBullets;    //총알이 무한
+    //float baseAmmo; //기본 무기의 총알 수 
+    //float subAmmo; //특수 무기의 총알 수 
+    //bool isSubWeapon; //특수 무기인가요?
 
     //리로드 관련
-    bool reloadOn = true;  //리로드를 진행하나요?
-    [Tooltip("발사 후 충전 시작까지 걸리는 시간")]
-    public float reloadTimer = 1.0f;    //발사 후 충전 시작까지 걸리는 시간 
-    [Tooltip("충전 속도")]
-    public float reloadSpeed = 3.0f;    //충전 속도
-    float rTimer;
+    //bool reloadOn = true;  //리로드를 진행하나요?
+    //[Tooltip("발사 후 충전 시작까지 걸리는 시간")]
+    //public float reloadTimer = 1.0f;    //발사 후 충전 시작까지 걸리는 시간 
+    //[Tooltip("충전 속도")]
+    //public float reloadSpeed = 3.0f;    //충전 속도
+    //float rTimer;
 
     //총기 관련
     int burstNumber; //한번 누를 때 연속 발사 수
@@ -33,7 +33,7 @@ public class PlayerWeapon : MonoBehaviour
     AudioClip shootSFX;     //발사시 효과음
 
     GameObject projectilePrefab;    //총알의 종류
-    float damage, speed, range, lifeTime;  // Projectile 수치들
+    float damage, speed,lifeTime;  // Projectile 수치들
     public float maxAmmo { get; private set; }    //총알 탄창의 max수치
     public float currAmmo { get; private set; }     //현재 총의 총알
     int reflectionCount;    //반사 횟수
@@ -58,27 +58,27 @@ public class PlayerWeapon : MonoBehaviour
         //baseAmmo는 계속 회복된다
         if (!playerBehavior.activate) return;
 
-        if (!shootON)
-        {
-            if(!isSubWeapon)
-            {
-                //총알 충전(리로드)
-                if (currAmmo < maxAmmo)
-                {
-                    if (rTimer > 0)
-                    {
-                        rTimer -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        currAmmo += Time.deltaTime * reloadSpeed;
-                    }
-                }
-            }
+        ////총알 충전(리로드)
+        //if (!shootON)
+        //{
+        //    if(!isSubWeapon)
+        //    {
+        //        if (currAmmo < maxAmmo)
+        //        {
+        //            if (rTimer > 0)
+        //            {
+        //                rTimer -= Time.deltaTime;
+        //            }
+        //            else
+        //            {
+        //                currAmmo += Time.deltaTime * reloadSpeed;
+        //            }
+        //        }
+        //    }
 
-            return;
-        }
-
+        //    return;
+        //}
+        if(!shootON) return;
 
         //무기를 바꾸는 중이면 발사하지 않는다. 
         if (isChanging)
@@ -100,19 +100,6 @@ public class PlayerWeapon : MonoBehaviour
 
         //발사 중지
         //shootON = false;
-
-        //if (isSingleShot)
-        //{
-        //    //단발식
-        //    TryShoot();
-        //    //발사 중지
-        //    shootON = false;
-        //}
-        //else
-        //{
-        //    //연사
-        //    TryShoot();
-        //}
     }
 
     #region Shoot Function
@@ -124,7 +111,7 @@ public class PlayerWeapon : MonoBehaviour
         if(!infiniteBullets) currAmmo -= 1;
 
         lastShootTime = Time.time;
-        rTimer = reloadTimer;
+        //rTimer = reloadTimer;
 
         //발사
         Shoot();
@@ -136,7 +123,7 @@ public class PlayerWeapon : MonoBehaviour
         if (currAmmo <= 0)
         {
             //ChangeWeapon(baseWeapon);
-            playerBehavior.TryChangeWeapon(baseWeapon);
+            playerBehavior.TryChangeWeapon(0);
         }
 
 
@@ -166,7 +153,7 @@ public class PlayerWeapon : MonoBehaviour
             GameObject projectile = PoolManager.instance.Get(projectilePrefab);
             projectile.transform.position = gunTipPos;
             projectile.transform.rotation = tempRot * randomRotation;
-            projectile.GetComponent<Projectile_Player>().init(damage, speed, range, lifeTime);
+            projectile.GetComponent<Projectile>().Init(damage, speed, lifeTime);
         }
 
         AudioManager.instance.PlaySfx(shootSFX);
@@ -179,7 +166,7 @@ public class PlayerWeapon : MonoBehaviour
 
     public void ChangeWeapon(WeaponData weaponData)
     {
-        isSubWeapon = weaponData != baseWeapon;
+        //isSubWeapon = weaponData != baseWeapon;
         lastShootTime = 0f;
 
         //원하는 총으로 바꿔준다.
@@ -215,12 +202,13 @@ public class PlayerWeapon : MonoBehaviour
         projectilePrefab = weaponData.ProjectilePrefab; 
         damage = weaponData.Damage;
         speed = weaponData.Speed;
-        range = weaponData.Range;
         lifeTime = weaponData.LifeTime;
         reflectionCount = weaponData.ReflectionCount;
 
         currAmmo = weaponData.MaxAmmo;
         maxAmmo = weaponData.MaxAmmo;
+
+        infiniteBullets = weaponData.InfiniteAmmo;
 
     }
 

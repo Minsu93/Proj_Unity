@@ -1,5 +1,4 @@
 using SpaceCowboy;
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

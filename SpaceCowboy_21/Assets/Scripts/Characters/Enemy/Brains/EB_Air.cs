@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,19 +7,19 @@ public class EB_Air : EnemyBrain
 
     public override void BrainStateChange()
     {
-        //상태에 따른 활동 
-        switch (enemyState)
-        {
-            case EnemyState.Sleep:
+        ////상태에 따른 활동 
+        //switch (enemyState)
+        //{
+        //    case EnemyState.Sleep:
 
-                if (inDetectRange) ChangeState(EnemyState.Chase, 0f);
-                break;
+        //        if (inDetectRange) ChangeState(EnemyState.Chase, 0f);
+        //        break;
 
-            case EnemyState.Chase:
+        //    case EnemyState.Chase:
 
-                if ((inAttackRange && isVisible && !action.attackCool)) ChangeState(EnemyState.Attack, 0f);
-                break;
-        }
+        //        if ((inAttackRange && isVisible && !action.attackCool)) ChangeState(EnemyState.Attack, 0f);
+        //        break;
+        //}
     }
 
     //public bool ThinkAboutAttack()
@@ -54,13 +53,4 @@ public class EB_Air : EnemyBrain
     //    }
     //}
 
-    protected override void AfterHitEvent() 
-    {
-        return;
-    }
-
-    protected override void WhenDieEvent()
-    {
-        return;
-    }
 }

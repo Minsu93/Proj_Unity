@@ -8,7 +8,7 @@ using UnityEngine.WSA;
 
 namespace SpaceCowboy
 {
-    public class PlayerBehavior : MonoBehaviour
+    public class PlayerBehavior : MonoBehaviour, IHitable
     {
         [Header("State")]
         public PlayerState playerState = PlayerState.Idle;
@@ -119,7 +119,6 @@ namespace SpaceCowboy
             characterGravity = GetComponent<CharacterGravity>();
             playerWeapon = GetComponent<PlayerWeapon>();
             health = GetComponent<PlayerHealth>();
-            //stargun = GetComponent<StarMagicGun>();
 
             GameManager.Instance.player = this.transform;
         }
@@ -244,7 +243,7 @@ namespace SpaceCowboy
             if (onSpace)
                 return;
 
-            Vector2 upVec = characterGravity.nearestPointGravityVector *  -1f;
+            Vector2 upVec =  ((Vector2)transform.position - characterGravity.nearestPoint).normalized ;
             RotateToVector(upVec, turnSpeedOnLand);
 
         }
@@ -518,89 +517,6 @@ namespace SpaceCowboy
 
         #endregion
 
-        #region Dash
-        public void TryDash()
-        {
-            //DashForce();
-            //StartCoroutine(DashRoutine());
-            if (OnAir)
-                StartCoroutine(EmergencyLanding());
-            //else
-            //{
-            //    StartCoroutine(EmergencyHop());
-            //}
-
-        }
-        void DashForce()
-        {
-            rb.velocity = Vector2.zero;
-            Vector2 dir = aimDirection;
-            float dashSpeed = 15f;
-            rb.AddForce(dir * dashSpeed, ForceMode2D.Impulse);
-
-        }
-        IEnumerator DashRoutine()
-        {
-            //대시 시작
-            characterGravity.activate = false;
-            rb.velocity = Vector2.zero;
-            float dashSpeed = 30f;
-            float dashDuration = .2f;
-            Vector2 dir = aimDirection;
-
-            rb.AddForce(dir * dashSpeed, ForceMode2D.Impulse);
-
-            //대시 시간
-            yield return new WaitForSeconds(dashDuration);
-
-            // 속도 초기화
-            rb.velocity = rb.velocity * 0.2f;
-            //rb.AddForce(dir * -1f * dashSpeed *0.3f, ForceMode2D.Impulse);
-            characterGravity.activate = true;
-        }
-        IEnumerator EmergencyHop()
-        {
-            playerState = PlayerState.Jumping;
-
-            lastJumpTime = Time.time;
-            OnAir = true;
-            airTimer = 0f;
-
-            Vector2 dir = transform.up;
-            float dist = 3f;
-            Vector2 startPos = (Vector2)transform.position;
-
-            float timer = 0f;
-            float hopingDuration = 0.2f;
-
-            while (timer < hopingDuration)
-            {
-                timer += Time.deltaTime;
-                rb.MovePosition(startPos + dir * dist * timer / hopingDuration);
-
-                yield return null;
-            }
-        }
-        IEnumerator EmergencyLanding()
-        {
-            float timer = 0f;
-            float landingDuration = 0.2f;
-            Vector2 dir = characterGravity.nearestPoint - (Vector2)transform.position;
-            Vector2 startPos = (Vector2)transform.position;
-            float dist = dir.magnitude;
-            dir = dir.normalized;
-
-            while (timer < landingDuration)
-            {
-                timer += Time.deltaTime;
-                rb.MovePosition(startPos + dir * dist * timer / landingDuration);
-
-                yield return null;
-            }
-            
-        }
-        #endregion
-
         #region Sliding
 
         public void ToggleSlide()
@@ -660,8 +576,6 @@ namespace SpaceCowboy
 
             this.inputAxis = inputAxisRaw;
 
-            //한번씩만 계산하는게 퍼포먼스가 좋을지, 아니면 매턴 변수에 집어넣는게 퍼포먼스가 좋을지 모르겠음. 어차피 검사는 해야하잖아.. 
-
             targetSpeed = moveSpeed;
 
             //상태를 달리기로 변경(Idle인 경우에만)
@@ -671,12 +585,6 @@ namespace SpaceCowboy
                 playerState = PlayerState.Running;
 
             }
-            //if (state != PlayerState.Running && state != PlayerState.JumpReady)
-            //{
-            //    //달리기 수정되면서 한번 실행.
-            //    state = PlayerState.Running;
-
-            //}
 
             //지상에 있을 동안의 움직임 
             if (!OnAir)
@@ -712,58 +620,10 @@ namespace SpaceCowboy
 
         }
 
-        /*
-        void MoveOnAir()
-        {
-            //근처에 행성이 없다면 공중 이동은 불가능.
-            if (onSpace)
-                return;
-
-            //if (!onFalling) return;
-
-
-            //조작 방향 바뀜
-            if (inputAxis.x != preInputAxis.x || inputAxis.y != preInputAxis.y)
-            {
-                preInputAxis = inputAxis;
-                faceRight = Vector2.SignedAngle(transform.up, inputAxis) < 0 ? true : false;
-            }
-
-            Vector2 velocity = rb.velocity;
-            Vector2 moveVec = transform.rotation * preInputAxis.normalized;
-            velocity = velocity + moveVec * airMoveSpeed * Time.fixedDeltaTime;
-
-            rb.velocity = velocity;
-            //rb.MovePosition(rb.position + (preInputAxis.normalized * moveSpeed * Time.fixedDeltaTime));
-            //rb.AddForce(preInputAxis.normalized * moveSpeed , ForceMode2D.Force);
-        }
-        */
-
         //이동을 시작할 때 실행
         private void GetClosestPoint()
         {
             currentEdgePointIndex = characterGravity.nearestPlanet.GetClosestIndex(transform.position);
-
-            //int closestPointIndex = 0;
-            //float closestDistance = float.MaxValue;
-
-            //// 엣지 콜라이더의 모든 포인트들을 순회하며 가장 가까운 포인트의 인덱스와 거리를 구함
-            //for (int i = 0; i < characterGravity.nearestCollider.points.Length; i++)
-            //{
-            //    Vector2 pointPosition = planetPoints[i];
-            //    bool right = Vector2.SignedAngle(transform.up, pointPosition - rb.position) < 0 ? true : false;
-            //    if (faceRight != right) continue; //캐릭터 진행방향과 다르면 제외한다
-            //    float distance = Vector2.Distance(rb.position, pointPosition);
-
-            //    if (distance < closestDistance)
-            //    {
-            //        closestDistance = distance;
-            //        closestPointIndex = i;
-            //    }
-            //}
-            //Debug.Log(closestPointIndex);
-            //currentEdgePointIndex = closestPointIndex;
-
         }
 
         public void ChangePlanet()  
@@ -844,7 +704,7 @@ namespace SpaceCowboy
             //플레이어가 공중에 있을 때, 떠 있는 시간이 길어지면 행성 방향으로 점점 가까워진다. 
             if (characterGravity.nearestPlanet)
             {
-                Vector2 vec = characterGravity.nearestPointGravityVector;
+                Vector2 vec = (characterGravity.nearestPoint - (Vector2)transform.position).normalized;
                 float vel = rb.velocity.magnitude;
 
                 rb.velocity = Vector2.Lerp(rb.velocity, vec * vel, onAirVelocityRotateSpeed * Time.fixedDeltaTime);
@@ -944,35 +804,12 @@ namespace SpaceCowboy
         #endregion
 
         #region Damage and Die
-        public void DamageEvent(float dmg)
+        public void DamageEvent(float damage, Vector2 hitPoint)
         {
             if (!activate) return;
 
-
             //데미지를 적용
-            if (health.AnyDamage(dmg))
-            {
-                if (health.currShield > 0) shieldhitEffect.Play();
-                else
-                {
-                    if (PlayerHitEvent != null) PlayerHitEvent();
-                }
-                //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
-            }
-
-            //죽었나요?
-            if (health.IsDead())
-            {
-                DeadEvent();
-                return;
-            }
-        }
-
-        public void DamageEvent(float dmg, Vector2 hitPoint)
-        {
-
-            //데미지를 적용
-            if (health.AnyDamage(dmg))
+            if (health.AnyDamage(damage))
             {
                 PlayerKnockBack(hitPoint, knockBackForce);
                 if (health.currShield > 0)

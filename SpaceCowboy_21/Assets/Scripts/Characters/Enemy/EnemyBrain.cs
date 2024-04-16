@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace SpaceEnemy
-{
+
     [SelectionBase]
 
-    public abstract class EnemyBrain : MonoBehaviour
+    public abstract class EnemyBrain : MonoBehaviour , IHitable
     {
         public EnemyState enemyState = EnemyState.Sleep;
         public bool activate = true;    //애너미가 활성화 되었습니까?
@@ -34,8 +33,7 @@ namespace SpaceEnemy
         protected Health health;
         protected EnemyAction action;
         protected CharacterGravity gravity;
-        //protected CharacterGravity pGravity;
-        protected DropItem dropitem;
+
 
         //참조
         public float playerDistance { get; set; }     //플레이어와의 거리를 기록해서 다른 행동을 할 수 있도록.
@@ -57,9 +55,6 @@ namespace SpaceEnemy
             action = GetComponent<EnemyAction>();
             gravity = GetComponent<CharacterGravity>();
             playerTr = GameManager.Instance.player;
-            //pGravity = playerTr.GetComponent<CharacterGravity>();
-            dropitem = GetComponent<DropItem>();
-
 
             if (health != null) health.ResetHealth();    //체력 초기화
         }
@@ -68,12 +63,6 @@ namespace SpaceEnemy
         protected void Start()
         {
             GameManager.Instance.PlayerDeadEvent += PlayerIsDead;   //플레이어가 죽은 경우 실행하는 이벤트 
-            
-            Planet pp = gravity.nearestPlanet;
-            if (pp != null)
-            {
-                pp.PlanetWakeUpEvent += WakeUp;
-            }
         }
 
 
@@ -92,10 +81,10 @@ namespace SpaceEnemy
         }
 
         //리셋한 경우 
-        public void ResetEnemyBrain()
+        public void ResetEnemyBrain(EnemyState eState)
         {
             activate = true;
-            enemyState = EnemyState.Sleep;
+            enemyState = eState;
 
             health.ResetHealth();
             action.ResetAction();
@@ -104,7 +93,9 @@ namespace SpaceEnemy
         //유닛 종류에 따라 다르게 상황을 감지한다. 
         public abstract void BrainStateChange();
 
+
         #region Checks
+
         protected void PlayerPosUpdate()    
         {
             playerDistance = (playerTr.position - transform.position).magnitude;
@@ -166,68 +157,18 @@ namespace SpaceEnemy
             
             return inOtherP;
         }
-
-        //protected bool FindAttackablePoint()
-        //{
-        //    bool findPoint = false;
-
-        //    //먼저 플레이어가 보이는 Collider2D 상의 포인트들의 값을 알아낸다.
-        //    List<int> visiblePoints = new List<int>();
-        //    int pointCounts = gravity.nearestCollider.points.Length - 1;
-
-        //    for (int i = 0; i < pointCounts; i++)
-        //    {
-        //        //절반만 하자. i가 짝수면 통과.
-        //        if (i % 4 == 0)
-        //            continue;
-
-        //        //포인트의 위치를 가져온다
-        //        Vector2 pointVector = GetPointPos(i);
-        //        Vector2 edgeDirection = gravity.nearestCollider.points[i + 1] - gravity.nearestCollider.points[i];
-        //        Vector2 normal = Vector2.Perpendicular(edgeDirection).normalized;
-        //        Vector2 playerPos = playerTr.position;
-
-        //        pointVector = pointVector + (normal * action.enemyHeight);
-        //        Vector2 dir = playerPos - pointVector;
-        //        float dist = dir.magnitude;
-        //        dir = dir.normalized;
-
-        //        //사정거리 내부의 점들만 체크한다
-        //        if (dist > attackRange)
-        //            continue;
-
-        //        //적AI가 서 있는 행성의 Point 중에서 플레이어가 보이는 Point 들만 뽑아낸다. 
-        //        RaycastHit2D hit = Physics2D.Raycast(pointVector, dir, dist, LayerMask.GetMask("Planet"));
-        //        if (hit.collider == null)
-        //        {
-        //            findPoint = true;
-        //            break;
-        //        }
-        //    }
-
-        //    return findPoint;
-        //}
-
-        //Vector2 GetPointPos(int pointIndex)
-        //{
-        //    Vector3 localPoint = gravity.nearestCollider.points[pointIndex];
-        //    Vector2 pointPos = gravity.nearestCollider.transform.TransformPoint(localPoint);
-        //    return pointPos;
-        //}
-
         #endregion
 
-        public virtual void DamageEvent(float dmg)
+        #region Hit and Damage
+        public virtual void DamageEvent(float damage, Vector2 hitVec)
         {
             if (enemyState == EnemyState.Die) return;
 
-            if (health.AnyDamage(dmg))
+            if (health.AnyDamage(damage))
             {
                 //맞는 효과 
                 if(action != null) action.HitView();
                 if (hitEffect != null) ParticleHolder.instance.GetParticle(hitEffect, transform.position, transform.rotation);
-
-                AfterHitEvent();
 
                 if (health.IsDead())
                 {
@@ -235,8 +176,6 @@ namespace SpaceEnemy
                     activate = false;
                     enemyState = EnemyState.Die;
                     
-                    //if (dropitem != null) dropitem.GenerateItem();
-                    //Debug.Log("Generate item!");
                     if (deadEffect != null) ParticleHolder.instance.GetParticle(deadEffect, transform.position, transform.rotation);
 
                     WhenDieEvent();
@@ -244,18 +183,12 @@ namespace SpaceEnemy
             }
         }
 
-        protected abstract void AfterHitEvent();
-        protected abstract void WhenDieEvent();
-
-        //깨어나기, 모든 Brain 들은 Planet에서 신호를 받아서 깨어난다. 
-        public virtual void WakeUp()
+        protected virtual void WhenDieEvent()
         {
-            if(enemyState == EnemyState.Sleep)
-            {
-                ChangeState(EnemyState.Chase, 0f);
-                action.WakeUpEvent();
-            }
+
         }
+
+        #endregion
 
         #region Delaied State Change
         //딜레이 주기
@@ -289,13 +222,22 @@ namespace SpaceEnemy
 
         #endregion
 
+
+        //깨어나기, 모든 Brain 들은 Planet에서 신호를 받아서 깨어난다. 
+        public virtual void WakeUp()
+        {
+            if (enemyState == EnemyState.Die) return;
+            
+            ChangeState(EnemyState.Chase, 0f);
+            action.WakeUpEvent();
+        }
+
         //플레이어가 죽은 경우 다시 잠든다. 
         public void PlayerIsDead()
         {
             if (enemyState == EnemyState.Die) return;
             enemyState = EnemyState.Sleep;
         }
-
 
         private void OnDrawGizmosSelected()
         {
@@ -315,10 +257,9 @@ namespace SpaceEnemy
         Chase,
         Attack, 
         Die,
-        Wait
+        Wait, 
+        Strike
     }
 
-
-}
 
 

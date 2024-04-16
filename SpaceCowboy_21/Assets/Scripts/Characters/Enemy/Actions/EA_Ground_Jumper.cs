@@ -6,19 +6,19 @@ public class EA_Ground_Jumper : EA_Ground
 {
     public Vector2 jumpAttackDirVec;
     public float jumpAttackForce = 10f;
-    protected override IEnumerator AttackCoroutine()
-    {
-        //캐릭터 위치로 회전.
-        faceRight = Vector2.SignedAngle(transform.up, brain.playerDirection) < 0 ? true : false;
-        FlipToDirectionView();
+    //protected override IEnumerator AttackCoroutine()
+    //{
+    //    //캐릭터 위치로 회전.
+    //    faceRight = Vector2.SignedAngle(transform.up, brain.playerDirection) < 0 ? true : false;
+    //    FlipToDirectionView();
 
-        yield return StartCoroutine(DelayRoutine(preAttackDelay));
+    //    yield return StartCoroutine(DelayRoutine(preAttackDelay));
 
-        //점프 공격
-        JumpAttack();
+    //    //점프 공격
+    //    JumpAttack();
 
-        yield return StartCoroutine(DelayRoutine(afterAttackDelay));
-    }
+    //    yield return StartCoroutine(DelayRoutine(afterAttackDelay));
+    //}
 
     void JumpAttack()
     {

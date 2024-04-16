@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     }
     public Planet playerNearestPlanet;
 
+    public GameObject miniMapObj;
+    public GameObject worldMapObj;
+
     public InteractableOBJ curObj;
 
     //중력관련
@@ -89,6 +92,20 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void MapOpen()
+    {
+        miniMapObj.SetActive(false);
+        worldMapObj.SetActive(true);
+        CameraManager.instance.MapOpen();
+    }
+    public void MapClose()
+    {
+        miniMapObj.SetActive(true);
+        worldMapObj.SetActive(false);
+        CameraManager.instance.MapClose();
+
+    }
+
 
     // 플레이어가 죽으면 전역에 이벤트 발생
     public void PlayerIsDead()
@@ -129,21 +146,13 @@ public class GameManager : MonoBehaviour
     //상호작용 관련
     public void InteractSomething()
     {
-        Debug.Log("oh");
         if (curObj == null)
             return;
 
         //플레이어 Cancel만 가능하도록 조작 변경.
-        DisablePlayerInput();
+        //DisablePlayerInput();
         curObj.InteractAction();
     }
 
-    public void InteractCancel()
-    {
-        if (curObj == null)
-            return;
 
-        EnablePlayerInput();
-        curObj.CancelAction();
-    }
 }

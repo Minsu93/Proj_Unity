@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using Spine.Unity;
 using Spine;
 using System.Collections;
@@ -19,7 +18,7 @@ public class EnemyView : MonoBehaviour
     bool preTurnRight;
     bool seePlayer;
 
-    public AnimationReferenceAsset idle, run, attack, die, aimOn;
+    public AnimationReferenceAsset idle, run, attack, die, aimOn, boost;
     EnemyState previousEnemyState;
 
     MeshRenderer _renderer;
@@ -45,8 +44,9 @@ public class EnemyView : MonoBehaviour
         enemyAction.EnemyHitEvent += DamageHit;
         enemyAction.EnemyAimOnEvent += AimOn;
         enemyAction.EnemyAimOffEvent += AimOff;
-        enemyAction.EnemySeePlayerOnceEvent += SeePlayerOnce;
         enemyAction.EnemySeeDirection += FlipScaleXToDirection;
+        enemyAction.EnemyResetEvent += ResetEvent;
+        enemyAction.EnemyStrikeEvent += StartStrike;
 
         _renderer = GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();
@@ -54,15 +54,8 @@ public class EnemyView : MonoBehaviour
 
         preTurnRight = true; //시작시 오른쪽을 보고 있나요?
 
-        Initialize();
-
     }
 
-    //자손마다 다른 활동
-    protected virtual void Initialize()
-    {
-
-    }
 
 
     void StartRun()
@@ -74,10 +67,16 @@ public class EnemyView : MonoBehaviour
     {
         skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
         
-        int cID = Shader.PropertyToID("_Color");
-        Color deadColor = Color.white;
-        block.SetColor(cID, deadColor);
-        _renderer.SetPropertyBlock(block);
+        //int cID = Shader.PropertyToID("_Color");
+        //Color deadColor = Color.white;
+        //block.SetColor(cID, deadColor);
+        //_renderer.SetPropertyBlock(block);
+    }
+    
+    void StartStrike()
+    {
+        if(boost != null)
+            skeletonAnimation.AnimationState.SetAnimation(0, boost, true);
     }
 
 
@@ -144,8 +143,19 @@ public class EnemyView : MonoBehaviour
         }
 
         //이 오브젝트를 비활성화
-        transform.parent.gameObject.SetActive(false);
+        //transform.parent.gameObject.SetActive(false);
 
+    }
+
+    private void ResetEvent()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
+
+        int cID = Shader.PropertyToID("_Color");
+        Color deadColor = new Color(1, 1, 1, 1);
+        block.SetColor(cID, deadColor);
+        _renderer.SetPropertyBlock(block);
+    
     }
 
     void AimOn()
@@ -155,22 +165,6 @@ public class EnemyView : MonoBehaviour
     void AimOff()
     {
         skeletonAnimation.AnimationState.AddEmptyAnimation(2, 0f, 0f);
-    }
-
-    void SeePlayerOnce()
-    {
-        FlipScaleX();
-    }
-
-    void FlipScaleX()
-    {
-        Vector3 dir = (enemyBrain.playerTr.position - transform.position).normalized; 
-        bool turnRight = Vector2.SignedAngle(transform.up, dir) < 0 ? true : false;
-        if (turnRight != preTurnRight)
-        {
-            skeletonAnimation.skeleton.ScaleX = turnRight ? 1 : -1;
-            preTurnRight = turnRight;
-        }
     }
 
     void FlipScaleXToDirection()

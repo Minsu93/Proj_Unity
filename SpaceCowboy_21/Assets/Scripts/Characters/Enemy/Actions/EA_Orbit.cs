@@ -1,4 +1,4 @@
-using SpaceEnemy;
+using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -7,159 +7,182 @@ using static UnityEngine.Rendering.DebugUI.Table;
 
 public class EA_Orbit : EnemyAction
 {
+    /// <summary>
+    /// 스트라이크 모드일때 행성을 그냥 지정해버린다. 
+    /// 장애물이 있으면 방향을 바꾼다. 
+    /// </summary>
+    /// 
 
     [Header("Orbit")]
-    public bool moveRight;          //회전 방향
-    public bool pauseOnAttackMode;  //공격시 정지.
     public float pauseTimer = 0.1f; //피격 시 정지 시간
 
-    [Header("Orbit Attack")]
-    public int burstNumber = 3;
-    public float burstDelay = 0.5f;
-    
     //변수
-    float moveSpeedMultiplier = 1f; //적 발견 시 빠르게 움직임 
-    float moveSpd = 0f;
     float pTime;
-    protected int direction;
-    bool moveUpdate = true;
-    Vector3 center;
-    
+
     //파티클
     public ParticleSystem boosterParticle;
 
-    //스크립트
-    AttachToPlanet attachToPlanet;
-    EV_OrbitCannon enemyview_s;
-    
-    //임시, 회전 용도
-    public GameObject ViewObj;
+    EnemyChase_Orbit chase_Orbit;
+
+
 
     protected override void Awake()
     {
         base.Awake();
-
-        enemyview_s = GetComponentInChildren<EV_OrbitCannon>();
-        attachToPlanet = GetComponent<AttachToPlanet>();
+        chase_Orbit = GetComponent<EnemyChase_Orbit>();
     }
 
-    protected void Start()
-    {
-        center = attachToPlanet.coll.transform.position;
-    }
 
-    private void FixedUpdate()
+    
+    protected override void Update()
     {
-        //스턴 시간
-        if(pTime > 0)
+        EnemyState currState = brain.enemyState;
+
+        if (currState != preState)
+        {
+            DoAction(currState);
+            preState = currState;
+        }
+
+        if (!activate) return;
+
+        //스턴 시간 추가
+        if (pTime > 0)
         {
             pTime -= Time.deltaTime;
             return;
         }
 
-        //공전
-        if (moveUpdate)
+        if (onAttack)
         {
-            //속도가 1보다 낮은 경우 속도를 1로 높인다
-            if (moveSpd < 1)
-            {
-                moveSpd += Time.deltaTime * 10f;
-                if (moveSpd >= 1) moveSpd = 1;
-            }
-        }
-        else
-        {
-            //속도가 0보다 클 경우 속도를 0으로 낮춘다
-            if (moveSpd > 0)
-            {
-                moveSpd -= Time.deltaTime * 10f;
-                if(moveSpd <= 0) { moveSpd = 0; }
-            }
+            if (attack != null)
+                attack.OnAttackAction();
         }
 
-        if(moveSpd > 0)
-            transform.RotateAround(center, Vector3.forward, direction * moveSpeed * moveSpeedMultiplier * Time.deltaTime);
-    }
-
-
-    protected override void OnChaseAction()
-    {
-        return;
-    }
-
-    protected override void OnAttackAction()
-    {
-        attackCool = true;
-        StartCoroutine(AttackCoroutine());
-    }
-
-    protected virtual IEnumerator AttackCoroutine()
-    {
-        yield return StartCoroutine(DelayRoutine(preAttackDelay));
-
-        int burst = burstNumber;
-        //if (enemyview_s != null)
-        //{
-        //    var guntip = enemyview_s.GetGunTipPos();
-        //    ShootAction(guntip.Item1, guntip.Item2, 0);
-        //}
-
-        while (burst > 0)
+        if (onChase)
         {
-            burst--;
-
-            Vector2 pos = transform.position;
-            Vector2 vec = Quaternion.Euler(0, 0, 90) * brain.playerDirection;
-            Quaternion rot = Quaternion.LookRotation(Vector3.forward, vec);
-
-            ShootAction(pos, rot, 0);
-
-            yield return new WaitForSeconds(burstDelay);
+            if (chase != null)
+                chase.OnChaseAction();
         }
     }
 
-
-
-
-    public override void HitView()
+    protected override void DoAction(EnemyState state)
     {
-        //애니메이션 이벤트
-        base.HitView();
+        switch (state)
+        {
+            case EnemyState.Strike:
+                onChase = false;
+                onAttack = false;
+                StrikeAction();
+                StrikeView();
+                break;
 
-        //약간 경직? 
-        pTime = pauseTimer;
+            case EnemyState.Sleep:
+                onChase = false;
+                onAttack = false;
+                OnSleepEvent();
+                AddOnPlanetEnemyList();
+                StartIdleView();
+                break;
+
+            case EnemyState.Chase:
+                StartIdleView();
+                onChase = true;
+                onAttack = false;
+                break;
+
+                //공격 시 이동
+            case EnemyState.Attack:
+                onChase = true;
+                onAttack = true;
+                break;
+
+            case EnemyState.Die:
+                onChase = false;
+                onAttack = false;
+                OnDieAction();
+                break;
+        }
     }
-    
 
 
     public override void WakeUpEvent()
     {
-        base.WakeUpEvent();
+        activate = true;
+        hitColl.enabled = true;
 
-        //움직이기 시작 
-        moveUpdate = true;
+        //방향 지정 추가
+        ChangeDirection(brain.playerIsRight);
+
+        //파티클 추가
         if (boosterParticle != null) boosterParticle.Play();
-        ChangeDirectionToRight(moveRight);
+
     }
+
 
     protected override void OnDieAction()
     {
         base.OnDieAction();
-
-        moveUpdate = false;
+        //파티클 추가
         if (boosterParticle != null) boosterParticle.Stop();
-
     }
 
-    public virtual void ChangeDirectionToRight(bool right)
+    void ChangeDirection()
     {
-
-        faceRight = right ? true : false;
+        faceRight = !faceRight;
         FlipToDirectionView();
-
-        direction = right ? -1 : 1;
-
-
+        chase_Orbit.ChangeDirection(faceRight);
     }
 
+    void ChangeDirection(bool isRight)
+    {
+        faceRight = isRight;
+        FlipToDirectionView();
+        chase_Orbit.ChangeDirection(faceRight);
+    }
+
+    public override void HitView()
+    {
+        base.HitView();
+
+        //경직 
+        pTime = pauseTimer;
+    }
+
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    {
+        Vector2 dir = strikePos - (Vector2)transform.position;
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
+        if (hit.collider == null) yield break;
+
+        //Orbit 추가
+        chase_Orbit.SetCenterPoint(hit.transform.GetComponent<Planet>());
+
+        Vector2 strikeStartPos = transform.position;
+        Vector2 strikeTargetPos = hit.point;
+        float strikeTime = hit.distance / strikeSpeed;
+        float time = 0; //강습 시간
+        float distance = hit.distance; //남은 거리
+        while (distance > distanceFromStrikePoint + enemyHeight)
+        {
+            time += Time.deltaTime;
+            distance = Vector2.Distance(transform.position, strikeTargetPos);
+            transform.position = (Vector2.Lerp(strikeStartPos, strikeTargetPos, time / strikeTime));
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        brain.WakeUp();
+    }
+
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.collider.CompareTag("Planet"))
+        {
+            ChangeDirection();
+        }
+    }
 }

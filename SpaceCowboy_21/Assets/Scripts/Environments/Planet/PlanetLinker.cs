@@ -10,9 +10,6 @@ public class PlanetLinker : MonoBehaviour
     public float maxLinkedDistance = 5f;
 
 
-    float TimeBetweens = 1.0f;
-    float timer;
-
     private void Start()
     {
         if (planet == null) GetComponent<Planet>();
@@ -20,24 +17,6 @@ public class PlanetLinker : MonoBehaviour
         GetLinkedPlanets();
         activeLinker = true;
     }
-
-    //void Update()
-    //{
-    //    if (Application.isPlaying)
-    //        this.enabled = false;
-
-    //    if (planet == null)
-    //        return;
-
-    //    timer += Time.deltaTime;
-    //    if(timer > TimeBetweens)
-    //    {
-    //        timer = 0;
-    //        GetLinkedPlanets();
-    //    }
-        
-    //}
-
 
     [ContextMenu("Get Linked Planets")]
     //이 행성과 Linked 되어있는 행성, 그리고 그 출입point를 구한다. 
@@ -60,9 +39,9 @@ public class PlanetLinker : MonoBehaviour
                 
                 //사이에 장애물이 있으면 제외한다
                 Transform target = hit.collider.transform;
-                Vector2 vec = target.position - transform.position;
-                RaycastHit2D ray = Physics2D.Raycast(transform.position, vec.normalized, vec.magnitude, LayerMask.GetMask("SpaceBorder"));
-                if (ray.collider != null) continue;
+                //Vector2 vec = target.position - transform.position;
+                //RaycastHit2D ray = Physics2D.Raycast(transform.position, vec.normalized, vec.magnitude, LayerMask.GetMask("SpaceBorder"));
+                //if (ray.collider != null) continue;
 
                 Planet targetP = target.GetComponent<Planet>();
 

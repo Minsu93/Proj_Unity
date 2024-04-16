@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,15 +45,6 @@ public class EB_Neu_ShieldFlower : EnemyBrain
         return;
     }
 
-    protected override void AfterHitEvent()
-    {
-        return;
-    }
-
-    protected override void WhenDieEvent()
-    {
-        return;
-    }
 
 
 

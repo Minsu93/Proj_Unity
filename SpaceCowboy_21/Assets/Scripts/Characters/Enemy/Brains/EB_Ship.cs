@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,13 +16,5 @@ public class EB_Ship : EnemyBrain
         throw new System.NotImplementedException();
     }
 
-    protected override void AfterHitEvent()
-    {
-        throw new System.NotImplementedException();
-    }
 
-    protected override void WhenDieEvent()
-    {
-        throw new System.NotImplementedException();
-    }
 }

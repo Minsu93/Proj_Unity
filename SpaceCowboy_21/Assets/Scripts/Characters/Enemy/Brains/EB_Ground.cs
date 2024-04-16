@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
@@ -28,13 +27,5 @@ public class EB_Ground : EnemyBrain
         }
     }
 
-    protected override void AfterHitEvent()
-    {
-        return;
-    }
 
-    protected override void WhenDieEvent()
-    {
-        return;
-    }
 }

@@ -91,6 +91,11 @@ public class WeaponData : ScriptableObject
     int maxAmmo;     //탄창의 개수
     public int MaxAmmo { get { return maxAmmo; } }
 
+
+    [SerializeField]
+    bool infiniteAmmo;     //탄창의 개수
+    public bool InfiniteAmmo { get { return infiniteAmmo; } }
+
     //[SerializeField]
     //float reloadTime;  // 재장전에 필요한 시간
     //public float ReloadTime { get { return reloadTime; } }
@@ -99,9 +104,9 @@ public class WeaponData : ScriptableObject
     float speed;        //총알의 속도
     public float Speed { get { return speed; } }
 
-    [SerializeField]
-    float range;        //총알의 최대 사거리
-    public float Range { get { return range; } }
+    //[SerializeField]
+    //float range;        //총알의 최대 사거리
+    //public float Range { get { return range; } }
 
 
     //[SerializeField]

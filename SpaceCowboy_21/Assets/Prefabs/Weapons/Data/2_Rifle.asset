@@ -27,7 +27,8 @@ MonoBehaviour:
   shootSFX: {fileID: 0}
   projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
   damage: 20
-  maxAmmo: 99
+  maxAmmo: 5
+  infiniteAmmo: 0
   speed: 90
   range: 0
   lifeTime: 3

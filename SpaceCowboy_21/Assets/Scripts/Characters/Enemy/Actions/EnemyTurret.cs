@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using Spine;
 using Spine.Unity;
 using System.Collections;
@@ -39,13 +38,7 @@ public class EnemyTurret : EnemyAction
         }
     }
 
-    protected override void OnChaseAction()
-    {
-        throw new System.NotImplementedException();
-    }
 
-    protected override void OnAttackAction()
-    {
-        throw new System.NotImplementedException();
-    }
+
+
 }

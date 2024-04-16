@@ -1,5 +1,4 @@
 using SpaceCowboy;
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -18,23 +17,20 @@ public class EA_Neutral : EnemyAction
         else onAttack = false;
     }
 
-    protected override void OnAttackAction()
-    {
-        attackCool = true;
+    //protected override void OnAttackAction()
+    //{
+    //    attackCool = true;
 
-        //공격하기
-        Vector2 gunTipPos = transform.position;
-        Quaternion gunTipRot = Quaternion.LookRotation(Vector3.forward, Quaternion.Euler(0, 0, 90f) * transform.up);
+    //    //공격하기
+    //    Vector2 gunTipPos = transform.position;
+    //    Quaternion gunTipRot = Quaternion.LookRotation(Vector3.forward, Quaternion.Euler(0, 0, 90f) * transform.up);
 
-        //총알 생성
-        GameObject projectile = PoolManager.instance.GetEnemyProj(projectileStructs[0].projectile);
-        projectile.transform.position = gunTipPos;
-        projectile.transform.rotation = gunTipRot;
-        projectile.GetComponent<Projectile>().init(projectileStructs[0].damage, projectileStructs[0].speed, projectileStructs[0].range, projectileStructs[0].lifeTime);
-    }
+    //    //총알 생성
+    //    GameObject projectile = PoolManager.instance.GetEnemyProj(projectileStructs[0].projectile);
+    //    projectile.transform.position = gunTipPos;
+    //    projectile.transform.rotation = gunTipRot;
+    //    projectile.GetComponent<Projectile>().Init(projectileStructs[0].damage, projectileStructs[0].speed, projectileStructs[0].lifeTime);
+    //}
 
-    protected override void OnChaseAction()
-    {
-        return;
-    }
+
 }

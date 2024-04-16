@@ -1,4 +1,3 @@
-using SpaceEnemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,52 +23,25 @@ public class EB_Orbit : EnemyBrain
         //상태에 따른 활동 
         switch (enemyState)
         {
-            //case EnemyState.Sleep:
-            //    if (inDetectRange)
-            //    {
-            //        WakeUp();
-            //    }
-            //    break;
-
+            //플레이어가 있는 방향으로 이동.
             case EnemyState.Chase:
                 if (inAttackRange && isVisible)
                 {
                     ChangeState(EnemyState.Attack, 0);
                 }
-                
-                if (!inAttackRange && !isVisible)
-                {
-                    //플레이어 방향을 감지하고 회전하기
-                    if(playerIsRight)
-                    {
-                        orbitAction.ChangeDirectionToRight(true);
-                    }
-                    else
-                    {
-                        orbitAction.ChangeDirectionToRight(false);
-                    }
-                }
-
                 break;
 
+            //지나가면서 포격
             case EnemyState.Attack:
 
                 if (!inAttackRange || !isVisible) 
                 {
                     ChangeState(EnemyState.Chase, 0);
                 }
-
                 break;
         }
     }
 
-    protected override void AfterHitEvent()
-    {
-        return;
-    }
 
-    protected override void WhenDieEvent()
-    {
-        return;
-    }
+
 }

@@ -36,10 +36,10 @@ public class PlayerInput : MonoBehaviour
         if (playerBehavior == null)
             return;
 
-        if (Input.GetButtonDown(CancelButton))
-        {
-            GameManager.Instance.InteractCancel();
-        }
+        //if (Input.GetButtonDown(CancelButton))
+        //{
+        //    GameManager.Instance.InteractCancel();
+        //}
 
 
         if (inputDisabled)
@@ -48,14 +48,12 @@ public class PlayerInput : MonoBehaviour
         //Map
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            //CameraManager.instance.MapOpen();
-            //¿ùµå¸Ê ¿ÀÇÂ
+            GameManager.Instance.MapOpen();
 
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
-            //CameraManager.instance.MapClose();
-            //¿ùµå¸Ê Å¬·ÎÁî
+            GameManager.Instance.MapClose();
         }
 
         // Jump
@@ -92,14 +90,14 @@ public class PlayerInput : MonoBehaviour
         // Slide
         if (Input.GetButtonDown(SlideButton))
         {
-            playerBehavior.ToggleSlide();
+            //playerBehavior.ToggleSlide();
 
-            //playerBehavior.TrySlide();
+            playerBehavior.TrySlide();
         }
 
         if (Input.GetButtonUp(SlideButton))
         {
-            //playerBehavior.TryStopSlide();
+            playerBehavior.TryStopSlide();
         }
 
         //¹«±â ±³Ã¼
@@ -111,10 +109,10 @@ public class PlayerInput : MonoBehaviour
         {
             playerBehavior.TryChangeWeapon(1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            playerBehavior.TryChangeWeapon(2);
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    playerBehavior.TryChangeWeapon(2);
+        //}
         //Lasso
         //if (Input.GetMouseButtonDown(1))
         //{

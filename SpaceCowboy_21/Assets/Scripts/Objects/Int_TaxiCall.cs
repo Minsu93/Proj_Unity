@@ -11,14 +11,13 @@ public class Int_TaxiCall : InteractableOBJ
     {
         worldMap.gameObject.SetActive(true);
         worldMap.OpenMap(1);
-
     }
 
-    public override void CancelAction()
+    public override void turnOnAction()
     {
-        worldMap.CloseMap();
-        worldMap.gameObject.SetActive(false);
-
+        return;
     }
+
+
 
 }
