@@ -235,9 +235,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5532728872473756}
   - component: {fileID: 2851087861543199190}
-  m_Layer: 12
+  m_Layer: 17
   m_Name: Trigger
-  m_TagString: Object
+  m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -267,7 +267,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -286,9 +286,9 @@ GameObject:
   - component: {fileID: 7027819132587245211}
   - component: {fileID: 5410031836246568675}
   - component: {fileID: 1558956853960136941}
-  m_Layer: 17
+  m_Layer: 12
   m_Name: WeaponDrop
-  m_TagString: Drop
+  m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -341,7 +341,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -361,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 1
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}

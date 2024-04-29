@@ -9683,6 +9683,146 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &2056016842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2056016843}
+  - component: {fileID: 2056016844}
+  m_Layer: 7
+  m_Name: SJumpTrail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2056016843
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056016842}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9007588099006207613}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!96 &2056016844
+TrailRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056016842}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7169be4c7516aef478bc5b1a822e38f4, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: -1151850961
+  m_SortingLayer: 4
+  m_SortingOrder: -450
+  m_Time: 2
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.22222222
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 0.32704395, g: 0.6340687, b: 1, a: 1}
+      key1: {r: 0, g: 0.345153, b: 0.9716981, a: 0}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_MinVertexDistance: 0.1
+  m_Autodestruct: 0
+  m_Emitting: 0
 --- !u!1 &1127436172421164705
 GameObject:
   m_ObjectHideFlags: 0
@@ -10255,10 +10395,8 @@ GameObject:
   - component: {fileID: 9007588099006207614}
   - component: {fileID: 9007588099006207601}
   - component: {fileID: 9007588099006207611}
-  - component: {fileID: 5589343788067957909}
   - component: {fileID: 9007588099006207609}
   - component: {fileID: 9007588099006207589}
-  - component: {fileID: 9007588099006207586}
   - component: {fileID: 1641079341}
   m_Layer: 7
   m_Name: Player
@@ -10286,6 +10424,7 @@ Transform:
   - {fileID: 586254651722766985}
   - {fileID: 4880570061481500053}
   - {fileID: 1178486509}
+  - {fileID: 2056016843}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10358,28 +10497,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444eb86dfef94874da85d1b12ff2813b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 12
+  playerState: 0
+  jumpForce: 13
+  superJumpForce: 18
   boosterForce: 1
   boostTime: 1
-  moveForce: 0.1
-  onAirVelocityRotateSpeed: 1
-  jumpChargeTimeSpent: 0.7
-  timeToStartChargeJump: 0.2
-  maxChargePower: 5
+  maxChargeTime: 1
   chargeStateSpeedMultiplier: 0.3
-  state: 0
-  moveSpeed: 7
+  moveSpeed: 8
   acceleration: 0.5
   inputResetTime: 0.5
+  slideSpeed: 15
   turnSpeedOnLand: 100
-  OnAir: 0
   onAirTime: 1
-  faceRight: 0
+  onAirVelocityRotateSpeed: 1
+  OnAir: 0
+  knockBackForce: 6
+  stunTime: 0.5
   shieldhitEffect: {fileID: 3346224299959829490}
   slidingEffect: {fileID: 1178486511}
+  sJumpTrail: {fileID: 2056016844}
+  weapons:
+  - {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
+  - {fileID: 11400000, guid: d7032922e3409744db92826777bbd6d5, type: 2}
   playerView: {fileID: 9007588099135373974}
   jumpViewer: {fileID: 9007588097638262585}
-  playerVelocity: {x: 0, y: 0}
 --- !u!114 &9007588099006207611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10393,25 +10535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseWeapon: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
-  infiniteBullets: 1
-  reloadTimer: 1
-  reloadSpeed: 6
-  weaponChangeTime: 0.5
---- !u!114 &5589343788067957909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9007588099006207600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e2aa124f1f30b8428604aa31bb00fc4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxAmmo: 6
-  shootInterval: 1
-  magicBullet: {fileID: 2224062225267729709, guid: 1de87b05587bd6a42af511cdea61adbf, type: 3}
+  weaponChangeTime: 0
 --- !u!114 &9007588099006207609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10424,11 +10548,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 302c9ef4ba68ddf43ab262a9cebf17f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activate: 1
+  nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
-  nearestPoint: {x: 0, y: 0}
   nearestCollider: {fileID: 0}
-  activate: 1
+  characterGravityMultiplier: 1
 --- !u!114 &9007588099006207589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10446,19 +10572,6 @@ MonoBehaviour:
   maxShield: 10
   delayToRegeneration: 5
   InvincibleTime: 0
---- !u!114 &9007588099006207586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9007588099006207600}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64db7830530dc8e489e2174e8a10453e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shieldObj: {fileID: 0}
 --- !u!114 &1641079341
 MonoBehaviour:
   m_ObjectHideFlags: 0

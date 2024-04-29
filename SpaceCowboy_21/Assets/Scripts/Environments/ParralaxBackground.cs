@@ -11,7 +11,6 @@ public class ParralaxBackground : MonoBehaviour
     private Vector3 lastCameraPosition;
 
     CinemachineVirtualCamera virtualCam;
-    float defaultLensSize;
     float defaultFOV;
     Vector3 startScale;
 
@@ -21,7 +20,7 @@ public class ParralaxBackground : MonoBehaviour
     {
         cameraTransform = Camera.main.transform;
         lastCameraPosition = cameraTransform.position;
-
+        transform.position = new Vector2(lastCameraPosition.x, lastCameraPosition.y);
 
         virtualCam = CameraManager.instance.virtualCamera;
         startScale = transform.localScale;
@@ -41,12 +40,9 @@ public class ParralaxBackground : MonoBehaviour
 
 
         ////렌즈에 따른 베이스 위치, 스케일 
-        //float lens = virtualCam.m_Lens.OrthographicSize;
         float curFOV = virtualCam.m_Lens.FieldOfView;
         float baseScaler;
-        //Vector2 basePos;
 
-        //baseScaler = defaultLensSize / lens; // 1 ~ 0.5의 값
         baseScaler = defaultFOV / curFOV;
         float a = 1 / baseScaler;      //a는 1~2의 값을 갖는다. 
         transform.localScale = startScale * a;

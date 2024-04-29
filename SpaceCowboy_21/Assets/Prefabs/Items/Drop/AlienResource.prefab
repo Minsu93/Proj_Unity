@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 3765283663132891048}
   - component: {fileID: 2221231759739553744}
   - component: {fileID: -1497620344037860417}
-  m_Layer: 17
+  m_Layer: 12
   m_Name: AlienResource
-  m_TagString: Drop
+  m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,7 +68,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -88,6 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 1
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
@@ -105,6 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   consumeEffect: {fileID: 6499634569363800450, guid: 3bf8c67c43247ea449ecc46a72f120e0, type: 3}
+  baseValue: 1
   timeToAutoCollect: 2
   collectDuration: 3
 --- !u!1 &6488043510964788347
@@ -342,9 +344,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6184720136159985071}
   - component: {fileID: 8238830306214643941}
-  m_Layer: 12
+  m_Layer: 17
   m_Name: Trigger
-  m_TagString: Object
+  m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -374,7 +376,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

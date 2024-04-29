@@ -38,6 +38,7 @@ public class EnemyAttack_Projectile : EnemyAttack
 
         StartCoroutine(AttackRoutine());     
     }
+    
 
 
     protected virtual IEnumerator AttackRoutine()

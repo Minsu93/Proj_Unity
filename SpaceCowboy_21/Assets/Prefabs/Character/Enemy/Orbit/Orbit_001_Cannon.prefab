@@ -5027,9 +5027,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 20
+  ascendSpeed: 2
   highAltitude: 4
   lowAltitude: 3
-  altitude: 0
 --- !u!114 &2967013171502460229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5231,7 +5231,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dd8ab0f368a2aa543be0d1ac512f4cf7, type: 2}
+  - {fileID: 2100000, guid: 72f7c0284884e9b419339e50098fea88, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5265,7 +5265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: f11df843477c66d4c8196064663d497f, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 29ac1663ec6ce8a4d8a1e2961d891fce, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
@@ -5308,12 +5308,12 @@ MonoBehaviour:
   enemyAction: {fileID: 3485153491677312890}
   enemyBrain: {fileID: 3485153491677312891}
   skeletonAnimation: {fileID: 7996702944756414970}
-  idle: {fileID: 11400000, guid: 444a096858eeb8f4fa78e4e631b4d66f, type: 2}
-  run: {fileID: 11400000, guid: 515681ff85d52b0449b6648d899db03d, type: 2}
-  attack: {fileID: 11400000, guid: c5ddd3e2fbd0da845895bdf0550f7a26, type: 2}
-  die: {fileID: 11400000, guid: e25f2e54a8c52454789fd5529669289d, type: 2}
-  aimOn: {fileID: 11400000, guid: 50a8cc38130441245962afaeb3ff1a88, type: 2}
-  boost: {fileID: 0}
+  idle: {fileID: 11400000, guid: a51cdf39743f3014db3d4b8ff6056de5, type: 2}
+  run: {fileID: 11400000, guid: a51cdf39743f3014db3d4b8ff6056de5, type: 2}
+  attack: {fileID: 11400000, guid: 065f4c304f17ad04c9602d80a974ac40, type: 2}
+  die: {fileID: 11400000, guid: 462997dbadf5bd7418f3275f347a96d9, type: 2}
+  aimOn: {fileID: 11400000, guid: 08870a337645d214f81537e0cecdc77c, type: 2}
+  strike: {fileID: 11400000, guid: 8cf2a9a0cb861494986b8690001f9cf9, type: 2}
 --- !u!114 &7996702944756414969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5342,7 +5342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skeletonAnimation: {fileID: 7996702944756414970}
   skinName: default
-  boneName: gun
+  boneName: guntip
   slotName: guntip
   attachmentName: guntip
 --- !u!1 &8134351543699796422
@@ -5358,7 +5358,7 @@ GameObject:
   - component: {fileID: 734733578332888012}
   m_Layer: 17
   m_Name: HitCollider
-  m_TagString: Enemy
+  m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5370,8 +5370,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8134351543699796422}
-  m_LocalRotation: {x: -0, y: -0, z: 0.9987106, w: 0.050767362}
-  m_LocalPosition: {x: 0.16842, y: 0.21407996, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.041178126, w: 0.9991518}
+  m_LocalPosition: {x: 0.09190003, y: 0.0062997947, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

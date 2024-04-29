@@ -23,6 +23,11 @@ public class Asteroid : MonoBehaviour, IGravitable
     Rigidbody2D rb;
     private HashSet<GameObject> hitTargets = new HashSet<GameObject>();
 
+    Vector2 explodeNormal;
+
+    bool _activate = false;
+    public bool Activate { get { return _activate; } set { _activate = value; } }
+
     private void Awake()
     {
         gravity = GetComponent<Gravity>();
@@ -36,6 +41,8 @@ public class Asteroid : MonoBehaviour, IGravitable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!_activate) return;
+
         // 적과 충돌했는지 확인
         if (collision.CompareTag("Enemy"))
         {
@@ -47,18 +54,24 @@ public class Asteroid : MonoBehaviour, IGravitable
                 {
                     hitable.DamageEvent(collideDamage, transform.position);
                     ShowHitEffect(hitParticle, collision.transform.position, collision.transform.rotation);
+                    // 적을 맞춘 리스트에 추가
+                    hitTargets.Add(collision.gameObject);
                 }
-
-                // 적을 맞춘 리스트에 추가
-                hitTargets.Add(collision.gameObject);
             }
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!_activate) return;
 
         //폭발 데미지
-        if (collision.CompareTag("Planet"))
+        if (collision.collider.CompareTag("Planet"))
         {
             gravity.CancelFixedGravity();
             rb.velocity = Vector3.zero;
+            //폭발 각도 지정
+            explodeNormal = (transform.position - collision.transform.position).normalized;
             //폭발 생성
             ExplodeAsteroid();
             StartCoroutine(DestroyRoutine(0.5f));
@@ -77,8 +90,8 @@ public class Asteroid : MonoBehaviour, IGravitable
                 ShowHitEffect(hitParticle, hit.transform.position, hit.transform.rotation);
             }
         }
-
-        ShowHitEffect(explodeParticle, transform.position, transform.rotation);
+        Quaternion rot = Quaternion.LookRotation(Vector3.forward, explodeNormal);
+        ShowHitEffect(explodeParticle, transform.position, rot);
     }
 
     protected void ShowHitEffect(ParticleSystem particle, Vector2 pos, Quaternion rot)
@@ -91,7 +104,7 @@ public class Asteroid : MonoBehaviour, IGravitable
     {
         viewObj.SetActive(false);
         yield return new WaitForSeconds(time);
-
+        _activate = false;
         gameObject.SetActive(false);
     }
    

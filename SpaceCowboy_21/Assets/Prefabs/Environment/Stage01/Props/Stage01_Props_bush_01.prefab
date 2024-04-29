@@ -97,7 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfc0751c7ba7564680b9606b780d642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stickToPlanet: 0
-  yOffset: 0.5
+  activate: 0
+  isOrbital: 0
+  range: 10
+  yOffset: 0.4
   zRotation: 0
   coll: {fileID: 0}
+  currPlanet: {fileID: 0}

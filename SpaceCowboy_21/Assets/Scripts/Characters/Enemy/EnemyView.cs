@@ -18,7 +18,8 @@ public class EnemyView : MonoBehaviour
     bool preTurnRight;
     bool seePlayer;
 
-    public AnimationReferenceAsset idle, run, attack, die, aimOn, boost;
+    public AnimationReferenceAsset idle, run, attack, die, aimOn, strike;
+
     EnemyState previousEnemyState;
 
     MeshRenderer _renderer;
@@ -75,8 +76,8 @@ public class EnemyView : MonoBehaviour
     
     void StartStrike()
     {
-        if(boost != null)
-            skeletonAnimation.AnimationState.SetAnimation(0, boost, true);
+        if(strike != null)
+            skeletonAnimation.AnimationState.SetAnimation(0, strike, true);
     }
 
 
@@ -85,8 +86,6 @@ public class EnemyView : MonoBehaviour
         //skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
 
         TrackEntry entry = skeletonAnimation.AnimationState.SetAnimation(1, attack, false);
-        entry.AttachmentThreshold = 1;
-        entry.MixDuration = 0;
         skeletonAnimation.AnimationState.AddEmptyAnimation(1, 0f, 0f);
     }
 

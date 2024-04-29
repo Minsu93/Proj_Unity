@@ -11,11 +11,10 @@ TagManager:
   - Object
   - Item
   - EnemyHitableProjectile
-  - Shield
-  - FloatingObj
-  - SpaceBorder
   - Obstacle
   - Drop
+  - PhysicsBody
+  - Block
   layers:
   - Default
   - TransparentFX
@@ -31,12 +30,12 @@ TagManager:
   - Planet
   - Object
   - Ship
-  - 
+  - Gravity
   - EnemyHitableProj
   - Obstacle
   - PhysicsBody
-  - 
-  - 
+  - GravityProj
+  - Block
   - Minimap
   - 
   - Post Processing

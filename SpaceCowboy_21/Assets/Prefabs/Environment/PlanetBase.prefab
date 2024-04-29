@@ -451,18 +451,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  gravityMultiplier: 1
   planetRadius: 8
   gravityRadius: 14
+  gravityMultiplier: 1
   planetFOV: 100
-  gravityViewer: {fileID: 880953034114429552}
-  polyCollider: {fileID: 5905974645841349009}
+  margin: 150
   linkedPlanetList:
   - planet: {fileID: 0}
     bridgeIndex: 47
     targetVector: {x: -2.2554107, y: -8.095149}
   worldPoints: []
   pointsNormal: []
+  enemyList: []
+  gravityViewer: {fileID: 880953034114429552}
+  polyCollider: {fileID: 5905974645841349009}
 --- !u!114 &4045485038870477491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,7 +502,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5820961588375558303}
   - component: {fileID: 5820961588375558304}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: GravityTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -548,7 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 880953034114429552}
   - component: {fileID: 535274560153431933}
-  m_Layer: 11
+  m_Layer: 20
   m_Name: GravityViewer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

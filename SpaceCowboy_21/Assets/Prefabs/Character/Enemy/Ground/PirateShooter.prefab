@@ -404,20 +404,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  moveSpeed: 5
   enemyHeight: 1
   turnSpeedOnLand: 100
   bodyDamage: 3
   strikeSpeed: 10
   distanceFromStrikePoint: 3
-  projectileStructs:
-  - projectile: {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
-    damage: 3
-    speed: 15
-    spreadAngle: 5
-    lifeTime: 5
-  hitColl: {fileID: 6769198538435257408}
-  hitCollObject: {fileID: 6651936169225812656}
   iconUI: {fileID: 3957556133272027459}
   jumpForce: 15
   maxAirTime: 1
@@ -524,8 +515,8 @@ GameObject:
   - component: {fileID: 3096307507880773408}
   - component: {fileID: 6769198538435257408}
   m_Layer: 17
-  m_Name: HitCollider
-  m_TagString: Enemy
+  m_Name: PhysicsCollider
+  m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

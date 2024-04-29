@@ -31,26 +31,6 @@ public class Gravity : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         currentGravityForce = GameManager.Instance.worldGravity;
-
-        //RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 10f, Vector2.right, 0f, LayerMask.GetMask("Planet"));
-
-        //if (hits.Length > 0)
-        //{
-        //    Transform t = null;
-        //    float min = Mathf.Infinity;
-
-        //    foreach (RaycastHit2D hit in hits)
-        //    {
-        //        Vector2 closestPoint = hit.collider.ClosestPoint(transform.position);
-        //        Vector2 check = closestPoint - (Vector2)transform.position;
-        //        if (check.magnitude < min)
-        //        {
-        //            t = hit.transform;
-        //            min = check.magnitude;
-        //        }
-        //    }
-        //    nearestPlanet = t.GetComponent<Planet>();
-        //}
     }
 
 

@@ -12,7 +12,7 @@ public abstract class Collectable : MonoBehaviour
 
     private void Awake()
     {
-        physicsCollider = GetComponentsInChildren<CircleCollider2D>()[0];
+        physicsCollider = GetComponentsInChildren<CircleCollider2D>()[1];
         gravity = GetComponent<Gravity>();
         rb = GetComponent<Rigidbody2D>();
     }

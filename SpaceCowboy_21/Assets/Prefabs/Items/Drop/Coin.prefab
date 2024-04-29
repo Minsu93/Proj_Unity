@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 6472452237231810244}
   - component: {fileID: 3765283663132891048}
   - component: {fileID: 2221231759739553744}
-  m_Layer: 17
+  m_Layer: 12
   m_Name: Coin
-  m_TagString: Drop
+  m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -87,6 +87,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 1
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
@@ -5112,9 +5113,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6184720136159985071}
   - component: {fileID: 8238830306214643941}
-  m_Layer: 12
+  m_Layer: 17
   m_Name: Trigger
-  m_TagString: Object
+  m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5144,7 +5145,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

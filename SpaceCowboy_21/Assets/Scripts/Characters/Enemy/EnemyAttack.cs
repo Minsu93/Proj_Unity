@@ -40,5 +40,8 @@ public abstract class EnemyAttack : MonoBehaviour
 
     //공격 행동 
     public abstract void OnAttackAction();
-
+    public virtual void StopAttackAction()
+    {
+        StopAllCoroutines();
+    }
 }

@@ -20,11 +20,14 @@ public class EnemyChase_Ground : EnemyChase
     protected Vector2[] ppoints; 
 
     EA_Ground action_Ground;
-
+    EnemyBrain brain;
+    CharacterGravity charGravity;
 
     protected override void Awake()
     {
         base.Awake();
+        brain = GetComponent<EnemyBrain>();
+        charGravity = GetComponent<CharacterGravity>();
         action_Ground = GetComponent<EA_Ground>();
     }
 
@@ -96,10 +99,11 @@ public class EnemyChase_Ground : EnemyChase
         dirIndex = positive < negative ? 1 : -1;            //+방향(positive)이 가까우면 1, -방향(negative)이 가까우면 -1
 
         //이동 방향을 바라본다.
-        faceRight = dirIndex > 0f ? true : false;
+        action_Ground.faceRight = dirIndex > 0f ? true : false;
         action_Ground.FlipToDirectionView();
 
     }
+
 
     //targetIndex에 가까워 졌나요? T/F
     bool MoveToTarget()
@@ -128,7 +132,6 @@ public class EnemyChase_Ground : EnemyChase
     }
 
 
-
     void PrepareJump()
     {
         int pointCounts = ppoints.Length - 1;
@@ -149,9 +152,10 @@ public class EnemyChase_Ground : EnemyChase
         dirIndex = positive < negative ? 1 : -1;
 
         //이동 방향을 바라본다.
-        faceRight = dirIndex > 0f ? true : false;
+        action_Ground.faceRight = dirIndex > 0f ? true : false;
         action_Ground.FlipToDirectionView();
     }
+
 
     void JumpToPlanet()
     {

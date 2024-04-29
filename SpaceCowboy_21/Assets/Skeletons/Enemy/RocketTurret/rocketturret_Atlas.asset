@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
   m_Name: rocketturret_Atlas
   m_EditorClassIdentifier: 
+  textureLoadingMode: 0
+  onDemandTextureLoader: {fileID: 0}
   atlasFile: {fileID: 4900000, guid: 7aae1b8dc01b7d84e9a6cbc0fd07225b, type: 3}
   materials:
   - {fileID: 2100000, guid: dcb3c90dbe0ab3948ab8958c82bb380c, type: 2}

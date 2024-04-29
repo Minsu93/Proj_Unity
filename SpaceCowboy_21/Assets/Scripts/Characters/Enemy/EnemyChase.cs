@@ -11,23 +11,15 @@ public abstract class EnemyChase : MonoBehaviour
 
     [Header("Move Property")]
     public float moveSpeed = 5f;
-    public bool faceRight { get; set; }  //캐릭터가 오른쪽을 보고 있습니까? 
-
 
     //스크립트
     protected Rigidbody2D rb;
-    protected EnemyBrain brain;
-    //protected EnemyAction action;
-    protected CharacterGravity charGravity;
     protected Planet curPlanet;
 
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        brain = GetComponent<EnemyBrain>();
-        //action = GetComponent<EnemyAction>();
-        charGravity = GetComponent<CharacterGravity>();
     }
 
     public abstract void OnChaseAction();

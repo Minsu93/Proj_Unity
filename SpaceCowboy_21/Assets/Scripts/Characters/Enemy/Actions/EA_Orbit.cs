@@ -122,7 +122,19 @@ public class EA_Orbit : EnemyAction
 
     protected override void OnDieAction()
     {
-        base.OnDieAction();
+        StopAllCoroutines();
+        attack.StopAttackAction();
+        DieView();
+
+        activate = false;
+        iconUI.SetActive(false);
+        hitColl.enabled = false;
+
+        //죽으면 궤도 물체 지상으로 떨어짐.
+        gravity.activate = true;
+
+        StartCoroutine(DieRoutine(3.0f));
+
         //파티클 추가
         if (boosterParticle != null) boosterParticle.Stop();
     }
@@ -155,9 +167,8 @@ public class EA_Orbit : EnemyAction
         RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
         if (hit.collider == null) yield break;
 
-        //Orbit 추가
-        chase_Orbit.SetCenterPoint(hit.transform.GetComponent<Planet>());
 
+        Planet planet = hit.collider.GetComponent<Planet>();
         Vector2 strikeStartPos = transform.position;
         Vector2 strikeTargetPos = hit.point;
         float strikeTime = hit.distance / strikeSpeed;
@@ -173,6 +184,8 @@ public class EA_Orbit : EnemyAction
         }
 
         yield return new WaitForSeconds(0.5f);
+        //Orbit 추가
+        chase_Orbit.SetCenterPoint(planet);
         brain.WakeUp();
     }
 

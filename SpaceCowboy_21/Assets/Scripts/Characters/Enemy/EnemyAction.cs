@@ -159,6 +159,10 @@ public abstract class EnemyAction : MonoBehaviour
         List<int> weights = new List<int>();
 
         Planet p = GameManager.Instance.playerNearestPlanet;
+        if(p == null)
+        {
+            //플레이어 행성이 없을 때. 
+        }
         strikePlanets.Add(p);
         weights.Add(p.linkedPlanetList.Count);  //플레이어 행성 : 주변 행성 비율은 50:50이다.
 
@@ -187,7 +191,7 @@ public abstract class EnemyAction : MonoBehaviour
         }
 
         //캐릭터를 회전한다. 
-        Vector2 rotateVec = StrikePosition - (Vector2)transform.position;
+        Vector2 rotateVec =  (Vector2)transform.position - StrikePosition;
         transform.rotation = Quaternion.LookRotation(Vector3.forward, rotateVec.normalized);
 
         //강습을 시작한다. 
@@ -296,6 +300,7 @@ public abstract class EnemyAction : MonoBehaviour
     protected virtual void OnDieAction()
     {
         StopAllCoroutines();
+        attack.StopAttackAction();
         DieView();
 
         activate = false;
@@ -305,7 +310,7 @@ public abstract class EnemyAction : MonoBehaviour
         StartCoroutine(DieRoutine(3.0f));
     }
 
-    IEnumerator DieRoutine(float sec)
+    protected IEnumerator DieRoutine(float sec)
     {
         yield return new WaitForSeconds(sec);
         gravity.activate = false;

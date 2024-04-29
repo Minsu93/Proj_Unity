@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
   m_Name: spikeplanet_Atlas
   m_EditorClassIdentifier: 
+  textureLoadingMode: 0
+  onDemandTextureLoader: {fileID: 0}
   atlasFile: {fileID: 4900000, guid: 2facf9e7b53c41945be58aeed967c86c, type: 3}
   materials:
   - {fileID: 2100000, guid: 093c56730795d14409dfd58065853e64, type: 2}

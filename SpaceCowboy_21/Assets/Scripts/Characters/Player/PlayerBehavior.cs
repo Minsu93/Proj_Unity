@@ -629,8 +629,8 @@ namespace SpaceCowboy
         public void ChangePlanet()  
         {   //행성이 바뀌면 이벤트 발생. CharacterGravity에서 신호를 받는다.
             planetChanged = true;
-
-            planetPoints = characterGravity.nearestPlanet.GetPoints(0.51f);
+            if(characterGravity.nearestPlanet != null)
+                planetPoints = characterGravity.nearestPlanet.GetPoints(0.51f);
         }
 
         void SpeedControl()

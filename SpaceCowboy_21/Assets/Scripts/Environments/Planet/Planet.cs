@@ -95,17 +95,38 @@ public class Planet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+        if (collision.CompareTag("Player"))
         {
-            gravity.AddToGravityList(this);
+            if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+            {
+                gravity.AddToGravityList(this);
+            }
         }
+        else if (collision.CompareTag("PhysicsBody"))
+        {
+            if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
+            {
+                gravity.AddToGravityList(this);
+            }
+        }
+        
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+        if (collision.CompareTag("Player"))
         {
-            gravity.RemoveFromGravityList(this);
+            if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+            {
+                gravity.RemoveFromGravityList(this);
+            }
+        }
+        else if (collision.CompareTag("PhysicsBody"))
+        {
+            if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
+            {
+                gravity.RemoveFromGravityList(this);
+            }
         }
     }
 

@@ -49,7 +49,6 @@ Shader "Spine/Skeleton Tint" {
 			#pragma shader_feature _ _DARK_COLOR_ALPHA_ADDITIVE
 			#pragma vertex vert
 			#pragma fragment frag
-			#include "UnityCG.cginc"
 			#include "CGIncludes/Spine-Common.cginc"
 			sampler2D _MainTex;
 			float4 _Color;

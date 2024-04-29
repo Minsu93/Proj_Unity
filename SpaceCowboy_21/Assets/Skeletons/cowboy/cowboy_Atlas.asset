@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
   m_Name: cowboy_Atlas
   m_EditorClassIdentifier: 
+  textureLoadingMode: 0
+  onDemandTextureLoader: {fileID: 0}
   atlasFile: {fileID: 4900000, guid: bbb83011e8f3f4b49a6f84d091a67a5c, type: 3}
   materials:
   - {fileID: 2100000, guid: 3590aeddb506b8b40aaf441df99bd31e, type: 2}

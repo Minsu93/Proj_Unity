@@ -8,6 +8,7 @@ public class Proj_MeteorGun : Projectile
     {
         if(collision.TryGetComponent<IGravitable>(out IGravitable gravitable))
         {
+            gravitable.Activate = true;
             gravitable.GravityOnEvent();
             ShowHitEffect(hitEffect);
         }
