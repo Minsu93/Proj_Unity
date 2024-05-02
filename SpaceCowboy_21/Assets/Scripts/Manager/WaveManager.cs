@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -7,23 +9,27 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
     public bool activate;
+    public string stageName = "stage0";
 
-    public int invasionMinute = 1;
-    public float InvasionTime { get { return invasionMinute * 60; } }    //침공 완료까지 전체 시간 
-
+    [Header("Wave Property")]
+    public float totalWaveTime; //마지막 웨이브까지의 시간
     public float gameTime { get; set; } //현재 스테이지 시간
+    float nextWaveTime; //다음 웨이브가 시작될 시간
 
-    float waveTime; //다음 웨이브가 시작될 시간
-    AnimationCurve waveTimeCurve;
-    int waveIndex;  //레벨 번호 0 ~ 3
+    Stage stage;
+    int stageIndex;
+    Coroutine spawnRoutine;
 
+
+    [Header("SpawnBox")]
     public float spawnRange = 5f;                  //랜덤 범위 넓이. 
     public float distanceUnitFromScreen = 5f;      //화면에서 떨어진 정도. 유닛 단위.
 
+
     //스크립트.
-    public EnemyTeam[] enemyTeams;  //각 웨이브마다 스폰될 적들의 정보.
     public WaveUI waveUI;
     public InvasionUI invasionUI;
+    Dictionary<string, GameObject> monsterDict;
     
     //test(임시)
     public GameObject testObj;
@@ -33,31 +39,94 @@ public class WaveManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-       
     }
 
-    public void UpdateWaveManager(int invasionMinute, AnimationCurve waveCurve, EnemyTeam[] enemies)
+    private void Start()
     {
-        this.invasionMinute = invasionMinute;
-        this.waveTimeCurve = waveCurve;
-        this.enemyTeams = enemies;
+        //Dictionary 불러오기
+        monsterDict = GetComponent<MonsterDictonary>().monsterDictionary;
 
-        ResetWaveManager();
-
-        waveTime = waveTimeCurve.Evaluate(waveIndex);   //웨이브Curve 의 0번째 시간, 즉 첫 웨이브 시작시간 업데이트
-        if (waveUI != null) waveUI.UpdateProgressBar(waveTime, gameTime, waveIndex);    
-        if (invasionUI != null) invasionUI.UpdateInvasionUI(InvasionTime);
+        //CreateWaveJson();
+        LoadWaveFromJson();
     }
+    
+    void CreateWaveJson()
+    {
+        //json테스트용
+
+        string path = Path.Combine(Application.dataPath + "/Data/", stageName + ".json");
+
+        Enemy enemy_A = new Enemy();
+        enemy_A.name = "cannon";
+        enemy_A.delay = 0;
+
+        Enemy enemy_B = new Enemy();
+        enemy_B.name = "shooter";
+        enemy_B.delay = 0;
+
+        Spawn spawn_A = new Spawn();
+        spawn_A.enemies.Add(enemy_A);
+        spawn_A.enemies.Add((enemy_B));
+        spawn_A.delayToNextWave = 5.0f;
+
+        Spawn spawn_B = new Spawn();
+        spawn_B.enemies.Add(enemy_A);
+        spawn_B.enemies.Add((enemy_B));
+        spawn_B.delayToNextWave = 5.0f;
+
+        Wave wave_A = new Wave();
+        wave_A.waveIndex = 0;
+        wave_A.spawns.Add(spawn_A);
+        wave_A.spawns.Add(spawn_B);
+        wave_A.totalTime = 60f;
+
+        Wave wave_B = new Wave();
+        wave_B.waveIndex = 0;
+        wave_B.spawns.Add(spawn_A);
+        wave_B.spawns.Add(spawn_B);
+        wave_B.totalTime = 120f;
+
+        Stage stage = new Stage();
+        stage.waves.Add(wave_A);
+        stage.waves.Add(wave_B);
+
+        string str = JsonUtility.ToJson(stage, true);
+        File.WriteAllText(path, str);
+    }
+    
+    void LoadWaveFromJson()
+    {
+        string path = Path.Combine(Application.dataPath + "/Data/", stageName + ".json");
+        string loadJson = File.ReadAllText(path);
+        stage = JsonUtility.FromJson<Stage>(loadJson);
+    }
+
+    //public void UpdateWaveManager(int invasionMinute, AnimationCurve waveCurve, EnemyTeam[] enemies)
+    //{
+    //    this.invasionMinute = invasionMinute;
+    //    this.waveTimeCurve = waveCurve;
+    //    this.enemyTeams = enemies;
+
+    //    ResetWaveManager();
+
+    //    waveTime = waveTimeCurve.Evaluate(waveIndex);   //웨이브Curve 의 0번째 시간, 즉 첫 웨이브 시작시간 업데이트
+    //    if (waveUI != null) waveUI.UpdateProgressBar(waveTime, gameTime, waveIndex);    
+    //    if (invasionUI != null) invasionUI.UpdateInvasionUI(InvasionTime);
+    //}
 
     void ResetWaveManager()
     {
-        waveIndex = 0;  //초기화
         gameTime = 0;
-        waveTime = 0;
+        nextWaveTime = 0;
+        stageIndex = 0;
+        spawnRoutine = null;
+        StopAllCoroutines();
+
     }
 
     public void WaveStart(bool start)
     {
+        ResetWaveManager();
         activate = start;
     }
 
@@ -69,57 +138,54 @@ public class WaveManager : MonoBehaviour
 
         gameTime += Time.deltaTime * timeSpeed;
 
-        if(gameTime >= waveTime)
-        {
-            //스폰 횟수
-            int spawnRepeat = Mathf.FloorToInt((waveIndex + 10) / 10);
-            spawnRepeat = Mathf.Clamp(spawnRepeat, 1, 3);
-            //스폰 종류
-            GameObject spawnObj;
-            if(waveIndex < 10)
-            {
-                spawnObj = testObj;
-            }
-            else
-            {
-                switch(Random.Range(0, 2))
-                {
-                    case 0: spawnObj = testObj; break;
-                    default: spawnObj = testObj2; break;
-                }
-            }
-            //스폰
-            for(int i = 0; i < spawnRepeat; i++)
-            {
-                SpawnEnemy(spawnObj);
 
-            }
-            NextLevel();
+        if(gameTime > nextWaveTime)
+        {
+            Debug.Log("다음 웨이브 시작");
+            //웨이브를 스폰합니다. 
+            nextWaveTime += stage.waves[stageIndex].totalTime;
+
+            if(spawnRoutine!=null) StopCoroutine(spawnRoutine);
+            spawnRoutine = StartCoroutine(RepeatSpawn(stage.waves[stageIndex].spawns));
+
+            stageIndex++;
+            if(stageIndex > stage.waves.Count) stageIndex = stage.waves.Count;
+
+        }
+
+    }
+
+    //Spawns에 들어있는 Spawn들을 번갈아 반복한다. 
+    IEnumerator RepeatSpawn(List<Spawn> spawns)
+    {
+        int spawnIndex = 0;
+        while (true)
+        {
+            Debug.Log("반복 스폰중 : " +  spawnIndex);   
+            StartCoroutine(SpawnObjects(spawns[spawnIndex].enemies));
+            yield return new WaitForSeconds(spawns[spawnIndex].delayToNextWave);
+            spawnIndex = (spawnIndex + 1) % spawns.Count;
         }
     }
 
-    void NextLevel()
+    //enemies에 들어있는 스폰을 순서대로 실행한다. 
+    IEnumerator SpawnObjects(List<Enemy> enemies)
     {
-        waveIndex ++;
-        waveTime += waveTimeCurve.Evaluate(waveIndex);
-        if (waveUI != null) waveUI.UpdateProgressBar(waveTime,gameTime, waveIndex);
-    }
-
-    void SpawnEnemy(GameObject enemyPrefab)
-    {
-        //랜덤 위치를 가져옵니다. 
-        Vector2 safePoint;
-        if (GetSafePointFromOutsideScreen(out safePoint))
+        foreach(Enemy enemy in enemies)
         {
-            GameObject enemy =  PoolManager.instance.GetEnemy(enemyPrefab);
-            enemy.transform.position = safePoint;
-            enemy.transform.rotation = Quaternion.identity;
-            enemy.GetComponent<EnemyBrain>().ResetEnemyBrain(EnemyState.Strike);
+            Debug.Log("적 생성");
+            GameObject enemyPrefab = monsterDict[enemy.name];
+            Vector2 safePoint;
+            if (GetSafePointFromOutsideScreen(out safePoint))
+            {
+                GameObject prefab = PoolManager.instance.GetEnemy(enemyPrefab);
+                prefab.transform.position = safePoint;
+                prefab.transform.rotation = Quaternion.identity;
+                prefab.GetComponent<EnemyBrain>().ResetEnemyBrain(EnemyState.Strike);
+            }
+            yield return new WaitForSeconds(enemy.delay);
         }
-
-        Debug.Log("Wave : " + waveIndex);
     }
-
 
 
     bool GetSafePointFromOutsideScreen(out Vector2 safePoint)
@@ -140,11 +206,11 @@ public class WaveManager : MonoBehaviour
 
         while(!findSafePoint && saftyCounter < maxSaftyCounter)
         {
-            switch (Random.Range(0, 2))
+            switch (UnityEngine.Random.Range(0, 2))
             {
                 case 0:
-                    vec.x = Random.Range(-spawnRange, spawnRange);
-                    vec.y = Random.Range(screenSizeMin.y - distanceUnitFromScreen - spawnRange, screenSizeMax.y + distanceUnitFromScreen + spawnRange);
+                    vec.x = UnityEngine.Random.Range(-spawnRange, spawnRange);
+                    vec.y = UnityEngine.Random.Range(screenSizeMin.y - distanceUnitFromScreen - spawnRange, screenSizeMax.y + distanceUnitFromScreen + spawnRange);
                     if (vec.x > 0)
                     {
                         vec.x = vec.x + screenSizeMax.x + distanceUnitFromScreen;
@@ -156,8 +222,8 @@ public class WaveManager : MonoBehaviour
                     break;
                 
                 default:
-                    vec.x = Random.Range(screenSizeMin.x - distanceUnitFromScreen - spawnRange, screenSizeMax.x + distanceUnitFromScreen + spawnRange);
-                    vec.y = Random.Range(-spawnRange, spawnRange);
+                    vec.x = UnityEngine.Random.Range(screenSizeMin.x - distanceUnitFromScreen - spawnRange, screenSizeMax.x + distanceUnitFromScreen + spawnRange);
+                    vec.y = UnityEngine.Random.Range(-spawnRange, spawnRange);
                     if (vec.y > 0)
                     {
                         vec.y = vec.y + screenSizeMax.y + distanceUnitFromScreen;
@@ -215,15 +281,34 @@ public class WaveManager : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class EnemyPrefab
+//몬스터의 이름과 몬스터 스폰 사이의 딜레이
+[Serializable]
+public class Enemy
 {
-    public GameObject prefab;   
-    public int count;   
+    public string name;
+    public float delay;
 }
 
-[System.Serializable]
-public class EnemyTeam
+//몬스터 웨이브가 얼마나 지속되는가. 
+[Serializable]
+public class Spawn
 {
-    public EnemyPrefab[] enemyPrefabs;
+    public List<Enemy> enemies = new List<Enemy>();
+    public float delayToNextWave; 
 }
+
+//한번의 Stage는 여러 웨이브의 반복으로 구성됨 
+[Serializable]
+public class Wave
+{
+    public int waveIndex;
+    public List<Spawn> spawns = new List<Spawn>();
+    public float totalTime;
+}
+
+[Serializable]
+public class Stage
+{
+    public List<Wave> waves = new List<Wave>();
+}
+

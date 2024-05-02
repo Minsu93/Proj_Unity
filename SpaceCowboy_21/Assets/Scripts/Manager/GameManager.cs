@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     public Transform player;
     PlayerInput playerInput;
+
     PlayerBehavior _playerBehavior;
     public PlayerBehavior PlayerBehavior
     {
@@ -22,6 +23,10 @@ public class GameManager : MonoBehaviour
             return _playerBehavior;
         }
     }
+
+    FireworkCreator _playerFirework;
+    public SkillArtifactSlot skillSlot;
+
     public Planet playerNearestPlanet;
 
     public GameObject miniMapObj;
@@ -72,6 +77,10 @@ public class GameManager : MonoBehaviour
 
         _instance = GetComponent<GameManager>();
         //DontDestroyOnLoad(gameObject);
+
+        //플레이어 관련
+        _playerFirework = player.GetComponent<FireworkCreator>();
+        skillSlot = player.GetComponent<SkillArtifactSlot>();
     }
 
 
@@ -154,5 +163,8 @@ public class GameManager : MonoBehaviour
         curObj.InteractAction();
     }
 
-
+    public void ChargeFireworkEnergy()
+    {
+        _playerFirework.EnergyIncrease(1f);
+    }
 }

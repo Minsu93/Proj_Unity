@@ -110,6 +110,7 @@ namespace SpaceCowboy
         CharacterGravity characterGravity;
         Rigidbody2D rb;
         PlayerHealth health;
+        SkillArtifactSlot skillSlot;
         //StarMagicGun stargun;
 
 
@@ -119,6 +120,8 @@ namespace SpaceCowboy
             characterGravity = GetComponent<CharacterGravity>();
             playerWeapon = GetComponent<PlayerWeapon>();
             health = GetComponent<PlayerHealth>();
+            skillSlot = GetComponent<SkillArtifactSlot>();
+
 
             GameManager.Instance.player = this.transform;
         }
@@ -902,10 +905,11 @@ namespace SpaceCowboy
             playerView.SetSkin(data.GunType);
         }
 
-        //public void TryMagicShoot()
-        //{
-        //    stargun.MagicShoot();
-        //}
+        public void tryUseSkill()
+        {
+            skillSlot.UseSkillArtifact(gunTipPos, aimDirection);
+        }
+
         #endregion
 
         #region Events

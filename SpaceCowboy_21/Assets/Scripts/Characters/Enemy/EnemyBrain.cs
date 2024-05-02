@@ -186,6 +186,8 @@ using UnityEngine;
         protected virtual void WhenDieEvent()
         {
 
+            GameManager.Instance.ChargeFireworkEnergy();
+
         }
 
         #endregion

@@ -1,0 +1,84 @@
+{
+    "waves": [
+        {
+            "waveIndex": 0,
+            "spawns": [
+                {
+                    "enemies": [
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.5
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.5
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        }
+                    ],
+                    "delayToNextWave": 5.0
+                },
+                {
+                    "enemies": [
+                        {
+                            "name": "orbit_cannon",
+                            "delay": 1.0
+                        },
+                        {
+                            "name": "orbit_cannon",
+                            "delay": 0.0
+                        }
+                    ],
+                    "delayToNextWave": 5.0
+                }
+            ],
+            "totalTime": 60.0
+        },
+        {
+            "waveIndex": 0,
+            "spawns": [
+                {
+                    "enemies": [
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        },
+                        {
+                            "name": "ground_shooter",
+                            "delay": 0.0
+                        }
+                    ],
+                    "delayToNextWave": 5.0
+                },
+                {
+                    "enemies": [
+                        {
+                            "name": "orbit_cannon",
+                            "delay": 0.0
+                        },
+                        {
+                            "name": "orbit_cannon",
+                            "delay": 0.0
+                        }
+                    ],
+                    "delayToNextWave": 5.0
+                }
+            ],
+            "totalTime": 60.0
+        }
+    ]
+}

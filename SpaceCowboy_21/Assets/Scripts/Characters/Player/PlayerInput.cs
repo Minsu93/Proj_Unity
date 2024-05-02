@@ -27,7 +27,7 @@ public class PlayerInput : MonoBehaviour
 
     private void Awake()
     {
-        if (playerBehavior == null) { playerBehavior = GetComponent<PlayerBehavior>(); }
+        playerBehavior = GetComponent<PlayerBehavior>();
     }
 
     // Update is called once per frame
@@ -119,14 +119,20 @@ public class PlayerInput : MonoBehaviour
         //    grabLasso.TryThrowLasso();
         //}
 
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    CameraManager.instance.ChangeCameraThreshold(12f, 8f);
+        //}
+        //if(Input.GetMouseButtonUp(1))
+        //{
+        //    CameraManager.instance.ResetCameraThreshold();
+        //}
+
         if (Input.GetMouseButtonDown(1))
         {
-            CameraManager.instance.ChangeCameraThreshold(12f, 8f);
+            playerBehavior.tryUseSkill();
         }
-        if(Input.GetMouseButtonUp(1))
-        {
-            CameraManager.instance.ResetCameraThreshold();
-        }
+
 
         //Interact
         if (Input.GetButtonDown(InteractButton))

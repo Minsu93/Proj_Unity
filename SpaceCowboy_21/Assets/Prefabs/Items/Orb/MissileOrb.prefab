@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6902607079615768973
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 48316535148025936, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_Name
+      value: MissileOrb
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 48316535148025939, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+--- !u!1 &1180839325502240790 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5740351802768314779, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+  m_PrefabInstance: {fileID: 6902607079615768973}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6872874771397128669 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 48316535148025936, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+  m_PrefabInstance: {fileID: 6902607079615768973}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-9004849433949137007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6872874771397128669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b60bbfdbfa85b81468e2fad28950f42f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbNumbers: 3
+  energyNeeded: 10
+  deadEffect: {fileID: 7103699754939687679, guid: a99942526ae463e47bb9144b99fdeece, type: 3}
+  viewObj: {fileID: 1180839325502240790}
+  detectRadius: 10
+  projectilePrefab: {fileID: 6292677011125795810, guid: b062853d9ed437641b8fa7e6e50334e0, type: 3}
+  missileCount: 3
+  missileInterval: 0.15
+  damage: 5
+  speed: 20
+  lifeTime: 5

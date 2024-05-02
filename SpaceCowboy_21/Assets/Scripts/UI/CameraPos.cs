@@ -6,8 +6,8 @@ public class CameraPos : MonoBehaviour
 {
     public GameObject ReticleOBJ;
     public float movementInfluence;
-    public float camSpeed { get; set; }
-    public float threshold { get; set; }
+    public float camSpeed = 3f;
+    public float threshold = 2f;
 
     public Sprite reticleSprite;
 

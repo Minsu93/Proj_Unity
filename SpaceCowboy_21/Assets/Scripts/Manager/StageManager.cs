@@ -12,7 +12,6 @@ public class StageManager : MonoBehaviour
     public GameObject[] stageObjectives;
     public int invasionMinute = 1;
     public AnimationCurve invasionTimeCurve;
-    public EnemyTeam[] enemyTeams;
 
     private void Start()
     {
@@ -26,7 +25,7 @@ public class StageManager : MonoBehaviour
         MissionManager.instance.UpdateTotalObjectives(stageObjectives);
 
         //wave 업데이트. 웨이브 시작. 
-        WaveManager.instance.UpdateWaveManager(invasionMinute, invasionTimeCurve, enemyTeams);
+        //WaveManager.instance.UpdateWaveManager(invasionMinute, invasionTimeCurve, enemyTeams);
 
     }
 
