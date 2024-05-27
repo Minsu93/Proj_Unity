@@ -1846,7 +1846,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 8653297541516762779}
   m_OnClick:
     m_PersistentCalls:
@@ -1885,7 +1885,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 4
   itemName: PISTOL
-  weaponData: {fileID: 0}
+  weaponData: {fileID: 11400000, guid: cf362e74c12f3884d8dc2119872e27d4, type: 2}
 --- !u!114 &8653297541516762783
 MonoBehaviour:
   m_ObjectHideFlags: 0

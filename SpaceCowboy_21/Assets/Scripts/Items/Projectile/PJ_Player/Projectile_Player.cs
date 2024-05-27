@@ -9,9 +9,7 @@ public class Projectile_Player : Projectile
 {
     [Tooltip("총알이 화면 밖으로 얼마나 나가도 되는 지 여유분")]
     [SerializeField] float screenBorderLimit = 5.0f;
-    [SerializeField] int penetrateCount;  //관통 횟수
-    [SerializeField] int reflectCount;    //반사 횟수
-    [SerializeField] int guideAmount;     //유도 정도. 
+
 
     //public event System.Action<Vector2> ProjImpactEvent;
 
@@ -29,10 +27,9 @@ public class Projectile_Player : Projectile
         this.speed = speed;
         this.lifeTime = lifeTime;
         this.distance = distance;
-
-        penetrateCount = penetrate;
-        reflectCount = reflect;
-        guideAmount = guide;
+        this.penetrateCount = penetrate;
+        this.reflectCount = reflect;
+        this.guideAmount = guide;
 
         ResetProjectile();
 

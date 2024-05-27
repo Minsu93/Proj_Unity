@@ -11,12 +11,15 @@ public class Projectile : MonoBehaviour
     protected float lifeTime;
     protected float distance;
     protected float speed;
+    protected int penetrateCount;  //관통 횟수
+    protected int reflectCount;    //반사 횟수
+    protected int guideAmount;     //유도 정도. 
 
     float disableDelayTime = 0.5f;    //부서지기 전 딜레이
     float delayTimer;
     Vector2 startPos;
 
-    private bool lifeLimitProj = false;
+    protected bool lifeLimitProj = false;
     protected Rigidbody2D rb;
     protected ProjectileMovement projectileMovement;
     protected Collider2D coll;
@@ -51,12 +54,13 @@ public class Projectile : MonoBehaviour
 
     }
 
-    public void Init(float damage, float speed, float lifeTime, float distance)
+    public virtual void Init(float damage, float speed, float lifeTime, float distance)
     {
         this.damage = damage;
         this.speed = speed;
         this.lifeTime = lifeTime;
         this.distance = distance;
+
         if(lifeTime > 0) { lifeLimitProj = true; }
         else { lifeLimitProj = false; }
 
@@ -108,7 +112,6 @@ public class Projectile : MonoBehaviour
 
     protected virtual void LifeOver()
     {
-        NonHitEvent(null);
         AfterHitEvent();
     }
 
@@ -129,9 +132,7 @@ public class Projectile : MonoBehaviour
 
         //HitFeedBack();
     }
-
     #endregion
-
 
 
     void Update()

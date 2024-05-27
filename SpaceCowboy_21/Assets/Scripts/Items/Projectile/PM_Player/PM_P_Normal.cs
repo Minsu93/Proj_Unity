@@ -74,7 +74,6 @@ public class PM_P_Normal : ProjectileMovement
             Quaternion rot = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rspd);
 
             //방향을 회전시킨다. 
-            //transform.rotation = rot;
             rb.SetRotation(rot);
 
             rb.velocity = transform.right * speed;
