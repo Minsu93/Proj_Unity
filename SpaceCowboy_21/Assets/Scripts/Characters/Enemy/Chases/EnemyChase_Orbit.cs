@@ -31,6 +31,9 @@ public class EnemyChase_Orbit : EnemyChase
 
         float signedAngle = Vector2.SignedAngle(Vector2.up, (Vector2)transform.position - centerPoint);
         degree = (-signedAngle + 360) % 360;
+
+        transform.rotation = Quaternion.Euler(0, 0, degree * -1); //가운데를 바라보게 각도 조절
+
     }
 
 

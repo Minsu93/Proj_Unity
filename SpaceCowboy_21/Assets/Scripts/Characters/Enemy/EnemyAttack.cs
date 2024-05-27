@@ -42,6 +42,7 @@ public abstract class EnemyAttack : MonoBehaviour
     public abstract void OnAttackAction();
     public virtual void StopAttackAction()
     {
+        _attackCool = false;
         StopAllCoroutines();
     }
 }

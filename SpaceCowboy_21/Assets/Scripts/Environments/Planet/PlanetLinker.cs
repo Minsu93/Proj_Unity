@@ -36,16 +36,10 @@ public class PlanetLinker : MonoBehaviour
                 if (hit.transform == this.transform) continue;
 
                 PlanetBridge bridge = new PlanetBridge();
-                
-                //사이에 장애물이 있으면 제외한다
-                Transform target = hit.collider.transform;
-                //Vector2 vec = target.position - transform.position;
-                //RaycastHit2D ray = Physics2D.Raycast(transform.position, vec.normalized, vec.magnitude, LayerMask.GetMask("SpaceBorder"));
-                //if (ray.collider != null) continue;
-
-                Planet targetP = target.GetComponent<Planet>();
 
                 //행성에 가장 가까운 Index를 고른다. 
+                Transform target = hit.collider.transform;
+                Planet targetP = target.GetComponent<Planet>();
                 PolygonCollider2D coll = target.GetComponent<PolygonCollider2D>();
                 float dist = float.MaxValue;
                 int bridgeIndex = 0;
@@ -71,6 +65,7 @@ public class PlanetLinker : MonoBehaviour
                 bridge.planet = targetP;
                 bridge.bridgeIndex = bridgeIndex;
                 bridge.targetVector = targetVector;
+                bridge.bridgeDistance = dist;
 
                 planet.linkedPlanetList.Add(bridge);
             }

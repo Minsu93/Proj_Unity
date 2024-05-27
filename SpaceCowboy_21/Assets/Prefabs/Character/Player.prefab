@@ -9916,8 +9916,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9007588097638262584}
-  - component: {fileID: 9007588097638262566}
-  - component: {fileID: 9007588097638262585}
+  - component: {fileID: 7171090883466871592}
   m_Layer: 7
   m_Name: Jump Trajectory
   m_TagString: Untagged
@@ -9941,106 +9940,7 @@ Transform:
   m_Father: {fileID: 9007588099006207613}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &9007588097638262566
-LineRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9007588097638262587}
-  m_Enabled: 0
-  m_CastShadows: 0
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 027f77c69a7d3e94e8f5a07f372cf7c6, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1151850961
-  m_SortingLayer: 4
-  m_SortingOrder: -5
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 3, y: 0, z: 1}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 0.6
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 1
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
---- !u!114 &9007588097638262585
+--- !u!114 &7171090883466871592
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10049,12 +9949,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9007588097638262587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3814ad85d48c9b4981c0fa515c16307, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c717654f9d74044c953d5751a68d1f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineMaterial: {fileID: 2100000, guid: 027f77c69a7d3e94e8f5a07f372cf7c6, type: 2}
-  arrowTip: {fileID: 9007588098430042158}
-  viwerLength: 0.3
+  arrowTip: {fileID: 9007588098430042145}
+  viwerLength: 1
 --- !u!1 &9007588098430042144
 GameObject:
   m_ObjectHideFlags: 0
@@ -10094,7 +9993,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9007588098430042144}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -10129,7 +10028,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: 1cfe2c34fa2414f45a5bee54c0e190b1, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.68267936, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10155,7 +10054,8 @@ GameObject:
   - component: {fileID: 9007588099006207611}
   - component: {fileID: 9007588099006207609}
   - component: {fileID: 9007588099006207589}
-  - component: {fileID: 1641079341}
+  - component: {fileID: 1641079348}
+  - component: {fileID: 1641079359}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -10254,10 +10154,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: 0
-  jumpForce: 13
-  superJumpForce: 18
-  boosterForce: 1
-  boostTime: 1
+  jumpForce: 15
+  airJumpForce: 15
+  airJumpMax: 1
+  maxAngleOnLand: 60
   maxChargeTime: 1
   chargeStateSpeedMultiplier: 0.3
   moveSpeed: 8
@@ -10275,9 +10175,7 @@ MonoBehaviour:
   sJumpTrail: {fileID: 2056016844}
   weapons:
   - {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
-  - {fileID: 11400000, guid: d7032922e3409744db92826777bbd6d5, type: 2}
   playerView: {fileID: 9007588099135373974}
-  jumpViewer: {fileID: 9007588097638262585}
 --- !u!114 &9007588099006207611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10291,7 +10189,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseWeapon: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
+  artifactWeaponPrefab: {fileID: 0}
   weaponChangeTime: 0
+  awp: {fileID: 8699299773701501225, guid: 4e5d0554bd245824380d3a8141eca638, type: 3}
 --- !u!114 &9007588099006207609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10323,12 +10223,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 374b3054b94ce3f40ab9195ade05df53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthState: 0
   maxHealth: 10
   maxShield: 10
-  delayToRegeneration: 5
   InvincibleTime: 0
---- !u!114 &1641079341
+--- !u!114 &1641079348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10337,9 +10235,80 @@ MonoBehaviour:
   m_GameObject: {fileID: 9007588099006207600}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c43879afd0f2b9141a8232a44ef5d8ca, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ab634f7d5908b44e93e283a598ab6b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fireworkPrefab: {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
+  gapBetweenOrbs: 4
+  launchHeight: 7
+  launchRadius: 7
+  launchInterval: 0.6
+  fireworkCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  launchTimer: 1
+--- !u!114 &1641079359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9007588099006207600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf8f44fea82cdf40b6fa9b229e9e173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sateCool: 5
+  maxSate: 1
+  throwCapsulePrefab: {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
+  throwCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  throwTravelTime: 0.5
+  throwDistance: 5
 --- !u!1 &9007588099135374057
 GameObject:
   m_ObjectHideFlags: 0

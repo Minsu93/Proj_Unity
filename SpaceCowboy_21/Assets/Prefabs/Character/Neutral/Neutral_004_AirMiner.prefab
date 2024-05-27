@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 1622225095033130156}
   - component: {fileID: 4642247461733937267}
   - component: {fileID: 6797804444322565750}
-  - component: {fileID: 658500213947439392}
-  - component: {fileID: 1426689803645667384}
   - component: {fileID: 4675185033650875292}
   - component: {fileID: 8254151463229695979}
   m_Layer: 17
@@ -29,8 +27,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3375626900628188794}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.437765, y: 6.762008, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.1365696, w: 0.9906305}
+  m_LocalPosition: {x: 5.2055664, y: -1.1799313, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -57,12 +55,6 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -77,84 +69,12 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1.2
---- !u!114 &658500213947439392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3375626900628188794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85b65826827929c4bb3a02a5d5adc2ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyState: 1
-  activate: 1
-  timeBetweenChecks: 0.5
-  checkRange: 20
-  attackRange: 20
-  minRange: 0
-  inChaseRange: 0
-  inAttackRange: 0
-  playerIsVisible: 0
-  playerIsInOtherPlanet: 0
---- !u!114 &1426689803645667384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3375626900628188794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5078dadbe870b6a42adb038364cb0c65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 0
-  enemyHeight: 0.7
-  turnSpeedOnLand: 100
-  knockBackSpeed: 0
-  knockBackTime: 0
-  preAttackDelay: 0
-  AttackDelay: 0
-  afterAttackDelay: 0
-  attackCoolTime: 6
-  predictionAccuracy: 0
-  projectileStructs:
-  - projectile: {fileID: 6292677011125795810, guid: aae67d0f8a7aef54da700465bb0510ce, type: 3}
-    damage: 5
-    speed: 4
-    spreadAngle: 0
-    range: 0
-    lifeTime: 12
-  hitCollObject: {fileID: 6516387629473620981}
-  iconUI: {fileID: 6040927677109241085}
 --- !u!114 &4675185033650875292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfc0751c7ba7564680b9606b780d642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate: 1
+  activate: 0
   isOrbital: 0
   range: 10
   yOffset: 1.2
@@ -218,7 +138,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1622225095033130156}
-  m_RootOrder: -1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5599508909280550152
 SpriteRenderer:
@@ -302,7 +222,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1622225095033130156}
-  m_RootOrder: -1
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6123354277035939811
 BoxCollider2D:
@@ -314,25 +234,6 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -379,7 +280,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1622225095033130156}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &9197582918220342102
 SpriteRenderer:

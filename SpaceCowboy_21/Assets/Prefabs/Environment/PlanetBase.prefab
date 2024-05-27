@@ -176,7 +176,6 @@ GameObject:
   - component: {fileID: 5820961588108856069}
   - component: {fileID: 5820961588108856068}
   - component: {fileID: 4045485038870477491}
-  - component: {fileID: 2482136860153590361}
   m_Layer: 11
   m_Name: PlanetBase
   m_TagString: Planet
@@ -455,14 +454,12 @@ MonoBehaviour:
   gravityRadius: 14
   gravityMultiplier: 1
   planetFOV: 100
-  margin: 150
   linkedPlanetList:
   - planet: {fileID: 0}
     bridgeIndex: 47
     targetVector: {x: -2.2554107, y: -8.095149}
   worldPoints: []
   pointsNormal: []
-  enemyList: []
   gravityViewer: {fileID: 880953034114429552}
   polyCollider: {fileID: 5905974645841349009}
 --- !u!114 &4045485038870477491
@@ -478,20 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 5820961588108856068}
-  maxLinkedDistance: 10
---- !u!114 &2482136860153590361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5820961588108854527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b066c300664c5ed4986993f2477cb0e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planet: {fileID: 5820961588108856068}
+  maxLinkedDistance: 15
 --- !u!1 &5820961588375558302
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,13 +534,13 @@ GameObject:
   m_Component:
   - component: {fileID: 880953034114429552}
   - component: {fileID: 535274560153431933}
-  m_Layer: 20
+  m_Layer: 14
   m_Name: GravityViewer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &880953034114429552
 Transform:
   m_ObjectHideFlags: 0

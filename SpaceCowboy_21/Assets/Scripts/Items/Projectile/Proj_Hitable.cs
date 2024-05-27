@@ -8,6 +8,8 @@ public class Proj_Hitable : Projectile, IHitable
 
     Health health;
 
+    public event System.Action ProjectileInitEvent;
+    public event System.Action ProjectileHitEvent;
     protected override void Awake()
     {
         base.Awake();
@@ -19,13 +21,12 @@ public class Proj_Hitable : Projectile, IHitable
     {
         if (health.AnyDamage(damage))  //어떠한 피해를 입었으면 true
         {
-            HitFeedBack();   //Projectile 에 있다. View 의 HitFeedback을 실행시킨다.
+            //HitFeedBack();   //Projectile 에 있다. View 의 HitFeedback을 실행시킨다.
         }
 
         if (health.IsDead())
         {
             //스스로를 파괴
-            NonHitEvent();
             AfterHitEvent();
         }
         else
@@ -36,22 +37,12 @@ public class Proj_Hitable : Projectile, IHitable
 
     void KnockBackEvent(Vector2 objVel)
     {
-        projectileMovement.KnockBackEvent(objVel);
+        //projectileMovement.KnockBackEvent(objVel);
     }
 
-    protected override void LifeTimeOver()
+    protected override void LifeOver()
     {
-        base.LifeTimeOver();
+        base.LifeOver();
     }
 
-    protected override void HitEvent(IHitable hitable)
-    {
-        base.HitEvent(hitable);
-    }
-
-    protected override void NonHitEvent()
-    {
-        base.NonHitEvent();
-
-    }
 }

@@ -3,17 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour
 {
     [Header("Default")]
     protected bool activate;
     protected float damage;
     protected float lifeTime;
+    protected float distance;
     protected float speed;
 
     float disableDelayTime = 0.5f;    //부서지기 전 딜레이
     float delayTimer;
-    
+    Vector2 startPos;
+
+    private bool lifeLimitProj = false;
     protected Rigidbody2D rb;
     protected ProjectileMovement projectileMovement;
     protected Collider2D coll;
@@ -22,9 +25,6 @@ public abstract class Projectile : MonoBehaviour
     public ParticleSystem nonHitEffect;
     public GameObject ViewObj;
     public TrailRenderer trail;
-
-    public event System.Action ProjectileInitEvent;
-    public event System.Action ProjectileHitEvent;
 
 
     protected virtual void Awake()
@@ -35,23 +35,13 @@ public abstract class Projectile : MonoBehaviour
 
     }
 
-    public void Init(float damage, float speed, float lifeTime)
-    {
-        this.damage = damage;
-        this.speed = speed;
-        this.lifeTime = lifeTime;
-        
-        ResetProjectile();
-        InitProjectile();
-        projectileMovement.StartMovement(speed);
-    }
-
     public virtual void ResetProjectile()
     {
         activate = true;
         coll.enabled = true;
         ViewObj.SetActive(true);
         delayTimer = disableDelayTime;
+        startPos = transform.position;
 
         if (trail != null)
         {
@@ -61,56 +51,88 @@ public abstract class Projectile : MonoBehaviour
 
     }
 
-    #region Hit Event
-
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    public void Init(float damage, float speed, float lifeTime, float distance)
     {
-        if (collision.TryGetComponent<IHitable>(out IHitable hitable))
-        {
-            HitEvent(hitable);
-        }
-        else
-        {
-            NonHitEvent();
-        }
-        AfterHitEvent();
+        this.damage = damage;
+        this.speed = speed;
+        this.lifeTime = lifeTime;
+        this.distance = distance;
+        if(lifeTime > 0) { lifeLimitProj = true; }
+        else { lifeLimitProj = false; }
 
+        ResetProjectile();
+        projectileMovement.StartMovement(speed);
     }
 
-    protected virtual void HitEvent(IHitable hitable)
+    public virtual void Init(float damage, float speed, float lifeTime, float distance, int penetrate, int reflect, int guide)
+    {
+        return;
+    }
+
+
+
+
+    #region Hit Event
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.TryGetComponent<ITarget>(out ITarget target))
+        {
+            if (collision.TryGetComponent<IHitable>(out IHitable hitable))
+            {
+                HitEvent(target, hitable);
+            }
+            else
+            {
+                NonHitEvent(target);
+            }
+        }
+    }
+
+
+    protected virtual void HitEvent(ITarget target,IHitable hitable)
     {
 
         hitable.DamageEvent(damage, transform.position);
+
         ShowHitEffect(hitEffect);
+
+        AfterHitEvent();
     }
-    protected virtual void NonHitEvent()
+
+    protected virtual void NonHitEvent(ITarget target)
     {
-
         ShowHitEffect(nonHitEffect);
-
+        AfterHitEvent();
     }
+
+    protected virtual void LifeOver()
+    {
+        NonHitEvent(null);
+        AfterHitEvent();
+    }
+
 
     protected void ShowHitEffect(ParticleSystem particle)
     {
         if (particle != null)
-            ParticleHolder.instance.GetParticle(particle, transform.position, transform.rotation);
+            GameManager.Instance.particleManager.GetParticle(particle, transform.position, transform.rotation);
     }
 
     protected void AfterHitEvent()
     {
-
         projectileMovement.StopMovement();
 
         activate = false;
         coll.enabled = false;
         ViewObj.SetActive(false);
 
-        HitFeedBack();
+        //HitFeedBack();
     }
 
     #endregion
 
-    #region LifeTime
+
 
     void Update()
     {
@@ -124,27 +146,37 @@ public abstract class Projectile : MonoBehaviour
             return;
         }
 
-        //총알에 수명이 있을 때 
-        LifeTimeCheck();
+        
+        if (lifeLimitProj)
+        {
+            //총알에 수명이 있을 때 
+            LifeTimeCheck();
+        }
+        else
+        {
+            //총알에 거리가 있을 때 
+            DistanceCheck();
+        }
+        
     }
 
     void LifeTimeCheck()
     {
         lifeTime -= Time.deltaTime;
-    
+
         if (lifeTime <= 0)
         {
-            LifeTimeOver();
+            LifeOver();
         }
     }
 
-    protected virtual void LifeTimeOver()
+    void DistanceCheck()
     {
-        NonHitEvent();
-        AfterHitEvent();
+        if(distance < Vector2.Distance(startPos, (Vector2)transform.position))
+        {
+            LifeOver();
+        }
     }
-
-    #endregion
 
 
     void DisableObject()
@@ -152,19 +184,6 @@ public abstract class Projectile : MonoBehaviour
         if(trail != null)
             trail.enabled = false;
         gameObject.SetActive(false);
-    }
-
-    
-    protected void HitFeedBack()
-    {
-        if (ProjectileHitEvent != null)
-            ProjectileHitEvent();
-    }
-    
-    protected void InitProjectile()
-    {
-        if(ProjectileInitEvent != null) 
-            ProjectileInitEvent();
     }
 
 

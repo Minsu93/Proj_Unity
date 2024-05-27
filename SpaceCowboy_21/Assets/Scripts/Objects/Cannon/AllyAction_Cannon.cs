@@ -6,9 +6,13 @@ using static UnityEngine.Rendering.DebugUI.Table;
 
 public class AllyAction_Cannon : AllyAction
 {
-    public float cannonDamage;
-    public float cannonSpeed;
-    public float cannonLifeTime;
+    [SerializeField] float cannonDamage;
+    [SerializeField] float cannonSpeed;
+    [SerializeField] float cannonLifeTime;
+    [SerializeField] int cannonPenetrateCount;
+    [SerializeField] int cannonReflectCount;
+    [SerializeField] int cannonGuideAmount;
+
 
     public override void Attack(Vector3 pos, Quaternion rot)
     {
@@ -19,10 +23,10 @@ public class AllyAction_Cannon : AllyAction
         //Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
 
         //ÃÑ¾Ë »ý¼º
-        GameObject projectile = PoolManager.instance.Get(projectilePrefab);
+        GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
         projectile.transform.position = pos;
         projectile.transform.rotation = rot;
-        projectile.GetComponent<Projectile_Player>().Init(cannonDamage, cannonSpeed, cannonLifeTime);
+        //projectile.GetComponent<Projectile_Player>().Init(cannonDamage, cannonSpeed, cannonLifeTime,cannonPenetrateCount, cannonReflectCount,cannonGuideAmount);
 
         //AudioManager.instance.PlaySfx(shootSFX);
     }

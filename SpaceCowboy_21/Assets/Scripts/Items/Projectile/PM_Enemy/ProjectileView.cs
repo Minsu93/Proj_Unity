@@ -16,8 +16,8 @@ public class ProjectileView : MonoBehaviour
     {
         if (proj == null) return;
 
-        proj.ProjectileInitEvent += ResetRenderer;
-        proj.ProjectileHitEvent += DamageHit;
+        //proj.ProjectileInitEvent += ResetRenderer;
+        //proj.ProjectileHitEvent += DamageHit;
 
         _renderer = GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();

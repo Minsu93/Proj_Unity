@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public HealthState healthState = HealthState.Default;
+    //public HealthState healthState = HealthState.Default;
 
     public float maxHealth = 10;
     public float currHealth {  get; private set; }
 
     public float maxShield = 10;
     public float currShield { get; private set; }
-    public float delayToRegeneration = 1.0f;
-    public float dTimer { get; private set; }
+    //public float delayToRegeneration = 1.0f;
+    //public float dTimer { get; private set; }
     //public float regenerateTime = 2.0f;
     //public float regenSpeed = 3.0f;
 
-
-    public float InvincibleTime;
+    //무적 시간
+    [SerializeField] float InvincibleTime;
     float _invincibleTimer;
 
 
@@ -28,12 +28,17 @@ public class PlayerHealth : MonoBehaviour
     {
         currHealth = maxHealth;
         currShield = maxShield;
-        healthState = HealthState.Default;
+        //healthState = HealthState.Default;
     }
 
     public bool AnyDamage(float dmg)
     {   //맞아서 데미지를 입었는지 검사
         bool isHit = false;
+
+        if(currHealth ==0)
+        {
+            return isHit;
+        }
 
         if (_invincibleTimer > 0)
         {
@@ -58,17 +63,19 @@ public class PlayerHealth : MonoBehaviour
 
         isHit = true;
 
-        if(isHit)
-        {
-            dTimer = 0;
-            healthState = HealthState.OnHit;
-        }
+        //플레이어 Status UI 를 업데이트한다.
+        GameManager.Instance.playerManager.UpdatePlayerStatusUI();
 
         return isHit;
     }
 
     public void RecoverShield(float amount)
     {
+        if (currHealth == 0)
+        {
+            return;
+        }
+
         if (currShield < maxShield)
         {
             //실드를 회복한다
@@ -103,43 +110,43 @@ public class PlayerHealth : MonoBehaviour
         }
 
 
-       switch(healthState)
-        {
-            case HealthState.Default:
-                if (currHealth < maxHealth) healthState = HealthState.OnHit;
-                break;
+       //switch(healthState)
+       // {
+       //     case HealthState.Default:
+       //         if (currHealth < maxHealth) healthState = HealthState.OnHit;
+       //         break;
 
-            case HealthState.OnHit:
+       //     case HealthState.OnHit:
 
-                //맞으면 딜레이동안 기다리고 OnRegen상태로 넘어간다
-                dTimer += Time.deltaTime / delayToRegeneration;
-                if (dTimer >= 1)
-                {
-                    dTimer = 0;
-                    currShield = maxShield;
-                    healthState = HealthState.Default;
-                }
-                break;
-            //case HealthState.OnRegen: 
-            //    if(currShield < maxShield)
-            //    {
+       //         //맞으면 딜레이동안 기다리고 OnRegen상태로 넘어간다
+       //         dTimer += Time.deltaTime / delayToRegeneration;
+       //         if (dTimer >= 1)
+       //         {
+       //             dTimer = 0;
+       //             currShield = maxShield;
+       //             healthState = HealthState.Default;
+       //         }
+       //         break;
+       //     //case HealthState.OnRegen: 
+       //     //    if(currShield < maxShield)
+       //     //    {
 
-            //        //실드를 회복한다
-            //        currShield += regenSpeed * Time.deltaTime;
+       //     //        //실드를 회복한다
+       //     //        currShield += regenSpeed * Time.deltaTime;
 
-            //        //실드가 다 찼으면 기본 상태로 돌아간다
-            //        if (currShield >= maxShield)
-            //        {
-            //            currShield = maxShield;
-            //            healthState = HealthState.Default;
-            //        }
-            //    }
-            //    break;
-            case HealthState.Dead: break;
-        }
+       //     //        //실드가 다 찼으면 기본 상태로 돌아간다
+       //     //        if (currShield >= maxShield)
+       //     //        {
+       //     //            currShield = maxShield;
+       //     //            healthState = HealthState.Default;
+       //     //        }
+       //     //    }
+       //     //    break;
+       //     case HealthState.Dead: break;
+       // }
     }
 
 
-    public enum HealthState { Default, OnHit, OnRegen, Dead}
+    //public enum HealthState { Default, OnHit, OnRegen, Dead}
 
 }

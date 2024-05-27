@@ -14,7 +14,7 @@ public class Generator : InteractableOBJ
         if (!interactOn) return;
 
         //코스트가 있는지 검사하고
-        if (ResourceManager.Instance.PayMoney(interactCost))
+        if (GameManager.Instance.materialManager.PayMoney("gold",interactCost))
         {
             //TurnOn을 시작한다.
             turnOnStart = true;

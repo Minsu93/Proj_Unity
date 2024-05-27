@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Asteroid : MonoBehaviour, IGravitable
+public class Asteroid : MonoBehaviour
 {
     /// <summary>
     /// 중력 총에 맞으면 지상으로 떨어진다. 
@@ -36,7 +36,7 @@ public class Asteroid : MonoBehaviour, IGravitable
 
     public void GravityOnEvent()
     {
-        gravity.FixedGravityFunction(GameManager.Instance.playerNearestPlanet, collideSpeed);
+        gravity.FixedGravityFunction(GameManager.Instance.playerManager.playerNearestPlanet, collideSpeed);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -97,7 +97,7 @@ public class Asteroid : MonoBehaviour, IGravitable
     protected void ShowHitEffect(ParticleSystem particle, Vector2 pos, Quaternion rot)
     {
         if (particle != null)
-            ParticleHolder.instance.GetParticle(particle, pos, rot);
+            GameManager.Instance.particleManager.GetParticle(particle, pos, rot);
     }
 
     IEnumerator DestroyRoutine(float time)

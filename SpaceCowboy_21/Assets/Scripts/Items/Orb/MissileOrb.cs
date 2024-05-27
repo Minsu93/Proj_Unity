@@ -21,10 +21,16 @@ public class MissileOrb : Orb
     [SerializeField] private float missileInterval = 0.3f;
 
     //데미지 및 속도
-    public float damage, speed, lifeTime;
+    [SerializeField] float damage;
+    [SerializeField] float speed;
+    [SerializeField] float lifeTime;
+    [SerializeField] int penetrateCount;
+    [SerializeField] int reflectCount;
+    [SerializeField] int guideAmount;
 
 
-    protected override void WhenDieEvent()
+
+    protected override void ActivateOrb()
     {
         if (CheckTarget(out RaycastHit2D[] hits))
         {
@@ -78,9 +84,9 @@ public class MissileOrb : Orb
     void Shoot(Vector3 pos, Quaternion rot)
     {
         //총알 생성
-        GameObject projectile = PoolManager.instance.Get(projectilePrefab);
+        GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
         projectile.transform.position = pos;
         projectile.transform.rotation = rot;
-        projectile.GetComponent<Projectile>().Init(damage, speed, lifeTime);
+        //projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, penetrateCount, reflectCount, guideAmount);
     }
 }

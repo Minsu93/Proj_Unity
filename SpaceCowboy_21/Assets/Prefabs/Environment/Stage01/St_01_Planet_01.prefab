@@ -46,10 +46,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4045485038870477491, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
-      propertyPath: maxLinkedDistance
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 4083433014974948542, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1364,7 +1360,7 @@ PrefabInstance:
       objectReference: {fileID: 2800000, guid: 486d9342827bfcf4d91936076294aa55, type: 3}
     - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Sprites.Array.size
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_LocalAABB.m_Center.x
@@ -1395,6 +1391,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 90f49724d4fd1174d9db0bd1d92418b7, type: 3}
     - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Sprites.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: 28fc3d18a52105a42a7645594e69446c, type: 3}
+    - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Sprites.Array.data[8]
       value: 
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
@@ -1404,6 +1404,10 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
     - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
       propertyPath: m_Sprites.Array.data[10]
+      value: 
+      objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
+    - target: {fileID: 5820961588108856066, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}
+      propertyPath: m_Sprites.Array.data[11]
       value: 
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
     - target: {fileID: 5820961588108856067, guid: 71fe9d998a6926445b46fb6e893cb1f6, type: 3}

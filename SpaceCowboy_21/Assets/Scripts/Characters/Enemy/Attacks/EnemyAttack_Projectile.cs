@@ -10,6 +10,7 @@ public class EnemyAttack_Projectile : EnemyAttack
     public float damage;
     public float speed;
     public float lifeTime;
+    public float range;
     [Space]
     public float randomAngle;
     [Space]
@@ -79,10 +80,10 @@ public class EnemyAttack_Projectile : EnemyAttack
             Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, totalSpread * (i));
 
             //ÃÑ¾Ë »ý¼º
-            GameObject proj = PoolManager.instance.GetEnemyProj(projectile);
+            GameObject proj = GameManager.Instance.poolManager.GetEnemyProj(projectile);
             proj.transform.position = pos;
             proj.transform.rotation = tempRot * randomRotation;
-            proj.GetComponent<Projectile>().Init(damage, speed, lifeTime);
+            proj.GetComponent<Projectile_Enemy>().Init(damage, speed, lifeTime, range);
         }
     }
 

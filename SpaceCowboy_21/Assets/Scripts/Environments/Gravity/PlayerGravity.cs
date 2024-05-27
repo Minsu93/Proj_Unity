@@ -24,7 +24,7 @@ public class PlayerGravity : CharacterGravity
 
     protected override void ChangePlanet()
     {
-        GameManager.Instance.playerNearestPlanet = nearestPlanet;
+        GameManager.Instance.playerManager.playerNearestPlanet = nearestPlanet;
 
         //중력 범위 표시
         if (preNearestPlanet != null)
@@ -36,7 +36,7 @@ public class PlayerGravity : CharacterGravity
         {
             nearestPlanet.graviteyViewOn();
 
-            CameraManager.instance.ChangeCamera(nearestPlanet.planetFOV);
+            GameManager.Instance.cameraManager.ChangeCamera(nearestPlanet.planetFOV);
         }
 
         preNearestPlanet = nearestPlanet;

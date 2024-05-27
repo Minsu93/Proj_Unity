@@ -4852,7 +4852,7 @@ GameObject:
   - component: {fileID: 2967013171502460230}
   - component: {fileID: 2967013171502460231}
   - component: {fileID: 2967013171502460232}
-  - component: {fileID: 3485153491677312891}
+  - component: {fileID: 2117722196004796748}
   - component: {fileID: 3485153491677312890}
   - component: {fileID: 652078404442559525}
   - component: {fileID: 1131099544882004073}
@@ -4941,7 +4941,7 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
   characterGravityMultiplier: 1
---- !u!114 &3485153491677312891
+--- !u!114 &2117722196004796748
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4950,25 +4950,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2967013171502460237}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b339c5428519fc46b508e635d0e14d6, type: 3}
+  m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyState: 0
-  activate: 1
-  doTotalRangeCheck: 1
   doAttackRangeCheck: 1
   doVisionCheck: 1
-  doPlanetCheck: 0
+  doPlanetCheck: 1
   timeBetweenChecks: 0.5
-  limitRange: 0
   attackRange: 10
-  hitEffect: {fileID: 0}
-  deadEffect: {fileID: 0}
-  inDetectRange: 0
-  inAttackRange: 0
-  isVisible: 0
-  inOtherPlanet: 0
-  playerIsRight: 0
 --- !u!114 &3485153491677312890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4982,11 +4971,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
+  enemyState: 0
   enemyHeight: 0.7
   turnSpeedOnLand: 100
-  bodyDamage: 3
+  bodyDamage: 0
   strikeSpeed: 10
   distanceFromStrikePoint: 1
+  clearMoveDistance: 3
+  clearMoveTime: 3
+  clearCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hitEffect: {fileID: 0}
+  deadEffect: {fileID: 0}
   iconUI: {fileID: 7508925075503968073}
   pauseTimer: 0.1
   boosterParticle: {fileID: 8810903381058341265}
@@ -5075,11 +5093,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropRepeat: 4
-  itemChance: 0.7
   dropTable:
-  - item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
-    dropRate: 100
+  - dropChance: 0.2
+    item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    dropMin: 4
+    dropMax: 5
+  - dropChance: 0.05
+    item: {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
+    dropMin: 1
+    dropMax: 1
   launchPowerMin: 4
   launchPowerMax: 8
 --- !u!1 &7508925075503968073
@@ -5306,7 +5328,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyAction: {fileID: 3485153491677312890}
-  enemyBrain: {fileID: 3485153491677312891}
   skeletonAnimation: {fileID: 7996702944756414970}
   idle: {fileID: 11400000, guid: a51cdf39743f3014db3d4b8ff6056de5, type: 2}
   run: {fileID: 11400000, guid: a51cdf39743f3014db3d4b8ff6056de5, type: 2}
@@ -5371,7 +5392,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8134351543699796422}
   m_LocalRotation: {x: -0, y: -0, z: -0.041178126, w: 0.9991518}
-  m_LocalPosition: {x: 0.09190003, y: 0.0062997947, z: 0}
+  m_LocalPosition: {x: 0.045950014, y: 0.0031501357, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

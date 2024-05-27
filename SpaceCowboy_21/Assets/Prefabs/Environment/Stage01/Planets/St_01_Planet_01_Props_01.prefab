@@ -74,7 +74,7 @@ PrefabInstance:
     - target: {fileID: 6970701545371744160, guid: 4e560f45120a8854f8d6eb3b7ff799a1, type: 3}
       propertyPath: coll
       value: 
-      objectReference: {fileID: 5914766623513394515}
+      objectReference: {fileID: 0}
     - target: {fileID: 6970701545371744160, guid: 4e560f45120a8854f8d6eb3b7ff799a1, type: 3}
       propertyPath: yOffset
       value: 0.43
@@ -90,7 +90,7 @@ PrefabInstance:
     - target: {fileID: 6970701545371744160, guid: 4e560f45120a8854f8d6eb3b7ff799a1, type: 3}
       propertyPath: currPlanet
       value: 
-      objectReference: {fileID: 5993009035025088454}
+      objectReference: {fileID: 0}
     - target: {fileID: 6970701545371744160, guid: 4e560f45120a8854f8d6eb3b7ff799a1, type: 3}
       propertyPath: stickToPlanet
       value: 1
@@ -188,7 +188,7 @@ PrefabInstance:
     - target: {fileID: 6205322766105645790, guid: e23378b62074c4945a9ef17b07343900, type: 3}
       propertyPath: coll
       value: 
-      objectReference: {fileID: 5914766623513394515}
+      objectReference: {fileID: 0}
     - target: {fileID: 6205322766105645790, guid: e23378b62074c4945a9ef17b07343900, type: 3}
       propertyPath: activate
       value: 0
@@ -200,7 +200,7 @@ PrefabInstance:
     - target: {fileID: 6205322766105645790, guid: e23378b62074c4945a9ef17b07343900, type: 3}
       propertyPath: currPlanet
       value: 
-      objectReference: {fileID: 5993009035025088454}
+      objectReference: {fileID: 0}
     - target: {fileID: 6205322766105645790, guid: e23378b62074c4945a9ef17b07343900, type: 3}
       propertyPath: stickToPlanet
       value: 1
@@ -2799,10 +2799,6 @@ PrefabInstance:
       propertyPath: m_Sprites.Array.data[11]
       value: 
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
-    - target: {fileID: 257342791875140893, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
-      propertyPath: gravityRadius
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 5356211549604366851, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
       propertyPath: m_ShapeTexture
       value: 
@@ -3222,22 +3218,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7104952894271452906, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
   m_PrefabInstance: {fileID: 5816735441572455131}
   m_PrefabAsset: {fileID: 0}
---- !u!60 &5914766623513394515 stripped
-PolygonCollider2D:
-  m_CorrespondingSourceObject: {fileID: 192611316580736904, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
-  m_PrefabInstance: {fileID: 5816735441572455131}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5993009035025088454 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 257342791875140893, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
-  m_PrefabInstance: {fileID: 5816735441572455131}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7027b70d49cfac4b83a9f3e011d86e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6385322664242328058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3446,7 +3426,7 @@ PrefabInstance:
     - target: {fileID: 6350227545487080890, guid: 08d18d63b6f20524b96b63680c603c8a, type: 3}
       propertyPath: coll
       value: 
-      objectReference: {fileID: 5914766623513394515}
+      objectReference: {fileID: 0}
     - target: {fileID: 6350227545487080890, guid: 08d18d63b6f20524b96b63680c603c8a, type: 3}
       propertyPath: yOffset
       value: 0.1
@@ -3458,7 +3438,7 @@ PrefabInstance:
     - target: {fileID: 6350227545487080890, guid: 08d18d63b6f20524b96b63680c603c8a, type: 3}
       propertyPath: currPlanet
       value: 
-      objectReference: {fileID: 5993009035025088454}
+      objectReference: {fileID: 0}
     - target: {fileID: 6350227545487080890, guid: 08d18d63b6f20524b96b63680c603c8a, type: 3}
       propertyPath: stickToPlanet
       value: 1

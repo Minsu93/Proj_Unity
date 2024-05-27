@@ -46,7 +46,7 @@ public abstract class InteractableOBJ : MonoBehaviour
                 DrawOutline();
                 objUI.TextOn(true);
                 interactOn = true;
-                GameManager.Instance.curObj = this;
+                GameManager.Instance.playerManager.curObj = this;
             }
         }
     }
@@ -69,7 +69,7 @@ public abstract class InteractableOBJ : MonoBehaviour
                 RemoveOutLine();
                 objUI.TextOn(false);
                 interactOn = false;
-                GameManager.Instance.curObj = null;
+                GameManager.Instance.playerManager.curObj = null;
             }
         }
     }

@@ -146,7 +146,6 @@ GameObject:
   - component: {fileID: 315180441151937975}
   - component: {fileID: 315180441151937970}
   - component: {fileID: 315180441151937971}
-  - component: {fileID: 5501715937644684075}
   m_Layer: 11
   m_Name: P_s_Planet_Spike
   m_TagString: Planet
@@ -453,25 +452,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7027b70d49cfac4b83a9f3e011d86e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityMultiplier: 1
-  isGrabProjectile: 0
+  activate: 0
   planetRadius: 2.6
   gravityRadius: 8.6
+  gravityMultiplier: 1
   planetFOV: 90
+  linkedPlanetList: []
+  worldPoints: []
+  pointsNormal: []
+  enemyList: []
   gravityViewer: {fileID: 6390129945319728327}
-  edgeColl: {fileID: 0}
---- !u!114 &5501715937644684075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 315180441151935048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33daff23fc15752409519317d7926c0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  polyCollider: {fileID: 0}
 --- !u!1 &1322983611880660460
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,6 +691,7 @@ MonoBehaviour:
   skeletonAnimation: {fileID: 1376302791626824313}
   idle: {fileID: 0}
   run: {fileID: 0}
-  shoot: {fileID: 0}
+  attack: {fileID: 0}
   die: {fileID: 11400000, guid: 4e358f4b36ca6b44e8841e7ad987eab3, type: 2}
   aimOn: {fileID: 0}
+  strike: {fileID: 0}

@@ -1327,11 +1327,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 257342791875140890, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 79.4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 257342791875140890, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 257342791875140890, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1405,14 +1405,6 @@ PrefabInstance:
       propertyPath: m_Sprites.Array.data[11]
       value: 
       objectReference: {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
-    - target: {fileID: 257342791875140893, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
-      propertyPath: planetRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 257342791875140893, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
-      propertyPath: gravityRadius
-      value: 19
-      objectReference: {fileID: 0}
     - target: {fileID: 257342791875140893, guid: 9ef2a9bed331c824698c7f83f8a60191, type: 3}
       propertyPath: gravityViewer
       value: 

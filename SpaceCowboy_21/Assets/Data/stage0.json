@@ -4,78 +4,88 @@
             "waveIndex": 0,
             "spawns": [
                 {
-                    "enemies": [
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.5
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.5
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        }
-                    ],
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.2
+                    },
+                    "spawnCount": 4,
+                    "delayToNextWave": 10.0
+                },
+                {
+                    "enemy": {
+                        "name": "orbit_cannon",
+                        "delay": 0.2
+                    },
+                    "spawnCount": 4,
+                    "delayToNextWave": 2.0
+                },
+                {
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.2
+                    },
+                    "spawnCount": 3,
+                    "delayToNextWave": 8.0
+                },
+                {
+                    "enemy": {
+                        "name": "orbit_cannon",
+                        "delay": 0.2
+                    },
+                    "spawnCount": 4,
+                    "delayToNextWave": 0.0
+                }
+            ],
+            "totalTime": 50.0
+        },
+        {
+            "waveIndex": 1,
+            "spawns": [
+                {
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.0
+                    },
+                    "spawnCount": 5,
                     "delayToNextWave": 5.0
                 },
                 {
-                    "enemies": [
-                        {
-                            "name": "orbit_cannon",
-                            "delay": 1.0
-                        },
-                        {
-                            "name": "orbit_cannon",
-                            "delay": 0.0
-                        }
-                    ],
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.0
+                    },
+                    "spawnCount": 5,
+                    "delayToNextWave": 5.0
+                },
+                {
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.0
+                    },
+                    "spawnCount": 5,
+                    "delayToNextWave": 5.0
+                },
+                {
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 0.0
+                    },
+                    "spawnCount": 5,
                     "delayToNextWave": 5.0
                 }
             ],
-            "totalTime": 60.0
+            "totalTime": 50.0
         },
         {
-            "waveIndex": 0,
+            "waveIndex": 2,
             "spawns": [
                 {
-                    "enemies": [
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        },
-                        {
-                            "name": "ground_shooter",
-                            "delay": 0.0
-                        }
-                    ],
-                    "delayToNextWave": 5.0
-                },
-                {
-                    "enemies": [
-                        {
-                            "name": "orbit_cannon",
-                            "delay": 0.0
-                        },
-                        {
-                            "name": "orbit_cannon",
-                            "delay": 0.0
-                        }
-                    ],
-                    "delayToNextWave": 5.0
+                    "enemy": {
+                        "name": "ground_shooter",
+                        "delay": 2
+                    },
+                    "spawnCount": 20,
+                    "delayToNextWave": 0.0
                 }
             ],
             "totalTime": 60.0

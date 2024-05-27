@@ -5,18 +5,13 @@ using UnityEngine;
 public abstract class ProjectileMovement : MonoBehaviour
 {
     protected float speed;
-    public bool rotateBySpeed = true;
+    public bool rotateBySpeed = false;
 
     protected Rigidbody2D rb;
     protected Projectile proj;
 
-    [Space]
 
-    //이 오브젝트가 넉백을 얼마나 할 것인지 정해주는 변수들
-    public float knockBackTime = 0.2f;
-    protected float _knockBackTime; //실제 대기 
-    public float knockBackForce = 2f;
-    protected bool knockBackOn = false;
+
 
     protected virtual void Awake()
     {
@@ -44,10 +39,6 @@ public abstract class ProjectileMovement : MonoBehaviour
         transform.rotation = targetRotation;
     }
 
-    public virtual void KnockBackEvent(Vector2 vec)
-    {
-        return;
-    }
 
 
 

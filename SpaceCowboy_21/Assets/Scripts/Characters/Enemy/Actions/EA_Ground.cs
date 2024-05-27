@@ -18,40 +18,44 @@ public class EA_Ground : EnemyAction
     public float airTime;
     public float lastJumpTime; 
 
-    protected override void Update()
+
+    protected override bool BeforeUpdate()
     {
-        //공중 체크 추가
+        if (!activate) return true;
+
+        //공중 체크 
         CheckOnAir();
+        //공중 회전
+        RotateCharacterToGround();
+        if (onAir) return true;
 
-        EnemyState currState = brain.enemyState;
-
-        if (currState != preState)
-        {
-            DoAction(currState);
-            preState = currState;
-        }
-
-        //공중 회전 추가
-        if(currState != EnemyState.Strike) RotateCharacterToGround();
-
-        if (!activate) return;
-
-        //공중 체크 추가
-        if (onAir) return;
-
-        if (onAttack)
-        {
-            if (attack != null)
-                attack.OnAttackAction();
-        }
-
-        if (onChase)
-        {
-            if (chase != null)
-                chase.OnChaseAction();
-        }
+        return false;
     }
 
+
+    public override void BrainStateChange()
+    {
+        //상태에 따른 활동 
+        switch (enemyState)
+        {
+            case EnemyState.Idle:
+                //플레이어가 죽지 않았다면, 바로 추격한다.
+                if (GameManager.Instance.playerIsAlive)
+                    enemyState = EnemyState.Chase;
+                break;
+
+            case EnemyState.Chase:
+                if (brain.inAttackRange && brain.isVisible)
+                    enemyState = EnemyState.Attack;
+                break;
+
+            case EnemyState.Attack:
+                if (!brain.inAttackRange || !brain.isVisible)
+                    enemyState = EnemyState.Chase;
+
+                break;
+        }
+    }
 
 
     void RotateCharacterToGround()
@@ -111,6 +115,7 @@ public class EA_Ground : EnemyAction
     }
 
 
+
     //#region KnockBackMethod
     //public void EnemyKnockBack(Vector2 hitPoint)
     //{
@@ -152,7 +157,7 @@ public class EA_Ground : EnemyAction
     //#endregion
 
 
-    
+
 
 
 

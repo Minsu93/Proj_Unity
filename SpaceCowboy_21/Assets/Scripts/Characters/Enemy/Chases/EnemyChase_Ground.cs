@@ -23,6 +23,8 @@ public class EnemyChase_Ground : EnemyChase
     EnemyBrain brain;
     CharacterGravity charGravity;
 
+    //debug
+
     protected override void Awake()
     {
         base.Awake();
@@ -36,6 +38,7 @@ public class EnemyChase_Ground : EnemyChase
         //행성이 바뀌면 ppoint 업데이트
         if (curPlanet != charGravity.nearestPlanet)
         {
+            passedPlanet = curPlanet;
             curPlanet = charGravity.nearestPlanet;
             if (curPlanet != null)
             {
@@ -88,7 +91,7 @@ public class EnemyChase_Ground : EnemyChase
         int pointCounts = ppoints.Length - 1;
 
         //플레이어 위치를 구한다
-        targetIndex = curPlanet.GetClosestIndex(brain.playerTr.position);
+        targetIndex = curPlanet.GetClosestIndex(GameManager.Instance.player.position);
 
         //현재와 다음 인덱스 위치를 구한다. 
         closestIndex = curPlanet.GetClosestIndex(transform.position);
@@ -135,13 +138,15 @@ public class EnemyChase_Ground : EnemyChase
     void PrepareJump()
     {
         int pointCounts = ppoints.Length - 1;
-        Planet playerPlanet = GameManager.Instance.playerNearestPlanet;
+        Planet playerPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
 
-        if (!curPlanet.GetjumpPoint(playerPlanet, out PlanetBridge _bridge))
-        {
-            return;
-        }
+        //점프할 행성을 구한다 
+        Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
 
+
+        //점프 포인트를 구한다. 
+        if (!curPlanet.GetjumpPoint(targetPlanet, out PlanetBridge _bridge)) return;
+  
         targetIndex = _bridge.bridgeIndex;
         closestTargetPoint = _bridge.targetVector;
         closestIndex = curPlanet.GetClosestIndex(transform.position);
@@ -168,4 +173,74 @@ public class EnemyChase_Ground : EnemyChase
         rb.AddForce(dir.normalized * jumpForce, ForceMode2D.Impulse);
     }
 
+    Planet prePlayerPlanet;
+    Planet passedPlanet;//지나온 행성, 내 행성이 바뀌었을 때 수정된다. 
+    Planet ChoosePlanet(Planet playerPlanet, Planet curPlanet)
+    {
+        List<Planet> playerLinkedPlanets = new List<Planet>();
+        List<Planet> curLinkedPlanets = new List<Planet>();
+        List<Planet> commonPlanets = new List<Planet> ();
+        Planet targetPlanet = null;
+
+        //플레이어의 행성이 바뀌었을 때 
+        if (prePlayerPlanet != playerPlanet)
+        {
+            passedPlanet = null;
+            prePlayerPlanet = playerPlanet;
+        }
+
+        foreach (PlanetBridge bridge in playerPlanet.linkedPlanetList)
+        {
+            playerLinkedPlanets.Add(bridge.planet);
+        }
+        foreach (PlanetBridge bridge in curPlanet.linkedPlanetList)
+        {
+            curLinkedPlanets.Add(bridge.planet);
+        }
+
+        //두개의 List에 겹치는 것만 골라낸다. 
+        foreach (Planet planet in playerLinkedPlanets)
+        {
+            if (curLinkedPlanets.Contains(planet))
+            {
+                commonPlanets.Add(planet);
+            }
+        }
+
+        //플레이어 행성을 추가한다. 
+        //commonPlanets.Add(playerPlanet);
+
+        //지나온 행성을 제거한다.
+        if (passedPlanet!= null && commonPlanets.Contains(passedPlanet))
+        {
+            commonPlanets.Remove(passedPlanet);
+        }
+
+        //리스트에서 랜덤하게 선택해서 진행한다. 
+
+        if (commonPlanets.Count > 0)
+        {
+            switch(Random.Range(0, 2))
+            {
+                //플레이어 행성으로 직행
+                case 0:
+                    targetPlanet = playerPlanet;
+                    break;
+                //예측 행성으로 이동
+                default:
+                    targetPlanet = commonPlanets[Random.Range(0, commonPlanets.Count - 1)];
+                    break;
+            }
+        }
+        else
+        {
+            targetPlanet = playerPlanet;
+        }
+        
+        return targetPlanet;
+        
+    }
+
 }
+
+

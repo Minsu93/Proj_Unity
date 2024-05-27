@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PoolManager : MonoBehaviour
 {
-    public static PoolManager instance;
-
     //풀링 오브젝트들을 보관할 장소
     public GameObject[] playerProjectiles;
     public GameObject[] enemyProjectiles;
@@ -22,13 +20,16 @@ public class PoolManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
-                
+        Init();
 
+    }
+
+    void Init()
+    {
         //초기화
         playerProjPools = new List<GameObject>[playerProjectiles.Length];
 
-        for(int i = 0; i < playerProjPools.Length; i++)
+        for (int i = 0; i < playerProjPools.Length; i++)
         {
             playerProjPools[i] = new List<GameObject>();
         }
@@ -36,14 +37,14 @@ public class PoolManager : MonoBehaviour
 
         enemyProjPools = new List<GameObject>[enemyProjectiles.Length];
 
-        for(int index = 0; index < enemyProjectiles.Length; index++)
+        for (int index = 0; index < enemyProjectiles.Length; index++)
         {
             enemyProjPools[index] = new List<GameObject>();
         }
 
-        
+
         dropItemPools = new List<GameObject>[dropItems.Length];
-        for(int t = 0; t < dropItems.Length; t++)
+        for (int t = 0; t < dropItems.Length; t++)
         {
             dropItemPools[t] = new List<GameObject>();
         }

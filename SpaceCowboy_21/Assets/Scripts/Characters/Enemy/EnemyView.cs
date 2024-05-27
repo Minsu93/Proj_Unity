@@ -11,7 +11,6 @@ using System.Reflection;
 public class EnemyView : MonoBehaviour
 {
     public EnemyAction enemyAction;
-    public EnemyBrain enemyBrain;
     public SkeletonAnimation skeletonAnimation;
 
 
@@ -48,6 +47,7 @@ public class EnemyView : MonoBehaviour
         enemyAction.EnemySeeDirection += FlipScaleXToDirection;
         enemyAction.EnemyResetEvent += ResetEvent;
         enemyAction.EnemyStrikeEvent += StartStrike;
+        enemyAction.EnemyClearEvent += StartClear;
 
         _renderer = GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();
@@ -78,6 +78,11 @@ public class EnemyView : MonoBehaviour
     {
         if(strike != null)
             skeletonAnimation.AnimationState.SetAnimation(0, strike, true);
+    }
+
+    void StartClear()
+    {
+        StartCoroutine(BeingTransparentRoutine(3.0f));
     }
 
 
@@ -127,12 +132,18 @@ public class EnemyView : MonoBehaviour
         yield return new WaitForSeconds(1f);
         //애니메이션이 끝나면
 
+        StartCoroutine(BeingTransparentRoutine(1.0f));
+    }
+
+    //점차 투명해지는 루틴
+    IEnumerator BeingTransparentRoutine(float duration)
+    {
         float alpha = 1;
         int cID = Shader.PropertyToID("_Color");
 
         while (alpha > 0)
         {
-            alpha -= Time.deltaTime;
+            alpha -= Time.deltaTime / duration;
 
             Color deadColor = new Color(1, 1, 1, alpha);
             block.SetColor(cID, deadColor);
@@ -140,10 +151,6 @@ public class EnemyView : MonoBehaviour
 
             yield return null;
         }
-
-        //이 오브젝트를 비활성화
-        //transform.parent.gameObject.SetActive(false);
-
     }
 
     private void ResetEvent()

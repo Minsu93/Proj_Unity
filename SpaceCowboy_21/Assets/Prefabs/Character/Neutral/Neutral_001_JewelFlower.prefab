@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2252272392005501617}
   - component: {fileID: 5146007695764908649}
   - component: {fileID: 7575829791591024236}
-  - component: {fileID: 7291950653332295360}
   - component: {fileID: 4182700444181585448}
   - component: {fileID: 7974901006276670713}
   - component: {fileID: 5096023929502341905}
@@ -29,8 +28,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782683807349536384}
-  m_LocalRotation: {x: 0, y: 0, z: 0.0016381765, w: 0.9999987}
-  m_LocalPosition: {x: 2.0555258, y: 0.3234691, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.07060262, w: 0.99750453}
+  m_LocalPosition: {x: 1.911844, y: -0.68644536, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -56,12 +55,6 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -76,53 +69,12 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
---- !u!114 &7291950653332295360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782683807349536384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48e8c5639554f4b4196347f8eeab6ca6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyState: 1
-  activate: 1
-  timeBetweenChecks: 0.5
-  checkRange: 0
-  attackRange: 0
-  minRange: 0
-  inChaseRange: 0
-  inAttackRange: 0
-  playerIsVisible: 0
-  playerIsInOtherPlanet: 0
 --- !u!114 &4182700444181585448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,11 +120,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropRepeat: 1
-  itemChance: 1
   dropTable:
-  - item: {fileID: 1489413032599568933, guid: 4c9fe11e72c17d84c8d8912dc21b6075, type: 3}
-    dropRate: 100
+  - dropChance: 0
+    item: {fileID: 1489413032599568933, guid: 4c9fe11e72c17d84c8d8912dc21b6075, type: 3}
+    dropMin: 0
+    dropMax: 0
   launchPowerMin: 3
   launchPowerMax: 4
 --- !u!1 &4201261074098241022
@@ -205,7 +157,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2252272392005501617}
-  m_RootOrder: -1
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &2516185078605781142
 CircleCollider2D:
@@ -217,25 +169,6 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -272,7 +205,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2252272392005501617}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3841890881353985810
 SpriteRenderer:

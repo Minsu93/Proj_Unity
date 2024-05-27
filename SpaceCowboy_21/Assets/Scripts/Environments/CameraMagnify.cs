@@ -10,12 +10,12 @@ public class CameraMagnify : MonoBehaviour
     public BoxCollider2D boxCollider;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        CameraManager.instance.ChangeCamera(magnifyFOV, changeSpd);
+        GameManager.Instance.cameraManager.ChangeCamera(magnifyFOV, changeSpd);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        CameraManager.instance.ChangeCamera(defaultFOV, changeSpd);
+        GameManager.Instance.cameraManager.ChangeCamera(defaultFOV, changeSpd);
     }
 
     private void OnDrawGizmos()

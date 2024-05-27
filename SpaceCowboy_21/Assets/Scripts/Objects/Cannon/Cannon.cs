@@ -39,38 +39,38 @@ public class Cannon : MonoBehaviour, ISwitchable
 
     void Update()
     {
-        if (!activate) return;
+        //if (!activate) return;
 
-        //적 탐색
-        if (enemyBrain == null)
-        {
-            //적이 없다면 새로운 적을 찾는다.
-            if (brain.CheckNearestEnemyBrain(out EnemyBrain eBrain))
-            {
-                enemyBrain = eBrain;
-            }
-        }
-        if(enemyBrain != null && !enemyBrain.activate)
-        {
-            //만약 조준한 적이 죽었다면 새로운 적을 찾는다
-            if (brain.CheckNearestEnemyBrain(out EnemyBrain eBrain))
-            {
-                enemyBrain = eBrain;
-            }
-        }
-        //둘다 아니면 다음으로
+        ////적 탐색
+        //if (enemyBrain == null)
+        //{
+        //    //적이 없다면 새로운 적을 찾는다.
+        //    if (brain.CheckNearestEnemyBrain(out EnemyBrain eBrain))
+        //    {
+        //        enemyBrain = eBrain;
+        //    }
+        //}
+        //if(enemyBrain != null && !enemyBrain.activate)
+        //{
+        //    //만약 조준한 적이 죽었다면 새로운 적을 찾는다
+        //    if (brain.CheckNearestEnemyBrain(out EnemyBrain eBrain))
+        //    {
+        //        enemyBrain = eBrain;
+        //    }
+        //}
+        ////둘다 아니면 다음으로
 
-        //조준 
-        if (enemyBrain == null) return;
+        ////조준 
+        //if (enemyBrain == null) return;
 
-        Vector2 targetVec = enemyBrain.transform.position - muzzlePos.position;
-        Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec.normalized;
-        Quaternion targetRot = Quaternion.LookRotation(Vector3.forward, upVec);
-        muzzlePos.rotation = targetRot;
+        //Vector2 targetVec = enemyBrain.transform.position - muzzlePos.position;
+        //Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec.normalized;
+        //Quaternion targetRot = Quaternion.LookRotation(Vector3.forward, upVec);
+        //muzzlePos.rotation = targetRot;
 
-        //발사 
-        if (!action.OnAttackCool)
-            action.Attack(muzzlePos.position, targetRot);
+        ////발사 
+        //if (!action.OnAttackCool)
+        //    action.Attack(muzzlePos.position, targetRot);
 
     }
 

@@ -7,7 +7,7 @@ using UnityEngine;
 
 
 [SelectionBase]
-public class Planet : MonoBehaviour
+public class Planet : MonoBehaviour, ITarget
 {
     public bool activate = false;   //행성이 활성화 되었는지
 
@@ -15,12 +15,11 @@ public class Planet : MonoBehaviour
     public float gravityRadius = 4f;
     public float gravityMultiplier = 1f;    // 중력배수
     public float planetFOV = 90f;
-    public float margin = 150f;     //행성 감지용 여유 스크린 넓이
 
     public List<PlanetBridge> linkedPlanetList = new List<PlanetBridge>();
     public Vector2[] worldPoints;   //행성Coll points 의 월드 값. 
     public Vector2[] pointsNormal;  //points의 노말방향 값들. 
-    public List<EnemyBrain> enemyList = new List<EnemyBrain>();
+    //public List<EnemyBrain> enemyList = new List<EnemyBrain>();
 
     //스크립트
     public Transform gravityViewer;
@@ -65,19 +64,19 @@ public class Planet : MonoBehaviour
         gravityViewer.gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        //0.5초마다 실행
+    //private void Update()
+    //{
+    //    //0.5초마다 실행
 
-        if (PlanetBoundIsInScreen())
-        {
-            if(!activate)
-            {
-                activate = true;
-                WakeUpEnemies();
-            }
-        }
-    }
+    //    if (PlanetBoundIsInScreen())
+    //    {
+    //        if(!activate)
+    //        {
+    //            activate = true;
+    //            WakeUpEnemies();
+    //        }
+    //    }
+    //}
 
     #region Gravity
 
@@ -133,57 +132,57 @@ public class Planet : MonoBehaviour
 
     public void graviteyViewOn()
     {
-        gravityViewer.gameObject.SetActive(true);
+        //gravityViewer.gameObject.SetActive(true);
     }
 
     public void graviteyViewOff()
     {
-        gravityViewer.gameObject.SetActive(false);
+        //gravityViewer.gameObject.SetActive(false);
     }
 
     #endregion
 
-    #region Enemy Awake & Planet Events
+    #region Enemy Awake & Planet Events (Remove)
 
-    //여유 크기 
-    bool PlanetBoundIsInScreen()
-    {
-        Bounds bounds = polyCollider.bounds;
-        
-
-        Vector3[] corners = new Vector3[4];
-        corners[0] = new Vector3(bounds.min.x, bounds.min.y, 0); // Bottom-left
-        corners[1] = new Vector3(bounds.max.x, bounds.min.y, 0); // Bottom-right
-        corners[2] = new Vector3(bounds.max.x, bounds.max.y, 0); // Top-right
-        corners[3] = new Vector3(bounds.min.x, bounds.max.y, 0); // Top-left
-
-        foreach (var corner in corners)
-        {
-            Vector3 screenPoint = Camera.main.WorldToScreenPoint(corner);
-
-            if (screenPoint.x > 0 - margin && screenPoint.x < Screen.width + margin)
-            {
-                if(screenPoint.y > 0 - margin && screenPoint.y < Screen.height + margin)
-                {
-                    return true; // One of the corners is outside the screen
-                }
-            }
-        }
-
-        return false; // All corners are inside the screen
-    }
+    //여유 크기
+    //public bool PlanetBoundIsInScreen()
+    //{
+    //    Bounds bounds = polyCollider.bounds;
 
 
-    void WakeUpEnemies()
-    {
-        if (enemyList.Count > 0)
-        {
-            foreach (EnemyBrain brain in enemyList)
-            {
-                brain.WakeUp();
-            }
-        }
-    }
+    //    Vector3[] corners = new Vector3[4];
+    //    corners[0] = new Vector3(bounds.min.x, bounds.min.y, 0); // Bottom-left
+    //    corners[1] = new Vector3(bounds.max.x, bounds.min.y, 0); // Bottom-right
+    //    corners[2] = new Vector3(bounds.max.x, bounds.max.y, 0); // Top-right
+    //    corners[3] = new Vector3(bounds.min.x, bounds.max.y, 0); // Top-left
+
+    //    foreach (var corner in corners)
+    //    {
+    //        Vector3 screenPoint = Camera.main.WorldToScreenPoint(corner);
+
+    //        if (screenPoint.x > 0 - margin && screenPoint.x < Screen.width + margin)
+    //        {
+    //            if (screenPoint.y > 0 - margin && screenPoint.y < Screen.height + margin)
+    //            {
+    //                return true; // One of the corners is outside the screen
+    //            }
+    //        }
+    //    }
+
+    //    return false; // All corners are inside the screen
+    //}
+
+
+    //void WakeUpEnemies()
+    //{
+    //    if (enemyList.Count > 0)
+    //    {
+    //        foreach (EnemyBrain brain in enemyList)
+    //        {
+    //            brain.WakeUp();
+    //        }
+    //    }
+    //}
 
     #endregion
 
@@ -348,6 +347,13 @@ public class Planet : MonoBehaviour
         }
         return index;
     }
+
+    public float GetClosestDistance(Vector2 pos)
+    {
+        Vector2 closestPoint = worldPoints[GetClosestIndex(pos)];
+        float dist = Vector2.Distance(pos,closestPoint);
+        return dist;
+    }
     #endregion
 
 
@@ -365,6 +371,11 @@ public class Planet : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, gravityRadius);
     }
+
+    public Collider2D GetCollider()
+    {
+        return polyCollider;
+    }
 }
 
 [System.Serializable]
@@ -373,12 +384,14 @@ public struct PlanetBridge
     public Planet planet;
     public int bridgeIndex;
     public Vector2 targetVector;
+    public float bridgeDistance;
 
-    public PlanetBridge(Planet planet, int bridgeIndex, Vector2 targetVector)
+    public PlanetBridge(Planet planet, int bridgeIndex, Vector2 targetVector, float bridgeDistance)
     {
         this.planet = planet;
         this.bridgeIndex = bridgeIndex;
         this.targetVector = targetVector;
+        this.bridgeDistance = bridgeDistance;
     }
 }
 

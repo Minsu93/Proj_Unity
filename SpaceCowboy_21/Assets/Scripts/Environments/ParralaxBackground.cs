@@ -10,7 +10,6 @@ public class ParralaxBackground : MonoBehaviour
     private Transform cameraTransform;
     private Vector3 lastCameraPosition;
 
-    CinemachineVirtualCamera virtualCam;
     float defaultFOV;
     Vector3 startScale;
 
@@ -22,9 +21,8 @@ public class ParralaxBackground : MonoBehaviour
         lastCameraPosition = cameraTransform.position;
         transform.position = new Vector2(lastCameraPosition.x, lastCameraPosition.y);
 
-        virtualCam = CameraManager.instance.virtualCamera;
         startScale = transform.localScale;
-        defaultFOV = CameraManager.instance.defaultFOV;
+        defaultFOV = GameManager.Instance.cameraManager.defaultFOV;
 
         //시작 위치 살짝 잡아주기
 
@@ -40,12 +38,12 @@ public class ParralaxBackground : MonoBehaviour
 
 
         ////렌즈에 따른 베이스 위치, 스케일 
-        float curFOV = virtualCam.m_Lens.FieldOfView;
-        float baseScaler;
+        //float curFOV = GameManager.Instance.cameraManager.currFOV;
+        //float baseScaler;
 
-        baseScaler = defaultFOV / curFOV;
-        float a = 1 / baseScaler;      //a는 1~2의 값을 갖는다. 
-        transform.localScale = startScale * a;
+        //baseScaler = defaultFOV / curFOV;
+        //float a = 1 / baseScaler;      //a는 1~2의 값을 갖는다. 
+        //transform.localScale = startScale * a;
 
 
     }

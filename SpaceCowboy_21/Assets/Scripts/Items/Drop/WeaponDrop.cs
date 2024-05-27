@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class WeaponDrop : Collectable
 {
-    public WeaponData weaponData;
-    PlayerBehavior playerBehavior;
+    //public WeaponData weaponData;
+    //PlayerBehavior playerBehavior;
 
     protected override void ConsumeEffect()
     {
-        playerBehavior.TryChangeWeapon(weaponData);
+        //playerBehavior.TryChangeWeapon(weaponData);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        playerBehavior = GameManager.Instance.PlayerBehavior;
+        //playerBehavior = GameManager.Instance.PlayerBehavior;
     }
 
 }

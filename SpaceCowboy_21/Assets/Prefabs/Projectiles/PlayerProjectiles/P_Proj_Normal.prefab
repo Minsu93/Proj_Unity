@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -5107147801187730982}
   - component: {fileID: 7188975242274261650}
   - component: {fileID: 3140605196254949026}
-  - component: {fileID: -1193727413953729404}
+  - component: {fileID: 2911168840577561464}
   m_Layer: 9
   m_Name: P_Proj_Normal
   m_TagString: PlayerProjectile
@@ -101,7 +101,10 @@ MonoBehaviour:
   ViewObj: {fileID: 8991112628740824846}
   trail: {fileID: 5543431350520239108}
   screenBorderLimit: 5
---- !u!114 &-1193727413953729404
+  penetrateCount: 0
+  reflectCount: 0
+  guideAmount: 0
+--- !u!114 &2911168840577561464
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,12 +113,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6292677011125795810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecd5636146dbd9e45b40cdb3e9765806, type: 3}
+  m_Script: {fileID: 11500000, guid: 14f2ca91f47a98a4b97b14d870e8a84a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateBySpeed: 1
-  knockBackTime: 0.2
-  knockBackForce: 2
+  rotateBySpeed: 0
+  guideRadius: 4
+  rotationSpeed: 1
 --- !u!1 &6535184387503664083
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class CameraPos : MonoBehaviour
 {
-    public GameObject ReticleOBJ;
+    //public GameObject ReticleOBJ;
     public float movementInfluence;
     public float camSpeed = 3f;
     public float threshold = 2f;
 
-    public Sprite reticleSprite;
+    //public Sprite reticleSprite;
+
 
     Vector2 prePlayerPos;
     Vector2 currCamPos;
@@ -17,31 +18,28 @@ public class CameraPos : MonoBehaviour
     Transform player;
     GameObject reticle;
 
-    bool activate = true;
+    bool activate = false;
 
     private void Awake()
     {
-        reticle = ReticleOBJ;
-        SpriteRenderer spr = reticle.AddComponent<SpriteRenderer>();
-        spr.sprite = reticleSprite;
-        spr.sortingLayerName = "Effect";
+        CreateRecticle();
+
+        //위치 초기화
+        //reticle.transform.position = player.position;
     }
-    private void Start()
+    public void CameraPosInit()
     {
         this.player = GameManager.Instance.player;
         this.transform.position = player.transform.position;
         GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
-
-        //위치 초기화
-        reticle.transform.position = player.position;
+        activate = true;
     }
     private void FixedUpdate()
     {
         if (!activate)
         {
-            //캐릭터가 죽으면 카메라는 플레이어 시체를 따라다님.
-            this.transform.position = player.transform.position;
-
+            ////캐릭터가 죽으면 카메라는 플레이어 시체를 따라다님.
+            //this.transform.position = player.transform.position;
             return;
         }
 
@@ -73,6 +71,14 @@ public class CameraPos : MonoBehaviour
         currCamPos = Vector2.Lerp(currCamPos, camPos, Time.deltaTime * camSpeed);
 
         transform.position = currCamPos;
+    }
+
+    void CreateRecticle()
+    {
+        reticle = new GameObject("Reticle");
+        SpriteRenderer spr = reticle.AddComponent<SpriteRenderer>();
+        spr.sprite = Resources.Load<Sprite>("/UI/Reticle3");
+        spr.sortingLayerName = "Effect";
     }
 
     Vector2 SeePlayerFront()

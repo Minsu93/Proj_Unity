@@ -31,7 +31,7 @@ public abstract class Collectable : MonoBehaviour
         {
             ConsumeEffect();
 
-            ParticleHolder.instance.GetParticle(consumeEffect, transform.position, transform.rotation);
+            GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
             gameObject.SetActive(false);
         }
     }

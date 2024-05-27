@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class ProjMov_Guide : ProjectileMovement
+public class ProjMov_Guide : ProjMov_Normal
 {
     public float rotationSpeed = 1f;
 

@@ -5,20 +5,16 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public static CameraManager instance;
-    public CameraPos cameraPos;
-    public CinemachineVirtualCamera virtualCamera;
-    public GameObject miniMapCam;
-    public GameObject worldMapCam;
+    [SerializeField] CameraPos cameraPos;
+    [SerializeField] CinemachineVirtualCamera virtualCamera;
 
-    //카메라 관련
-    public float mapFOV = 120f;
+    //카메라FOV 관련
     public float defaultFOV = 90f;
-    float currFOV;
+    public float currFOV { get; private set; }
     float targetFOV;
 
     float approx = 0.05f;
-    public float defaultFovControlSpd = 5.0f;
+    [SerializeField] float defaultFovControlSpd = 5.0f;
     float fovControlSpd;
 
     //CameraPos관련
@@ -28,74 +24,57 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
-    }
+        GameManager.Instance.cameraManager = this;
 
-    private void Start()
-    {
         //초기 FOV
+        //fovControlSpd = defaultFovControlSpd;
         currFOV = defaultFOV;
-        targetFOV = currFOV;
-        fovControlSpd = defaultFovControlSpd;
-
-        GameManager.Instance.PlayerDeadEvent += PlayerIsDead;
+        //targetFOV = currFOV;
     }
 
-    private void FixedUpdate()
+
+    //private void FixedUpdate()
+    //{
+    //    //카메라 조절
+    //    if (virtualCamera == null) return;
+
+    //    if (Mathf.Abs(currFOV - targetFOV) > approx)
+    //    {
+    //        currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * fovControlSpd);
+    //        virtualCamera.m_Lens.FieldOfView = currFOV;
+    //    }
+
+    //}
+
+    public void InitCam()
     {
-        //카메라 조절
-
-        if (Mathf.Abs(currFOV - targetFOV) > approx)
-        {
-            currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * fovControlSpd);
-            virtualCamera.m_Lens.FieldOfView = currFOV;
-        }
-
+        cameraPos.CameraPosInit();
     }
-
     //카메라 이벤트
-    public void MapOpen()
+    public void StopCameraFollow()
     {
-        //targetFOV = mapFOV;
-
         cameraPos.StopCameraFollow();
-        miniMapCam.SetActive(false);
-        worldMapCam.SetActive(true);
-
     }
 
-    public void MapClose()
+    public void StartCameraFollow()
     {
-        //targetFOV = defaultFOV;
-
         cameraPos.StartCameraFollow();
-        miniMapCam.SetActive(true);
-        worldMapCam.SetActive(false);
     }
 
     //행성 이동시 기본 FOV 변경
     public void ChangeCamera(float fov)
     {
-        defaultFOV = fov;
-        targetFOV = defaultFOV;
-        fovControlSpd = defaultFovControlSpd;
-
+        //defaultFOV = fov;
+        //targetFOV = defaultFOV;
+        //fovControlSpd = defaultFovControlSpd;
     }
 
     //속도 지정 식 카메라 확대,축소 
     public void ChangeCamera(float fov, float spd)
     {
-        defaultFOV = fov;
-        targetFOV = defaultFOV;
-        fovControlSpd = spd;
+        //defaultFOV = fov;
+        //targetFOV = defaultFOV;
+        //fovControlSpd = spd;
     }
 
-
-
-
-
-    public void PlayerIsDead()
-    {
-        virtualCamera.Follow = null;
-    }
 }

@@ -32,56 +32,51 @@ public class EA_Orbit : EnemyAction
         chase_Orbit = GetComponent<EnemyChase_Orbit>();
     }
 
-
-    
-    protected override void Update()
+    protected override bool BeforeUpdate()
     {
-        EnemyState currState = brain.enemyState;
-
-        if (currState != preState)
-        {
-            DoAction(currState);
-            preState = currState;
-        }
-
-        if (!activate) return;
+        if (!activate) return true;
 
         //스턴 시간 추가
         if (pTime > 0)
         {
             pTime -= Time.deltaTime;
-            return;
+            return true;
         }
 
-        if (onAttack)
-        {
-            if (attack != null)
-                attack.OnAttackAction();
-        }
+        return false;
+    }
 
-        if (onChase)
+    
+    public override void BrainStateChange()
+    {
+        switch (enemyState)
         {
-            if (chase != null) chase.OnChaseAction();
+            case EnemyState.Idle:
+                //플레이어가 죽지 않았다면, 바로 추격한다.
+                if (GameManager.Instance.playerIsAlive)
+                    enemyState = EnemyState.Chase;
+                break;
 
+            case EnemyState.Chase:
+                if (brain.inAttackRange && brain.isVisible)
+                    enemyState = EnemyState.Attack;
+                break;
+
+            case EnemyState.Attack:
+                if (!brain.inAttackRange || !brain.isVisible)
+                    enemyState = EnemyState.Chase;
+                break;
         }
     }
+
 
     protected override void DoAction(EnemyState state)
     {
         switch (state)
         {
-            case EnemyState.Strike:
+            case EnemyState.Idle:
                 onChase = false;
                 onAttack = false;
-                StrikeAction();
-                StrikeView();
-                break;
-
-            case EnemyState.Sleep:
-                onChase = false;
-                onAttack = false;
-                OnSleepEvent();
-                AddOnPlanetEnemyList();
                 StartIdleView();
                 break;
 
@@ -91,30 +86,28 @@ public class EA_Orbit : EnemyAction
                 onAttack = false;
                 break;
 
-                //공격 시 이동
+                //추가한 부분 : 공격 시 이동
             case EnemyState.Attack:
                 onChase = true;
                 onAttack = true;
                 break;
 
-            case EnemyState.Die:
-                onChase = false;
-                onAttack = false;
-                OnDieAction();
-                break;
         }
     }
 
-
+    
     public override void WakeUpEvent()
     {
+        enemyState = EnemyState.Chase;
         activate = true;
-        hitColl.enabled = true;
+
+        //중력 활성화 제거
+        //gravity.activate = true;
 
         //방향 지정 추가
         ChangeDirection(brain.playerIsRight);
 
-        //파티클 추가
+        //파티클 조절 추가
         if (boosterParticle != null) boosterParticle.Play();
 
     }
@@ -122,22 +115,15 @@ public class EA_Orbit : EnemyAction
 
     protected override void OnDieAction()
     {
-        StopAllCoroutines();
-        attack.StopAttackAction();
-        DieView();
-
-        activate = false;
-        iconUI.SetActive(false);
-        hitColl.enabled = false;
+        base.OnDieAction();
 
         //죽으면 궤도 물체 지상으로 떨어짐.
         gravity.activate = true;
 
-        StartCoroutine(DieRoutine(3.0f));
-
         //파티클 추가
         if (boosterParticle != null) boosterParticle.Stop();
     }
+
 
     void ChangeDirection()
     {
@@ -153,27 +139,44 @@ public class EA_Orbit : EnemyAction
         chase_Orbit.ChangeDirection(faceRight);
     }
 
-    public override void HitView()
+    //base에 피격시 정지하는 pTime 만 추가함.
+    public override void DamageEvent(float damage, Vector2 hitVec)
     {
-        base.HitView();
+        if (enemyState == EnemyState.Die) return;
 
-        //경직 
-        pTime = pauseTimer;
+        if (health.AnyDamage(damage))
+        {
+            HitView();
+
+            //피격시 정지 추가
+            pTime = pauseTimer;
+
+            if (hitEffect != null) GameManager.Instance.particleManager.GetParticle(hitEffect, transform.position, transform.rotation);
+
+            if (health.IsDead())
+            {
+                WhenDieEvent();
+
+                GameManager.Instance.playerManager.ChargeFireworkEnergy();
+            }
+        }
     }
 
+    //행성 도착 시 행성 center를 가져오는 로직 추가함. 
     protected override IEnumerator StrikeRoutine(Vector2 strikePos)
     {
         Vector2 dir = strikePos - (Vector2)transform.position;
         RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
         if (hit.collider == null) yield break;
 
-
+        //추가한 부분
         Planet planet = hit.collider.GetComponent<Planet>();
+
         Vector2 strikeStartPos = transform.position;
         Vector2 strikeTargetPos = hit.point;
         float strikeTime = hit.distance / strikeSpeed;
-        float time = 0; //강습 시간
-        float distance = hit.distance; //남은 거리
+        float time = 0; 
+        float distance = hit.distance; 
         while (distance > distanceFromStrikePoint + enemyHeight)
         {
             time += Time.deltaTime;
@@ -184,14 +187,16 @@ public class EA_Orbit : EnemyAction
         }
 
         yield return new WaitForSeconds(0.5f);
-        //Orbit 추가
+
+        //추가한 부분
         chase_Orbit.SetCenterPoint(planet);
-        brain.WakeUp();
+
+        WakeUpEvent();
     }
 
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    //행성과 부딪히면 방향 전환. 
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.collider.CompareTag("Planet"))
         {

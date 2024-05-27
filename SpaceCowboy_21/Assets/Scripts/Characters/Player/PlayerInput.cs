@@ -2,6 +2,7 @@ using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [SelectionBase]
 public class PlayerInput : MonoBehaviour
@@ -45,16 +46,16 @@ public class PlayerInput : MonoBehaviour
         if (inputDisabled)
             return;
 
-        //Map
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            GameManager.Instance.MapOpen();
+        ////Map
+        //if (Input.GetKeyDown(KeyCode.Tab))
+        //{
+        //    GameManager.Instance.MapOpen();
 
-        }
-        if (Input.GetKeyUp(KeyCode.Tab))
-        {
-            GameManager.Instance.MapClose();
-        }
+        //}
+        //if (Input.GetKeyUp(KeyCode.Tab))
+        //{
+        //    GameManager.Instance.MapClose();
+        //}
 
         // Jump
         if (Input.GetButtonDown(JumpButton))
@@ -128,16 +129,38 @@ public class PlayerInput : MonoBehaviour
         //    CameraManager.instance.ResetCameraThreshold();
         //}
 
+        //스킬 사용
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    playerBehavior.TryUseSkill();
+        //}
+
+        //투척 위성 사용
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            playerBehavior.TryThrowSatellite();
+        }
+
+        //weaponWheel 사용
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GameManager.Instance.playerManager.OpenWeaponWheel();
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            GameManager.Instance.playerManager.CloseWeaponWheel();
+
+        }
         if (Input.GetMouseButtonDown(1))
         {
-            playerBehavior.tryUseSkill();
+            GameManager.Instance.playerManager.CloseWeaponWheel();
         }
 
 
         //Interact
         if (Input.GetButtonDown(InteractButton))
         {
-            GameManager.Instance.InteractSomething();
+            GameManager.Instance.playerManager.InteractSomething();
         }
 
     }

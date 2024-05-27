@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Orb : MonoBehaviour, IHitable
+public abstract class Orb : MonoBehaviour, IHitable , ITarget
 {
     /// <summary>
     /// 아이콘 변경될 일 없음. . 
@@ -14,11 +14,13 @@ public abstract class Orb : MonoBehaviour, IHitable
     /// </summary>
 
     public int orbNumbers = 1;  //생성되는 오브의 수
-    public int energyNeeded = 15;   //생성에 필요한 에너지의 양 
+    public int energyNeeded = 15;   //생성에 필요한 에너지의 양, 혹은 오브 쿨타임
+    [SerializeField] private int orbHealth = 1;     //오브 최대 발동시킬수 있는 양, Hit당 한번
+    [SerializeField] private float orbDuration = 8.0f; //오브 지속시간.
     public ParticleSystem deadEffect;
     
     [SerializeField] GameObject viewObj;
-
+    
     bool activate = false;
     Health health;
     Collider2D coll; 
@@ -27,16 +29,19 @@ public abstract class Orb : MonoBehaviour, IHitable
     void Awake()
     {
         health = GetComponent<Health>();
+        health.maxHealth = orbHealth;
         coll = GetComponent<Collider2D>();
     }
 
     private void OnEnable()
     {
         ResetOrb();
+        StartCoroutine(DeactivateRoutine(orbDuration));
     }
 
     void ResetOrb()
     {
+        health.ResetHealth();
         activate = true;
         coll.enabled = true;
         viewObj.SetActive(true);
@@ -46,25 +51,40 @@ public abstract class Orb : MonoBehaviour, IHitable
     {
         if (!activate) return;
 
-        if (health.AnyDamage(damage))
+        if (health.AnyDamage(1))
         {
             //맞는 효과 
+            //오브 사용 효과
+            ActivateOrb();
 
             if (health.IsDead())
             {
-                activate = false;
-                coll.enabled = false;
-                viewObj.SetActive(false);
-                if (deadEffect != null) ParticleHolder.instance.GetParticle(deadEffect, transform.position, transform.rotation);
-                //오브 사용 효과
-                WhenDieEvent();
-                //3초 후 오브 Deactive
-                StartCoroutine(DieRoutine());
+                DeactivateOrb();
             }
         }
     }
 
-    protected abstract void WhenDieEvent();
+    protected abstract void ActivateOrb();
+
+
+    IEnumerator DeactivateRoutine(float sec)
+    {
+        yield return new WaitForSeconds(sec);
+        DeactivateOrb();
+    }
+
+    //오브 사라짐
+    void DeactivateOrb()
+    {
+        activate = false;
+        coll.enabled = false;
+        viewObj.SetActive(false);
+        if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
+
+        //3초 후 오브 Deactive
+        StartCoroutine(DieRoutine());
+    }
+
 
     IEnumerator DieRoutine()
     {
@@ -72,4 +92,8 @@ public abstract class Orb : MonoBehaviour, IHitable
         gameObject.SetActive(false);
     }
 
+    public Collider2D GetCollider()
+    {
+        return coll;
+    }
 }

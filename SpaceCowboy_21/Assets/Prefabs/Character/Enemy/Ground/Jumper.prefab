@@ -97,7 +97,6 @@ GameObject:
   - component: {fileID: 4366261071164999803}
   - component: {fileID: 4366261071164999796}
   - component: {fileID: 4366261071164999801}
-  - component: {fileID: 1825997888212723312}
   - component: {fileID: 3502908609817935589}
   - component: {fileID: 2731751136049779265}
   m_Layer: 8
@@ -114,8 +113,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4366261071164999793}
-  m_LocalRotation: {x: 0, y: 0, z: 0.01616716, w: 0.99986935}
-  m_LocalPosition: {x: 0.08300246, y: -0.47089183, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.020407503, w: 0.99979174}
+  m_LocalPosition: {x: 0.08025596, y: -0.53814125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -176,6 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 1
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
@@ -194,34 +194,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 15
   InvincibleTime: 0
---- !u!114 &1825997888212723312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4366261071164999793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf6b97fc74e6bc8459598e1c8e4ff574, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyState: 0
-  activate: 1
-  doTotalRangeCheck: 1
-  doAttackRangeCheck: 1
-  doVisionCheck: 1
-  doPlanetCheck: 1
-  timeBetweenChecks: 0.25
-  limitRange: 20
-  attackRange: 8
-  hitEffect: {fileID: 0}
-  deadEffect: {fileID: 0}
-  inDetectRange: 0
-  inAttackRange: 0
-  isVisible: 0
-  inOtherPlanet: 0
-  playerIsRight: 0
 --- !u!114 &3502908609817935589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,22 +207,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  moveSpeed: 0.5
   enemyHeight: 1.2
   turnSpeedOnLand: 100
-  preAttackDelay: 0
-  afterAttackDelay: 0
-  attackCoolTime: 3
-  predictionAccuracy: 0
   bodyDamage: 3
   strikeSpeed: 10
   distanceFromStrikePoint: 0
-  projectileStructs: []
-  hitColl: {fileID: 0}
-  hitCollObject: {fileID: 6651936169225812656}
+  clearMoveDistance: 3
+  clearMoveTime: 3
+  clearCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   iconUI: {fileID: 3957556133272027459}
   jumpForce: 10
   maxAirTime: 5
+  airTime: 0
+  lastJumpTime: 0
   jumpAttackDirVec: {x: 1, y: 2}
   jumpAttackForce: 12
 --- !u!114 &2731751136049779265

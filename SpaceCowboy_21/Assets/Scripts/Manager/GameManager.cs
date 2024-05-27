@@ -7,55 +7,37 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-    public Transform player;
-    PlayerInput playerInput;
-
-    PlayerBehavior _playerBehavior;
-    public PlayerBehavior PlayerBehavior
-    {
-        get
-        {
-            if(_playerBehavior == null)
-            {
-                _playerBehavior = player.GetComponent<PlayerBehavior>();
-            }
-            return _playerBehavior;
-        }
-    }
-
-    FireworkCreator _playerFirework;
-    public SkillArtifactSlot skillSlot;
-
-    public Planet playerNearestPlanet;
-
-    public GameObject miniMapObj;
-    public GameObject worldMapObj;
-
-    public InteractableOBJ curObj;
+    //플레이어 관련 
+    [SerializeField] GameObject playerPrefab;
+    public Transform player { get; private set; }
+    public bool playerIsAlive { get; private set; } //적들이 플레이어가 살았는지 죽었는지 참고
 
     //중력관련
     public float worldGravity = 900f;
 
-
-
+    //싱글톤
+    private static GameManager _instance = null;
     public static GameManager Instance
     {
         get
         {
-            // SingletonBehaviour가 초기화 되기 전이라면
             if (_instance == null)
             {
-                // 해당 오브젝트를 찾아 할당한다.
-                _instance = FindObjectOfType<GameManager>();
-                //DontDestroyOnLoad(_instance.gameObject);
+                return null;
             }
             return _instance;
         }
     }
 
+    //매니저들
+    public PoolManager poolManager { get; private set; }
+    public AudioManager audioManager { get; private set; }
+    public ParticleManager particleManager { get; private set; }
+    public PlayerManager playerManager { get; private set; }
 
-    //public float worldGravity;
+    public CameraManager cameraManager { get; set; }
+    public MaterialManager materialManager { get; set; }
+
 
     [Space]
     public bool playBGM;
@@ -65,22 +47,23 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        //if (_instance != null)
-        //{
-        //    if (_instance != this)
-        //    {
-        //        Destroy(gameObject);
-        //    }
+        if(_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
 
-        //    return;
-        //}
+        }
+        else
+        {
+            Destroy(this.gameObject);
+            return;
+        }
 
-        _instance = GetComponent<GameManager>();
-        //DontDestroyOnLoad(gameObject);
+        poolManager = GetComponentInChildren<PoolManager>();
+        audioManager = GetComponentInChildren<AudioManager>();
+        particleManager = GetComponentInChildren<ParticleManager>();
+        playerManager = GetComponentInChildren<PlayerManager>();
 
-        //플레이어 관련
-        _playerFirework = player.GetComponent<FireworkCreator>();
-        skillSlot = player.GetComponent<SkillArtifactSlot>();
     }
 
 
@@ -89,7 +72,6 @@ public class GameManager : MonoBehaviour
         //if(playBGM) AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
-
     }
 
 
@@ -101,70 +83,70 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void MapOpen()
+    public void SpawnPlayer()
     {
-        miniMapObj.SetActive(false);
-        worldMapObj.SetActive(true);
-        CameraManager.instance.MapOpen();
-    }
-    public void MapClose()
-    {
-        miniMapObj.SetActive(true);
-        worldMapObj.SetActive(false);
-        CameraManager.instance.MapClose();
+
+        //스폰 포인트를 가져온다. 
+        StartPoint spawnPoint = GameObject.FindObjectOfType<StartPoint>();
+        Vector2 pos = Vector2.zero;
+        Quaternion rot = Quaternion.identity;
+        //스폰 포인트가 있으면 그 장소, 없으면 0,0 에 플레이어를 소환한다. 
+        if(spawnPoint != null)
+        {
+            pos = spawnPoint.transform.position;
+            rot = spawnPoint.transform.rotation;
+        }
+        GameObject playerObj = Instantiate(playerPrefab, pos, rot);
+
+        //플레이어의 정보를 할당한다. 
+        player = playerObj.transform;
+        playerManager.UpdatePlayerScripts(playerObj);
+        
+        //플레이어생명 변수 업데이트
+        playerIsAlive = true;
 
     }
+
 
 
     // 플레이어가 죽으면 전역에 이벤트 발생
     public void PlayerIsDead()
     {
+        //플레이어생명 변수 업데이트
+        playerIsAlive = false;
+
         if (PlayerDeadEvent != null)
             PlayerDeadEvent();
+
+        if(cameraManager != null)
+            cameraManager.StopCameraFollow();
     }
 
-    public void LoadScene(int num)
-    {
-        SceneManager.LoadScene(num);
-    }
+
+    //씬 로드
     public void Loadscene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        if(player != null)
+            playerManager.SavePlayerInfo();
+        if(materialManager!= null)
+            materialManager.SaveMoney();
+
+        StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
-    
-
-    //플레이어 입력 관련 
-    public void DisablePlayerInput()
+    IEnumerator LoadSceneRoutine(string sceneName)
     {
-        if(playerInput == null)
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        while (!asyncLoad.isDone)
         {
-            playerInput = player.GetComponent<PlayerInput>();
+            yield return null;
         }
-        playerInput.inputDisabled = true;
-    }
-    public void EnablePlayerInput()
-    {
-        if (playerInput == null)
-        {
-            playerInput = player.GetComponent<PlayerInput>();
-        }
-        playerInput.inputDisabled = false;
+
+        
     }
 
-    //상호작용 관련
-    public void InteractSomething()
-    {
-        if (curObj == null)
-            return;
 
-        //플레이어 Cancel만 가능하도록 조작 변경.
-        //DisablePlayerInput();
-        curObj.InteractAction();
-    }
 
-    public void ChargeFireworkEnergy()
-    {
-        _playerFirework.EnergyIncrease(1f);
-    }
+  
 }

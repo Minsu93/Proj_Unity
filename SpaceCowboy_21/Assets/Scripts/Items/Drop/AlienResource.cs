@@ -37,7 +37,7 @@ public class AlienResource : Collectable
     }
     protected override void ConsumeEffect()
     {
-        ResourceManager.Instance.AddMoney(baseValue);
+        GameManager.Instance.materialManager.AddMoney("gold" ,baseValue);
     }
 
     //플레이어 위치로 자동으로 날아가는 로직. 

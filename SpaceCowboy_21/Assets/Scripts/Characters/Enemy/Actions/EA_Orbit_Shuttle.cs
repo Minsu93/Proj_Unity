@@ -19,13 +19,13 @@ public class EA_Orbit_Shuttle : EA_Orbit
     void SummonAction()
     {
         //gunTipRot, gunTipPos 업데이트
-        Vector2 pos = SpawnPoint.position;
-        Quaternion rot = transform.rotation;
+        //Vector2 pos = SpawnPoint.position;
+        //Quaternion rot = transform.rotation;
 
-        GameObject enemy = PoolManager.instance.GetEnemy(enemyPrefab);
-        enemy.transform.position = pos;
-        enemy.transform.rotation = rot;
-        enemy.GetComponent<EnemyBrain>().ResetEnemyBrain(EnemyState.Sleep);
+        //GameObject enemy = GameManager.Instance.poolManager.GetEnemy(enemyPrefab);
+        //enemy.transform.position = pos;
+        //enemy.transform.rotation = rot;
+        //enemy.GetComponent<EnemyBrain>().ResetEnemyBrain(EnemyState.Sleep);
 
         //View에서 애니메이션 실행
         //AttackView();

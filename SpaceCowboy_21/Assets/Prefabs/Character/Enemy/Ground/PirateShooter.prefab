@@ -171,14 +171,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyAction: {fileID: -7530958711495705422}
-  enemyBrain: {fileID: 7762146820271754592}
   skeletonAnimation: {fileID: 494461757288810318}
   idle: {fileID: 11400000, guid: 748a5b5e3804db645ba22de2672cdcd4, type: 2}
   run: {fileID: 11400000, guid: cc645c699f5a3e341aa7c7a3b116d0a0, type: 2}
   attack: {fileID: 11400000, guid: 4d65fa783f948bd41b48bbd1f9ac110f, type: 2}
   die: {fileID: 11400000, guid: 00a0f294153e6c543ba9853b3cd1670d, type: 2}
   aimOn: {fileID: 11400000, guid: 18bbbadae00a07843bf2d2b266878b9d, type: 2}
-  boost: {fileID: 11400000, guid: 5e9d3fd4027fd35459d0975d59ae87f8, type: 2}
+  strike: {fileID: 0}
 --- !u!1 &3957556133272027459
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +274,7 @@ GameObject:
   - component: {fileID: 4366261071164999802}
   - component: {fileID: 4366261071164999803}
   - component: {fileID: 4366261071164999796}
-  - component: {fileID: 7762146820271754592}
+  - component: {fileID: 8459344501355062472}
   - component: {fileID: -7530958711495705422}
   - component: {fileID: 1423748881765916512}
   - component: {fileID: 6420697008794989757}
@@ -363,7 +362,7 @@ MonoBehaviour:
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
   characterGravityMultiplier: 1
---- !u!114 &7762146820271754592
+--- !u!114 &8459344501355062472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -372,25 +371,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4366261071164999793}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c5e53059e5146942a0f674eba12311a, type: 3}
+  m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyState: 0
-  activate: 1
-  doTotalRangeCheck: 1
   doAttackRangeCheck: 1
   doVisionCheck: 1
   doPlanetCheck: 1
-  timeBetweenChecks: 0.25
-  limitRange: 50
-  attackRange: 16
-  hitEffect: {fileID: 0}
-  deadEffect: {fileID: 0}
-  inDetectRange: 0
-  inAttackRange: 0
-  isVisible: 0
-  inOtherPlanet: 0
-  playerIsRight: 0
+  timeBetweenChecks: 0.5
+  attackRange: 10
 --- !u!114 &-7530958711495705422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,11 +392,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
+  enemyState: 0
   enemyHeight: 1
   turnSpeedOnLand: 100
-  bodyDamage: 3
+  bodyDamage: 0
   strikeSpeed: 10
   distanceFromStrikePoint: 3
+  clearMoveDistance: 3
+  clearMoveTime: 3
+  clearCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hitEffect: {fileID: 0}
+  deadEffect: {fileID: 0}
   iconUI: {fileID: 3957556133272027459}
   jumpForce: 15
   maxAirTime: 1
@@ -497,11 +514,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropRepeat: 4
-  itemChance: 0.7
   dropTable:
-  - item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
-    dropRate: 100
+  - dropChance: 0.2
+    item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    dropMin: 4
+    dropMax: 5
+  - dropChance: 0.05
+    item: {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
+    dropMin: 1
+    dropMax: 1
   launchPowerMin: 4
   launchPowerMax: 8
 --- !u!1 &6651936169225812656

@@ -38,7 +38,8 @@ public class EnemyTurret : EnemyAction
         }
     }
 
-
-
-
+    public override void BrainStateChange()
+    {
+        throw new System.NotImplementedException();
+    }
 }

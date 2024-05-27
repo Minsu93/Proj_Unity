@@ -40,17 +40,24 @@ namespace SpaceCowboy
         PointAttachment curPoint;
         Vector2 pointVec;
 
-       
-
-        Skin characterSkin;
 
         //юс╫ц
         public GunType gunType;
 
+        private void Awake()
+        {
+            _renderer = GetComponent<MeshRenderer>();
+            block = new MaterialPropertyBlock();
+            _renderer.SetPropertyBlock(block);
+
+            skeleton = skeletonAnimation.skeleton;
+            skeletonData = skeleton.Data;
+
+        }
+
         // Start is called before the first frame update
         void Start()
         {
-
             if (playerBehavior == null) return;
 
             playerBehavior.ShootEvent += PlayShoot;
@@ -59,12 +66,6 @@ namespace SpaceCowboy
             playerBehavior.PlayerJumpStartEvent += PlayJumpStart;
             playerBehavior.PlayerJumpEvent += PlayJump;
            
-            _renderer = GetComponent<MeshRenderer>();
-            block = new MaterialPropertyBlock();
-            _renderer.SetPropertyBlock(block);
-
-            skeleton = skeletonAnimation.skeleton;
-            skeletonData = skeleton.Data;
 
             //SetSkin(gunType);
             //Debug.Log(gunType.skinName + "," + gunType.boneName + "," + gunType.slotName + "," + gunType.attachmentName);

@@ -30,6 +30,10 @@ public class Gravity : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start()
+    {
         currentGravityForce = GameManager.Instance.worldGravity;
     }
 

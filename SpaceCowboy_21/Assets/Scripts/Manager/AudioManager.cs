@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager instance;
-
     [Header("#BGM")]
     public AudioClip bgmClip;
     public float bgmVolume;
@@ -24,10 +22,7 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
         Init();
-
-
     }
 
     void Init()

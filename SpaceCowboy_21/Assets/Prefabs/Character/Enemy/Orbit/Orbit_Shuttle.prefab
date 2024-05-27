@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 5229468253160163711}
   - component: {fileID: 5981731693290601104}
   - component: {fileID: 1874223100699026876}
-  - component: {fileID: 1436944100954163269}
+  - component: {fileID: 9007570567952805213}
   - component: {fileID: 6672906700475144542}
   - component: {fileID: 4960100431443214305}
   - component: {fileID: 2993226351851388282}
@@ -179,11 +179,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate: 0
   nearestPoint: {x: 0, y: 0}
+  fixedGravity: 0
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
   characterGravityMultiplier: 1
---- !u!114 &1436944100954163269
+--- !u!114 &9007570567952805213
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -192,25 +193,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1440813470705713312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b339c5428519fc46b508e635d0e14d6, type: 3}
+  m_Script: {fileID: 11500000, guid: ce4a2a19785dc484e9565cfc98870ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyState: 0
-  activate: 1
-  doTotalRangeCheck: 0
-  doAttackRangeCheck: 0
-  doVisionCheck: 0
-  doPlanetCheck: 0
+  doAttackRangeCheck: 1
+  doVisionCheck: 1
+  doPlanetCheck: 1
   timeBetweenChecks: 0.5
-  limitRange: 0
-  attackRange: 20
-  hitEffect: {fileID: 0}
-  deadEffect: {fileID: 0}
-  inDetectRange: 0
-  inAttackRange: 0
-  isVisible: 0
-  inOtherPlanet: 0
-  playerIsRight: 0
+  attackRange: 10
 --- !u!114 &6672906700475144542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,24 +214,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  moveSpeed: 3
+  enemyState: 0
   enemyHeight: 2.5
   turnSpeedOnLand: 100
-  preAttackDelay: 0
-  afterAttackDelay: 0
-  attackCoolTime: 4
-  predictionAccuracy: 0
   bodyDamage: 3
-  projectileStructs: []
-  hitCollObject: {fileID: 687311927457098951}
+  strikeSpeed: 10
+  distanceFromStrikePoint: 0
+  clearMoveDistance: 3
+  clearMoveTime: 3
+  clearCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hitEffect: {fileID: 0}
+  deadEffect: {fileID: 0}
   iconUI: {fileID: 7617689621884379559}
-  moveRight: 0
-  pauseOnAttackMode: 0
   pauseTimer: 0.1
-  burstNumber: 3
-  burstDelay: 0.5
   boosterParticle: {fileID: 0}
-  ViewObj: {fileID: 6439189037819475281}
   enemyPrefab: {fileID: 4366261071164999793, guid: 59b9363470f37ff46927cec0a05f8dc5, type: 3}
   SpawnPoint: {fileID: 4813559572307860058}
 --- !u!114 &4960100431443214305
@@ -289,11 +280,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropRepeat: 4
-  itemChance: 1
   dropTable:
-  - item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
-    dropRate: 100
+  - dropChance: 0
+    item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    dropMin: 0
+    dropMax: 0
   launchPowerMin: 3
   launchPowerMax: 6
 --- !u!1 &4404203783401445477
