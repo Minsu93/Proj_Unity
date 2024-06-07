@@ -12,10 +12,13 @@ public abstract class Orb : MonoBehaviour, IHitable , ITarget
     /// 생성 조건 >> 생성기에서 읽음.
     /// 효과 : 터졌을 때 효과. 
     /// </summary>
-
+    [Header("Popper")]
     public int orbNumbers = 1;  //생성되는 오브의 수
     public int energyNeeded = 15;   //생성에 필요한 에너지의 양, 혹은 오브 쿨타임
-    [SerializeField] private int orbHealth = 1;     //오브 최대 발동시킬수 있는 양, Hit당 한번
+    [Header("Orb")]
+    //[SerializeField] private int orbHealth = 1;     //오브 최대 발동시킬수 있는 양, Hit당 한번
+    [SerializeField] private int orbReActiveCount = 1;      //오브의 반복 활성화 횟수. 
+    int repeatCount;
     [SerializeField] private float orbDuration = 8.0f; //오브 지속시간.
     public ParticleSystem deadEffect;
     
@@ -29,7 +32,8 @@ public abstract class Orb : MonoBehaviour, IHitable , ITarget
     void Awake()
     {
         health = GetComponent<Health>();
-        health.maxHealth = orbHealth;
+        health.ResetHealth();
+
         coll = GetComponent<Collider2D>();
     }
 
@@ -45,6 +49,7 @@ public abstract class Orb : MonoBehaviour, IHitable , ITarget
         activate = true;
         coll.enabled = true;
         viewObj.SetActive(true);
+        repeatCount = 0;
     }
 
     public void DamageEvent(float damage, Vector2 hitPoint)
@@ -55,11 +60,19 @@ public abstract class Orb : MonoBehaviour, IHitable , ITarget
         {
             //맞는 효과 
             //오브 사용 효과
-            ActivateOrb();
 
             if (health.IsDead())
             {
-                DeactivateOrb();
+                ActivateOrb();
+                repeatCount++;
+                if(repeatCount >= orbReActiveCount)
+                {
+                    DeactivateOrb();
+                }
+                else
+                {
+                    health.ResetHealth();
+                }
             }
         }
     }
@@ -95,5 +108,10 @@ public abstract class Orb : MonoBehaviour, IHitable , ITarget
     public Collider2D GetCollider()
     {
         return coll;
+    }
+
+    public void KnockBackEvent(Vector2 hitPos, float forceAmount)
+    {
+        throw new NotImplementedException();
     }
 }

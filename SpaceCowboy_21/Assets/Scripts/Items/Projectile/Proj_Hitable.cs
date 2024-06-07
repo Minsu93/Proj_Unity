@@ -8,8 +8,8 @@ public class Proj_Hitable : Projectile, IHitable
 
     Health health;
 
-    public event System.Action ProjectileInitEvent;
-    public event System.Action ProjectileHitEvent;
+    //public event System.Action ProjectileInitEvent;
+    //public event System.Action ProjectileHitEvent;
     protected override void Awake()
     {
         base.Awake();
@@ -45,4 +45,8 @@ public class Proj_Hitable : Projectile, IHitable
         base.LifeOver();
     }
 
+    public void KnockBackEvent(Vector2 hitPos, float forceAmount)
+    {
+        throw new System.NotImplementedException();
+    }
 }

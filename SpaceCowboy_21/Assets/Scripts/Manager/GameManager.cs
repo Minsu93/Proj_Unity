@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     public bool playBGM;
 
     public event System.Action PlayerDeadEvent;
+    public event System.Action PlayerTeleportEvent;
 
 
     void Awake()
@@ -120,6 +121,11 @@ public class GameManager : MonoBehaviour
 
         if(cameraManager != null)
             cameraManager.StopCameraFollow();
+    }
+    //플레이어가 위치 이동을 했을 때(맵 경계, 혹은 텔레포트 기계)
+    public void PlayerIsTeleport()
+    {
+        if(PlayerTeleportEvent != null) PlayerTeleportEvent();
     }
 
 

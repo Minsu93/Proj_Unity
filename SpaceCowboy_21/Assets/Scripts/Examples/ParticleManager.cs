@@ -38,8 +38,23 @@ public class ParticleManager : MonoBehaviour
         playParticle(index, pos, rot);
     }
 
+    public void GetParticle(ParticleSystem particle, Vector3 pos, Quaternion rot, Vector3 scale)
+    {
+        int index = 0;
+
+        for (int i = 0; i < effects.Length; i++)
+        {
+            if (effects[i] == particle)
+            {
+                index = i;
+            }
+        }
+
+        playParticle(index, pos, rot, scale);
+    }
+
     //해당 파티클 출력하기
-    void playParticle(int index , Vector3 particlePos, Quaternion particleRot)
+    void playParticle(int index, Vector3 particlePos, Quaternion particleRot)
     {
         ParticleSystem particleToPlay = particlePool[index].getAvailabeParticle();
 
@@ -50,6 +65,22 @@ public class ParticleManager : MonoBehaviour
 
             particleToPlay.transform.position = particlePos;
             particleToPlay.transform.rotation = particleRot;
+            particleToPlay.Play();
+        }
+
+    }
+    void playParticle(int index , Vector3 particlePos, Quaternion particleRot, Vector3 particleScale)
+    {
+        ParticleSystem particleToPlay = particlePool[index].getAvailabeParticle();
+
+        if (particleToPlay != null)
+        {
+            if (particleToPlay.isPlaying)
+                particleToPlay.Stop();
+
+            particleToPlay.transform.position = particlePos;
+            particleToPlay.transform.rotation = particleRot;
+            particleToPlay.transform.localScale = particleScale;
             particleToPlay.Play();
         }
 

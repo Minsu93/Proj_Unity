@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
+  playerUIInteractPrefab: {fileID: 8653297541307795509, guid: 7e94682f21de58448afc75ab1e7db468, type: 3}
   weaponData: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
   orbData: {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
   throwData: {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
@@ -102,6 +103,9 @@ MonoBehaviour:
   - {fileID: 7424398827703927764, guid: 3ffa3c43adff7724ea60c7bc8514782a, type: 3}
   - {fileID: 7424398827703927764, guid: 0a0d036cddeec7947a938b7fbd9a4f06, type: 3}
   - {fileID: 7196136449052729651, guid: 123ea11c39d1fb04c996651624506b01, type: 3}
+  - {fileID: 1205147032739621916, guid: 5846ac8c07b97a347893dd1a6272202d, type: 3}
+  - {fileID: 7196136449052729651, guid: 6df6c92d894b04149ada091485ba5bd3, type: 3}
+  - {fileID: 7196136449052729651, guid: e15a4baac458ae7409bdf82f4995befb, type: 3}
 --- !u!1 &529613330717527071
 GameObject:
   m_ObjectHideFlags: 0
@@ -126,7 +130,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 529613330717527071}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -201,6 +205,9 @@ MonoBehaviour:
   - {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
   - {fileID: 6292677011125795810, guid: f223f89339f9aa44684453007f706008, type: 3}
   - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
+  - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
+  - {fileID: 589853217845385795, guid: 519957f155df7074a9c04b08ad82c52e, type: 3}
+  - {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
   enemyProjectiles:
   - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
   - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
@@ -212,7 +219,6 @@ MonoBehaviour:
   - {fileID: 3887532328296468646, guid: 451b5fd71a2a1ea4a8317ca548b520d2, type: 3}
   - {fileID: 657525897022449219, guid: f43e27027bdcfce4eaa12c68e7954238, type: 3}
   - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
-  - {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
   - {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
   enemies:
   - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}

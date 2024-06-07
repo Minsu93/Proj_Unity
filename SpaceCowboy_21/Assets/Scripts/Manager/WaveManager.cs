@@ -31,6 +31,11 @@ public class WaveManager : MonoBehaviour
     public float spawnRange = 5f;                  //랜덤 범위 넓이. 
     public float distanceUnitFromScreen = 5f;      //화면에서 떨어진 정도. 유닛 단위.
 
+    float timer;
+    float updateCycle = 0.5f;
+    public Planet playerNearestPlanet;
+
+
     //행성 관련
     [SerializeField] List<Planet> planetList = new List<Planet>();
 
@@ -70,6 +75,20 @@ public class WaveManager : MonoBehaviour
         if (!activate) return;
 
         waveProgressImg.fillAmount = (gameTime - preWaveTime) / (nextWaveTime - preWaveTime);
+
+        if (activate)
+        {
+            if (timer < updateCycle)
+            {
+                timer += Time.deltaTime;
+            }
+            else
+            {
+                timer = 0;
+                playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
+            }
+
+        }
     }
 
     void CreateWaveJson()
@@ -366,7 +385,7 @@ public class WaveManager : MonoBehaviour
     }
 
     //스크린에 보이는 행성 중 하나를 고른다. 
-    Planet SelectClosesetPlanetFromScreen(Vector2 point)
+    public Planet SelectClosesetPlanetFromScreen(Vector2 point)
     {
         Planet planet = null;
         List<Planet> visiblePlanet = new List<Planet>(); 

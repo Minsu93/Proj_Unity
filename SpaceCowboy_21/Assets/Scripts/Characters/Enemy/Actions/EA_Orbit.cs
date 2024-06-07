@@ -81,7 +81,7 @@ public class EA_Orbit : EnemyAction
                 break;
 
             case EnemyState.Chase:
-                StartIdleView();
+                StartRunView();
                 onChase = true;
                 onAttack = false;
                 break;
@@ -146,7 +146,7 @@ public class EA_Orbit : EnemyAction
 
         if (health.AnyDamage(damage))
         {
-            HitView();
+            StartHitView();
 
             //피격시 정지 추가
             pTime = pauseTimer;
@@ -192,6 +192,16 @@ public class EA_Orbit : EnemyAction
         chase_Orbit.SetCenterPoint(planet);
 
         WakeUpEvent();
+    }
+
+    public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
+    {
+        EnemyPause(1f);
+
+        Vector2 dir = (Vector2)transform.position - hitPos;
+        dir = dir.normalized;
+
+        rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
     }
 
 

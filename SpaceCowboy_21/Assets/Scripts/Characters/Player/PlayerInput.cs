@@ -18,12 +18,9 @@ public class PlayerInput : MonoBehaviour
 
     PlayerBehavior playerBehavior;
 
-    //방어기 test
-    //public GrabLasso grabLasso;
-    //public CounterShield counterShield;
-
     bool moveON = false;
     public bool inputDisabled = false;
+    public bool shootDisabled = false;
 
 
     private void Awake()
@@ -37,62 +34,38 @@ public class PlayerInput : MonoBehaviour
         if (playerBehavior == null)
             return;
 
-        //if (Input.GetButtonDown(CancelButton))
-        //{
-        //    GameManager.Instance.InteractCancel();
-        //}
-
-
         if (inputDisabled)
             return;
-
-        ////Map
-        //if (Input.GetKeyDown(KeyCode.Tab))
-        //{
-        //    GameManager.Instance.MapOpen();
-
-        //}
-        //if (Input.GetKeyUp(KeyCode.Tab))
-        //{
-        //    GameManager.Instance.MapClose();
-        //}
 
         // Jump
         if (Input.GetButtonDown(JumpButton))
         {
-            //playerBehavior.PrepareJump();
             playerBehavior.TrySpeedJump();
         }
-        //if(Input.GetButtonUp(JumpButton))
-        //{
-        //    playerBehavior.TryJump();
-        //}
-
 
         // Shoot
-        if (Input.GetButtonDown(ShootButton))
+        //if (Input.GetButtonDown(ShootButton))
+        //{
+        //    playerBehavior.StartShoot();
+        //}
+
+        //if (Input.GetButtonUp(ShootButton))
+        //{
+        //    playerBehavior.StopShoot();
+        //}
+
+        if (!shootDisabled && Input.GetButton(ShootButton))
         {
-            playerBehavior.StartShoot();
-
+            playerBehavior.TryShoot();
         }
-
         if (Input.GetButtonUp(ShootButton))
         {
-            playerBehavior.StopShoot();
-
+            playerBehavior.TryResetShoot();
         }
-
-        //// MagicShoot
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    playerBehavior.TryMagicShoot();
-        //}
 
         // Slide
         if (Input.GetButtonDown(SlideButton))
         {
-            //playerBehavior.ToggleSlide();
-
             playerBehavior.TrySlide();
         }
 
@@ -101,45 +74,11 @@ public class PlayerInput : MonoBehaviour
             playerBehavior.TryStopSlide();
         }
 
-        //무기 교체
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            playerBehavior.TryChangeWeapon(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            playerBehavior.TryChangeWeapon(1);
-        }
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    playerBehavior.TryChangeWeapon(2);
-        //}
-        //Lasso
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    grabLasso.TryThrowLasso();
-        //}
-
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    CameraManager.instance.ChangeCameraThreshold(12f, 8f);
-        //}
-        //if(Input.GetMouseButtonUp(1))
-        //{
-        //    CameraManager.instance.ResetCameraThreshold();
-        //}
-
-        //스킬 사용
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    playerBehavior.TryUseSkill();
-        //}
-
         //투척 위성 사용
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            playerBehavior.TryThrowSatellite();
-        }
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    playerBehavior.TryThrowSatellite();
+        //}
 
         //weaponWheel 사용
         if (Input.GetKeyDown(KeyCode.E))
@@ -151,10 +90,11 @@ public class PlayerInput : MonoBehaviour
             GameManager.Instance.playerManager.CloseWeaponWheel();
 
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1))    //우클릭 시 취소
         {
             GameManager.Instance.playerManager.CloseWeaponWheel();
         }
+
 
 
         //Interact

@@ -90,7 +90,7 @@ public class EnemyBrain : MonoBehaviour
     {
         bool inOtherP = false;
 
-        if (GameManager.Instance.playerManager.playerNearestPlanet != gravity.nearestPlanet) inOtherP = true;
+        if (WaveManager.instance.playerNearestPlanet != gravity.nearestPlanet) inOtherP = true;
         inOtherPlanet = inOtherP;
 
         return inOtherP;

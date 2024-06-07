@@ -9,6 +9,10 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
+    //Update 활성화 여부 
+    bool activate = false;
+    float timer;
+
     //인터렉트 오브젝트
     public InteractableOBJ curObj { get; set; }
 
@@ -17,8 +21,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private GameObject playerUIInteractPrefab;
     Image healthImg;
     Image shieldImg;
-    GameObject weaponWheel;
     WeaponWheelController weaponWheelController;
+    Gauge_Weapon gauge_Weapon;
 
     //저장할 플레이어 정보
     [SerializeField] WeaponData weaponData;
@@ -34,7 +38,8 @@ public class PlayerManager : MonoBehaviour
     ArtifactBombSlot playerThrowSlot;
     PlayerHealth playerHealth;
     public PlayerWeapon playerWeapon { get; private set; }
-    public Planet playerNearestPlanet;
+
+
 
     //플레이어가 사용하는 장비, 유물, 업그레이드 수치 등을 저장한다.
     public void SavePlayerInfo()
@@ -64,7 +69,7 @@ public class PlayerManager : MonoBehaviour
 
         playerBehavior.TryChangeWeapon(weaponData);
         playerOrbSlot.ChangePopper(orbData);
-        playerThrowSlot.ChangeBomb(throwData);
+        //playerThrowSlot.ChangeBomb(throwData);
         
     }
 
@@ -75,34 +80,42 @@ public class PlayerManager : MonoBehaviour
         playerInput = playerObj.GetComponent<PlayerInput>();
         playerBehavior = playerObj.GetComponent<PlayerBehavior>();
         playerOrbSlot = playerObj.GetComponent<ArtifactPopperSlot>();
-        playerThrowSlot = playerObj.GetComponent<ArtifactBombSlot>();
+        //playerThrowSlot = playerObj.GetComponent<ArtifactBombSlot>();
         playerHealth = playerObj.GetComponent<PlayerHealth>();
         playerWeapon = playerObj.GetComponent<PlayerWeapon>();
+
+        playerObj.GetComponent<PlayerBehavior>().InitPlayer(this);
+
+        //UI를 업데이트한다. 
+        SpawnPlayerUI();
+
+        //Camera를 업데이트한다.
+        GameManager.Instance.cameraManager.InitCam();
 
         //저장 정보를 불러온다.
         LoadPlayerInfo();
 
-        playerObj.GetComponent<PlayerBehavior>().InitPlayer();
+        //플레이어의 NearestPlanet을 갱신한다
+        activate = true;
 
-
-        //Camera를 업데이트한다.
-        GameManager.Instance.cameraManager.InitCam();
-        //UI를 업데이트한다. 
-        SpawnPlayerUI();
-
-        
     }
 
     //플레이어 입력 관련 
     public void DisablePlayerInput()
     {
-        if (playerInput == null) return;
         playerInput.inputDisabled = true;
     }
     public void EnablePlayerInput()
     {
-        if (playerInput == null) return;
         playerInput.inputDisabled = false;
+    }
+    public void DisablePlayerShoot()
+    {
+        playerInput.shootDisabled = true;
+    }
+    public void EnablePlayerShoot()
+    {
+        playerInput.shootDisabled = false;
     }
 
     //상호작용 관련
@@ -126,6 +139,24 @@ public class PlayerManager : MonoBehaviour
         weaponWheelController.ToggleWheel(false);
     }
 
+    
+    //무기 게이지 관련 
+    public void PlayerShootTime(float lastShootTime)
+    {
+        gauge_Weapon.ListenShoot(lastShootTime);
+    }
+    public void PlayerChangeWeapon(WeaponData data)
+    {
+        gauge_Weapon.WeaponChange(playerWeapon, data.ShootInterval);
+    }
+
+    //게이지가 reticle 따라다니게 만들기
+    public void SetReticleFollower(GameObject reticleObj)
+    {
+        gauge_Weapon.setFollowTarget(reticleObj);
+    }
+
+    //총을 다 쓰고 나서 초기화시키기
     public void ResetPlayerWeapon()
     {
         weaponWheelController.CancelItem();
@@ -143,8 +174,8 @@ public class PlayerManager : MonoBehaviour
         GameObject pUI = Instantiate(playerUIPrefab);
         healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
         shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
+        gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
         GameObject pUI_Int = Instantiate(playerUIInteractPrefab);
-        weaponWheel = pUI_Int.transform.Find("WeaponWheel").gameObject;
         weaponWheelController = pUI_Int.transform.Find("WeaponWheel").GetComponent<WeaponWheelController>();
     }
 

@@ -43,7 +43,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     [SerializeField] ParticleSystem deadEffect;   //죽었을 때 효과
 
     //로컬 변수
-    bool isAimOn = false;   //조준 중인가요
     protected bool onAttack;  //공격중일 때 
     protected bool onChase = false;   //chase 중인가요
     protected bool startChase;        //chase 시작 시 한번만 실행.
@@ -68,17 +67,18 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
 
     //이벤트
-    public event System.Action EnemyStartRun;
     public event System.Action EnemyStartIdle;
+    public event System.Action EnemyStartRun;
+    public event System.Action EnemyStrikeEvent;
     public event System.Action EnemyAttackEvent;
-    public event System.Action EnemyAimOnEvent;
-    public event System.Action EnemyAimOffEvent;
-    public event System.Action EnemySeeDirection;
     public event System.Action EnemyHitEvent;
     public event System.Action EnemyDieEvent;
+    public event System.Action EnemyAimOnEvent;
+    public event System.Action EnemyAimOffEvent;
     public event System.Action EnemyResetEvent;
-    public event System.Action EnemyStrikeEvent;
     public event System.Action EnemyClearEvent;
+    public event System.Action EnemySeeDirection;
+
 
 
 
@@ -129,6 +129,9 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
             preState = enemyState;
         }
 
+        //pause 상태.
+        if (enemyState == EnemyState.Wait) return;
+
         if (onAttack)
         {
             if(attack != null)
@@ -142,10 +145,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         }
     }
 
-    /// <summary>
-    /// 업데이트하기 전 조건이다. true면 업데이트를 수행하지 않는다. 
-    /// </summary>
-    /// <returns></returns>
+    // 업데이트하기 전 조건이다. true면 업데이트를 수행하지 않는다. 
     protected virtual bool BeforeUpdate()
     {
         if (!activate) return true;
@@ -154,9 +154,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     }
 
     
-    /// <summary>
-    /// 유닛 종류에 따라 다르게 상황을 감지한다. 
-    /// </summary>
+    // 유닛 종류에 따라 다르게 상황을 감지한다. 
     public abstract void BrainStateChange();
 
     //상태가 바뀔 때 한번만 실행 
@@ -165,22 +163,24 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         switch (state)
         {
             case EnemyState.Idle:
+                StartIdleView();
                 onChase = false;
                 onAttack = false;
-                StartIdleView();
                 break;
 
             case EnemyState.Chase:
-                StartIdleView();
+                StartRunView();
                 onChase = true;
                 onAttack = false;
                 break;
 
             case EnemyState.Attack:
+                StartIdleView();
                 onChase = false;
                 onAttack = true;
                 break;
 
+          
         }
     }
 
@@ -190,9 +190,11 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     {
         ResetAction();
 
+        enemyState = EnemyState.Strike;
+
         StrikeAction(target);
         
-        StrikeView();
+        StartStrikeView();
     }
 
     public void StrikeAction(Planet targetPlanet)
@@ -210,39 +212,15 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         StartCoroutine(StrikeRoutine(StrikePosition));
     }
 
-    //Planet SelectPlanet(List<Planet> planets, List<int> weights)
-    //{
-    //    int totalWeight = 0;
-    //    foreach (var item in weights)
-    //    {
-    //        totalWeight += item;
-    //    }
-
-    //    int randomWeight = Random.Range(0, totalWeight);
-    //    int cumulativeWeight = 0;
-
-    //    for (int i = 0; i < weights.Count; i++)
-    //    {
-    //        cumulativeWeight += weights[i];
-    //        if (randomWeight < cumulativeWeight)
-    //        {
-    //            return planets[i];
-    //        }
-    //    }
-    //    return planets[0];
-    //}
-
     protected virtual IEnumerator StrikeRoutine(Vector2 strikePos)
     {
-        enemyState = EnemyState.Strike;
-
         Vector2 dir = strikePos - (Vector2)transform.position;
         RaycastHit2D hit = Physics2D.CircleCast(transform.position,enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
         if (hit.collider == null) yield break;
 
         Vector2 strikeStartPos = transform.position;
-        Vector2 normal = (hit.point - strikeStartPos).normalized;
-        Vector2 strikeTargetPos = hit.point - (normal * (distanceFromStrikePoint + enemyHeight));
+        Vector2 normal = (strikeStartPos - hit.point).normalized;
+        Vector2 strikeTargetPos = hit.point + (normal * (distanceFromStrikePoint + enemyHeight));
         
         float strikeTime = (strikeStartPos - strikeTargetPos).magnitude / strikeSpeed;
         float time = 0; //강습 시간
@@ -274,7 +252,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         hitColl.enabled = false;
 
         //이동완료 시 투명화.
-        ClearView();
+        StartClearView();
 
         StartCoroutine(ClearRoutine());
         StartCoroutine(DieRoutine(3.0f));
@@ -303,7 +281,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         enemyState = EnemyState.Idle;
     }
 
-    //셔틀에서 스폰될 때? 
+    //초기화
     public void ResetAction()
     {
         onChase = false;
@@ -314,7 +292,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         preState = EnemyState.Strike;
 
         health.ResetHealth();
-        ResetView();
+        StartResetView();
     }
 
     //Strike 끝나고 깨어나기. 
@@ -332,7 +310,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
         StopAllCoroutines();
         attack.StopAttackAction();
-        DieView();
+        StartDieView();
 
         iconUI.SetActive(false);
         hitColl.enabled = false;
@@ -372,7 +350,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         if (health.AnyDamage(damage))
         {
             //맞는 효과 
-            HitView();
+            StartHitView();
             if (hitEffect != null) GameManager.Instance.particleManager.GetParticle(hitEffect, transform.position, transform.rotation);
 
             if (health.IsDead())
@@ -394,7 +372,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
         StopAllCoroutines();
         attack.StopAttackAction();
-        DieView();
+        StartDieView();
 
         iconUI.SetActive(false);
         hitColl.enabled = false;
@@ -408,6 +386,27 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
     }
 
+    public void KnockBackEvent(Vector2 hitPos, float forceAmount)
+    {
+        EnemyKnockBack(hitPos, forceAmount);
+    }
+
+    //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
+    public abstract void EnemyKnockBack(Vector2 hitPos, float forceAmount);
+
+    public void EnemyPause(float second)
+    {
+        StartCoroutine(PauseRoutine(second));
+    }
+    IEnumerator PauseRoutine(float sec)
+    {
+        //지난 행동상태
+        EnemyState preState = enemyState;
+        enemyState = EnemyState.Wait;
+
+        yield return new WaitForSeconds(sec);
+        enemyState = preState;
+    }
     #endregion
 
     #region Animation View Events
@@ -423,21 +422,10 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
             EnemyStartIdle();
     }
 
-    public void AttackView()
+    public void StartAttackView()
     {
         if (EnemyAttackEvent != null)
             EnemyAttackEvent();
-    }
-
-    protected void AimOnView()
-    {
-        if (EnemyAimOnEvent != null)
-            EnemyAimOnEvent();
-    }
-    protected void AimOffView()
-    {
-        if (EnemyAimOffEvent != null)
-            EnemyAimOffEvent();
     }
 
     public void FlipToDirectionView()
@@ -446,46 +434,40 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
             EnemySeeDirection();
     }
 
-    public virtual void HitView()
+    public virtual void StartHitView()
     {
         if (EnemyHitEvent != null)
             EnemyHitEvent();
     }
 
-    public void DieView()
+    public void StartDieView()
     {
         if (EnemyDieEvent != null)
             EnemyDieEvent();
     }
 
-    public void ClearView()
+    public void StartClearView()
     {
         if (EnemyClearEvent != null) EnemyClearEvent();
     }
-    public void ResetView()
+    public void StartResetView()
     {
         if (EnemyResetEvent != null) EnemyResetEvent();
     }
 
 
-    public void AimStart()
+    public void StartAimStart()
     {
-        if (!isAimOn)
-        {
-            isAimOn = true;
-            AimOnView();
-        }
+        if (EnemyAimOnEvent != null)
+            EnemyAimOnEvent();
     }
-    public void AimStop()
+    public void StartAimStop()
     {
-        if (isAimOn)
-        {
-            isAimOn = false;
-            AimOffView();
-        }
+        if (EnemyAimOffEvent != null)
+            EnemyAimOffEvent();
     }
 
-    protected void StrikeView()
+    protected void StartStrikeView()
     {
         if (EnemyStrikeEvent != null)
             EnemyStrikeEvent();
@@ -504,6 +486,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     {
         return hitColl;
     }
+
+
 }
 
 

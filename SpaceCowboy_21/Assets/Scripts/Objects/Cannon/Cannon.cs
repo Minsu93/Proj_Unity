@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour, ISwitchable
 {
-    bool activate = false;
+    //bool activate = false;
     public Transform muzzlePos;
-    EnemyBrain enemyBrain;
+    //EnemyBrain enemyBrain;
 
 
-    AllyBrain brain;
-    AllyAction action;
+    //AllyBrain brain;
+    //AllyAction action;
 
     public Sprite[] turnOnSprites;
     public SpriteRenderer headSpr;
@@ -18,14 +18,14 @@ public class Cannon : MonoBehaviour, ISwitchable
 
     void Awake()
     {
-        brain =  GetComponent<AllyBrain>();
-        action = GetComponent<AllyAction>();
+        //brain =  GetComponent<AllyBrain>();
+        //action = GetComponent<AllyAction>();
     }
 
     public void ActivateObject()
     {
         //이 오브젝트를 가동한다
-        activate = true;
+        //activate = true;
         if (headSpr != null) headSpr.sprite = turnOnSprites[0];
         if (neckSpr != null) neckSpr.sprite = turnOnSprites[1];
 
@@ -34,7 +34,7 @@ public class Cannon : MonoBehaviour, ISwitchable
     public void DeactivateObject()
     {
         //오브젝트를 비가동한다. 
-        activate = false;
+        //activate = false;
     }
 
     void Update()

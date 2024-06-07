@@ -42,4 +42,9 @@ public class EnemyTurret : EnemyAction
     {
         throw new System.NotImplementedException();
     }
+
+    public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
+    {
+        throw new System.NotImplementedException();
+    }
 }

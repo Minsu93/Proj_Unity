@@ -61,7 +61,7 @@ public class Planet : MonoBehaviour, ITarget
         gravMat.SetFloat("_LineWidth", lineWidth / gravityRadius);
         gravMat.SetFloat("_Segment_Spacing", spacing / gravityRadius);
         gravMat.SetFloat("_Segment_Count", count * gravityRadius);
-        gravityViewer.gameObject.SetActive(false);
+        //gravityViewer.gameObject.SetActive(false);
     }
 
     //private void Update()
@@ -94,33 +94,47 @@ public class Planet : MonoBehaviour, ITarget
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
-            {
-                gravity.AddToGravityList(this);
-            }
-        }
-        else if (collision.CompareTag("PhysicsBody"))
+        //if (collision.CompareTag("Player"))
+        //{
+        //    if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+        //    {
+        //        gravity.AddToGravityList(this);
+        //    }
+        //}
+        //else if (collision.CompareTag("PhysicsBody"))
+        //{
+        //    if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
+        //    {
+        //        gravity.AddToGravityList(this);
+        //    }
+        //}
+
+        if (collision.CompareTag("PhysicsBody"))
         {
             if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
             {
                 gravity.AddToGravityList(this);
             }
         }
-        
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
-            {
-                gravity.RemoveFromGravityList(this);
-            }
-        }
-        else if (collision.CompareTag("PhysicsBody"))
+        //if (collision.CompareTag("Player"))
+        //{
+        //    if (collision.transform.TryGetComponent<Gravity>(out Gravity gravity))
+        //    {
+        //        gravity.RemoveFromGravityList(this);
+        //    }
+        //}
+        //else if (collision.CompareTag("PhysicsBody"))
+        //{
+        //    if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
+        //    {
+        //        gravity.RemoveFromGravityList(this);
+        //    }
+        //}
+        if (collision.CompareTag("PhysicsBody"))
         {
             if (collision.transform.parent.TryGetComponent<Gravity>(out Gravity gravity))
             {
@@ -343,7 +357,7 @@ public class Planet : MonoBehaviour, ITarget
                 index = secondIndex;
             }
 
-            Debug.DrawLine(pos, pointPosition, Color.cyan,1f);
+            //Debug.DrawLine(pos, pointPosition, Color.cyan,1f);
         }
         return index;
     }

@@ -1,7 +1,7 @@
-using JetBrains.Annotations;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class WeaponWheelController : MonoBehaviour
 {
@@ -20,17 +20,21 @@ public class WeaponWheelController : MonoBehaviour
         {
             wheelActivate = true;
             animator.SetBool("OpenWeaponWheel", true);
+            GameManager.Instance.playerManager.DisablePlayerShoot();
+
         }
 
         //WheelActivate 가  true 이고 activate 가 false일때 >> 종료
-        if(wheelActivate && !activate)
+        if (wheelActivate && !activate)
         {
             wheelActivate = false;
             animator.SetBool("OpenWeaponWheel", false);
             ShowItemNameText("");
+            GameManager.Instance.playerManager.EnablePlayerShoot();
+
         }
 
-    }
+    }   
 
     //아이템 활성화
     public void ActivateItem(int ID, WeaponData wData)

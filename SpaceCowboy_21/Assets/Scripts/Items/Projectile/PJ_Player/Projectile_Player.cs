@@ -31,9 +31,12 @@ public class Projectile_Player : Projectile
         this.reflectCount = reflect;
         this.guideAmount = guide;
 
+        if (lifeTime > 0) { lifeLimitProj = true; }
+        else { lifeLimitProj = false; }
+
         ResetProjectile();
 
-        if(guide > 0)
+        if (guide > 0)
         {
             //유도 적용
             projMov_P.StartMovement(speed, guideAmount);

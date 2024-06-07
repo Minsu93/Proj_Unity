@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PM_P_Normal : ProjectileMovement
-
 {
-    bool guideOn = false;
-
     [SerializeField] float guideRadius = 5f;
     [SerializeField] float rotationSpeed = 1f;
     float rspd;

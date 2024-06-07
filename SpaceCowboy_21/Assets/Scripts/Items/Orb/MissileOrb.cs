@@ -11,7 +11,7 @@ public class MissileOrb : Orb
     /// 적이 아예 없으면 랜덤한 장소를 타격한다. 
     /// </summary>
     /// 
-
+    [Header("Projectile Orb")]
     //감지 범위
     public float detectRadius = 5f;
     //발사하는 projectile
@@ -24,6 +24,7 @@ public class MissileOrb : Orb
     [SerializeField] float damage;
     [SerializeField] float speed;
     [SerializeField] float lifeTime;
+    [SerializeField] float distance;
     [SerializeField] int penetrateCount;
     [SerializeField] int reflectCount;
     [SerializeField] int guideAmount;
@@ -87,6 +88,6 @@ public class MissileOrb : Orb
         GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
         projectile.transform.position = pos;
         projectile.transform.rotation = rot;
-        //projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, penetrateCount, reflectCount, guideAmount);
+        projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, distance, penetrateCount, reflectCount, guideAmount);
     }
 }

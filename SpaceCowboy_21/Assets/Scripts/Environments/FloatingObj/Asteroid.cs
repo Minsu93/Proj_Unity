@@ -36,7 +36,7 @@ public class Asteroid : MonoBehaviour
 
     public void GravityOnEvent()
     {
-        gravity.FixedGravityFunction(GameManager.Instance.playerManager.playerNearestPlanet, collideSpeed);
+        gravity.FixedGravityFunction(WaveManager.instance.playerNearestPlanet, collideSpeed);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -30,13 +30,13 @@ public class EnemyAttack_Projectile : EnemyAttack
         tipPoser = GetComponentInChildren<GunTipPoser>();
     }
 
+    //공격 행동
     public override void OnAttackAction()
     {
         if (_attackCool) return;
 
         _attackCool = true;
         StartCoroutine(AttackCoolRoutine());
-
         StartCoroutine(AttackRoutine());     
     }
     
@@ -44,7 +44,9 @@ public class EnemyAttack_Projectile : EnemyAttack
 
     protected virtual IEnumerator AttackRoutine()
     {
-        enemyAction.AimStart();
+        enemyAction.StartAimStart();
+        //다른 행동 정지.
+        enemyAction.EnemyPause(attackCoolTime);
 
         yield return new WaitForSeconds(preAttackDelay);
 
@@ -54,13 +56,13 @@ public class EnemyAttack_Projectile : EnemyAttack
             burst--;
             var guntip = tipPoser.GetGunTipPos();         //총 쏘는 위치, 회전값을 가져와야 한다. 
             ShootAction(guntip.Item1, guntip.Item2);
-            enemyAction.AttackView();   //애니메이션 실행 
+            enemyAction.StartAttackView();   //애니메이션 실행 
             yield return new WaitForSeconds(burstDelay);
         }
 
         yield return new WaitForSeconds(afterAttackDelay);
 
-        enemyAction.AimStop();
+        enemyAction.StartAimStop();
     }
 
     public void ShootAction(Vector2 pos, Quaternion Rot)

@@ -24,8 +24,8 @@ public class Gauge_ChargeJump : MonoBehaviour
 
     private void LateUpdate()
     {
-        currPower = playerBehavior.curChargedTime;
-        maxPower = playerBehavior.maxChargeTime;
+        //currPower = playerBehavior.curChargedTime;
+        //maxPower = playerBehavior.maxChargeTime;
         //currPower = playerBehavior.chargedPower;
         //maxPower = playerBehavior.maxChargePower;
         DecideShowing();

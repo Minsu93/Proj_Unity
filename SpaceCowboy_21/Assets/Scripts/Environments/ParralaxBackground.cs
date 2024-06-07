@@ -6,37 +6,23 @@ using UnityEngine;
 
 public class ParralaxBackground : MonoBehaviour
 {
-    [SerializeField] private float parralaxEffectMultiplier;
-    private Transform cameraTransform;
+    //속도의 반대 방향으로 이동한다. 
+
+    [SerializeField] private float speed;
     private Vector3 lastCameraPosition;
 
-    float defaultFOV;
-    Vector3 startScale;
+    //float defaultFOV;
+    //Vector3 startScale;
 
-
-
-    private void Start()
-    {
-        cameraTransform = Camera.main.transform;
-        lastCameraPosition = cameraTransform.position;
-        transform.position = new Vector2(lastCameraPosition.x, lastCameraPosition.y);
-
-        startScale = transform.localScale;
-        defaultFOV = GameManager.Instance.cameraManager.defaultFOV;
-
-        //시작 위치 살짝 잡아주기
-
-    }
 
     private void LateUpdate()
     {
-        Vector3 deltaMovement = cameraTransform.position - lastCameraPosition;
+        Vector3 cameraPos = Camera.main.transform.position;
+        Vector3 deltaMovement = cameraPos - lastCameraPosition;
+        lastCameraPosition = cameraPos;
+
+        transform.Translate(new Vector3(deltaMovement.x, deltaMovement.y, 0) * -speed * Time.deltaTime, Space.World);
         
-        transform.position += deltaMovement * parralaxEffectMultiplier;
-        lastCameraPosition = cameraTransform.position;
-
-
-
         ////렌즈에 따른 베이스 위치, 스케일 
         //float curFOV = GameManager.Instance.cameraManager.currFOV;
         //float baseScaler;
@@ -44,7 +30,5 @@ public class ParralaxBackground : MonoBehaviour
         //baseScaler = defaultFOV / curFOV;
         //float a = 1 / baseScaler;      //a는 1~2의 값을 갖는다. 
         //transform.localScale = startScale * a;
-
-
     }
 }

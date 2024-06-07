@@ -8,7 +8,7 @@ public class EnemyChase_Ground : EnemyChase
 {
     //점프 
     public float jumpForce = 10f;
-    bool shouldJump;  //점프 준비
+    bool shouldJump = false;  //점프 준비
 
     int targetIndex;
     int closestIndex;
@@ -17,7 +17,9 @@ public class EnemyChase_Ground : EnemyChase
     float mTimer;
 
     Vector2 closestTargetPoint;
-    protected Vector2[] ppoints; 
+    protected Vector2[] ppoints;
+    Planet prePlayerPlanet;
+    Planet passedPlanet;//지나온 행성, 내 행성이 바뀌었을 때 수정된다. 
 
     EA_Ground action_Ground;
     EnemyBrain brain;
@@ -46,8 +48,9 @@ public class EnemyChase_Ground : EnemyChase
                 TargetUpdate();
             }
         }
-
+        //우주에 떠 있거나, 플레이어가 nearestPlanet이 없을 때는 추적하지 않는다. 
         if (curPlanet == null) return;
+        if (WaveManager.instance.playerNearestPlanet == null) return; 
 
         //0.5초마다 타겟 업데이트
         if (mTimer > 0) mTimer -= Time.deltaTime;
@@ -58,7 +61,7 @@ public class EnemyChase_Ground : EnemyChase
         }
 
         //이동
-        if (!shouldJump)
+        if (shouldJump)
         {
             if (MoveToTarget()) JumpToPlanet();
         }
@@ -73,12 +76,12 @@ public class EnemyChase_Ground : EnemyChase
     {
         if (brain.OnOtherPlanetCheck())
         {
-            shouldJump = false;
+            shouldJump = true;
             PrepareJump();
         }
         else
         {
-            shouldJump = true;
+            shouldJump = false;
             PrepareChase();
         }
     }
@@ -138,11 +141,11 @@ public class EnemyChase_Ground : EnemyChase
     void PrepareJump()
     {
         int pointCounts = ppoints.Length - 1;
-        Planet playerPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
+        Planet playerPlanet = WaveManager.instance.playerNearestPlanet;
 
         //점프할 행성을 구한다 
         Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
-
+        if (targetPlanet == null) return;
 
         //점프 포인트를 구한다. 
         if (!curPlanet.GetjumpPoint(targetPlanet, out PlanetBridge _bridge)) return;
@@ -173,8 +176,7 @@ public class EnemyChase_Ground : EnemyChase
         rb.AddForce(dir.normalized * jumpForce, ForceMode2D.Impulse);
     }
 
-    Planet prePlayerPlanet;
-    Planet passedPlanet;//지나온 행성, 내 행성이 바뀌었을 때 수정된다. 
+
     Planet ChoosePlanet(Planet playerPlanet, Planet curPlanet)
     {
         List<Planet> playerLinkedPlanets = new List<Planet>();

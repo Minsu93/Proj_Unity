@@ -50,6 +50,10 @@ public class WeaponData : ScriptableObject
     public float Range { get { return range; } }
 
     [SerializeField]
+    bool showRange;
+    public bool ShowRange { get { return showRange; } }
+
+    [SerializeField]
     int maxAmmo;     //탄창의 개수, 0이면 무한.
     public int MaxAmmo { get { return maxAmmo; } }
 
@@ -76,6 +80,10 @@ public class WeaponData : ScriptableObject
     [SerializeField]
     AudioClip shootSFX;   //총기 사운드
     public AudioClip ShootSFX { get { return shootSFX; } }
+
+    [SerializeField]
+    float recoil;
+    public float Recoil { get { return recoil; } }
 
 
 }

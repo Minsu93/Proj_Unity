@@ -124,7 +124,7 @@ namespace SpaceCowboy
             if (state != PlayerState.Sliding)
                 FlipScaleX();
 
-            GetGunTipPos();
+            //GetGunTipPos();
         }
 
 
@@ -215,7 +215,7 @@ namespace SpaceCowboy
 
 
 
-        void GetGunTipPos()
+        public void GetGunTipPos()
         {
             if (curPoint != null)
             {

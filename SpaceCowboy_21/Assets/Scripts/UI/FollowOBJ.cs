@@ -6,11 +6,6 @@ public class FollowOBJ : MonoBehaviour
 {
     public GameObject followingObj;
 
-    private void Start()
-    {
-        //followingObj.SetActive(true);
-    }
-
     private void LateUpdate()
     {
         if (followingObj == null)

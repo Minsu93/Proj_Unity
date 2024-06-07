@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class CameraPos : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class CameraPos : MonoBehaviour
 
     private void Awake()
     {
-        CreateRecticle();
+        //CreateRecticle();
 
         //위치 초기화
         //reticle.transform.position = player.position;
@@ -33,6 +34,8 @@ public class CameraPos : MonoBehaviour
         this.transform.position = player.transform.position;
         GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
         activate = true;
+
+        CreateRecticle();
     }
     private void FixedUpdate()
     {
@@ -77,8 +80,9 @@ public class CameraPos : MonoBehaviour
     {
         reticle = new GameObject("Reticle");
         SpriteRenderer spr = reticle.AddComponent<SpriteRenderer>();
-        spr.sprite = Resources.Load<Sprite>("/UI/Reticle3");
+        spr.sprite = Resources.Load<Sprite>("UI/Reticle3");
         spr.sortingLayerName = "Effect";
+        GameManager.Instance.playerManager.SetReticleFollower(reticle);
     }
 
     Vector2 SeePlayerFront()
@@ -96,5 +100,13 @@ public class CameraPos : MonoBehaviour
     public void StartCameraFollow()
     {
         activate = true;
+    }
+
+    public void MoveCamPos(Vector2 pos)
+    {
+        transform.position = pos;
+        reticle.transform.position = pos;
+        prePlayerPos = pos;
+        currCamPos = pos;
     }
 }

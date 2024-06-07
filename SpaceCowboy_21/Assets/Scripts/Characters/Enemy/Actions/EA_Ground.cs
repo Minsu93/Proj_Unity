@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using UnityEngine;
 using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
+using static Unity.VisualScripting.Member;
 
 public class EA_Ground : EnemyAction
 {
@@ -114,6 +115,34 @@ public class EA_Ground : EnemyAction
 
     }
 
+    public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
+    {
+        EnemyPause(1f);
+
+        if (onAir)
+        {
+            Vector2 dir = (Vector2)transform.position - hitPos;
+            dir = dir.normalized;
+
+            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+        }
+        else
+        {
+            //hit포인트가 좌/우 어디에 있는지 검사 후 반대 방향으로 튕겨나간다. 
+            int hitIndex = Vector2.SignedAngle(transform.up, hitPos - (Vector2)transform.position) > 0 ? 1 : -1;
+
+            Vector2 dir = (transform.right * hitIndex + transform.up) * 0.71f;
+
+            rb.velocity = Vector2.zero;
+            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+
+            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
+            onAir = true;
+            airTime = 0;
+            lastJumpTime = Time.time;
+        }
+
+    }
 
 
     //#region KnockBackMethod

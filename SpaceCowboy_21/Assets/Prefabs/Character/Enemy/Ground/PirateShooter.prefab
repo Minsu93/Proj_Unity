@@ -397,7 +397,7 @@ MonoBehaviour:
   turnSpeedOnLand: 100
   bodyDamage: 0
   strikeSpeed: 10
-  distanceFromStrikePoint: 3
+  distanceFromStrikePoint: 2
   clearMoveDistance: 3
   clearMoveTime: 3
   clearCurve:
@@ -449,6 +449,7 @@ MonoBehaviour:
   damage: 3
   speed: 15
   lifeTime: 5
+  range: 0
   randomAngle: 5
   numberOfProjectiles: 1
   anglePerProjectile: 0

@@ -9,17 +9,17 @@ public class CameraManager : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera virtualCamera;
 
     //카메라FOV 관련
-    public float defaultFOV = 90f;
-    public float currFOV { get; private set; }
-    float targetFOV;
+    //public float defaultFOV = 90f;
+    //public float currFOV { get; private set; }
+    //float targetFOV;
 
-    float approx = 0.05f;
-    [SerializeField] float defaultFovControlSpd = 5.0f;
-    float fovControlSpd;
+    //float approx = 0.05f;
+    //[SerializeField] float defaultFovControlSpd = 5.0f;
+    //float fovControlSpd;
 
     //CameraPos관련
-    public float defaultCamSpeed = 3f;
-    public float defaultThreshold = 2f;
+    //public float defaultCamSpeed = 3f;
+    //public float defaultThreshold = 2f;
 
 
     private void Awake()
@@ -28,7 +28,7 @@ public class CameraManager : MonoBehaviour
 
         //초기 FOV
         //fovControlSpd = defaultFovControlSpd;
-        currFOV = defaultFOV;
+        //currFOV = defaultFOV;
         //targetFOV = currFOV;
     }
 
@@ -75,6 +75,33 @@ public class CameraManager : MonoBehaviour
         //defaultFOV = fov;
         //targetFOV = defaultFOV;
         //fovControlSpd = spd;
+    }
+
+    public void ActiveVirtualCam(bool active)
+    {
+        virtualCamera.gameObject.SetActive(active);
+    }
+
+    //카메라 이동.
+    public void MoveCamera(Vector2 pos, Vector2 limitSize)
+    {
+        //화면 절반의 넓이를 구한다. 
+        Camera cam = Camera.main;
+        float cameraHeightHalf = cam.orthographicSize;
+        float ratio = (float) Screen.width / Screen.height;
+        float cameraWidthHalf = cameraHeightHalf * ratio;
+
+        float x = pos.x;
+        float y = pos.y;
+        x = Mathf.Clamp(x, -limitSize.x + cameraWidthHalf, limitSize.x - cameraWidthHalf);
+        y = Mathf.Clamp(y, -limitSize.y + cameraHeightHalf, limitSize.y - cameraHeightHalf);
+        Vector2 newPos = new Vector2(x, y);
+
+        Debug.Log(newPos);
+        //이동 시 pos가 화면 가장자리라면, 화면 절반 내부로 이동시킨다. 
+        cameraPos.MoveCamPos(newPos);
+        ActiveVirtualCam(true);
+        //virtualCamera.transform.position = new Vector3(newPos.x, newPos.y, -10f);
     }
 
 }

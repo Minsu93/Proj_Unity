@@ -55,6 +55,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4269979732343251798, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
+      propertyPath: maxHealth
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a33f07e33dca75147a9353abcf5d829e, type: 3}
 --- !u!1 &1180839325502240790 stripped
@@ -81,7 +85,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orbNumbers: 3
   energyNeeded: 10
-  orbHealth: 1
+  orbHealth: 3
+  orbReActiveCount: 3
   orbDuration: 8
   deadEffect: {fileID: 7103699754939687679, guid: a99942526ae463e47bb9144b99fdeece, type: 3}
   viewObj: {fileID: 1180839325502240790}
@@ -92,3 +97,7 @@ MonoBehaviour:
   damage: 5
   speed: 20
   lifeTime: 5
+  distance: 0
+  penetrateCount: 0
+  reflectCount: 0
+  guideAmount: 0
