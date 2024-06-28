@@ -9,8 +9,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Mat_GaugeCircle
   m_Shader: {fileID: -6465566751694194690, guid: 5c8a188cda1c9184fbcae9ec49830390, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -19,7 +17,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -54,11 +51,21 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
+    - _FirstPercent: 1
+    - _FourthPercent: 0
     - _LineWidth: 5
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Radius: 0.3
     - _Rotation: 0
+    - _SecondPercent: 1
+    - _SegmentCount_First: 2
+    - _SegmentCount_Fourth: 2
+    - _SegmentCount_Second: 2
+    - _SegmentCount_Third: 2
     - _Segment_Count: 18.92
     - _Segment_Spacing: 0.001
+    - _ThirdPercent: 0
     m_Colors:
     - _Color: {r: 0.99607843, g: 0.21237941, b: 0.14117648, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

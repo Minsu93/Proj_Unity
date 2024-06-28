@@ -18,6 +18,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     /// 각 유닛마다 다른 Action을 하겠지만, 큰 틀에서는 비슷하기 때문에 동일한 Action을 상속받아 사용하더라도 문제가 없도록 만들려고 한다. 
     /// </summary>
     public bool activate;
+    public EnemyType enemyType = EnemyType.Ground;     //적의 타입.WaveManager에서 받아와 유닛 별 다른 스폰방식을 적용한다. 
+
     public EnemyState enemyState = EnemyState.Strike;
 
 
@@ -152,8 +154,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
         return false;
     }
-
-    
+        
     // 유닛 종류에 따라 다르게 상황을 감지한다. 
     public abstract void BrainStateChange();
 
@@ -186,57 +187,26 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
 
     #region Strike Mode
-    public void EnemyStartStrike(Planet target)
+    //지상 및 궤도 타입의 Strike 방식
+    public void EnemyStartStrike(Vector2 strikePos)
     {
         ResetAction();
 
         enemyState = EnemyState.Strike;
-
-        StrikeAction(target);
-        
         StartStrikeView();
-    }
-
-    public void StrikeAction(Planet targetPlanet)
-    {
-        int strikePointIndex;
-        Vector2 StrikePosition;
-        strikePointIndex = targetPlanet.GetClosestIndex(transform.position);
-        StrikePosition = targetPlanet.worldPoints[strikePointIndex];
 
         //캐릭터를 회전한다. 
-        Vector2 rotateVec =  (Vector2)transform.position - StrikePosition;
+        Vector2 rotateVec = (Vector2)transform.position - strikePos;
         transform.rotation = Quaternion.LookRotation(Vector3.forward, rotateVec.normalized);
 
         //강습을 시작한다. 
-        StartCoroutine(StrikeRoutine(StrikePosition));
+        StartCoroutine(StrikeRoutine(strikePos));
     }
 
-    protected virtual IEnumerator StrikeRoutine(Vector2 strikePos)
-    {
-        Vector2 dir = strikePos - (Vector2)transform.position;
-        RaycastHit2D hit = Physics2D.CircleCast(transform.position,enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
-        if (hit.collider == null) yield break;
 
-        Vector2 strikeStartPos = transform.position;
-        Vector2 normal = (strikeStartPos - hit.point).normalized;
-        Vector2 strikeTargetPos = hit.point + (normal * (distanceFromStrikePoint + enemyHeight));
-        
-        float strikeTime = (strikeStartPos - strikeTargetPos).magnitude / strikeSpeed;
-        float time = 0; //강습 시간
-        //float distance = hit.distance; //남은 거리
-        while (time < strikeTime)
-        {
-            time += Time.deltaTime;
-            //distance = Vector2.Distance(transform.position, strikeTargetPos);
-            rb.MovePosition(Vector2.Lerp(strikeStartPos, strikeTargetPos, time / strikeTime));
 
-            yield return null;
-        }
-        //착지하면 활동 시작. 
-        yield return new WaitForSeconds(0.5f);
-        WakeUpEvent();
-    }
+    protected abstract IEnumerator StrikeRoutine(Vector2 strikePos);
+
     #endregion
 
     #region Wave Clear
@@ -357,7 +327,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
             {
                 WhenDieEvent();
 
-                GameManager.Instance.playerManager.ChargeFireworkEnergy();
+                //GameManager.Instance.playerManager.ChargeFireworkEnergy();
             }
         }
     }
@@ -522,4 +492,10 @@ public enum EnemyState
     Strike
 }
 
+public enum EnemyType
+{
+    Ground, 
+    Orbit,
+    Air
+}
 

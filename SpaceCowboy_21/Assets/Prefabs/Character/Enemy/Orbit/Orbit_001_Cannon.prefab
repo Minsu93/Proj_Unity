@@ -4971,6 +4971,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
+  enemyType: 0
   enemyState: 0
   enemyHeight: 0.7
   turnSpeedOnLand: 100
@@ -5026,6 +5027,7 @@ MonoBehaviour:
   damage: 1
   speed: 8
   lifeTime: 5
+  range: 0
   randomAngle: 0
   numberOfProjectiles: 1
   anglePerProjectile: 0
@@ -5095,15 +5097,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropTable:
   - dropChance: 0.2
-    item: {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
+    item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     dropMin: 4
     dropMax: 5
-  - dropChance: 0.05
-    item: {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
+  ammoDropTable:
+    dropChance: 1
+    item: {fileID: 0}
     dropMin: 1
     dropMax: 1
-  launchPowerMin: 4
-  launchPowerMax: 8
+  resourceLaunchPowerMin: 3
+  resourceLaunchPowerMax: 4
+  ammoLaunchPowerMin: 5
+  ammoLaunchPowerMax: 6
 --- !u!1 &7508925075503968073
 GameObject:
   m_ObjectHideFlags: 0

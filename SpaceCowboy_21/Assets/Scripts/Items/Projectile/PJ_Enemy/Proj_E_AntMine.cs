@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Proj_E_AntMine : Projectile_Enemy
+public class Proj_E_AntMine : Projectile_GuideMissile
 {
     ///// <summary>
     ///// 플레이어가 밟았을 때(닿았을 때), 플레이어의 총에 맞았을 때 터진다. 

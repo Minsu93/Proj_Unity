@@ -77,8 +77,8 @@ public class CapsuleMovement : MonoBehaviour
 
     void UseCapsule(PlayerBehavior playerBehavior)
     {
-        //무기를 장착시킨다 
-        playerBehavior.TryChangeWeapon(weaponData);
+        ////무기를 장착시킨다 
+        //playerBehavior.TryChangeWeapon(weaponData);
         //이 오브젝트를 없엔다 
         DisableObject();
     }

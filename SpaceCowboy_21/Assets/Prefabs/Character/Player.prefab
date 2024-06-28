@@ -10188,7 +10188,6 @@ GameObject:
   - component: {fileID: 9007588099006207611}
   - component: {fileID: 9007588099006207609}
   - component: {fileID: 9007588099006207589}
-  - component: {fileID: 1641079348}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -10303,8 +10302,6 @@ MonoBehaviour:
   stunTime: 0.5
   shieldhitEffect: {fileID: 3346224299959829490}
   slidingEffect: {fileID: 1178486511}
-  weapons:
-  - {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
 --- !u!114 &2573866162365558717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10342,11 +10339,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0233c0ee869337a45aa7ed07257ee445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseWeapon: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
   weaponChangeTime: 0.3
   sightLineRenderer: {fileID: 9038096803213095484}
-  maxCharge: 0
-  chargeSpeed: 0
 --- !u!114 &9007588099006207609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10381,48 +10375,6 @@ MonoBehaviour:
   maxHealth: 10
   maxShield: 10
   InvincibleTime: 0
---- !u!114 &1641079348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9007588099006207600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ab634f7d5908b44e93e283a598ab6b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fireworkPrefab: {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
-  gapBetweenOrbs: 4
-  launchHeight: 7
-  launchRadius: 7
-  launchInterval: 0.6
-  fireworkCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  launchTimer: 1
 --- !u!1 &9007588099135374057
 GameObject:
   m_ObjectHideFlags: 0

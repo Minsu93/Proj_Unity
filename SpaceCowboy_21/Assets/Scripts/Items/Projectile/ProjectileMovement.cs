@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ProjectileMovement : MonoBehaviour
 {
     protected float speed;
-    public bool rotateBySpeed = false;
+    //public bool rotateBySpeed = false;
 
     protected Rigidbody2D rb;
     protected Projectile proj;
@@ -29,15 +29,15 @@ public abstract class ProjectileMovement : MonoBehaviour
 
 
 
-    protected void RotateBySpeed()
-    {
-        //투사체는 속도에 따라서 회전 회전
-        Vector2 direction = rb.velocity.normalized;
-        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * direction;
-        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
+    //protected void RotateBySpeed()
+    //{
+    //    //투사체는 속도에 따라서 회전 회전
+    //    Vector2 direction = rb.velocity.normalized;
+    //    Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * direction;
+    //    Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
-        transform.rotation = targetRotation;
-    }
+    //    transform.rotation = targetRotation;
+    //}
 
 
 

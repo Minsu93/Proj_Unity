@@ -4899,7 +4899,7 @@ GameObject:
   - component: {fileID: 6672809801243708868}
   - component: {fileID: -5107147801187730982}
   - component: {fileID: 5885827282753015796}
-  - component: {fileID: -4130478894466682202}
+  - component: {fileID: 5525266720489527263}
   - component: {fileID: 8683079615262098441}
   m_Layer: 10
   m_Name: E_Proj_Normal
@@ -4961,7 +4961,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.15
---- !u!114 &-4130478894466682202
+--- !u!114 &5525266720489527263
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4970,14 +4970,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6292677011125795810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c27e707b210fbf344bab594da1e03ae8, type: 3}
+  m_Script: {fileID: 11500000, guid: 393b8b0de368f3e4ea11a2d769659013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 7424398827703927764, guid: 643ad9326050de0449bfcb494361b746, type: 3}
-  disableDelayTime: 0.5
+  nonHitEffect: {fileID: 7424398827703927764, guid: ffd0b535168a07e49b32ca3ad3da9471, type: 3}
   ViewObj: {fileID: 2075803043324835472}
   trail: {fileID: 0}
-  hitByProjectileOn: 0
 --- !u!114 &8683079615262098441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4990,9 +4989,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd5636146dbd9e45b40cdb3e9765806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateBySpeed: 0
   knockBackTime: 0.2
   knockBackForce: 2
-  slowProj: 0
-  slowTimer: 0
-  slowSpeed: 0

@@ -19,6 +19,7 @@ public class PlayerInput : MonoBehaviour
     PlayerBehavior playerBehavior;
 
     bool moveON = false;
+    bool shootInputOn = false;
     public bool inputDisabled = false;
     public bool shootDisabled = false;
 
@@ -56,11 +57,14 @@ public class PlayerInput : MonoBehaviour
 
         if (!shootDisabled && Input.GetButton(ShootButton))
         {
+            if (!shootInputOn) shootInputOn = true;
             playerBehavior.TryShoot();
         }
-        if (Input.GetButtonUp(ShootButton))
+        if (!shootDisabled && Input.GetButtonUp(ShootButton))
         {
-            playerBehavior.TryResetShoot();
+            if(shootInputOn)
+                playerBehavior.TryResetShoot();
+            if (shootInputOn) shootInputOn = false;
         }
 
         // Slide

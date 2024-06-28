@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 2_Bomb_Basic
+  m_EditorClassIdentifier: 
+  gunType:
+    skinName: guns/rifle
+    boneName: gun_2h
+    slotName: guntip_2h
+    attachmentName: guntip_2h
+  icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
+  weaponEnergy: 5
+  projectilePrefab: {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
+  damage: 100
+  shootInterval: 1
+  numberOfProjectile: 1
+  speed: 10
+  lifeTime: 0
+  range: 5
+  showRange: 1
+  maxAmmo: 5
+  projPenetration: 0
+  projReflection: 0
+  projGuide: 0
+  projectileSpread: 0
+  randomSpreadAngle: 0
+  shootSFX: {fileID: 0}
+  weaponPrefab: {fileID: 5061795885844492922, guid: 154542a7ba2b2a749be2a5b062a7195c, type: 3}
+  ammoPrefab: {fileID: 4774568720044120686, guid: 60a5075285ef0c94da50dd36bc6ffe0e, type: 3}
+  weaponEnableSprite: {fileID: 21300000, guid: 9e44d283f46923c4fa750fd09555c428, type: 3}
+  weaponDisableSprite: {fileID: 21300000, guid: 7f2c36d37b9dd224d8b97bfcca8aa020, type: 3}

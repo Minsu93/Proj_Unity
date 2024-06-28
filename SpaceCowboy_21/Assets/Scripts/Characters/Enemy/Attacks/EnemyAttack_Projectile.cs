@@ -85,31 +85,8 @@ public class EnemyAttack_Projectile : EnemyAttack
             GameObject proj = GameManager.Instance.poolManager.GetEnemyProj(projectile);
             proj.transform.position = pos;
             proj.transform.rotation = tempRot * randomRotation;
-            proj.GetComponent<Projectile_Enemy>().Init(damage, speed, lifeTime, range);
+            proj.GetComponent<Projectile>().Init(damage, speed, lifeTime, range);
         }
     }
 
-    //protected void ShootOrbitAction(Vector2 pos, Quaternion Rot, int projIndex, Planet planet, bool isRight)
-    //{
-    //    Vector2 gunTipPos = pos;
-    //    Quaternion gunTipRot = Rot;
-
-    //    Quaternion targetRotation = gunTipRot;
-
-    //    //·£´ý °¢µµ Ãß°¡
-    //    float randomAngle = Random.Range(-projectileStructs[projIndex].spreadAngle * 0.5f, projectileStructs[projIndex].spreadAngle * 0.5f);
-    //    Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
-
-    //    //ÃÑ¾Ë »ý¼º
-    //    GameObject projectile = PoolManager.instance.GetEnemyProj(projectileStructs[projIndex].projectile);
-    //    projectile.transform.position = gunTipPos;
-    //    projectile.transform.rotation = targetRotation * randomRotation;
-
-    //    Proj_Orbit orbit = projectile.GetComponent<Proj_Orbit>();
-    //    orbit.Init(projectileStructs[projIndex].damage, projectileStructs[projIndex].speed, projectileStructs[projIndex].lifeTime);
-    //    orbit.SetOrbit(planet, isRight);
-
-    //    AttackView();
-
-    //}
 }

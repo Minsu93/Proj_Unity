@@ -46,10 +46,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
   playerUIInteractPrefab: {fileID: 8653297541307795509, guid: 7e94682f21de58448afc75ab1e7db468, type: 3}
-  weaponData: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
-  orbData: {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
-  throwData: {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
-  playerNearestPlanet: {fileID: 0}
+  firstWeaponData: {fileID: 0}
+  secondWeaponData: {fileID: 0}
+  thirdWeaponData: {fileID: 0}
+  fourthWeaponData: {fileID: 0}
+  weaponInventory:
+  - weaponData: {fileID: 0}
+    maxWeaponEnergy: 0
+    curWeaponEnergy: 0
+    activate: 0
+  - weaponData: {fileID: 0}
+    maxWeaponEnergy: 0
+    curWeaponEnergy: 0
+    activate: 0
+  - weaponData: {fileID: 0}
+    maxWeaponEnergy: 0
+    curWeaponEnergy: 0
+    activate: 0
+  - weaponData: {fileID: 0}
+    maxWeaponEnergy: 0
+    curWeaponEnergy: 0
+    activate: 0
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,16 +113,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effects:
   - {fileID: 7196136449052729651, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
-  - {fileID: 7424398827703927764, guid: 643ad9326050de0449bfcb494361b746, type: 3}
-  - {fileID: 7424398827703927764, guid: 5c63e663adb6989408d7b3e3d81dc8a3, type: 3}
-  - {fileID: 6499634569363800450, guid: 3bf8c67c43247ea449ecc46a72f120e0, type: 3}
-  - {fileID: 7103699754939687679, guid: a99942526ae463e47bb9144b99fdeece, type: 3}
-  - {fileID: 7424398827703927764, guid: 3ffa3c43adff7724ea60c7bc8514782a, type: 3}
-  - {fileID: 7424398827703927764, guid: 0a0d036cddeec7947a938b7fbd9a4f06, type: 3}
   - {fileID: 7196136449052729651, guid: 123ea11c39d1fb04c996651624506b01, type: 3}
-  - {fileID: 1205147032739621916, guid: 5846ac8c07b97a347893dd1a6272202d, type: 3}
   - {fileID: 7196136449052729651, guid: 6df6c92d894b04149ada091485ba5bd3, type: 3}
   - {fileID: 7196136449052729651, guid: e15a4baac458ae7409bdf82f4995befb, type: 3}
+  - {fileID: 7103699754939687679, guid: a99942526ae463e47bb9144b99fdeece, type: 3}
+  - {fileID: 6499634569363800450, guid: 3bf8c67c43247ea449ecc46a72f120e0, type: 3}
+  - {fileID: 1205147032739621916, guid: 5846ac8c07b97a347893dd1a6272202d, type: 3}
+  - {fileID: 7424398827703927764, guid: 643ad9326050de0449bfcb494361b746, type: 3}
+  - {fileID: 7424398827703927764, guid: 5c63e663adb6989408d7b3e3d81dc8a3, type: 3}
+  - {fileID: 7424398827703927764, guid: 3ffa3c43adff7724ea60c7bc8514782a, type: 3}
+  - {fileID: 7424398827703927764, guid: 0a0d036cddeec7947a938b7fbd9a4f06, type: 3}
+  - {fileID: 7424398827703927764, guid: ffd0b535168a07e49b32ca3ad3da9471, type: 3}
+  - {fileID: 6499634569363800450, guid: f67be9e5c8e4a3143bf98a6378c2aac4, type: 3}
 --- !u!1 &529613330717527071
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,26 +222,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerProjectiles:
   - {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
-  - {fileID: 6292677011125795810, guid: f223f89339f9aa44684453007f706008, type: 3}
   - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
   - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
   - {fileID: 589853217845385795, guid: 519957f155df7074a9c04b08ad82c52e, type: 3}
-  - {fileID: 6872874771397128669, guid: 52018c50572674d409bd639791668aaa, type: 3}
   enemyProjectiles:
   - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
   - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
   - {fileID: 6292677011125795810, guid: aae67d0f8a7aef54da700465bb0510ce, type: 3}
   - {fileID: 6292677011125795810, guid: bb1295ee9c1b11f40a05cc2de1658711, type: 3}
-  - {fileID: 6292677011125795810, guid: 02fa07447cbf1e24593cc55467481482, type: 3}
+  - {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
   dropItems:
-  - {fileID: 1489413032599568933, guid: c301eda0deb23254cb9134bd88281aa5, type: 3}
-  - {fileID: 3887532328296468646, guid: 451b5fd71a2a1ea4a8317ca548b520d2, type: 3}
-  - {fileID: 657525897022449219, guid: f43e27027bdcfce4eaa12c68e7954238, type: 3}
-  - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
-  - {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
+  - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
+  - {fileID: 4774568720044120686, guid: 60a5075285ef0c94da50dd36bc6ffe0e, type: 3}
+  - {fileID: 4774568720044120686, guid: cb463196b3d6adc4b8f5e1c922c41b8e, type: 3}
+  - {fileID: 4774568720044120686, guid: 0a2de00c1ce756849b569eebd67e2803, type: 3}
+  - {fileID: 4774568720044120686, guid: 68aaedbe12fb4574f80049a7f1305343, type: 3}
+  - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
+  - {fileID: 7158106260931719753, guid: 496205cd47966d14a9c203f2ecd9c2b0, type: 3}
   enemies:
   - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
   - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
+  - {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
+  - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
 --- !u!1 &529613331651955589
 GameObject:
   m_ObjectHideFlags: 0

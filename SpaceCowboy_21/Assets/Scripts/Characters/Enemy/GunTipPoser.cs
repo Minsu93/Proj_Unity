@@ -41,6 +41,10 @@ public class GunTipPoser : MonoBehaviour
     {
         Vector2 Pos = curPoint.GetWorldPosition(slot, transform);
         Quaternion Rot = Quaternion.Euler(0, 0, skeletonAnimation.transform.rotation.eulerAngles.z + curPoint.ComputeWorldRotation(bone));
+        Vector2 direction = Rot * Vector2.right;  // Quaternion 회전을 사용해 방향 Vector 계산
+        Vector2 endPos = Pos + ((Vector2)direction * 5f);  // 선의 종료 위치 계산
+        Debug.DrawLine(Pos, endPos, Color.red, 3f);  // 선 그리기
+
 
         return (Pos, Rot);
     }

@@ -22,7 +22,7 @@ public class Planet : MonoBehaviour, ITarget
     //public List<EnemyBrain> enemyList = new List<EnemyBrain>();
 
     //스크립트
-    public Transform gravityViewer;
+    //public Transform gravityViewer;
     public PolygonCollider2D polyCollider;
     CircleCollider2D gravityColl;
 
@@ -40,7 +40,7 @@ public class Planet : MonoBehaviour, ITarget
         if (polyCollider == null)
             polyCollider = GetComponent<PolygonCollider2D>();
 
-        SetViewerMaterial();
+        //SetViewerMaterial();
 
         //시작 시 Points 계산 (회전하지 않는다는 가정 하에)
         worldPoints = new Vector2[polyCollider.points.Length];
@@ -51,16 +51,16 @@ public class Planet : MonoBehaviour, ITarget
 
     void SetViewerMaterial()
     {
-        //viewer의 스케일을 조절
-        gravityViewer.localScale = Vector3.one * gravityRadius * 2f;
+        ////viewer의 스케일을 조절
+        //gravityViewer.localScale = Vector3.one * gravityRadius * 2f;
 
-        Material gravMat = gravityViewer.GetComponent<Renderer>().material;
-        float lineWidth = gravMat.GetFloat("_LineWidth");
-        float spacing = gravMat.GetFloat("_Segment_Spacing");
-        float count = gravMat.GetFloat("_Segment_Count");
-        gravMat.SetFloat("_LineWidth", lineWidth / gravityRadius);
-        gravMat.SetFloat("_Segment_Spacing", spacing / gravityRadius);
-        gravMat.SetFloat("_Segment_Count", count * gravityRadius);
+        //Material gravMat = gravityViewer.GetComponent<Renderer>().material;
+        //float lineWidth = gravMat.GetFloat("_LineWidth");
+        //float spacing = gravMat.GetFloat("_Segment_Spacing");
+        //float count = gravMat.GetFloat("_Segment_Count");
+        //gravMat.SetFloat("_LineWidth", lineWidth / gravityRadius);
+        //gravMat.SetFloat("_Segment_Spacing", spacing / gravityRadius);
+        //gravMat.SetFloat("_Segment_Count", count * gravityRadius);
         //gravityViewer.gameObject.SetActive(false);
     }
 

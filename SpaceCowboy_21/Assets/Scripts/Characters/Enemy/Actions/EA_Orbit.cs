@@ -25,6 +25,7 @@ public class EA_Orbit : EnemyAction
     EnemyChase_Orbit chase_Orbit;
 
 
+    //override 한 부분
 
     protected override void Awake()
     {
@@ -125,20 +126,6 @@ public class EA_Orbit : EnemyAction
     }
 
 
-    void ChangeDirection()
-    {
-        faceRight = !faceRight;
-        FlipToDirectionView();
-        chase_Orbit.ChangeDirection(faceRight);
-    }
-
-    void ChangeDirection(bool isRight)
-    {
-        faceRight = isRight;
-        FlipToDirectionView();
-        chase_Orbit.ChangeDirection(faceRight);
-    }
-
     //base에 피격시 정지하는 pTime 만 추가함.
     public override void DamageEvent(float damage, Vector2 hitVec)
     {
@@ -157,7 +144,7 @@ public class EA_Orbit : EnemyAction
             {
                 WhenDieEvent();
 
-                GameManager.Instance.playerManager.ChargeFireworkEnergy();
+                //GameManager.Instance.playerManager.ChargeFireworkEnergy();
             }
         }
     }
@@ -202,6 +189,23 @@ public class EA_Orbit : EnemyAction
         dir = dir.normalized;
 
         rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+    }
+
+
+    //추가된 부분
+
+    void ChangeDirection()
+    {
+        faceRight = !faceRight;
+        FlipToDirectionView();
+        chase_Orbit.ChangeDirection(faceRight);
+    }
+
+    void ChangeDirection(bool isRight)
+    {
+        faceRight = isRight;
+        FlipToDirectionView();
+        chase_Orbit.ChangeDirection(faceRight);
     }
 
 

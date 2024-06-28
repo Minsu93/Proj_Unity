@@ -1,4 +1,5 @@
 using SpaceCowboy;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,7 @@ public class Projectile : MonoBehaviour
     public GameObject ViewObj;
     public TrailRenderer trail;
 
+    public WeaponImpactDelegate weaponImpactDel;
 
     protected virtual void Awake()
     {
@@ -90,6 +92,8 @@ public class Projectile : MonoBehaviour
             {
                 NonHitEvent(target);
             }
+
+            WeaponImpactEvent();
         }
     }
 
@@ -132,6 +136,11 @@ public class Projectile : MonoBehaviour
 
         //HitFeedBack();
     }
+
+    void WeaponImpactEvent()
+    {
+        if (weaponImpactDel != null) weaponImpactDel();
+    }
     #endregion
 
 
@@ -155,8 +164,11 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            //총알에 거리가 있을 때 
-            DistanceCheck();
+            //총알에 거리가 있을 때 거리체크
+
+            float dist = Vector2.Distance(startPos, (Vector2)transform.position);
+            DistanceCheck(dist);          
+
         }
         
     }
@@ -171,13 +183,15 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    void DistanceCheck()
+    void DistanceCheck(float dist)
     {
-        if(distance < Vector2.Distance(startPos, (Vector2)transform.position))
+        if(distance < dist)
         {
             LifeOver();
         }
+       
     }
+
 
 
     void DisableObject()

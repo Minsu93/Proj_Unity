@@ -25,7 +25,7 @@ public class PlayerJump : MonoBehaviour
     int dashCount = 0;
     Vector2 jumpVector;     //실제 점프 방향벡터
     //ctor2 preVelocity;    //KnockBack 속도 계산용도.
-
+    
 
     //점프 Trail 관련
     public TrailRenderer sJumpTrail;    //슈퍼점프 트레일
@@ -47,21 +47,22 @@ public class PlayerJump : MonoBehaviour
     }
     private void Start()
     {
-        GameManager.Instance.PlayerTeleportEvent += ClearTrail;
+        GameManager.Instance.PlayerTeleportStart += ClearTrail;
+        GameManager.Instance.PlayerTeleportEnd += ShowTrail;
     }
 
-
-
-    public void ShowTrail(bool active)
-    {
-        sJumpTrail.emitting = active;
-        sJumpTrail.Clear();
-
-    }
 
     public void ClearTrail()
     {
-        sJumpTrail.Clear();
+        if(sJumpTrail != null && sJumpTrail.emitting)
+            sJumpTrail.Clear();
+    }
+    public void ShowTrail()
+    {
+        if(doingDash)
+            sJumpTrail.emitting = true;
+        if (sJumpTrail != null && sJumpTrail.emitting)
+            sJumpTrail.Clear();
     }
 
     public void RemoveJumpArrow()
@@ -130,14 +131,17 @@ public class PlayerJump : MonoBehaviour
         rb.velocity = Vector2.zero;
         rb.AddForce(jumpVector * dashForce, ForceMode2D.Impulse);
 
-        ShowTrail(true);
+        sJumpTrail.emitting = true;
+        sJumpTrail.Clear();
 
     }
 
     void ResetDash()
     {
         doingDash = false;
-        ShowTrail(false);
+        sJumpTrail.emitting = false;
+        sJumpTrail.Clear();
+
         playerBehavior.PlayerInputControl(true);
         playerBehavior.PlayerIgnoreProjectile(false);
 
@@ -176,7 +180,7 @@ public class PlayerJump : MonoBehaviour
                         if (impactParticle != null)
                             GameManager.Instance.particleManager.GetParticle(impactParticle, transform.position, transform.rotation);
 
-                        playerBehavior.PlayerUnhittable(1f);
+                        playerBehavior.PlayerUnhittable(unHittableTime);
                     }
                     else
                     {

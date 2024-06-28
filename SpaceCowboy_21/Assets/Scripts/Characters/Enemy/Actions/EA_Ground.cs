@@ -7,7 +7,6 @@ using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using UnityEngine;
 using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
-using static Unity.VisualScripting.Member;
 
 public class EA_Ground : EnemyAction
 {
@@ -16,9 +15,10 @@ public class EA_Ground : EnemyAction
 
     //공중
     public float maxAirTime = 1.0f;
-    public float airTime;
-    public float lastJumpTime; 
+    public float airTime {get; set;}
+    public float lastJumpTime { get; set;} 
 
+    //override 되는 부분
 
     protected override bool BeforeUpdate()
     {
@@ -32,7 +32,6 @@ public class EA_Ground : EnemyAction
 
         return false;
     }
-
 
     public override void BrainStateChange()
     {
@@ -58,6 +57,60 @@ public class EA_Ground : EnemyAction
         }
     }
 
+    public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
+    {
+        EnemyPause(1f);
+
+        if (onAir)
+        {
+            Vector2 dir = (Vector2)transform.position - hitPos;
+            dir = dir.normalized;
+
+            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+        }
+        else
+        {
+            //hit포인트가 좌/우 어디에 있는지 검사 후 반대 방향으로 튕겨나간다. 
+            int hitIndex = Vector2.SignedAngle(transform.up, hitPos - (Vector2)transform.position) > 0 ? 1 : -1;
+
+            Vector2 dir = (transform.right * hitIndex + transform.up) * 0.71f;
+
+            rb.velocity = Vector2.zero;
+            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+
+            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
+            onAir = true;
+            airTime = 0;
+            lastJumpTime = Time.time;
+        }
+
+    }
+
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    {
+        Vector2 dir = strikePos - (Vector2)transform.position;
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
+        if (hit.collider == null) yield break;
+
+        Vector2 strikeStartPos = transform.position;
+        Vector2 normal = (strikeStartPos - hit.point).normalized;
+        Vector2 strikeTargetPos = hit.point + (normal * (distanceFromStrikePoint + enemyHeight));
+
+        float strikeTime = (strikeStartPos - strikeTargetPos).magnitude / strikeSpeed;
+        float time = 0; //강습 시간
+        while (time < strikeTime)
+        {
+            time += Time.deltaTime;
+            rb.MovePosition(Vector2.Lerp(strikeStartPos, strikeTargetPos, time / strikeTime));
+
+            yield return null;
+        }
+        //착지하면 활동 시작. 
+        yield return new WaitForSeconds(0.5f);
+        WakeUpEvent();
+    }
+
+    //추가된 부분
 
     void RotateCharacterToGround()
     {
@@ -79,7 +132,6 @@ public class EA_Ground : EnemyAction
 
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnspeedMultiplier * turnSpeed * Time.deltaTime);
     }
-
 
     void CheckOnAir()
     {
@@ -115,34 +167,8 @@ public class EA_Ground : EnemyAction
 
     }
 
-    public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
-    {
-        EnemyPause(1f);
 
-        if (onAir)
-        {
-            Vector2 dir = (Vector2)transform.position - hitPos;
-            dir = dir.normalized;
 
-            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
-        }
-        else
-        {
-            //hit포인트가 좌/우 어디에 있는지 검사 후 반대 방향으로 튕겨나간다. 
-            int hitIndex = Vector2.SignedAngle(transform.up, hitPos - (Vector2)transform.position) > 0 ? 1 : -1;
-
-            Vector2 dir = (transform.right * hitIndex + transform.up) * 0.71f;
-
-            rb.velocity = Vector2.zero;
-            rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
-
-            //지상에서 점프했을 때. OnAir 가 false인 상태에서 점프함.
-            onAir = true;
-            airTime = 0;
-            lastJumpTime = Time.time;
-        }
-
-    }
 
 
     //#region KnockBackMethod

@@ -114,6 +114,9 @@ public class EnemyChase_Ground : EnemyChase
     //targetIndex에 가까워 졌나요? T/F
     bool MoveToTarget()
     {
+        if (curPlanet != charGravity.nearestPlanet) 
+            return false;
+
         int pointCounts = ppoints.Length - 1;
 
         Vector2 movePos = ppoints[(closestIndex + dirIndex + pointCounts) % pointCounts];

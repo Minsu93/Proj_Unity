@@ -84,7 +84,7 @@ public class Proj_WallReflect : Projectile
 
 
 
-    protected virtual void HitEvent(ITarget target, IHitable hitable)
+    protected override void HitEvent(ITarget target, IHitable hitable)
     {
 
         hitable.DamageEvent(damage, transform.position);
@@ -94,13 +94,13 @@ public class Proj_WallReflect : Projectile
         AfterHitEvent();
     }
 
-    protected virtual void NonHitEvent(ITarget target)
+    protected override void NonHitEvent(ITarget target)
     {
         ShowHitEffect(nonHitEffect);
         AfterHitEvent();
     }
 
-    protected virtual void LifeOver()
+    protected override void LifeOver()
     {
         AfterHitEvent();
     }

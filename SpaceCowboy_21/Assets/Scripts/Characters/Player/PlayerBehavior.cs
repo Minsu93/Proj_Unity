@@ -14,11 +14,8 @@ namespace SpaceCowboy
         float lastJumpTime;     
 
 
-        [Header("Super Jump")]
-
-
-        [SerializeField] float velocityOnAirLimit = 5f; //공중 recoil 반동 이동시간.
-        [SerializeField] float recoilLimitAngle = 90;
+        //[SerializeField] float velocityOnAirLimit = 5f; //공중 recoil 반동 이동시간.
+        //[SerializeField] float recoilLimitAngle = 90;
 
 
         [Header("Movement")]
@@ -68,9 +65,6 @@ namespace SpaceCowboy
         //이펙트들
         public ParticleSystem shieldhitEffect;  //실드가 맞았을 때 출력할 이펙트
         public ParticleSystem slidingEffect;    //슬라이딩할때 출력할 이펙트
-
-        [Header("WeaponDatas")]
-        public WeaponData[] weapons;
 
         //애니메이션 이벤트
         public event System.Action PlayerIdleEvent;
@@ -643,6 +637,11 @@ namespace SpaceCowboy
 
         }
 
+        public void healEvent(float amount)
+        {
+            health.HealthUp(amount);
+        }
+
         public void DeadEvent()
         {
             //true 인 경우 체력이 0 이하로 떨어졌다는 뜻.
@@ -732,19 +731,18 @@ namespace SpaceCowboy
             playerWeapon.ShootOffProcess();
         }
 
-        public void TryChangeWeapon(int index)
+        public void TryChangeWeaponSkin(GunType gunType)
         {
-            WeaponData data = weapons[index];
-            //PlayerView와 PlayerWeapon 무기 변경
-            playerWeapon.ChangeWeapon(data);
-            playerView.SetSkin(data.GunType);
+           // playerWeapon.ChangeWeapon(weaponData);
+            playerView.SetSkin(gunType);
         }
-        public void TryChangeWeapon(WeaponData data)
-        {
-            //PlayerView와 PlayerWeapon 무기 변경
-            playerWeapon.ChangeWeapon(data);
-            playerView.SetSkin(data.GunType);
-        }
+
+        //public void TryChangeWeapon(WeaponData data)
+        //{
+        //    //PlayerView와 PlayerWeapon 무기 변경
+        //    playerWeapon.ChangeWeapon(data);
+        //    playerView.SetSkin(data.GunType);
+        //}
 
         //public void GunRecoil(float amount, Vector2 dir)
         //{

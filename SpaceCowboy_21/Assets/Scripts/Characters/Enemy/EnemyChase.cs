@@ -24,4 +24,5 @@ public abstract class EnemyChase : MonoBehaviour
 
     public abstract void OnChaseAction();
 
+
 }

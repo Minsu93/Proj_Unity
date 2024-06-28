@@ -17,9 +17,13 @@ public class WeaponData : ScriptableObject
     Sprite icon;    //아이콘을 결정.
     public Sprite Icon { get { return icon; } }
 
-    [SerializeField] 
-    FireMode fireMode;
-    public FireMode FireMode { get {  return fireMode; } }
+    [SerializeField]
+    int weaponEnergy;
+    public int WeaponEnergy { get {  return weaponEnergy; } }
+
+
+
+    [Header("Projectile Property")]
 
     [SerializeField]
     GameObject projectilePrefab;    //총알의 종류
@@ -81,11 +85,24 @@ public class WeaponData : ScriptableObject
     AudioClip shootSFX;   //총기 사운드
     public AudioClip ShootSFX { get { return shootSFX; } }
 
+    //[SerializeField]
+    //float recoil;
+    //public float Recoil { get { return recoil; } }
+
     [SerializeField]
-    float recoil;
-    public float Recoil { get { return recoil; } }
+    GameObject weaponPrefab;
+    public GameObject WeaponPrefab { get { return weaponPrefab; } }
 
+    [SerializeField]
+    GameObject ammoPrefab;
+    public GameObject AmmoPrefab { get { return ammoPrefab; } }
 
+    [SerializeField]
+    Sprite weaponEnableSprite;
+    public Sprite WeaponEnableSprite { get { return weaponEnableSprite; } }
+
+    [SerializeField]
+    Sprite weaponDisableSprite;
+    public Sprite WeaponDisableSprite { get { return weaponDisableSprite; } }
 }
 
-public enum FireMode { Auto, Charge, SingleShot}

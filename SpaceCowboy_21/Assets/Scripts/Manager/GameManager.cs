@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
     public bool playBGM;
 
     public event System.Action PlayerDeadEvent;
-    public event System.Action PlayerTeleportEvent;
+    public event System.Action PlayerTeleportStart;
+    public event System.Action PlayerTeleportEnd;
 
 
     void Awake()
@@ -123,17 +124,24 @@ public class GameManager : MonoBehaviour
             cameraManager.StopCameraFollow();
     }
     //플레이어가 위치 이동을 했을 때(맵 경계, 혹은 텔레포트 기계)
-    public void PlayerIsTeleport()
+    public void PlayerIsTeleport(bool start )
     {
-        if(PlayerTeleportEvent != null) PlayerTeleportEvent();
+        if (start)
+        {
+            if (PlayerTeleportStart != null) PlayerTeleportStart();
+        }
+        else
+        {
+            if(PlayerTeleportEnd != null) PlayerTeleportEnd();  
+        }
     }
 
 
     //씬 로드
     public void Loadscene(string sceneName)
     {
-        if(player != null)
-            playerManager.SavePlayerInfo();
+        //if(player != null)
+        //    playerManager.SavePlayerInfo();
         if(materialManager!= null)
             materialManager.SaveMoney();
 

@@ -40,8 +40,10 @@ public class EnemyView : MonoBehaviour
         enemyAction.EnemyDieEvent += PlayDead;
         enemyAction.EnemyClearEvent += PlayStageClear;
         enemyAction.EnemyResetEvent += PlayReset;
-        enemyAction.EnemyAimOnEvent += PlayAimOn;
-        enemyAction.EnemyAimOffEvent += PlayAimOff;
+        if(aimOn != null)
+            enemyAction.EnemyAimOnEvent += PlayAimOn;
+        if (aimOn != null)
+            enemyAction.EnemyAimOffEvent += PlayAimOff;
         enemyAction.EnemySeeDirection += FlipScaleXToDirection;
 
 

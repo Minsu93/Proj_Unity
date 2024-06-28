@@ -19,6 +19,9 @@ public class Gauge_Weapon : MonoBehaviour
     float curTime;
     float lastShootTime;
 
+    float maxAmmo;
+    float curAmmo;
+
     bool activate;
 
     PlayerWeapon weapon;
@@ -35,68 +38,43 @@ public class Gauge_Weapon : MonoBehaviour
         followObj.followingObj = obj;
     }
 
-    public void WeaponChange(PlayerWeapon playerWeapon, float shootInterval)
+    //무기 변경 시 호출되는 함수
+    public void WeaponChange(PlayerWeapon playerWeapon, float maxAmmo)
     {
-        weapon = playerWeapon;
-        maxTime = shootInterval;
-        curTime = shootInterval;
+        this.maxAmmo = maxAmmo;
+        this.curAmmo = maxAmmo;
+        UpdateGauge();
     }
 
-    public void ListenShoot(float lastShootTime)
+    //총을 쏠 때마다 호출되는 함수
+    public void ListenShoot(float curAmmo)
     {
-        this.lastShootTime = lastShootTime;
-        curTime = 0;
+        this.curAmmo = curAmmo;
+        UpdateGauge();
     }
 
-
-
-    private void LateUpdate()
+    void UpdateGauge()
     {
-        if (weapon == null) return;
-
-        if (curTime <= maxTime)
-        {
-            curTime = Time.time - lastShootTime;
-        }
-
         DecideShowing();
-
-        if (!activate) return;
-        ammoGauge.fillAmount = curTime / maxTime;
-
-
-        
-
-
-        //if (currAmmo / maxAmmo > 0.2f)
-        //{
-        //    ammoGauge.color = ammoColor;
-        //}
-        //else
-        //{
-        //    ammoGauge.color = emptyColor;
-        //}
-
+        if(maxAmmo > 0)
+        {
+            ammoGauge.fillAmount = curAmmo / maxAmmo;
+        }
     }
+
+
 
     //게이지는 curTime 이 MaxTime 보다 작을 때 보여진다. 
+    //(수정) maxAmmo가 0이 아니면 보여진다. 그렇지 않으면 보이지 않는다. 
     void DecideShowing()
     {
-        if(curTime < maxTime)
+        if(maxAmmo == 0)
         {
-            if (!activate)
-            {
-                activate = true;
-                ShowGauge();
-            }
+            HideGauge();
         }
         else
         {
-            if (activate)
-            {
-                activate = false;
-                HideGauge();
-            }
+            ShowGauge();
         }
     }
     

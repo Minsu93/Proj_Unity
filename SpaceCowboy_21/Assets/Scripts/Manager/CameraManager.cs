@@ -97,11 +97,8 @@ public class CameraManager : MonoBehaviour
         y = Mathf.Clamp(y, -limitSize.y + cameraHeightHalf, limitSize.y - cameraHeightHalf);
         Vector2 newPos = new Vector2(x, y);
 
-        Debug.Log(newPos);
         //이동 시 pos가 화면 가장자리라면, 화면 절반 내부로 이동시킨다. 
         cameraPos.MoveCamPos(newPos);
-        ActiveVirtualCam(true);
-        //virtualCamera.transform.position = new Vector3(newPos.x, newPos.y, -10f);
     }
 
 }

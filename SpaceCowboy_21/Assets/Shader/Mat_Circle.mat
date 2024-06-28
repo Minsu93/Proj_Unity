@@ -64,11 +64,21 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
+    - _FirstPercent: 1
+    - _FourthPercent: 0
     - _LineWidth: 1
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Radius: 0.5
     - _Rotation: 0
+    - _SecondPercent: 1
+    - _SegmentCount_First: 2
+    - _SegmentCount_Fourth: 2
+    - _SegmentCount_Second: 2
+    - _SegmentCount_Third: 2
     - _Segment_Count: 20
     - _Segment_Spacing: 0.06
+    - _ThirdPercent: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0.5882353}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

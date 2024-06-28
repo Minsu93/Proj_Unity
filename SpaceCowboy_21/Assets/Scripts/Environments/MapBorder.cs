@@ -9,13 +9,12 @@ public class MapBorder : MonoBehaviour
     PolygonCollider2D polyColl;
 
 
+    //플레이어가 오브젝트를 빠져나가면
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.PlayerIsTeleport();
-            GameManager.Instance.cameraManager.ActiveVirtualCam(false);
-
+            //이동 위치 계산
             Vector2 playerPos = collision.transform.position;
             float x = playerPos.x;
             float y = playerPos.y;
@@ -39,9 +38,19 @@ public class MapBorder : MonoBehaviour
             }
 
             Vector2 movePos = new Vector2(x, y);
-            StartCoroutine(NextFrameRoutine(movePos));
 
+            TeleportPlayer(movePos);
         }
+    }
+
+    void TeleportPlayer(Vector2 movePos)
+    {
+        //TeleportStart 이벤트
+        GameManager.Instance.PlayerIsTeleport(true);
+        //카메라 off
+        GameManager.Instance.cameraManager.ActiveVirtualCam(false);
+
+        StartCoroutine(NextFrameRoutine(movePos));
     }
 
     IEnumerator NextFrameRoutine(Vector2 movePos)
@@ -49,11 +58,14 @@ public class MapBorder : MonoBehaviour
         yield return null;
 
         GameManager.Instance.player.position = movePos;
-
         Vector2 limitVec = new Vector2(width * 0.5f, height * 0.5f);
         GameManager.Instance.cameraManager.MoveCamera(movePos, limitVec);
-        GameManager.Instance.PlayerIsTeleport();
+        //카메라 on
+        GameManager.Instance.cameraManager.ActiveVirtualCam(true);
+        //TeleportEnd이벤트
+        GameManager.Instance.PlayerIsTeleport(false);
     }
+
 
     [ContextMenu("Set Border")]
     void SetBorder()

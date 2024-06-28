@@ -5,14 +5,12 @@ using UnityEngine;
 public abstract class Collectable : MonoBehaviour
 {
     public ParticleSystem consumeEffect;
-    protected CircleCollider2D physicsCollider;
     //protected CircleCollider2D collectCollider;
     protected Gravity gravity;
     protected Rigidbody2D rb;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        physicsCollider = GetComponentsInChildren<CircleCollider2D>()[1];
         gravity = GetComponent<Gravity>();
         rb = GetComponent<Rigidbody2D>();
     }

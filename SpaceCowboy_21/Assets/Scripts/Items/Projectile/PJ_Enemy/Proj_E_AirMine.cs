@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Proj_E_AirMine : Projectile_Enemy
+public class Proj_E_AirMine : Projectile_GuideMissile
 {
 
 

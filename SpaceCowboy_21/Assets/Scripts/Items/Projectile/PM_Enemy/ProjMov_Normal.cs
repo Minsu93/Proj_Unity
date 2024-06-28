@@ -42,10 +42,6 @@ public class ProjMov_Normal : ProjectileMovement
     }
 
 
-    public virtual void KnockBackEvent(Vector2 vec)
-    {
-        return;
-    }
 
 
 }
