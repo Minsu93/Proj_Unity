@@ -84,20 +84,20 @@ public class PlayerInput : MonoBehaviour
         //    playerBehavior.TryThrowSatellite();
         //}
 
-        //weaponWheel 사용
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            GameManager.Instance.playerManager.OpenWeaponWheel();
-        }
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            GameManager.Instance.playerManager.CloseWeaponWheel();
+        ////weaponWheel 사용
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    GameManager.Instance.playerManager.OpenWeaponWheel();
+        //}
+        //if (Input.GetKeyUp(KeyCode.E))
+        //{
+        //    GameManager.Instance.playerManager.CloseWeaponWheel();
 
-        }
-        if (Input.GetMouseButtonDown(1))    //우클릭 시 취소
-        {
-            GameManager.Instance.playerManager.CloseWeaponWheel();
-        }
+        //}
+        //if (Input.GetMouseButtonDown(1))    //우클릭 시 취소
+        //{
+        //    GameManager.Instance.playerManager.CloseWeaponWheel();
+        //}
 
 
 

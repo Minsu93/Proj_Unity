@@ -3,20 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponDrop : Collectable
+public class WeaponDrop : InteractableOBJ
 {
-    //public WeaponData weaponData;
-    //PlayerBehavior playerBehavior;
+    [SerializeField] private WeaponData weaponData;
+    [SerializeField] private ParticleSystem consumeEffect;
 
-    protected override void ConsumeEffect()
+
+    public override void InteractAction()
     {
-        //playerBehavior.TryChangeWeapon(weaponData);
+        //무기 교체
+        GameManager.Instance.playerManager.ChangeWeapon(weaponData);
+
+        //아이템 비활성화
+        GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
+        gameObject.SetActive(false);
+
+
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        //playerBehavior = GameManager.Instance.PlayerBehavior;
-    }
+
 
 }

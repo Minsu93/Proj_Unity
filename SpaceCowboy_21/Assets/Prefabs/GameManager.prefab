@@ -45,28 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
-  playerUIInteractPrefab: {fileID: 8653297541307795509, guid: 7e94682f21de58448afc75ab1e7db468, type: 3}
   firstWeaponData: {fileID: 0}
   secondWeaponData: {fileID: 0}
   thirdWeaponData: {fileID: 0}
   fourthWeaponData: {fileID: 0}
-  weaponInventory:
-  - weaponData: {fileID: 0}
-    maxWeaponEnergy: 0
-    curWeaponEnergy: 0
-    activate: 0
-  - weaponData: {fileID: 0}
-    maxWeaponEnergy: 0
-    curWeaponEnergy: 0
-    activate: 0
-  - weaponData: {fileID: 0}
-    maxWeaponEnergy: 0
-    curWeaponEnergy: 0
-    activate: 0
-  - weaponData: {fileID: 0}
-    maxWeaponEnergy: 0
-    curWeaponEnergy: 0
-    activate: 0
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,12 +215,9 @@ MonoBehaviour:
   - {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
   dropItems:
   - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
-  - {fileID: 4774568720044120686, guid: 60a5075285ef0c94da50dd36bc6ffe0e, type: 3}
-  - {fileID: 4774568720044120686, guid: cb463196b3d6adc4b8f5e1c922c41b8e, type: 3}
-  - {fileID: 4774568720044120686, guid: 0a2de00c1ce756849b569eebd67e2803, type: 3}
-  - {fileID: 4774568720044120686, guid: 68aaedbe12fb4574f80049a7f1305343, type: 3}
   - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
   - {fileID: 7158106260931719753, guid: 496205cd47966d14a9c203f2ecd9c2b0, type: 3}
+  - {fileID: 5318680110006584562, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
   enemies:
   - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
   - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}

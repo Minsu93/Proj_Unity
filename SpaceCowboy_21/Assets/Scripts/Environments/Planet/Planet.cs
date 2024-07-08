@@ -9,7 +9,11 @@ using UnityEngine;
 [SelectionBase]
 public class Planet : MonoBehaviour, ITarget
 {
+    //Test
+    public int planetID = 0;    //총기 변경용
+
     public bool activate = false;   //행성이 활성화 되었는지
+
 
     public float planetRadius = 2f;
     public float gravityRadius = 4f;

@@ -428,7 +428,15 @@ namespace SpaceCowboy
         {   //행성이 바뀌면 이벤트 발생. CharacterGravity에서 신호를 받는다.
             planetChanged = true;
             if(characterGravity.nearestPlanet != null)
+            {
                 planetPoints = characterGravity.nearestPlanet.GetPoints(0.51f);
+
+                //무기 변경 테스트
+                //Planet p = characterGravity.nearestPlanet;
+                //GameManager.Instance.playerManager.ChangeWeapon(p.planetID);
+            }
+
+
         }
 
         void SpeedControl()

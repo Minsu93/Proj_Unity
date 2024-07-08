@@ -519,15 +519,12 @@ MonoBehaviour:
     item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     dropMin: 4
     dropMax: 5
-  ammoDropTable:
-    dropChance: 1
-    item: {fileID: 0}
+  - dropChance: 0.1
+    item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     dropMin: 1
     dropMax: 1
   resourceLaunchPowerMin: 3
   resourceLaunchPowerMax: 4
-  ammoLaunchPowerMin: 5
-  ammoLaunchPowerMax: 6
 --- !u!1 &6651936169225812656
 GameObject:
   m_ObjectHideFlags: 0

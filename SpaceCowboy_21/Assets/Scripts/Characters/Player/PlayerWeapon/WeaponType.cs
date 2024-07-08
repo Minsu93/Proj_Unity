@@ -64,11 +64,11 @@ public abstract class WeaponType : MonoBehaviour
     public event System.Action afterShootEvent;     //총쏘기 후처리. ammo감소.
     
 
-    protected WeaponCubeSlots cubeSlots;
+    //protected WeaponCubeSlots cubeSlots;
 
     private void Awake()
     {
-        cubeSlots = GetComponent<WeaponCubeSlots>();    
+        //cubeSlots = GetComponent<WeaponCubeSlots>();    
     }
 
 
@@ -98,15 +98,20 @@ public abstract class WeaponType : MonoBehaviour
         shootSFX = weaponData.ShootSFX;
 
         //현재 갖고있는 기술Cube들의 스텟을 적용한다. 
-        weaponStats = cubeSlots.UpdateStats(baseStats);
+        //weaponStats = cubeSlots.UpdateStats(baseStats);
 
         //Combination 을 확인한다
-        CheckCombination();
+        //CheckCombination();
     }
 
     public abstract void ShootButtonDown(Vector2 pos, Vector3 dir);
     public abstract void ShootButtonUp(Vector2 pos, Vector3 dir);
 
+    
+    protected virtual void AfterShootProcess()
+    {
+        if (afterShootEvent != null) afterShootEvent();
+    }
 
 
     //실제 쏘는 행동
@@ -149,12 +154,7 @@ public abstract class WeaponType : MonoBehaviour
 
     }
 
-    //총 쏜후 PlayerWeapon에서 작동.
-    protected void AfterShootProcess()
-    {
-        if (afterShootEvent != null) afterShootEvent();
-    }
-
+    
     void WeaponShootEvent()
     {
         if(weaponStats.weaponShoot != null)
@@ -163,40 +163,40 @@ public abstract class WeaponType : MonoBehaviour
         }
     }
 
-    void CheckCombination()
-    {
-        int index = cubeSlots.CheckSpecialCombinations();
-        switch (index)
-        {
-            case 0:
-                //변화형 없음
-                break;
-            case 1:
-                //변화형 A
-                Varitation_A();
-                break;
-            case 2:
-                //변화형 A
-                Varitation_B();
-                break;
-            case 3:
-                //변화형 A
-                Varitation_C();
-                break;
-        }
-    }
+    //void CheckCombination()
+    //{
+    //    int index = cubeSlots.CheckSpecialCombinations();
+    //    switch (index)
+    //    {
+    //        case 0:
+    //            //변화형 없음
+    //            break;
+    //        case 1:
+    //            //변화형 A
+    //            Varitation_A();
+    //            break;
+    //        case 2:
+    //            //변화형 A
+    //            Varitation_B();
+    //            break;
+    //        case 3:
+    //            //변화형 A
+    //            Varitation_C();
+    //            break;
+    //    }
+    //}
 
-    //변화형
-    protected virtual void Varitation_A()
-    {
-        Debug.Log("AB 결합 무기");
-    }
-    protected virtual void Varitation_B()
-    {
-        Debug.Log("AC 결합 무기");
-    }
-    protected virtual void Varitation_C()
-    {
-        Debug.Log("BC 결합 무기");
-    }
+    ////변화형
+    //protected virtual void Varitation_A()
+    //{
+    //    Debug.Log("AB 결합 무기");
+    //}
+    //protected virtual void Varitation_B()
+    //{
+    //    Debug.Log("AC 결합 무기");
+    //}
+    //protected virtual void Varitation_C()
+    //{
+    //    Debug.Log("BC 결합 무기");
+    //}
 }

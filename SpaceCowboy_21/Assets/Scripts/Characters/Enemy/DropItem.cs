@@ -13,12 +13,12 @@ public class DropItem : MonoBehaviour
     /// </summary>
     
     [SerializeField] List<DropTable> dropTable = new List<DropTable>();
-    [SerializeField] DropTable ammoDropTable = new DropTable();
+    //[SerializeField] DropTable ammoDropTable = new DropTable();
 
     [SerializeField] float resourceLaunchPowerMin = 3f;
     [SerializeField] float resourceLaunchPowerMax = 4f;
-    [SerializeField] float ammoLaunchPowerMin = 5f;
-    [SerializeField] float ammoLaunchPowerMax = 6f;
+    //[SerializeField] float ammoLaunchPowerMin = 5f;
+    //[SerializeField] float ammoLaunchPowerMax = 6f;
     private void Awake()
     {
         EnemyAction enemyAction = GetComponent<EnemyAction>();
@@ -34,28 +34,31 @@ public class DropItem : MonoBehaviour
             GenerateProcess(dropTable[i].dropChance, dropTable[i].item, dropTable[i].dropMin, dropTable[i].dropMax, resourceLaunchPowerMin, resourceLaunchPowerMax);
         }
 
-        //ammo Generate
-
-        //1. 현재 부족한 ammo의 수 카운트. PlayerManager에서 WeaponInventory를 가져오고, activate되지 않은 무기들을 구해서 ammoList를 만든다. 
-        WeaponInventory[] w_Inventory = GameManager.Instance.playerManager.weaponInventory;
-        List<GameObject> ammoList = new List<GameObject>();
-        for(int h = 0; h < w_Inventory.Length; h++)
-        {
-            if(w_Inventory[h].activate == false)
-            {
-                GameObject ammoPrefab = w_Inventory[h].weaponData.AmmoPrefab;
-                if( ammoPrefab != null )
-                    ammoList.Add(ammoPrefab);
-            }
-        }
-
-        //2. 생성
-        for (int j = 0; j < ammoList.Count; j++)
-        {
-            GenerateProcess(ammoDropTable.dropChance, ammoList[j], ammoDropTable.dropMin, ammoDropTable.dropMax, ammoLaunchPowerMin, ammoLaunchPowerMax);
-        }
-
     }
+
+    //void AmmoGenerate()
+    //{
+    //    //ammo Generate
+
+    //    //1. 현재 부족한 ammo의 수 카운트. PlayerManager에서 WeaponInventory를 가져오고, activate되지 않은 무기들을 구해서 ammoList를 만든다. 
+    //    WeaponInventory[] w_Inventory = GameManager.Instance.playerManager.weaponInventory;
+    //    List<GameObject> ammoList = new List<GameObject>();
+    //    for (int h = 0; h < w_Inventory.Length; h++)
+    //    {
+    //        if (w_Inventory[h].activate == false)
+    //        {
+    //            GameObject ammoPrefab = w_Inventory[h].weaponData.AmmoPrefab;
+    //            if (ammoPrefab != null)
+    //                ammoList.Add(ammoPrefab);
+    //        }
+    //    }
+
+    //    //2. 생성
+    //    for (int j = 0; j < ammoList.Count; j++)
+    //    {
+    //        GenerateProcess(ammoDropTable.dropChance, ammoList[j], ammoDropTable.dropMin, ammoDropTable.dropMax, ammoLaunchPowerMin, ammoLaunchPowerMax);
+    //    }
+    //}
 
     void GenerateProcess(float dropChance, GameObject item, int dropMin, int dropMax, float launchPowerMin, float launchPowerMax)
     {

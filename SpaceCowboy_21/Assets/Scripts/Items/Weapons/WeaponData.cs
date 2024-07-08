@@ -17,9 +17,9 @@ public class WeaponData : ScriptableObject
     Sprite icon;    //아이콘을 결정.
     public Sprite Icon { get { return icon; } }
 
-    [SerializeField]
-    int weaponEnergy;
-    public int WeaponEnergy { get {  return weaponEnergy; } }
+    //[SerializeField]
+    //int weaponEnergy;
+    //public int WeaponEnergy { get {  return weaponEnergy; } }
 
 
 
@@ -93,9 +93,9 @@ public class WeaponData : ScriptableObject
     GameObject weaponPrefab;
     public GameObject WeaponPrefab { get { return weaponPrefab; } }
 
-    [SerializeField]
-    GameObject ammoPrefab;
-    public GameObject AmmoPrefab { get { return ammoPrefab; } }
+    //[SerializeField]
+    //GameObject ammoPrefab;
+    //public GameObject AmmoPrefab { get { return ammoPrefab; } }
 
     [SerializeField]
     Sprite weaponEnableSprite;

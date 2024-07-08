@@ -8,7 +8,7 @@ public class AmmoDrop : AutoCollectable
 
     protected override void ConsumeEffect()
     {
-        GameManager.Instance.playerManager.CollectWeaponEnergy(weaponData, amount);
+        //GameManager.Instance.playerManager.CollectWeaponEnergy(weaponData, amount);
     }
 
 }

@@ -55,11 +55,10 @@ public class WeaponWheelController : MonoBehaviour
     //아이템 활성화
     public void ActivateItem(int ID, WeaponData wData)
     {
-        //GameManager.Instance.playerManager.playerBehavior.TryChangeWeapon(wData);
-        GameManager.Instance.playerManager.ChangeWeapon(ID);
-        selectedItem.sprite = wData.Icon;
+        //GameManager.Instance.playerManager.ChangeWeapon(ID);
+        //selectedItem.sprite = wData.Icon;
 
-        ToggleWheel(false);
+        //ToggleWheel(false);
 
     }
 
@@ -82,70 +81,70 @@ public class WeaponWheelController : MonoBehaviour
     }
 
     //첫 버튼 설정 시
-    public void SetItemData(WeaponInventory[] w_Inventory)
-    {
-        //버튼 활성화 설정
-        for(int i = 0; i < w_Inventory.Length; i++)
-        {
-            buttons[i].SetData(w_Inventory[i].weaponData, w_Inventory[i].maxWeaponEnergy);
+    //public void SetItemData(WeaponInventory[] w_Inventory)
+    //{
+    //    //버튼 활성화 설정
+    //    for(int i = 0; i < w_Inventory.Length; i++)
+    //    {
+    //        buttons[i].SetData(w_Inventory[i].weaponData, w_Inventory[i].maxWeaponEnergy);
 
 
-            //미니휠 설정
-            onSprite[i] = w_Inventory[i].weaponData.WeaponEnableSprite;
-            offSprite[i] = w_Inventory[i].weaponData.WeaponDisableSprite;
-            miniWheels[i].sprite = offSprite[i];
+    //        //미니휠 설정
+    //        onSprite[i] = w_Inventory[i].weaponData.WeaponEnableSprite;
+    //        offSprite[i] = w_Inventory[i].weaponData.WeaponDisableSprite;
+    //        miniWheels[i].sprite = offSprite[i];
 
-            //활성화 여부에 따라 UI 교체
-            if (w_Inventory[i].activate)
-            {
-                buttons[i].SetInteractable(true);
-                miniWheels[i].sprite = onSprite[i];
-            }
-            else
-            {
-                buttons[i].SetInteractable(false);
-            }
+    //        //활성화 여부에 따라 UI 교체
+    //        if (w_Inventory[i].activate)
+    //        {
+    //            buttons[i].SetInteractable(true);
+    //            miniWheels[i].sprite = onSprite[i];
+    //        }
+    //        else
+    //        {
+    //            buttons[i].SetInteractable(false);
+    //        }
 
-        }
-    }
+    //    }
+    //}
 
     //무기 게이지 변할 때마다
-    public void UpdateWeaponGauge(WeaponInventory[] w_Inventory)
-    {
-        float curEng;
-        float maxEng;
-        float value;
-        //string valueName = "";
+    //public void UpdateWeaponGauge(WeaponInventory[] w_Inventory)
+    //{
+    //    float curEng;
+    //    float maxEng;
+    //    float value;
+    //    //string valueName = "";
 
-        for (int i = 0; i < w_Inventory.Length; i++)
-        {
-            //무기 버튼 활성화, 비활성화
-            if (w_Inventory[i].activate)
-            {
-                buttons[i].SetInteractable(true);
-                miniWheels[i].sprite = onSprite[i];
-            }
-            else
-            {
-                buttons[i].SetInteractable(false);
-                miniWheels[i].sprite = offSprite[i];
-            }
+    //    for (int i = 0; i < w_Inventory.Length; i++)
+    //    {
+    //        //무기 버튼 활성화, 비활성화
+    //        if (w_Inventory[i].activate)
+    //        {
+    //            buttons[i].SetInteractable(true);
+    //            miniWheels[i].sprite = onSprite[i];
+    //        }
+    //        else
+    //        {
+    //            buttons[i].SetInteractable(false);
+    //            miniWheels[i].sprite = offSprite[i];
+    //        }
             
-            //무기 percent 게이지
-            curEng = w_Inventory[i].curWeaponEnergy;
-            maxEng = w_Inventory[i].maxWeaponEnergy;
-            if (maxEng > 0f)
-            {
-                value = curEng / maxEng;
-            }
-            else
-            {
-                value = 1f;
-            }
-            buttons[i].SetPercentGauge(value);
-        }
+    //        //무기 percent 게이지
+    //        curEng = w_Inventory[i].curWeaponEnergy;
+    //        maxEng = w_Inventory[i].maxWeaponEnergy;
+    //        if (maxEng > 0f)
+    //        {
+    //            value = curEng / maxEng;
+    //        }
+    //        else
+    //        {
+    //            value = 1f;
+    //        }
+    //        buttons[i].SetPercentGauge(value);
+    //    }
 
         
-    }
+    //}
 
 }
