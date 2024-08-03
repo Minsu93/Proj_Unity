@@ -21,6 +21,7 @@ public class ProjMov_Guide : ProjectileMovement
         activate = true;
     }
 
+
     public override void StopMovement()
     {
         activate = false;

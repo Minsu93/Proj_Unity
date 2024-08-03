@@ -23,14 +23,16 @@ public class EA_Orbit : EnemyAction
     public ParticleSystem boosterParticle;
 
     EnemyChase_Orbit chase_Orbit;
-
+    [SerializeField] AnimationCurve knockBackCurve;
+    [SerializeField] float knockBackDistance = 1f;   //날아가는 거리
+    [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
 
     //override 한 부분
 
     protected override void Awake()
     {
         base.Awake();
-        chase_Orbit = GetComponent<EnemyChase_Orbit>();
+        chase_Orbit = chase as EnemyChase_Orbit;
     }
 
     protected override bool BeforeUpdate()
@@ -46,8 +48,40 @@ public class EA_Orbit : EnemyAction
 
         return false;
     }
+    protected override void Update()
+    {
+        //Enemy가 죽거나 Strike가 끝나기 전에는 Update하지 않는다. 
+        if (BeforeUpdate()) return;
 
-    
+        //브레인에서 플레이어 관련 변수 업데이트
+        brain.TotalCheck();
+
+        //업데이트에 따라 enemyState 변경. 
+        BrainStateChange();
+
+        //enemyState에 따른 Action 실행 
+        if (enemyState != preState)
+        {
+            DoAction(enemyState);
+            preState = enemyState;
+        }
+
+        ///수정된 부분
+        if (enemyState == EnemyState.Wait) return;
+
+        if (onAttack)
+        {
+            if (attack != null)
+                attack.OnAttackAction();
+        }
+
+        if (onChase)
+        {
+            if (chase != null)
+                chase.OnChaseAction();
+        }
+    }
+
     public override void BrainStateChange()
     {
         switch (enemyState)
@@ -183,16 +217,34 @@ public class EA_Orbit : EnemyAction
 
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
     {
-        EnemyPause(1f);
+        EnemyPause(knockbackTime + 0.3f);
 
         Vector2 dir = (Vector2)transform.position - hitPos;
         dir = dir.normalized;
-
-        rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+        Vector2 startPos = (Vector2)transform.position;
+        Vector2 targetPos = (Vector2)transform.position + (dir*knockBackDistance);
+        StartCoroutine(KnockBackRoutine(startPos, targetPos));
+        
+        //rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+    }
+    IEnumerator KnockBackRoutine(Vector2 start, Vector2 end)
+    {
+        float time = 0;
+        while (time < 1)
+        {
+            time += Time.deltaTime / knockbackTime;
+            rb.MovePosition(Vector2.Lerp(start, end, knockBackCurve.Evaluate(time)));
+            yield return null;
+        }
+        chase_Orbit.ResetCenterPoint();
     }
 
+    public override void AfterAttack()
+    {
+        //공격 이후에 따로 정지되는 로직 없음.
+        return;
+    }
 
-    //추가된 부분
 
     void ChangeDirection()
     {

@@ -36,6 +36,17 @@ public class EnemyChase_Orbit : EnemyChase
 
     }
 
+    /// <summary>
+    /// 현재 행성의 중심 위치를 기준으로 orbit의 위치(각도)를 재조정.
+    /// </summary>
+    public void ResetCenterPoint()
+    {
+        float signedAngle = Vector2.SignedAngle(Vector2.up, (Vector2)transform.position - centerPoint);
+        degree = (-signedAngle + 360) % 360;
+
+        transform.rotation = Quaternion.Euler(0, 0, degree * -1); //가운데를 바라보게 각도 조절
+    }
+
 
     public override void OnChaseAction()
     {

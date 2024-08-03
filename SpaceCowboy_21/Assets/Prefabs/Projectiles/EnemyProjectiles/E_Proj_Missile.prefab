@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3416425566203631328}
   - component: {fileID: 5398907725021750014}
-  - component: {fileID: 329782296859137236}
+  - component: {fileID: 4608515024599431814}
   - component: {fileID: -2915084213876638146}
   - component: {fileID: 3649628937693691514}
   - component: {fileID: 5477442307006051095}
@@ -59,8 +59,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &329782296859137236
-BoxCollider2D:
+--- !u!58 &4608515024599431814
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -73,18 +73,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.9, y: 0.8}
-  m_EdgeRadius: 0
+  m_Radius: 0.6
 --- !u!114 &-2915084213876638146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +96,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  explodeEffect: {fileID: 1205147032739621916, guid: 5846ac8c07b97a347893dd1a6272202d, type: 3}
+  trailParticle: {fileID: 7072543533629953566}
 --- !u!114 &3649628937693691514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb952361a62e4f428e88e0943523c41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 30
+  rotationSpeed: 10
 --- !u!114 &5477442307006051095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +151,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7072543533629953539}
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.719, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1000,7 +992,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 15
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1053,7 +1045,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4912,9 +4904,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -864625343
-  m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingLayerID: 320622911
+  m_SortingLayer: 6
+  m_SortingOrder: -50
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0

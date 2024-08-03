@@ -9,6 +9,7 @@ public class EnemyChase_Ground : EnemyChase
     //점프 
     public float jumpForce = 10f;
     bool shouldJump = false;  //점프 준비
+    bool shouldChase;
 
     int targetIndex;
     int closestIndex;
@@ -48,6 +49,7 @@ public class EnemyChase_Ground : EnemyChase
                 TargetUpdate();
             }
         }
+
         //우주에 떠 있거나, 플레이어가 nearestPlanet이 없을 때는 추적하지 않는다. 
         if (curPlanet == null) return;
         if (WaveManager.instance.playerNearestPlanet == null) return; 
@@ -56,9 +58,11 @@ public class EnemyChase_Ground : EnemyChase
         if (mTimer > 0) mTimer -= Time.deltaTime;
         else
         {
-            mTimer = 0.5f;
             TargetUpdate();
         }
+
+        //추격이 불가능하면 추격하지 않는다. 
+        if (!shouldChase) return;
 
         //이동
         if (shouldJump)
@@ -74,15 +78,18 @@ public class EnemyChase_Ground : EnemyChase
 
     void TargetUpdate()
     {
+        mTimer = 0.5f;
+
         if (brain.OnOtherPlanetCheck())
         {
             shouldJump = true;
-            PrepareJump();
+            shouldChase = PrepareJump();
         }
         else
         {
             shouldJump = false;
             PrepareChase();
+            shouldChase = true;
         }
     }
 
@@ -90,13 +97,12 @@ public class EnemyChase_Ground : EnemyChase
     //같은 행성에 있을 때 추격 준비
     void PrepareChase()
     {
-        ////플레이어가 보이는 가장 가까운 point로 이동한다. 
         int pointCounts = ppoints.Length - 1;
 
-        //플레이어 위치를 구한다
+        //플레이어 위치와 가장 가까운 index를 구한다 = target
         targetIndex = curPlanet.GetClosestIndex(GameManager.Instance.player.position);
 
-        //현재와 다음 인덱스 위치를 구한다. 
+        //현재 가장 가까운 위치를 구한다.
         closestIndex = curPlanet.GetClosestIndex(transform.position);
 
         //방향 index를 구한다.
@@ -107,27 +113,30 @@ public class EnemyChase_Ground : EnemyChase
         //이동 방향을 바라본다.
         action_Ground.faceRight = dirIndex > 0f ? true : false;
         action_Ground.FlipToDirectionView();
-
     }
 
 
     //targetIndex에 가까워 졌나요? T/F
     bool MoveToTarget()
     {
-        if (curPlanet != charGravity.nearestPlanet) 
-            return false;
+        if (action_Ground.onAir) return false;
 
         int pointCounts = ppoints.Length - 1;
-
-        Vector2 movePos = ppoints[(closestIndex + dirIndex + pointCounts) % pointCounts];
-        Vector2 moveDir = (movePos - rb.position).normalized;
-        float moveDist = (movePos - rb.position).magnitude;
-
-        // 움직일 거리가 거의 가까워졌으면 타겟을 바꾼다.
-        if (moveDist < moveSpeed * Time.fixedDeltaTime)
+        float moveDist;
+        Vector2 moveDir;
+        do
         {
-            closestIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
+            int targetPoint = (closestIndex + dirIndex + pointCounts) % pointCounts;
+            Vector2 movePos = ppoints[targetPoint];
+            moveDir = (movePos - rb.position).normalized;
+            moveDist = (movePos - rb.position).magnitude;
+
+            if (moveDist < moveSpeed * Time.fixedDeltaTime)
+            {
+                closestIndex = (closestIndex + dirIndex + pointCounts) % pointCounts;
+            }
         }
+        while (moveDist < moveSpeed * Time.fixedDeltaTime);
 
         // 목적지에 가까이 도착하면 종료한다.
         if (Vector2.Distance(ppoints[targetIndex], (Vector2)transform.position) < 0.1f)
@@ -141,17 +150,17 @@ public class EnemyChase_Ground : EnemyChase
     }
 
 
-    void PrepareJump()
+    bool PrepareJump()
     {
         int pointCounts = ppoints.Length - 1;
         Planet playerPlanet = WaveManager.instance.playerNearestPlanet;
 
         //점프할 행성을 구한다 
         Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
-        if (targetPlanet == null) return;
+        if (targetPlanet == null) return false;
 
         //점프 포인트를 구한다. 
-        if (!curPlanet.GetjumpPoint(targetPlanet, out PlanetBridge _bridge)) return;
+        if (!curPlanet.GetjumpPoint(targetPlanet, out PlanetBridge _bridge)) return false;
   
         targetIndex = _bridge.bridgeIndex;
         closestTargetPoint = _bridge.targetVector;
@@ -165,6 +174,8 @@ public class EnemyChase_Ground : EnemyChase
         //이동 방향을 바라본다.
         action_Ground.faceRight = dirIndex > 0f ? true : false;
         action_Ground.FlipToDirectionView();
+
+        return true;
     }
 
 

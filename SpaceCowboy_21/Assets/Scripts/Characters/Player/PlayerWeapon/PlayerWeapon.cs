@@ -24,13 +24,20 @@ public class PlayerWeapon : MonoBehaviour
     bool pointOn;
     int targetLayer;
     [SerializeField] LineRenderer sightLineRenderer;
+    [SerializeField] GameObject bone1H;
+    [SerializeField] GameObject bone2H;
+    public GameObject point1H;
+    public GameObject point2H;
+
 
     //무기 슬롯
-    Dictionary<WeaponData, WeaponType> weaponDictionary = new Dictionary<WeaponData, WeaponType>();
+    public WeaponData baseWeaponData;
+    Dictionary<WeaponData, WeaponType> weaponTypeDictionary = new Dictionary<WeaponData, WeaponType>();
+    Stack<AmmoInventory> ammoStack = new Stack<AmmoInventory>();
     
     //스크립트 관련
     PlayerBehavior playerBehavior;
-    GameObject weaponSlot;  //WeaponType 보관 장소
+    //GameObject weaponSlot;  //WeaponType 보관 장소
     WeaponType currWeaponType;  //현재 웨폰 타입
 
 
@@ -44,9 +51,11 @@ public class PlayerWeapon : MonoBehaviour
         targetLayer = 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("Enemy");
 
         //무기 슬롯생성.
-        weaponSlot = new GameObject();
-        weaponSlot.name = "WeaponSlot";
-        weaponSlot.transform.parent = transform;
+        //weaponSlot = new GameObject();
+        //weaponSlot.name = "WeaponSlot";
+        //weaponSlot.transform.parent = transform;
+        //weaponSlot.transform.position = Vector3.zero;
+
 
     }
     private void Update()
@@ -76,7 +85,36 @@ public class PlayerWeapon : MonoBehaviour
     {
         weaponRangeSight.SetActive(visible);
         showWeaponRange = visible;
-     
+    }
+
+    void ChangeWeaponRangeColor(Color color)
+    {
+        weaponRangePoint.GetComponent<SpriteRenderer>().color = color;
+        //sightLineRenderer.startColor = color;
+        //sightLineRenderer.endColor = color;
+
+        var gradient = new Gradient();
+
+        gradient.mode = GradientMode.Blend;
+
+        var gradientColorKeys = new GradientColorKey[2]
+        {
+            new GradientColorKey(color, 0f),
+            new GradientColorKey(color, 1f)
+        };
+
+        var alphaKeys = new GradientAlphaKey[4]
+        {
+            new GradientAlphaKey(0f, 0f),
+            new GradientAlphaKey(1f, 0.1f),
+            new GradientAlphaKey(1f, 0.9f),
+            new GradientAlphaKey(0f, 1f)
+        };
+
+        gradient.SetKeys(gradientColorKeys, alphaKeys);
+
+        sightLineRenderer.colorGradient = gradient;
+
     }
 
     void UpdateWeaponSight()
@@ -111,6 +149,7 @@ public class PlayerWeapon : MonoBehaviour
                 if (!weaponRangePoint.activeSelf)
                 {
                     weaponRangePoint.SetActive(true);
+                    ChangeWeaponRangeColor(Color.yellow);
                 }
                 weaponRangePoint.transform.position = pos3;
             }
@@ -119,6 +158,8 @@ public class PlayerWeapon : MonoBehaviour
                 if (weaponRangePoint.activeSelf)
                 {
                     weaponRangePoint.SetActive(false);
+                    ChangeWeaponRangeColor(Color.white);
+
                 }
             }
 
@@ -163,41 +204,101 @@ public class PlayerWeapon : MonoBehaviour
         // 총알을 다 쓴 경우 
         if (!infiniteBullets && currAmmo <= 0)
         {
-            GameManager.Instance.playerManager.ChangeWeapon(0);             //무기 기본으로 변경
+            //currWeaponType.ConsumeItem();
+            //GameManager.Instance.playerManager.ChangeWeapon(0);             //무기 기본으로 변경
+            PopWeapon();    //마지막 무기 꺼내기
         }
     }
 
     #endregion
    
     #region ChangeWeapon
+    public bool PushWeapon(WeaponData data)
+    {
+        bool canPush;
+        if(ammoStack.Count < 3)
+        {
+            //사용하던 무기를 집어넣는다. 
+            AmmoInventory ammoInven = new AmmoInventory();
+            ammoInven.weaponData = currWeaponType.weaponData;
+            ammoInven.currAmmo = currAmmo;
+            ammoStack.Push(ammoInven);
+            
+            Debug.Log(ammoStack.Count);
+            //신규 무기를 착용한다. 
+            WeaponType wtype = InitializeWeapon(data);
+            ChangeWeapon(wtype, wtype.maxAmmo);
+            
+            canPush = true;
+        }
+        else
+        {
+            canPush = false;
+        }
+        return canPush;
+    }
+    public void PopWeapon()
+    {
+        //스택에 있으면 가져오기
+        if(ammoStack.TryPop(out AmmoInventory ammoInven))
+        {
+            WeaponType wtype = InitializeWeapon(ammoInven.weaponData);
+            ChangeWeapon(wtype, ammoInven.currAmmo);
+        }
+        //스택에 없으면 기본 총기로 
+        else
+        {
+            BackToBaseWeapon();
+        }
+    }
+    //기본 총기 소환
+    public void BackToBaseWeapon()
+    {
+        WeaponType wtype = InitializeWeapon(baseWeaponData);
+        ChangeWeapon(wtype, wtype.maxAmmo);
+    }
 
-    public void InitializeWeapon(WeaponData data)
+    public WeaponType InitializeWeapon(WeaponData data)
     {
         WeaponType wtype;
 
         //현재 만들어진 무기가 있으면 가져온다. 그렇지 않으면 새로 생성한다. 
-        if (weaponDictionary.ContainsKey(data))
+        if (weaponTypeDictionary.ContainsKey(data))
         {
-            weaponDictionary.TryGetValue(data, out wtype);
+            weaponTypeDictionary.TryGetValue(data, out wtype);
         }
         else
         {
+            GameObject weaponObj;
             //생성
-            GameObject weaponObj = Instantiate(data.WeaponPrefab, weaponSlot.transform);
-            wtype = weaponObj.GetComponent<WeaponType>();
-            wtype.Initialize(data);
+            if (data.GunStyle == GunStyle.OneHand)
+            {
+                //1H
+                weaponObj = Instantiate(data.WeaponPrefab, bone1H.transform);
+                wtype = weaponObj.GetComponent<WeaponType>();
+                wtype.Initialize(data, point1H.transform.localPosition);
+            }
+            else
+            {
+                //2H
+                weaponObj = Instantiate(data.WeaponPrefab, bone2H.transform);
+                wtype = weaponObj.GetComponent<WeaponType>();
+                wtype.Initialize(data, point2H.transform.localPosition);
+            }
+
             wtype.afterShootEvent -= AfterShootProcess;
             wtype.afterShootEvent += AfterShootProcess;
             weaponObj.SetActive(false);
 
             //Dict에 추가
-            weaponDictionary.Add(data, wtype);
+            weaponTypeDictionary.Add(data, wtype);
         }
 
-        ChangeWeapon(wtype);
+        return wtype;
+        //ChangeWeapon(wtype);
     }
 
-    public void ChangeWeapon(WeaponType weaponType)
+    public void ChangeWeapon(WeaponType weaponType, float curAmmo)
     {
         isChanging = true;
         shootOn = false;
@@ -211,22 +312,30 @@ public class PlayerWeapon : MonoBehaviour
         currWeaponType.gameObject.SetActive(true);
 
         //스킨
-        GunType finalSkin = currWeaponType.finalGunType;
-        playerBehavior.TryChangeWeaponSkin(finalSkin);
+        playerBehavior.TryChangeWeaponSkin(currWeaponType.weaponData);
 
         //이 스크립트(Player Weapon) 에서 필요한 Ammo, Range 갱신
-        WeaponStats weaponStats = currWeaponType.weaponStats;
-
-        currAmmo = weaponStats.maxAmmo;
-        maxAmmo = weaponStats.maxAmmo;
-        range = weaponStats.range;
-        ShowWeaponSight(true);
+        currAmmo = curAmmo;
+        maxAmmo = currWeaponType.maxAmmo;
+        range = currWeaponType.range;
+        ShowWeaponSight(currWeaponType.showRange);
 
         if (maxAmmo == 0) infiniteBullets = true;
         else infiniteBullets = false;
 
+        ResetBuff();
+
         //무기 교체 쿨타임
         StartCoroutine(ChangePauseRoutine());
+    }
+
+    //버프 초기화 시 현재 무기 스텟을 리셋한다. Player Stats Buff에서 콜, 총기 변경 시마다 콜.
+    public void ResetBuff()
+    {
+        //버프를 가져온다
+        WeaponStats buffStats = GameManager.Instance.playerManager.playerBuffs.weaponBuffStats;
+        //적용한다. 
+        currWeaponType.ResetWeapon(buffStats);
     }
 
     IEnumerator ChangePauseRoutine()
@@ -237,9 +346,13 @@ public class PlayerWeapon : MonoBehaviour
         isChanging = false;
     }
 
-
     #endregion
 
+    public class AmmoInventory
+    {
+        public WeaponData weaponData;
+        public float currAmmo;
+    }
 
 
 }

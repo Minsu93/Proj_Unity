@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
-public class AutoCollectable : Collectable
+public abstract class AutoCollectable : Collectable
 {
     protected CircleCollider2D physicsCollider;
 
@@ -86,8 +86,15 @@ public class AutoCollectable : Collectable
 
     }
 
-    protected override void ConsumeEffect()
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        throw new System.NotImplementedException();
+        if (collision.CompareTag("Player"))
+        {
+            GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
+            gameObject.SetActive(false);
+        }
     }
+
+    protected abstract void ConsumeEffect();
 }

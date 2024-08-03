@@ -1,0 +1,21 @@
+{
+    "startTime": 5.0,
+    "hasBossWave": false,
+    "waves": [
+        {
+            "waveIndex": 0,
+            "spawns": [
+                {
+                    "enemy": {
+                        "name": "ground_rocketboy",
+                        "delay": 0.2
+                    },
+                    "spawnCount": 1,
+                    "delayToNextWave": 0.0
+                }
+            ],
+            "totalTime": 30.0
+        }
+    ],
+    "bossWave": null
+}

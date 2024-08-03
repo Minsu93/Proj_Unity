@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03c421907f3fdb44a20128f6e5b9562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 8
   moveCurve:
     serializedVersion: 2
     m_Curve:
@@ -526,15 +526,10 @@ MonoBehaviour:
     item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     dropMin: 4
     dropMax: 5
-  ammoDropTable:
-    dropChance: 1
-    item: {fileID: 0}
-    dropMin: 1
-    dropMax: 1
+  itemTables: []
+  itemDropChance: 0
   resourceLaunchPowerMin: 3
   resourceLaunchPowerMax: 4
-  ammoLaunchPowerMin: 5
-  ammoLaunchPowerMax: 6
 --- !u!114 &4107349004659083497
 MonoBehaviour:
   m_ObjectHideFlags: 0

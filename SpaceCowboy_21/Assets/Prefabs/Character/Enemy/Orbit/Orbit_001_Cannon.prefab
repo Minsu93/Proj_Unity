@@ -5009,6 +5009,32 @@ MonoBehaviour:
   iconUI: {fileID: 7508925075503968073}
   pauseTimer: 0.1
   boosterParticle: {fileID: 8810903381058341265}
+  knockBackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.2385066
+      outSlope: 3.2385066
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.06754657
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  knockBackDistance: 1
+  knockbackTime: 1
 --- !u!114 &652078404442559525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5062,7 +5088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc78144269cb8a40bebe088e0ee6b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 15
   InvincibleTime: 0
 --- !u!114 &3485153491677312893
 MonoBehaviour:
@@ -5100,15 +5126,12 @@ MonoBehaviour:
     item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     dropMin: 4
     dropMax: 5
-  ammoDropTable:
-    dropChance: 1
-    item: {fileID: 0}
-    dropMin: 1
-    dropMax: 1
+  itemTables:
+  - itemID: 20002
+    dropChance: 0
+  itemDropChance: 0.2
   resourceLaunchPowerMin: 3
   resourceLaunchPowerMax: 4
-  ammoLaunchPowerMin: 5
-  ammoLaunchPowerMax: 6
 --- !u!1 &7508925075503968073
 GameObject:
   m_ObjectHideFlags: 0

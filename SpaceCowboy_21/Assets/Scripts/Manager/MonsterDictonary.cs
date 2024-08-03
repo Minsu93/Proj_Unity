@@ -8,13 +8,13 @@ public class MonsterDictonary : MonoBehaviour
     //몬스터 이름 string , 그리고 값 prefab이 들어가있는 Dictonary이다. 
     
     public List<Monster> monsterList = new List<Monster>();
-    public Dictionary<string, GameObject> monsterDictionary = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> monsDictionary = new Dictionary<string, GameObject>();
 
     private void Awake()
     {
         for(int i = 0; i< monsterList.Count; i++)
         {
-            monsterDictionary.Add(monsterList[i].name, monsterList[i].monsterPrefab);
+            monsDictionary.Add(monsterList[i].name, monsterList[i].monsterPrefab);
         }
     }
 }

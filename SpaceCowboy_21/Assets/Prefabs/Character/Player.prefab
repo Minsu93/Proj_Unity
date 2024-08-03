@@ -10040,6 +10040,216 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2957042638013869580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6709815571886152776}
+  - component: {fileID: 7547537376570328105}
+  m_Layer: 0
+  m_Name: 2HPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6709815571886152776
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2957042638013869580}
+  m_LocalRotation: {x: -0, y: -0, z: -0.0000000037252903, w: 1}
+  m_LocalPosition: {x: 0.96262914, y: 0.11399699, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8083644797547962534}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7547537376570328105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2957042638013869580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf461e4341180341a648c07e1899528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonRenderer: {fileID: 9007588099135373972}
+  slotName: guntip_2h
+  pointAttachmentName: guntip_2h
+  followRotation: 1
+  followSkeletonFlip: 1
+  followSkeletonZPosition: 0
+--- !u!1 &3446928774385788913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2817518773118729303}
+  - component: {fileID: 2074911762416645750}
+  m_Layer: 0
+  m_Name: 1HBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2817518773118729303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446928774385788913}
+  m_LocalRotation: {x: 0, y: 0, z: 0.042722557, w: 0.999087}
+  m_LocalPosition: {x: 0.2997858, y: 0.3784262, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3046183441987819282}
+  m_Father: {fileID: 9007588099135373971}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2074911762416645750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446928774385788913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1fd8daaed7b64148a34acb96ba14ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonRenderer: {fileID: 9007588099135373972}
+  boneName: gun_body_1h
+  followXYPosition: 1
+  followZPosition: 1
+  followBoneRotation: 1
+  followSkeletonFlip: 1
+  followLocalScale: 0
+  followParentWorldScale: 0
+  maintainedAxisOrientation: 1
+  initializeOnAwake: 1
+--- !u!1 &3674259624317706478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3046183441987819282}
+  - component: {fileID: 3930157205218647149}
+  m_Layer: 0
+  m_Name: 1HPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3046183441987819282
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3674259624317706478}
+  m_LocalRotation: {x: -0, y: -0, z: -0.0000000037252903, w: 1}
+  m_LocalPosition: {x: 0.594812, y: 0.17119902, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2817518773118729303}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3930157205218647149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3674259624317706478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf461e4341180341a648c07e1899528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonRenderer: {fileID: 9007588099135373972}
+  slotName: guntip_1h
+  pointAttachmentName: guntip_1h
+  followRotation: 1
+  followSkeletonFlip: 1
+  followSkeletonZPosition: 0
+--- !u!1 &6111980993235756783
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8083644797547962534}
+  - component: {fileID: 5085060140174315264}
+  m_Layer: 0
+  m_Name: 2HBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8083644797547962534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6111980993235756783}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6709815571886152776}
+  m_Father: {fileID: 9007588099135373971}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5085060140174315264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6111980993235756783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1fd8daaed7b64148a34acb96ba14ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonRenderer: {fileID: 9007588099135373972}
+  boneName: gun_body_2h
+  followXYPosition: 1
+  followZPosition: 1
+  followBoneRotation: 1
+  followSkeletonFlip: 1
+  followLocalScale: 0
+  followParentWorldScale: 0
+  maintainedAxisOrientation: 1
+  initializeOnAwake: 1
 --- !u!1 &9007588097638262587
 GameObject:
   m_ObjectHideFlags: 0
@@ -10188,6 +10398,7 @@ GameObject:
   - component: {fileID: 9007588099006207611}
   - component: {fileID: 9007588099006207609}
   - component: {fileID: 9007588099006207589}
+  - component: {fileID: 7998577281222330454}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -10289,12 +10500,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: 0
-  velocityOnAirLimit: 5
-  recoilLimitAngle: 90
   moveSpeed: 8
-  acceleration: 0.5
+  acceleration: 2
   inputResetTime: 0.5
-  slideSpeed: 15
+  slideSpeed: 1.8
   turnSpeedOnLand: 100
   onAirTime: 1
   onAirVelocityRotateSpeed: 1
@@ -10320,7 +10529,7 @@ MonoBehaviour:
   dashRadius: 0.8
   dashMaxCount: 1
   dashTime: 0.4
-  dashDamage: 1
+  dashDamage: 5
   dashKnockBackPower: 10
   unHittableTime: 1
   doingDash: 0
@@ -10341,6 +10550,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponChangeTime: 0.3
   sightLineRenderer: {fileID: 9038096803213095484}
+  bone1H: {fileID: 3446928774385788913}
+  bone2H: {fileID: 6111980993235756783}
+  point1H: {fileID: 3674259624317706478}
+  point2H: {fileID: 2957042638013869580}
+  baseWeaponData: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
 --- !u!114 &9007588099006207609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10375,6 +10589,18 @@ MonoBehaviour:
   maxHealth: 10
   maxShield: 10
   InvincibleTime: 0
+--- !u!114 &7998577281222330454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9007588099006207600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85d1ec31be56da14296982163519d586, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9007588099135374057
 GameObject:
   m_ObjectHideFlags: 0
@@ -10389,6 +10615,7 @@ GameObject:
   - component: {fileID: 9007588099135373972}
   - component: {fileID: 9007588099135373974}
   - component: {fileID: 9007588099135373975}
+  - component: {fileID: 5417328333865828663}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -10407,7 +10634,9 @@ Transform:
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2817518773118729303}
+  - {fileID: 8083644797547962534}
   m_Father: {fileID: 9007588099006207613}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10474,7 +10703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeletonDataAsset: {fileID: 11400000, guid: 5971640e928de504798287dcaad34c21, type: 2}
-  initialSkinName: guns/revolver
+  initialSkinName: 1h_base
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
   initialFlipY: 0
@@ -10524,11 +10753,6 @@ MonoBehaviour:
   shoot: {fileID: 11400000, guid: 11a23861425f54242a2a6afb59e8dfc0, type: 2}
   slide: {fileID: 11400000, guid: a9542daa271a9d740a7fafe1ea7fe3fa, type: 2}
   die: {fileID: 11400000, guid: 59ef6b9a15540c04d85b8dd21dbb6332, type: 2}
-  gunType:
-    skinName: guns/revolver
-    boneName: gun_1h
-    slotName: guntip_1h
-    attachmentName: guntip_1h
 --- !u!114 &9007588099135373975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10543,6 +10767,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skeletonAnimation: {fileID: 9007588099135373972}
   boneName: aimTarget
+--- !u!114 &5417328333865828663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9007588099135374057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b214a8417f182c4fa7f1603dfa5ba93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atlasAsset: {fileID: 11400000, guid: 099533b041ed60a4abb36e87a14b3067, type: 2}
+  inheritProperties: 1
 --- !u!1 &9157420935847179382
 GameObject:
   m_ObjectHideFlags: 0

@@ -99,7 +99,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
 
     private void Start()
     {
-        WaveManager.instance.StageClear += WaveClearEvent;
+        WaveManager.instance.MonsterDisappearEvent += WaveClearEvent;
         GameManager.Instance.PlayerDeadEvent += PlayerIsDead;   //플레이어가 죽은 경우 실행하는 이벤트 
     }
 
@@ -181,7 +181,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
                 onAttack = true;
                 break;
 
-          
         }
     }
 
@@ -202,8 +201,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         //강습을 시작한다. 
         StartCoroutine(StrikeRoutine(strikePos));
     }
-
-
 
     protected abstract IEnumerator StrikeRoutine(Vector2 strikePos);
 
@@ -243,6 +240,11 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     #endregion
 
     #region Basic Actions
+    //공격 이후 적유닛 행동
+    public virtual void AfterAttack()
+    {
+        EnemyPause(attack.attackCoolTime);
+    }
 
     //플레이어가 죽은 경우 다시 잠든다. 
     public void PlayerIsDead()
@@ -272,6 +274,21 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         enemyState = EnemyState.Chase;
         activate = true;
         gravity.activate = true;
+    }
+
+    //유닛 정지
+    public void EnemyPause(float second)
+    {
+        StartCoroutine(PauseRoutine(second));
+    }
+    IEnumerator PauseRoutine(float sec)
+    {
+        //지난 행동상태
+        EnemyState preState = enemyState;
+        enemyState = EnemyState.Wait;
+
+        yield return new WaitForSeconds(sec);
+        enemyState = preState;
     }
 
     protected virtual void OnDieAction()
@@ -348,15 +365,15 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         hitColl.enabled = false;
 
         StartCoroutine(DieRoutine(3.0f));
-        
+
         //WaveManager에 전달.
-        if(WaveManager.instance != null)
+        if (WaveManager.instance != null)
             WaveManager.instance.CountEnemyLeft(this.gameObject);
 
         if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
     }
 
-    public void KnockBackEvent(Vector2 hitPos, float forceAmount)
+    void IHitable.KnockBackEvent(Vector2 hitPos, float forceAmount)
     {
         EnemyKnockBack(hitPos, forceAmount);
     }
@@ -364,19 +381,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
     public abstract void EnemyKnockBack(Vector2 hitPos, float forceAmount);
 
-    public void EnemyPause(float second)
-    {
-        StartCoroutine(PauseRoutine(second));
-    }
-    IEnumerator PauseRoutine(float sec)
-    {
-        //지난 행동상태
-        EnemyState preState = enemyState;
-        enemyState = EnemyState.Wait;
-
-        yield return new WaitForSeconds(sec);
-        enemyState = preState;
-    }
     #endregion
 
     #region Animation View Events

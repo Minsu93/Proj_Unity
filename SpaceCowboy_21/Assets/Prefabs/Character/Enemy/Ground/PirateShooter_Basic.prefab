@@ -91,6 +91,10 @@ PrefabInstance:
       propertyPath: skeletonAnimation
       value: 
       objectReference: {fileID: 7073518580252680384}
+    - target: {fileID: 2194943413800418210, guid: 59b9363470f37ff46927cec0a05f8dc5, type: 3}
+      propertyPath: itemDropChance
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 4366261071164999793, guid: 59b9363470f37ff46927cec0a05f8dc5, type: 3}
       propertyPath: m_Name
       value: PirateShooter_Basic

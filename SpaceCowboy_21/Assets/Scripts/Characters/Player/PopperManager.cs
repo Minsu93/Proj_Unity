@@ -5,12 +5,9 @@ using UnityEngine;
 
 public class PopperManager : MonoBehaviour
 {
-    //웨이브 클리어시 실행
-    [SerializeField] WaveManager waveManager;
-
 
     //발사 사이 간격
-    [SerializeField] GameObject fireworkPrefab;
+    [SerializeField] GameObject popperPrefab;
     [SerializeField] private float gapBetweenOrbs = 3.0f;
     [SerializeField] private float launchHeight = 5.0f;
     [SerializeField] private float launchRadius = 5.0f;
@@ -18,54 +15,43 @@ public class PopperManager : MonoBehaviour
     [SerializeField] private AnimationCurve fireworkCurve;
     [SerializeField] private float launchTimer = 0.5f;
 
-    //생성할 아이템 목록
+
+    //test. 생성될 아이템 목록. 추후에 techDocument 에서 해금된 만큼 리스트에 추가되도록 만들것.
     [SerializeField]
-    GameObject[] waveClearPops;
+    GameObject[] popItems;
 
-    //플레이어 위치
-    //Transform playerTr;
 
-    private void Start()
+    public void CreatePopper(Transform targetTr)
     {
-        if (waveClearPops.Length > 0)
-        {
-            waveManager.WaveClear += CreatePopper;
-        }
+        StartCoroutine(LaunchFireWork(targetTr, popItems)); 
     }
 
-    //오브 교체
-    public void CreatePopper()
+    IEnumerator LaunchFireWork(Transform targetTr, GameObject[] items)
     {
-        StartCoroutine(LaunchFireWork(waveClearPops));
-    }
-
-    //오브 가동
-    IEnumerator LaunchFireWork(GameObject[] items)
-    {
-        List<Vector2> targetPoints = GetEmptySpace(items.Length);
-        Transform playerTr = GameManager.Instance.player;
+        List<Vector2> targetPoints = GetEmptySpace(targetTr,items.Length);
 
         for(int i = 0; i < items.Length; i++)
         {
             // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
-            GameObject firework = GameManager.Instance.poolManager.GetItem(fireworkPrefab);
-            firework.transform.position = playerTr.position;
-            firework.transform.rotation = playerTr.rotation;
-            StartCoroutine(MoveAndExplode(firework, playerTr.position, targetPoints[i], items[i]));
+            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
+            firework.transform.position = targetTr.position;
+            firework.transform.rotation = targetTr.rotation;
+            StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoints[i], items[i]));
 
             // 다음 폭죽 발사까지 딜레이를 줍니다.
             yield return new WaitForSeconds(launchInterval);
         }
+
+        yield return null;
     }
 
 
 
-    //플레이어 윗부분 주변의 포인트 가져옴. 행성이 없는 장소. 
-    List<Vector2> GetEmptySpace(int number)
+    //타겟 윗부분 주변의 포인트 가져옴. 행성이 없는 장소. 
+    List<Vector2> GetEmptySpace(Transform targetTr, int number)
     {
         int maxAttempts = 20;
         List<Vector2> points = new List<Vector2>();
-        Transform playerTr = GameManager.Instance.player;
 
 
         for (int i = 0; i < maxAttempts; i++)
@@ -73,7 +59,7 @@ public class PopperManager : MonoBehaviour
             float angle = Random.Range(0, Mathf.PI * 2); // 0부터 2π 사이의 랜덤한 각도를 생성합니다.
             float distance = Mathf.Sqrt(Random.Range(0, Mathf.Pow(launchRadius, 2))); // 원의 내부에서 랜덤한 거리를 생성합니다. 이때 루트를 씌우는 이유는 원 내부의 각 영역에 동일한 확률로 포인트를 생성하기 위함입니다.
             Vector2 randomPoint = new Vector2(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle)); // 이 각도와 거리를 사용하여 원 내부의 랜덤한 포인트를 계산합니다.
-            randomPoint += (Vector2)playerTr.position + (Vector2)playerTr.up * launchHeight;
+            randomPoint += (Vector2)targetTr.position + (Vector2)targetTr.up * launchHeight;
 
             Collider2D coll = Physics2D.OverlapCircle(randomPoint, 1f, LayerMask.GetMask("Planet"));
             if (coll == null)
@@ -103,7 +89,7 @@ public class PopperManager : MonoBehaviour
                 float angle = Random.Range(0, Mathf.PI * 2);
                 float distance = Mathf.Sqrt(Random.Range(0, Mathf.Pow(1, 2)));
                 Vector2 randomPoint = new Vector2(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle)); // 이 각도와 거리를 사용하여 원 내부의 랜덤한 포인트를 계산합니다.
-                randomPoint += (Vector2)playerTr.position + (Vector2)playerTr.up;
+                randomPoint += (Vector2)targetTr.position + (Vector2)targetTr.up;
                 points.Add(randomPoint);
             }
         }
@@ -125,7 +111,7 @@ public class PopperManager : MonoBehaviour
         }
 
         // 오브 생성.
-        GameObject newOrb = GameManager.Instance.poolManager.GetItem(item);
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(item, 2);
         newOrb.transform.position = targetPos;
         newOrb.transform.rotation = Quaternion.identity;
         firework.SetActive(false);

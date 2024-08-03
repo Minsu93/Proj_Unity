@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.ParticleSystem;
@@ -23,16 +22,15 @@ public class PlayerManager : MonoBehaviour
     Gauge_Weapon gauge_Weapon;
 
     //저장할 플레이어 정보
-    [SerializeField] WeaponData firstWeaponData;
-    [SerializeField] WeaponData secondWeaponData;
-    [SerializeField] WeaponData thirdWeaponData;
-    [SerializeField] WeaponData fourthWeaponData;
-    //[SerializeField] GameObject orbData;
-    //[SerializeField] GameObject throwData;
+    //[SerializeField] WeaponData firstWeaponData;
+    //[SerializeField] WeaponData secondWeaponData;
+    //[SerializeField] WeaponData thirdWeaponData;
+    //[SerializeField] WeaponData fourthWeaponData;
 
     //웨펀 인벤토리
     //public WeaponInventory[] weaponInventory = new WeaponInventory[4];
-    WeaponData[] weaponInventory = new WeaponData[4];
+    //WeaponData[] weaponInventory = new WeaponData[4];
+    //public WeaponData baseWeaponData;
 
     //플레이어 관련 스크립트
     PlayerInput playerInput;
@@ -40,6 +38,7 @@ public class PlayerManager : MonoBehaviour
     //ArtifactPopperSlot playerOrbSlot;
     //ArtifactBombSlot playerThrowSlot;
     PlayerHealth playerHealth;
+    public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
 
 
@@ -52,6 +51,7 @@ public class PlayerManager : MonoBehaviour
         playerBehavior = playerObj.GetComponent<PlayerBehavior>();
         playerHealth = playerObj.GetComponent<PlayerHealth>();
         playerWeapon = playerObj.GetComponent<PlayerWeapon>();
+        playerBuffs = playerObj.GetComponent<PlayerBuffs>();
 
         playerObj.GetComponent<PlayerBehavior>().InitPlayer(this);
 
@@ -62,10 +62,11 @@ public class PlayerManager : MonoBehaviour
         GameManager.Instance.cameraManager.InitCam();
 
         //저장 정보를 불러온다.
-        LoadPlayerInfo();
+        //LoadPlayerInfo();
 
         //플레이어의 기본 무기를 장착시킨다.
-        ChangeWeapon(0);
+        //ChangeWeapon(0);
+        playerWeapon.BackToBaseWeapon();
     }
 
     //플레이어가 사용하는 장비, 유물, 업그레이드 수치 등을 저장한다.
@@ -84,62 +85,66 @@ public class PlayerManager : MonoBehaviour
     //    File.WriteAllText(path, str);
     //}
 
-    public void LoadPlayerInfo()
-    {
-        string path = Path.Combine(Application.dataPath, "Data/PlayerData", "weaponData.json");
-        string loadJson = File.ReadAllText(path);
-        PlayerData pData = JsonUtility.FromJson<PlayerData>(loadJson);
+    //public void LoadPlayerInfo()
+    //{
+    //    string path = Path.Combine(Application.dataPath, "Data/PlayerData", "weaponData.json");
+    //    string loadJson = File.ReadAllText(path);
+    //    PlayerData pData = JsonUtility.FromJson<PlayerData>(loadJson);
 
-        WeaponData first = Resources.Load<WeaponData>("Weapon/" + pData.firstWeaponName);
-        WeaponData second = Resources.Load<WeaponData>("Weapon/" + pData.secondWeaponName);
-        WeaponData third = Resources.Load<WeaponData>("Weapon/" + pData.thirdWeaponName);
-        WeaponData fourth = Resources.Load<WeaponData>("Weapon/" + pData.fourthWeaponName);
+    //    WeaponData first = Resources.Load<WeaponData>("Weapon/" + pData.firstWeaponName);
+    //    WeaponData second = Resources.Load<WeaponData>("Weapon/" + pData.secondWeaponName);
+    //    WeaponData third = Resources.Load<WeaponData>("Weapon/" + pData.thirdWeaponName);
+    //    WeaponData fourth = Resources.Load<WeaponData>("Weapon/" + pData.fourthWeaponName);
 
-        //인벤토리를 지정합니다.
-        if(first != null)
-        {
-            SetInventory(first, 0);
-        }
-        if(second != null)
-        {
-            SetInventory(second, 1);
-        }
-        if(third != null)
-        {
-            SetInventory(third, 2);
-        }
-        if(fourth != null)
-        {
-            SetInventory(fourth, 3);
-        }
-    }
+    //    //인벤토리를 지정합니다.
+    //    if(first != null)
+    //    {
+    //        SetInventory(first, 0);
+    //    }
+    //    if(second != null)
+    //    {
+    //        SetInventory(second, 1);
+    //    }
+    //    if(third != null)
+    //    {
+    //        SetInventory(third, 2);
+    //    }
+    //    if(fourth != null)
+    //    {
+    //        SetInventory(fourth, 3);
+    //    }
+    //}
 
-    void SetInventory(WeaponData weaponData, int index)
-    {
-        weaponInventory[index] = weaponData;
-    }
+    //void SetInventory(WeaponData weaponData, int index)
+    //{
+    //    weaponInventory[index] = weaponData;
+    //}
 
     //BaseWeapon 들로 변경할 때 
-    public void ChangeWeapon(int index)
-    {
-        WeaponData data = weaponInventory[index];
-        //무기 변경
-        playerWeapon.InitializeWeapon(data);
+    //public void ChangeWeapon(int index)
+    //{
+    //    WeaponData data = weaponInventory[index];
+    //    //무기 변경
+    //    playerWeapon.InitializeWeapon(data);
 
-        //UI 전달
-        UpdatePlayerGaugeUI(data);
-
-    }
+    //    //UI 전달
+    //    UpdatePlayerGaugeUI(data);
+    //}
 
     //신규 WeaponData로 변경할 때 
-    public void ChangeWeapon(WeaponData weaponData)
+    public bool ChangeWeapon(WeaponData weaponData)
     {
-        playerWeapon.InitializeWeapon(weaponData);
+        bool canPush = playerWeapon.PushWeapon(weaponData);
         //Ammo 게이지 UI전달
         UpdatePlayerGaugeUI(weaponData);
+        return canPush;
     }
 
-    #region Player관련
+    public bool HealthUp(float amount)
+    {
+        return playerBehavior.healEvent(amount);
+    }
+    #region Player Input 관련
 
     //플레이어 입력 관련 
     public void DisablePlayerInput()
@@ -263,14 +268,14 @@ public class PlayerManager : MonoBehaviour
 
 //저장할 데이터
 
-[Serializable]
-public class PlayerData
-{
-    public string firstWeaponName;
-    public string secondWeaponName;
-    public string thirdWeaponName;
-    public string fourthWeaponName;
-}
+//[Serializable]
+//public class PlayerData
+//{
+//    public string firstWeaponName;
+//    public string secondWeaponName;
+//    public string thirdWeaponName;
+//    public string fourthWeaponName;
+//}
 
 //[Serializable]
 

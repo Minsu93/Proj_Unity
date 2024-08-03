@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthDrop : Collectable
+public class HealthDrop : SelfCollectable
 {
     [SerializeField] float healAmount = 5f;
-    protected override void ConsumeEffect()
+    protected override bool ConsumeEffect()
     {
-        GameManager.Instance.playerManager.playerBehavior.healEvent(healAmount);
+        return GameManager.Instance.playerManager.HealthUp(healAmount);
     }
 
 }

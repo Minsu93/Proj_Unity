@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SpaceCowboy
 {
-    public class PlayerBehavior : MonoBehaviour, IHitable, ITarget, ITeleportable
+    public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportable
     {
         [Header("State")]
         public PlayerState playerState = PlayerState.Idle;
@@ -109,32 +109,13 @@ namespace SpaceCowboy
 
         void Update()
         {
-            //if(_sTime > 0 && playerState != PlayerState.Die)
-            //{
-            //    _sTime -= Time.deltaTime;
-            //    if(_sTime <= 0)
-            //    {
-            //        activate = true;
-            //    }
-            //}
-
             if (!activate) return;
-
 
             //우주에 있는지 체크
             onSpace = CheckOnSpace();
 
             //공중에 있는지 체크
             if (!playerJump.doingDash) CheckOnAir();
-
-            //공중에 오래 있으면 지표면 방향으로 떨어진다. 
-            if (OnAir)
-            {
-                if (airTimer <= onAirTime)
-                {
-                    airTimer += Time.deltaTime;
-                }
-            }
 
             //JumpArrowViewer 업데이트
             playerJump.UpdateJumpVector();
@@ -148,32 +129,37 @@ namespace SpaceCowboy
         }
 
 
-
         private void FixedUpdate()
         {
             if (!activate) return;
 
-            
-            //적AI에서 읽어오는 값
-            playerVelocity = moveDir * currSpeed;
-
             //캐릭터 회전
             if (!playerJump.doingDash) RotateCharacterToGround();
 
-            //실제 움직임 함수
-            MoveUpdate();
-
-            //이동 속도를 컨트롤
-            SpeedControl();
-
-            if(OnAir)
+            //공중에 오래 있으면 지표면 방향으로 떨어진다.
+            if (OnAir)
             {
-                if(airTimer > onAirTime)
+                if (airTimer <= onAirTime)
+                {
+                    airTimer += Time.fixedDeltaTime;
+                }
+                else
                 {
                     MoveUpdateOnAir();
                 }
             }
+            else
+            {
+                //!OnAir
+
+                //실제 움직임 함수
+                MoveUpdate();
+
+                //이동 속도를 컨트롤
+                SpeedControl();
+            }
         }
+
 
         #region RotateCharacterToGround
         void RotateCharacterToGround()
@@ -189,17 +175,17 @@ namespace SpaceCowboy
         void RotateToVector(Vector2 normal, float turnSpeed)
         {
             Vector3 vectorToTarget = normal;
-            int turnspeedMultiplier = 1;
             //normal과 transform.upward 사이의 값 차이가 크면 보정을 가해준다. 
             float rotateAngle = Vector2.Angle(transform.up, normal);
 
-            turnspeedMultiplier = Mathf.Clamp(Mathf.RoundToInt(rotateAngle * 0.1f), 1, 10);
+            int turnspeedMultiplier = Mathf.Clamp(Mathf.RoundToInt(rotateAngle * 0.1f), 1, 10);
 
             Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: vectorToTarget);
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnspeedMultiplier * turnSpeed * Time.deltaTime);
         }
         #endregion
+
 
         #region Jump
 
@@ -229,13 +215,12 @@ namespace SpaceCowboy
                     //점프 중 행성이 바뀌었을 때 
                     if (planetChanged)
                     {
-                        faceRight = Vector2.SignedAngle(transform.up, inputAxis) < 0 ? true : false;
-                        preInputAxis = inputAxis;
+                        ChangeMoveDirection(aimDirection);
                         planetChanged = false;
                     }
 
                     //착지 후 위치 파악
-                    GetClosestPoint();
+                    GetClosestPlanetPoint(transform.position);
 
                 }
                 else
@@ -264,6 +249,7 @@ namespace SpaceCowboy
             return onSpace;
         }
 
+
         public void TrySpeedJump()
         {
             if (!activate) return;
@@ -281,6 +267,7 @@ namespace SpaceCowboy
                 playerState = PlayerState.Jumping;
 
                 playerJump.Jump();
+
             }
 
             //초기화
@@ -291,8 +278,6 @@ namespace SpaceCowboy
             TryJumpEvent();
 
         }
-
-
 
 
         public void LauchPlayer(Vector2 Vec, float force)
@@ -319,13 +304,9 @@ namespace SpaceCowboy
 
         #endregion
 
+
         #region Sliding
 
-        public void ToggleSlide()
-        {
-            if (!slideON) TrySlide();
-            else TryStopSlide();
-        }
         public void TrySlide()
         {
             slideON = true;
@@ -335,49 +316,49 @@ namespace SpaceCowboy
 
             playerState = PlayerState.Sliding;
 
-            targetSpeed = slideSpeed;
+            speedMultiplier = slideSpeed;
+            //targetSpeed = slideSpeed;
             
             slidingEffect.Play();
             slidingEffect.transform.localScale = new Vector3(faceRight? 1 : -1 , 1, 1);
 
-            MoveOnLand();
-        }
-
-        public void TryStopSlide()
-        {
-            slideON = false;
-            StopSlide();
         }
 
         public void StopSlide()
         {
             if(playerState != PlayerState.Sliding) { return; }
 
-            //state = PlayerState.Idle;
+            slideON = false;
+
             playerState = PlayerState.Running;
             targetSpeed = 0;
-            
+
+            speedMultiplier = 1;
+
             slidingEffect.Stop();
         }
 
         #endregion
 
-        #region Movement
 
-        //void InputReset()
-        //{
-        //    //시간이 지나면 
-        //    //preInputAxis = Vector2.zero;
-        //}
+        #region Movement
 
         public void TryMove(Vector2 inputAxisRaw)
         {
             if (!activate) return;
-            if (playerState == PlayerState.Sliding) return;
             if (playerState == PlayerState.Jumping) return;
 
+            //input 방향이 바뀌면 방향 계산을 새로 한다.
             this.inputAxis = inputAxisRaw;
+            if (inputAxis.x != preInputAxis.x || inputAxis.y != preInputAxis.y)
+            {
+                preInputAxis = inputAxis;
 
+                ChangeMoveDirection(inputAxis);
+                GetClosestPlanetPoint(transform.position);
+            }
+
+            //목표 속도 설정
             targetSpeed = moveSpeed;
 
             //상태를 달리기로 변경(Idle인 경우에만)
@@ -387,40 +368,41 @@ namespace SpaceCowboy
                 playerState = PlayerState.Running;
 
             }
-
-            //지상에 있을 동안의 움직임 
-            if (!OnAir)
-            {
-                MoveOnLand();
-            }
-
         }
 
+        //입력이 완전 없으면
         public void TryStop()
         {
-            if (playerState == PlayerState.Sliding) return;
+            if (playerState == PlayerState.Sliding) StopSlide();
+
+            preInputAxis = Vector2.zero;
+            ChangeMoveDirection(Vector2.zero);
 
             targetSpeed = 0;
         }
 
-
-        void MoveOnLand()
+        public void TryPause()
         {
-            //조작 방향 바뀜
-            if (inputAxis.x != preInputAxis.x || inputAxis.y != preInputAxis.y)
-            {
-                preInputAxis = inputAxis;
-
-                faceRight = Vector2.SignedAngle(transform.up, inputAxis) < 0 ? true : false;
-                // 방향이 바뀔 때, 그 방향의 가장 가까운 포인트를 가져온다.
-                GetClosestPoint();
-
-            }
+            if (playerState == PlayerState.Sliding) playerState = PlayerState.Running;
+            targetSpeed = 0;
         }
 
-        //이동을 시작할 때 실행
-        private void GetClosestPoint()
+
+        void ChangeMoveDirection(Vector2 inputDirection)
         {
+            if (inputDirection == Vector2.zero) return;
+
+            //바라봐야 하는 방향이 어디인가.
+            Vector2 upVec = ((Vector2)transform.position - characterGravity.nearestPoint).normalized;
+
+            faceRight = Vector2.SignedAngle(upVec, inputDirection) < 0 ? true : false;
+
+
+        }
+
+        void GetClosestPlanetPoint(Vector2 pos)
+        {
+            // 가장 가까운 포인트를 가져온다.
             currentEdgePointIndex = characterGravity.nearestPlanet.GetClosestIndex(transform.position);
         }
 
@@ -431,17 +413,12 @@ namespace SpaceCowboy
             {
                 planetPoints = characterGravity.nearestPlanet.GetPoints(0.51f);
 
-                //무기 변경 테스트
-                //Planet p = characterGravity.nearestPlanet;
-                //GameManager.Instance.playerManager.ChangeWeapon(p.planetID);
             }
-
 
         }
 
         void SpeedControl()
         {
-
             if(currSpeed < targetSpeed)
             {
                 currSpeed += acceleration;
@@ -462,9 +439,11 @@ namespace SpaceCowboy
 
                 playerState = PlayerState.Idle;
 
-                preInputAxis = Vector2.zero;
-
             }
+
+            //적AI에서 읽어오는 값
+            playerVelocity = moveDir * currSpeed;
+
         }
 
 
@@ -473,10 +452,11 @@ namespace SpaceCowboy
             if (currSpeed < acceleration)
                 return;
 
-            if (playerState == PlayerState.Running || playerState == PlayerState.JumpReady || playerState == PlayerState.Sliding)
+            if (playerState == PlayerState.Running || playerState == PlayerState.Sliding)
             {
                 //움직임
                 int faceInt = faceRight ? 1 : -1;
+                int targetIndex;
                 Vector2 targetPointPos;
                 Vector2 moveVector;
                 float moveDist;
@@ -485,8 +465,9 @@ namespace SpaceCowboy
                 //목표로 할 포인트를 구한다.
                 do
                 {
-                    targetPointPos = planetPoints[currentEdgePointIndex];
-
+                    targetIndex = (currentEdgePointIndex + faceInt + (coll.points.Length - 1)) % ((coll.points.Length - 1));
+                    targetPointPos = planetPoints[targetIndex];
+                    
                     moveVector = targetPointPos - rb.position;
                     moveDist = moveVector.magnitude;
 
@@ -519,6 +500,7 @@ namespace SpaceCowboy
 
 
         #endregion
+
 
         #region KnockBack
 
@@ -607,11 +589,12 @@ namespace SpaceCowboy
 
         #endregion
 
+
         #region Damage and Die
         public void DamageEvent(float damage, Vector2 hitPoint)
         {
             if (!activate) return;
-
+            if (playerJump.doingDash) return;
             //데미지를 적용
             if (health.AnyDamage(damage))
             {
@@ -645,9 +628,9 @@ namespace SpaceCowboy
 
         }
 
-        public void healEvent(float amount)
+        public bool healEvent(float amount)
         {
-            health.HealthUp(amount);
+            return health.HealthUp(amount);
         }
 
         public void DeadEvent()
@@ -686,6 +669,8 @@ namespace SpaceCowboy
         public void PlayerIgnoreProjectile(bool ignore)
         {
             Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("EnemyProj"), ignore);
+            //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("StageObject"), ignore);
+
         }
 
         Coroutine unHitRoutine;
@@ -725,6 +710,7 @@ namespace SpaceCowboy
 
         #endregion
 
+
         #region Shoot & Throw
 
 
@@ -739,19 +725,12 @@ namespace SpaceCowboy
             playerWeapon.ShootOffProcess();
         }
 
-        public void TryChangeWeaponSkin(GunType gunType)
+        public void TryChangeWeaponSkin(WeaponData weaponData)
         {
-           // playerWeapon.ChangeWeapon(weaponData);
-            playerView.SetSkin(gunType);
+            playerView.SetSkin(weaponData);
         }
 
-        //public void TryChangeWeapon(WeaponData data)
-        //{
-        //    //PlayerView와 PlayerWeapon 무기 변경
-        //    playerWeapon.ChangeWeapon(data);
-        //    playerView.SetSkin(data.GunType);
-        //}
-
+       
         //public void GunRecoil(float amount, Vector2 dir)
         //{
         //    if (!OnAir) return;
@@ -764,6 +743,7 @@ namespace SpaceCowboy
         //}
         
         #endregion
+
 
         #region Events
 
@@ -807,11 +787,9 @@ namespace SpaceCowboy
     {
         Idle,
         Running,
-        JumpReady,
         Jumping, 
         Die,
         Sliding
-        //ChangeState     //state가 바뀔 필요가 있을때마다 실행시키는것? 
     }
 }
 

@@ -8,7 +8,7 @@ public abstract class InteractableOBJ : MonoBehaviour
     public bool interactOn { get; set; }
 
     [SerializeField] private GameObject outlineObject;
-    //protected SpriteRenderer spr;
+    protected SpriteRenderer spr;
     protected CircleCollider2D circleColl;
 
     //Material sprMat;
@@ -16,7 +16,7 @@ public abstract class InteractableOBJ : MonoBehaviour
 
     protected virtual void Awake()
     {
-        //spr = GetComponentInChildren<SpriteRenderer>();
+        spr = GetComponentInChildren<SpriteRenderer>();
         //circleColl = GetComponent<CircleCollider2D>();
         //sprMat = spr.material;
     }

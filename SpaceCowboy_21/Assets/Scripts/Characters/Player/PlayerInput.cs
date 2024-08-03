@@ -36,7 +36,15 @@ public class PlayerInput : MonoBehaviour
             return;
 
         if (inputDisabled)
+        {
+            if (moveON)
+            {
+                moveON = false;
+                playerBehavior.TryPause();
+            }
             return;
+        }
+        
 
         // Jump
         if (Input.GetButtonDown(JumpButton))
@@ -45,16 +53,6 @@ public class PlayerInput : MonoBehaviour
         }
 
         // Shoot
-        //if (Input.GetButtonDown(ShootButton))
-        //{
-        //    playerBehavior.StartShoot();
-        //}
-
-        //if (Input.GetButtonUp(ShootButton))
-        //{
-        //    playerBehavior.StopShoot();
-        //}
-
         if (!shootDisabled && Input.GetButton(ShootButton))
         {
             if (!shootInputOn) shootInputOn = true;
@@ -75,30 +73,8 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetButtonUp(SlideButton))
         {
-            playerBehavior.TryStopSlide();
+            playerBehavior.StopSlide();
         }
-
-        //투척 위성 사용
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    playerBehavior.TryThrowSatellite();
-        //}
-
-        ////weaponWheel 사용
-        //if (Input.GetKeyDown(KeyCode.E))
-        //{
-        //    GameManager.Instance.playerManager.OpenWeaponWheel();
-        //}
-        //if (Input.GetKeyUp(KeyCode.E))
-        //{
-        //    GameManager.Instance.playerManager.CloseWeaponWheel();
-
-        //}
-        //if (Input.GetMouseButtonDown(1))    //우클릭 시 취소
-        //{
-        //    GameManager.Instance.playerManager.CloseWeaponWheel();
-        //}
-
 
 
         //Interact
@@ -107,24 +83,13 @@ public class PlayerInput : MonoBehaviour
             GameManager.Instance.playerManager.InteractSomething();
         }
 
+
+        //움직임
+        MoveUpdate();
     }
 
-    private void FixedUpdate()
+    private void MoveUpdate()
     {
-        if (playerBehavior == null)
-            return;
-
-        if (inputDisabled)
-        {
-            if (moveON)
-            {
-                moveON = false;
-                playerBehavior.TryStop();
-            }
-            return;
-        }
-        //Vector2 moveRaw = Vector2.zero;
-
         moveDir.x = Input.GetAxisRaw(HorizontalAxis);
         moveDir.y = Input.GetAxisRaw(VerticalAxis);
         
@@ -141,5 +106,6 @@ public class PlayerInput : MonoBehaviour
                 playerBehavior.TryStop();
             }
         }
+
     }
 }

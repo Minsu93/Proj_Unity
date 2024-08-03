@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6672809801243708868}
   - component: {fileID: -5107147801187730982}
-  - component: {fileID: 7188975242274261650}
+  - component: {fileID: 6200486473210288244}
   - component: {fileID: 3140605196254949026}
   - component: {fileID: 2911168840577561464}
   m_Layer: 9
@@ -58,8 +58,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!61 &7188975242274261650
-BoxCollider2D:
+--- !u!58 &6200486473210288244
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -72,18 +72,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.5}
-  m_EdgeRadius: 0
+  m_Radius: 0.3
 --- !u!114 &3140605196254949026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,10 +90,6 @@ MonoBehaviour:
   nonHitEffect: {fileID: 7196136449052729651, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
   ViewObj: {fileID: 8991112628740824846}
   trail: {fileID: 5543431350520239108}
-  screenBorderLimit: 5
-  penetrateCount: 0
-  reflectCount: 0
-  guideAmount: 0
 --- !u!114 &2911168840577561464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,9 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f2ca91f47a98a4b97b14d870e8a84a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateBySpeed: 0
-  guideRadius: 4
-  rotationSpeed: 1
 --- !u!1 &6535184387503664083
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,6 +49,7 @@ MonoBehaviour:
   secondWeaponData: {fileID: 0}
   thirdWeaponData: {fileID: 0}
   fourthWeaponData: {fileID: 0}
+  baseWeaponData: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,6 +108,8 @@ MonoBehaviour:
   - {fileID: 7424398827703927764, guid: 0a0d036cddeec7947a938b7fbd9a4f06, type: 3}
   - {fileID: 7424398827703927764, guid: ffd0b535168a07e49b32ca3ad3da9471, type: 3}
   - {fileID: 6499634569363800450, guid: f67be9e5c8e4a3143bf98a6378c2aac4, type: 3}
+  - {fileID: 7424398827703927764, guid: 472b274baa81c84419f4b686e6398ae6, type: 3}
+  - {fileID: 8417428132932555912, guid: 7ee1ea38dbefffb4e9bb5d1207d3c67e, type: 3}
 --- !u!1 &529613330717527071
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,6 +143,8 @@ Transform:
   - {fileID: 529613331651955586}
   - {fileID: 529613330383855575}
   - {fileID: 529613329984358755}
+  - {fileID: 105173996593381382}
+  - {fileID: 3844769580556792900}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -168,6 +173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 529613330943597975}
   - component: {fileID: 529613330943597972}
+  - component: {fileID: 4217476810000004336}
   m_Layer: 0
   m_Name: PoolManager
   m_TagString: Untagged
@@ -202,27 +208,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617310a3137fe0743bcebc07d4eb5e2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerProjectiles:
-  - {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
-  - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
-  - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
-  - {fileID: 589853217845385795, guid: 519957f155df7074a9c04b08ad82c52e, type: 3}
-  enemyProjectiles:
-  - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
-  - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
-  - {fileID: 6292677011125795810, guid: aae67d0f8a7aef54da700465bb0510ce, type: 3}
-  - {fileID: 6292677011125795810, guid: bb1295ee9c1b11f40a05cc2de1658711, type: 3}
-  - {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
-  dropItems:
-  - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
-  - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
-  - {fileID: 7158106260931719753, guid: 496205cd47966d14a9c203f2ecd9c2b0, type: 3}
-  - {fileID: 5318680110006584562, guid: cdd9d836f6db1e74dbfb4e8b3649acc5, type: 3}
-  enemies:
-  - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
-  - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
-  - {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
-  - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
+  poolLists:
+  - name: PlayerProjectile
+    pool:
+    - {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
+    - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
+    - {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+    - {fileID: 2641103605245567174, guid: 7e447c85009070b40be110ffb6df1629, type: 3}
+    - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
+  - name: EnemyProjectile
+    pool:
+    - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
+    - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
+    - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
+    - {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
+  - name: DropItems
+    pool:
+    - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
+    - {fileID: 4446144700685440698, guid: 02c3da36b4de1d44babb36c4fc92fc9c, type: 3}
+    - {fileID: 4446144700685440698, guid: c45295ed7bd14c74eb81114932178842, type: 3}
+    - {fileID: 4446144700685440698, guid: 92cc2f43ce4757b4ca8b8a75eb067d8a, type: 3}
+    - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+    - {fileID: 7158106260931719753, guid: 496205cd47966d14a9c203f2ecd9c2b0, type: 3}
+  - name: Enemies
+    pool:
+    - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
+    - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
+    - {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
+    - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
+  - name: StageObjects
+    pool:
+    - {fileID: 1023907566023020907, guid: e7700e4c4582d8f4c8208de2ddbe9b62, type: 3}
+--- !u!114 &4217476810000004336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529613330943597974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab634f7d5908b44e93e283a598ab6b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popperPrefab: {fileID: 0}
+  gapBetweenOrbs: 4
+  launchHeight: 7
+  launchRadius: 7
+  launchInterval: 0.6
+  fireworkCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  launchTimer: 1
+  popItems:
+  - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
 --- !u!1 &529613331651955589
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,3 +334,126 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2e1df651eb5f4134282aa86a0300318f, type: 3}
   sfxVolume: 0.5
   channels: 10
+--- !u!1 &1938671263256324434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3844769580556792900}
+  - component: {fileID: 7388029682735944180}
+  m_Layer: 0
+  m_Name: MonstertDictionary
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3844769580556792900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938671263256324434}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 529613330717527068}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7388029682735944180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938671263256324434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff96c1333bcf1ff41ad310ba6ab538de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterList:
+  - name: ground_shooter
+    monsterPrefab: {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
+  - name: orbit_cannon
+    monsterPrefab: {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
+  - name: ground_rocketboy
+    monsterPrefab: {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
+  - name: air_shooter
+    monsterPrefab: {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
+--- !u!1 &2172668778671552628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 105173996593381382}
+  - component: {fileID: 3475625241433614323}
+  - component: {fileID: 2028510174}
+  - component: {fileID: 660483831756739733}
+  m_Layer: 0
+  m_Name: TechDocument
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &105173996593381382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172668778671552628}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 529613330717527068}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3475625241433614323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172668778671552628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de34eaaddb4e104999b64b67d2492db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2028510174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172668778671552628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e701d12b87f1d3e468a03b078fb2a26b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &660483831756739733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172668778671552628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49f69134738d1ca439be2b87fe771407, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

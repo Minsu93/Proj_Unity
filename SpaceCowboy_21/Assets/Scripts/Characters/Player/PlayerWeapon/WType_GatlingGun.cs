@@ -12,9 +12,9 @@ public class WType_GatlingGun : WeaponType
     float baseSpeed;
     float interval;
 
-    public override void Initialize(WeaponData weaponData)
+    public override void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
-        base.Initialize(weaponData);
+        base.Initialize(weaponData, gunTipLocalPos);
         
         baseSpeed = weaponStats.shootInterval;
     }

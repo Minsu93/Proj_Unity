@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 90001
+  m_EditorClassIdentifier: 
+  itemID: 20001
+  itemName: ChargingPirateGun
+  gunStyle: 1
+  icon: {fileID: 0}
+  projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+  damage: 10
+  shootInterval: 0.1
+  burstInterval: 0
+  numberOfProjectile: 1
+  numberOfBurst: 1
+  speed: 15
+  lifeTime: 0
+  range: 10
+  showRange: 1
+  maxAmmo: 5
+  projectileSpread: 30
+  randomSpreadAngle: 0
+  shootSFX: {fileID: 0}
+  weaponPrefab: {fileID: 3288597760306613731, guid: ad4528897afe85d408db3963e4c35e55, type: 3}
+  weaponEnableSprite: {fileID: 0}
+  weaponDisableSprite: {fileID: 0}

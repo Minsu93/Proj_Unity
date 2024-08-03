@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Networking.Types;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace SpaceCowboy
 {
@@ -29,26 +31,23 @@ namespace SpaceCowboy
         MeshRenderer _renderer;
         MaterialPropertyBlock block;
 
-
         Skeleton skeleton;
         SkeletonData skeletonData;
-
         Skin curSkin;
-
         Bone bone;
         Slot slot;
         PointAttachment curPoint;
         Vector2 pointVec;
 
-
-        //임시
-        public GunType gunType;
+        PlayerGunAttacher playerGunAttacher;
 
         private void Awake()
         {
             _renderer = GetComponent<MeshRenderer>();
             block = new MaterialPropertyBlock();
             _renderer.SetPropertyBlock(block);
+            
+            playerGunAttacher = GetComponent<PlayerGunAttacher>();
 
             skeleton = skeletonAnimation.skeleton;
             skeletonData = skeleton.Data;
@@ -145,7 +144,8 @@ namespace SpaceCowboy
         {
             //자세 초기화
             skeletonAnimation.AnimationState.ClearTrack(1);
-            skeleton.SetToSetupPose();
+            //skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton);
+            //skeleton.SetToSetupPose();
 
         }
         public void PlayShoot()
@@ -228,38 +228,79 @@ namespace SpaceCowboy
         }
 
 
-        public void SetSkin(GunType gunType)
+        public void SetSkin(WeaponData data)
         {
-            curSkin = skeletonData.FindSkin(gunType.skinName);
+            string skinName;
+            string slotName;
+            switch (data.GunStyle)
+            {
+                case GunStyle.OneHand:
+                    skinName = "1h_base";
+                    slotName = "gun_1h";
+                    break;
+
+                case GunStyle.TwoHand:
+                default:
+                    skinName = "2h_base";
+                    slotName = "gun_2h";
+                    break;
+
+            }
+            //스킨을 교체한다
+            curSkin = skeletonData.FindSkin(skinName);
+
+            //총을 교체한다
+            // SlotData slotData = skeletonData.FindSlot(slotName);
+            //int slotIndex = slotData.Index;
+            //curSkin.SetAttachment(slotIndex, slotName, gunAttachment);
+            
             skeleton.SetSkin(curSkin);
+
             skeletonAnimation.Skeleton.SetSlotsToSetupPose();
             skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton);
 
-            GetPoint(gunType);
+            playerGunAttacher.ApplyWeapon(slotName, data.ItemID.ToString());
+
+
+            //총구 위치를 가져온다.
+            GetPoint(data.GunStyle);
         }
 
-        void GetPoint(GunType gunType)
+        void GetPoint(GunStyle style)
         {
-            slot = skeleton.FindSlot(gunType.slotName);
-            int slotIndex = skeletonData.FindSlot(gunType.slotName).Index;
-            curPoint = curSkin.GetAttachment(slotIndex, gunType.attachmentName) as PointAttachment;
-            bone = skeleton.FindBone(gunType.boneName);
+            string boneName;
+            string slotName;
+            string attachmentName;
+
+            switch (style)
+            {
+                case GunStyle.OneHand:
+                    boneName = "gun_1h";
+                    slotName = "guntip_1h";
+                    attachmentName = "guntip_1h";
+                    break;
+
+                case GunStyle.TwoHand:
+                default:
+                    boneName = "gun_2h";
+                    slotName = "guntip_2h";
+                    attachmentName = "guntip_2h";
+                    break;
+
+            }
+            slot = skeleton.FindSlot(slotName);
+            int slotIndex = skeletonData.FindSlot(slotName).Index;
+            curPoint = curSkin.GetAttachment(slotIndex, attachmentName) as PointAttachment;
+            bone = skeleton.FindBone(boneName);
         }
 
 
-    }
-
-    [System.Serializable]
-    public class GunType
-    {
-        public string skinName;
-
-        public string boneName;
-
-        public string slotName;
-
-        public string attachmentName;
 
     }
+
+
+    public enum GunStyle { OneHand, TwoHand };
+
+
 }
 

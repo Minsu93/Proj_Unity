@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4083433014974948542
 Transform:
   m_ObjectHideFlags: 0
@@ -448,6 +448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7027b70d49cfac4b83a9f3e011d86e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planetID: 0
   activate: 0
   planetRadius: 8
   gravityRadius: 14
@@ -460,7 +461,6 @@ MonoBehaviour:
     bridgeDistance: 0
   worldPoints: []
   pointsNormal: []
-  gravityViewer: {fileID: 0}
   polyCollider: {fileID: 5905974645841349009}
 --- !u!114 &4045485038870477491
 MonoBehaviour:
@@ -475,7 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 5820961588108856068}
-  maxLinkedDistance: 15
+  maxLinkedDistance: 12
 --- !u!1 &5820961588375558302
 GameObject:
   m_ObjectHideFlags: 0

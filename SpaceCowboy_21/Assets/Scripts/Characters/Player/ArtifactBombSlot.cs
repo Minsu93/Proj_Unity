@@ -38,7 +38,7 @@ public class ArtifactBombSlot : MonoBehaviour
         Vector2 targetPoint = pos + (dir * throwDistance);
 
         // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
-        GameObject firework = GameManager.Instance.poolManager.GetItem(throwCapsulePrefab);
+        GameObject firework = GameManager.Instance.poolManager.GetPoolObj(throwCapsulePrefab, 2);
         firework.transform.position = pos;
         firework.transform.rotation = Quaternion.identity;
         StartCoroutine(MoveAndExplode(firework, targetPoint));
@@ -61,7 +61,7 @@ public class ArtifactBombSlot : MonoBehaviour
         }
 
         // 오브 생성.
-        GameObject newOrb = GameManager.Instance.poolManager.GetItem(usingBomb);
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(usingBomb, 2);
         newOrb.transform.position = targetPosition;
         newOrb.transform.rotation = Quaternion.identity;
         firework.SetActive(false);

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4790077076289910550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 411133283468321}
+  m_Layer: 0
+  m_Name: GunTip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &411133283468321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4790077076289910550}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1092712151017725871}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7166197176741019562
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,7 +41,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1092712151017725871}
   - component: {fileID: 4165559506245515679}
-  - component: {fileID: -7002963981091207421}
   m_Layer: 0
   m_Name: ChargeLaser
   m_TagString: Untagged
@@ -29,7 +59,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 411133283468321}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45,44 +76,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9b3c60813f2504497a83366fd91651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemID: 0
+  baseStats:
+    damage: 0
+    speed: 0
+    shootInterval: 0
   weaponStats:
     damage: 0
     speed: 0
-    lifeTime: 0
-    range: 0
     shootInterval: 0
-    projectileSpread: 0
-    randomSpreadAngle: 0
-    numberOfProjectile: 0
-    projPenetration: 0
-    projReflection: 0
-    projGuide: 0
-    maxAmmo: 0
+  gunTipObj: {fileID: 4790077076289910550}
   maxCharge: 2
   chargeSpeed: 2
   hitEffect: {fileID: 7424398827703927764, guid: 643ad9326050de0449bfcb494361b746, type: 3}
   nonHitEffect: {fileID: 7424398827703927764, guid: ffd0b535168a07e49b32ca3ad3da9471, type: 3}
   laserMat: {fileID: 2100000, guid: 4075a9a73799fe24b9692a0f551e2735, type: 2}
   laserColor: {r: 0.793472, g: 0.14287403, b: 0.8113208, a: 1}
---- !u!114 &-7002963981091207421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7166197176741019562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 703b1c4a511a3fe4882b74f439d8bf1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cubeList: []
-  combinationsA:
-  - A
-  - B
-  combinationsB:
-  - A
-  - C
-  combinationsC:
-  - B
-  - C

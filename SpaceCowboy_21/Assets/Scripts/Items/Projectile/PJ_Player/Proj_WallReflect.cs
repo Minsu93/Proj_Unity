@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Proj_WallReflect : Projectile
+public class Proj_WallReflect : Projectile_Player
 {
     //벽(이라 인식하는) 에 부딪히면 튕겨다닌다. 반사와 다른 점은 행성 뿐만 아니라 화면의 경계에서도 튕겨난다는 것. 
     //적에게 직접 피해를 주기보다는 화면에 계속 유지되면서 지속 피해를 준다. 
@@ -12,22 +12,12 @@ public class Proj_WallReflect : Projectile
     Vector2 curVelocity;
     Vector2 lastPos;
 
-    public override void Init(float damage, float speed, float lifeTime, float distance, int penetrate, int reflect, int guide)
+    public override void Init(float damage, float speed, float lifeTime, float distance)
     {
-        this.damage = damage;
-        this.speed = speed;
-        this.lifeTime = lifeTime;
-        this.distance = distance;
-        this.penetrateCount = penetrate;
-        this.reflectCount = reflect;
-        this.guideAmount = guide;
+        base.Init(damage, speed, lifeTime, distance);
 
-        if (lifeTime > 0) { lifeLimitProj = true; }
-        else { lifeLimitProj = false; }
-
-        ResetProjectile();
         lastPos = transform.position;
-        projectileMovement.StartMovement(speed);
+
     }
 
 

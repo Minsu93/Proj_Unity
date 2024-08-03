@@ -23,7 +23,7 @@ public class AllyAction_Cannon : AllyAction
         //Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
 
         //ÃÑ¾Ë »ý¼º
-        GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
+        GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
         projectile.transform.position = pos;
         projectile.transform.rotation = rot;
         //projectile.GetComponent<Projectile_Player>().Init(cannonDamage, cannonSpeed, cannonLifeTime,cannonPenetrateCount, cannonReflectCount,cannonGuideAmount);

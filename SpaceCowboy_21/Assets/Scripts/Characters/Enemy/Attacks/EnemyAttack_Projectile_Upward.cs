@@ -9,7 +9,7 @@ public class EnemyAttack_Projectile_Upward : EnemyAttack_Projectile
     {
         enemyAction.StartAimStart();
         //다른 행동 정지.
-        enemyAction.EnemyPause(attackCoolTime);
+        //enemyAction.EnemyPause(attackCoolTime);
 
         yield return new WaitForSeconds(preAttackDelay);
 

@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile_GuideMissile : Projectile , ITarget, IHitable
+public class Projectile_GuideMissile : Projectile_Enemy , ITarget, IHitable
 {
     [Header("Explode")]
     public float explodeRadius = 3.0f;
     public float knockBackAmount = 5.0f;
     public LayerMask targetLayer;
-
+    public ParticleSystem explodeEffect;
+    [SerializeField] ParticleSystem trailParticle;
 
     Health health;
     //ProjMov_Guide guideMovement;
@@ -19,8 +20,8 @@ public class Projectile_GuideMissile : Projectile , ITarget, IHitable
         base.Awake();
 
         health = GetComponent<Health>();
-        //guideMovement = GetComponent<ProjMov_Guide>();
     }
+
 
 
     public void DamageEvent(float damage, Vector2 hitPoint)
@@ -40,7 +41,8 @@ public class Projectile_GuideMissile : Projectile , ITarget, IHitable
         }
     }
 
-    protected override void HitEvent(ITarget target, IHitable hitable)
+
+    protected override void HitEvent(ITarget target, IEnemyHitable eHitable)
     {
         //폭발 추가
         BoomEvent();
@@ -73,16 +75,20 @@ public class Projectile_GuideMissile : Projectile , ITarget, IHitable
             Debug.Log("폭발에 맞았다.");
             for(int i = 0; i< colls.Length; i++)
             {
-                if (colls[i].transform.TryGetComponent<IHitable>(out IHitable hitable))
+                if (colls[i].transform.TryGetComponent<IEnemyHitable>(out IEnemyHitable eHitable))
                 {
-                    hitable.DamageEvent(damage, transform.position);
-                    hitable.KnockBackEvent(transform.position, knockBackAmount);
+                    eHitable.DamageEvent(damage, transform.position);
+                    eHitable.KnockBackEvent(transform.position, knockBackAmount);
                 }
             }
         }
 
         //폭발 이펙트 생성.
-        ShowHitEffect(nonHitEffect);
+        //ShowHitEffect(nonHitEffect);
+        ShowHitEffect(explodeEffect);
+        //트레일 emit 중지
+        if (trail != null)
+            trailParticle.Stop();
     }
 
     //적의 미사일이 플레이어의 총알에 맞았을 때, ProjMove_Guide에 전달하여 넉백을 한다.(현재는 제외함)

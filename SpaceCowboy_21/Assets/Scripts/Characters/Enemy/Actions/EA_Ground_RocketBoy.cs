@@ -16,12 +16,12 @@ public class EA_Ground_RocketBoy : EA_Ground
                 break;
 
             case EnemyState.Chase:
-                if (brain.inAttackRange)
+                if (brain.inAttackRange && brain.isVisible)
                     enemyState = EnemyState.Attack;
                 break;
 
             case EnemyState.Attack:
-                if (!brain.inAttackRange)
+                if (!brain.inAttackRange || !brain.isVisible)
                     enemyState = EnemyState.Chase;
 
                 break;

@@ -84,13 +84,19 @@ public class PlayerHealth : MonoBehaviour
             if (currShield >= maxShield) currShield = maxShield;
         }
     }
-    public void HealthUp(float amount)
+    public bool HealthUp(float amount)
     {
         if (currHealth == 0)
-            return;
+            return false;
 
-        currHealth += amount;
-        if(currHealth >= maxHealth) currHealth = maxHealth;
+        if (currHealth < maxHealth)
+        {
+            currHealth += amount;
+            if (currHealth >= maxHealth) currHealth = maxHealth;
+            return true;
+        }
+        else return false;
+
     }
 
     public bool IsDead()

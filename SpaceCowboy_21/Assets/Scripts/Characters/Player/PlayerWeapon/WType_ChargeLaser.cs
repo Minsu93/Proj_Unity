@@ -12,9 +12,9 @@ public class WType_ChargeLaser : WType_Charge
     [SerializeField] Color laserColor;
     List<LineRenderer> lasers = new List<LineRenderer>();
     
-    public override void Initialize(WeaponData weaponData)
+    public override void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
-        base.Initialize(weaponData);
+        base.Initialize(weaponData, gunTipLocalPos);
 
         for(int i = 0; i < weaponData.NumberOfProjectile; i++)
         {
@@ -42,18 +42,18 @@ public class WType_ChargeLaser : WType_Charge
 
     protected override void ChargeShoot(Vector2 pos, Vector3 dir, float power)
     {
-        float totalSpread = weaponStats.projectileSpread * (weaponStats.numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
+        float totalSpread = projectileSpread * (numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
 
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, -(totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
        
 
-        for (int i = 0; i < weaponStats.numberOfProjectile; i++)
+        for (int i = 0; i < numberOfProjectile; i++)
         {
-            float dist = weaponStats.range;
-            Vector2 vec = Quaternion.Euler(0, 0, weaponStats.projectileSpread * (i)) * rotatedVectorToTarget;
+            float dist = range;
+            Vector2 vec = Quaternion.Euler(0, 0, projectileSpread * (i)) * rotatedVectorToTarget;
 
             //장애물 충돌 감지
-            RaycastHit2D hit = Physics2D.Raycast(pos, vec, weaponStats.range, LayerMask.GetMask("Planet"));
+            RaycastHit2D hit = Physics2D.Raycast(pos, vec, range, LayerMask.GetMask("Planet"));
             if(hit.collider != null)
             {
                 dist = hit.distance;

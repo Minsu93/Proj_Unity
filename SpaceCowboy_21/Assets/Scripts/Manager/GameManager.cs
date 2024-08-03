@@ -31,12 +31,17 @@ public class GameManager : MonoBehaviour
 
     //매니저들
     public PoolManager poolManager { get; private set; }
+    public PopperManager popperManager { get; private set; }
     public AudioManager audioManager { get; private set; }
     public ParticleManager particleManager { get; private set; }
     public PlayerManager playerManager { get; private set; }
 
     public CameraManager cameraManager { get; set; }
     public MaterialManager materialManager { get; set; }
+
+    public TechDocument techDocument { get; private set; }
+
+    public MonsterDictonary monsterDictonary { get; private set; }
 
 
     [Space]
@@ -62,9 +67,12 @@ public class GameManager : MonoBehaviour
         }
 
         poolManager = GetComponentInChildren<PoolManager>();
+        popperManager = GetComponentInChildren<PopperManager>();
         audioManager = GetComponentInChildren<AudioManager>();
         particleManager = GetComponentInChildren<ParticleManager>();
         playerManager = GetComponentInChildren<PlayerManager>();
+        techDocument = GetComponentInChildren<TechDocument>();
+        monsterDictonary = GetComponentInChildren<MonsterDictonary>();
 
     }
 

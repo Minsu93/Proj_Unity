@@ -37,6 +37,9 @@ public class EnemyAttack_Projectile : EnemyAttack
 
         _attackCool = true;
         StartCoroutine(AttackCoolRoutine());
+
+        //enemyAction.EnemyPause(attackCoolTime);
+        enemyAction.AfterAttack();
         StartCoroutine(AttackRoutine());     
     }
     
@@ -46,7 +49,6 @@ public class EnemyAttack_Projectile : EnemyAttack
     {
         enemyAction.StartAimStart();
         //다른 행동 정지.
-        enemyAction.EnemyPause(attackCoolTime);
 
         yield return new WaitForSeconds(preAttackDelay);
 
@@ -82,7 +84,7 @@ public class EnemyAttack_Projectile : EnemyAttack
             Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, totalSpread * (i));
 
             //총알 생성
-            GameObject proj = GameManager.Instance.poolManager.GetEnemyProj(projectile);
+            GameObject proj = GameManager.Instance.poolManager.GetPoolObj(projectile, 1);
             proj.transform.position = pos;
             proj.transform.rotation = tempRot * randomRotation;
             proj.GetComponent<Projectile>().Init(damage, speed, lifeTime, range);

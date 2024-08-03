@@ -12,9 +12,6 @@ public class Projectile : MonoBehaviour
     protected float lifeTime;
     protected float distance;
     protected float speed;
-    protected int penetrateCount;  //관통 횟수
-    protected int reflectCount;    //반사 횟수
-    protected int guideAmount;     //유도 정도. 
 
     float disableDelayTime = 0.5f;    //부서지기 전 딜레이
     float delayTimer;
@@ -36,7 +33,8 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         projectileMovement = GetComponent<ProjectileMovement>();
-        coll = GetComponentsInChildren<Collider2D>()[0];
+        //coll = GetComponentsInChildren<Collider2D>()[0];
+        coll = GetComponent<Collider2D>();
 
     }
 
@@ -70,43 +68,14 @@ public class Projectile : MonoBehaviour
         projectileMovement.StartMovement(speed);
     }
 
-    public virtual void Init(float damage, float speed, float lifeTime, float distance, int penetrate, int reflect, int guide)
-    {
-        return;
-    }
-
 
 
 
     #region Hit Event
 
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.TryGetComponent<ITarget>(out ITarget target))
-        {
-            if (collision.TryGetComponent<IHitable>(out IHitable hitable))
-            {
-                HitEvent(target, hitable);
-            }
-            else
-            {
-                NonHitEvent(target);
-            }
-
-            WeaponImpactEvent();
-        }
-    }
 
 
-    protected virtual void HitEvent(ITarget target,IHitable hitable)
-    {
 
-        hitable.DamageEvent(damage, transform.position);
-
-        ShowHitEffect(hitEffect);
-
-        AfterHitEvent();
-    }
 
     protected virtual void NonHitEvent(ITarget target)
     {
@@ -137,7 +106,7 @@ public class Projectile : MonoBehaviour
         //HitFeedBack();
     }
 
-    void WeaponImpactEvent()
+    protected void WeaponImpactEvent()
     {
         if (weaponImpactDel != null) weaponImpactDel();
     }
@@ -156,15 +125,15 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        
+        //총알 수명 체크
         if (lifeLimitProj)
         {
-            //총알에 수명이 있을 때 
             LifeTimeCheck();
         }
+
+        //총알 거리 체크
         else
         {
-            //총알에 거리가 있을 때 거리체크
 
             float dist = Vector2.Distance(startPos, (Vector2)transform.position);
             DistanceCheck(dist);          

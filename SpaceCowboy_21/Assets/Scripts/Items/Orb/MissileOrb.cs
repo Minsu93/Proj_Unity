@@ -24,7 +24,7 @@ public class MissileOrb : Orb
     [SerializeField] float damage;
     [SerializeField] float speed;
     [SerializeField] float lifeTime;
-    [SerializeField] float distance;
+    [SerializeField] float range;
     [SerializeField] int penetrateCount;
     [SerializeField] int reflectCount;
     [SerializeField] int guideAmount;
@@ -85,9 +85,9 @@ public class MissileOrb : Orb
     void Shoot(Vector3 pos, Quaternion rot)
     {
         //ÃÑ¾Ë »ý¼º
-        GameObject projectile = GameManager.Instance.poolManager.Get(projectilePrefab);
+        GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
         projectile.transform.position = pos;
         projectile.transform.rotation = rot;
-        projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, distance, penetrateCount, reflectCount, guideAmount);
+        projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, range);
     }
 }

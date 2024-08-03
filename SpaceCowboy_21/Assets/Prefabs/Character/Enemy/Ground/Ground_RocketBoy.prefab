@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doAttackRangeCheck: 1
-  doVisionCheck: 0
+  doVisionCheck: 1
   doPlanetCheck: 1
   timeBetweenChecks: 0.5
   attackRange: 20
@@ -181,10 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05fbc033a3b6df247a9135d93adce312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCoolTime: 3
-  preAttackDelay: 0.1
+  attackCoolTime: 5
+  preAttackDelay: 1
   afterAttackDelay: 0.1
-  damage: 3
+  damage: 5
   speed: 5
   lifeTime: 15
   range: 0
@@ -257,21 +257,14 @@ MonoBehaviour:
   dropTable:
   - dropChance: 0.2
     item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
-    dropMin: 4
+    dropMin: 2
     dropMax: 5
-  - dropChance: 0.05
-    item: {fileID: 4714240275919088406, guid: f000d4a1436ab1844b34d0818c049ba6, type: 3}
-    dropMin: 1
-    dropMax: 1
-  ammoDropTable:
+  itemTables:
+  - itemID: 20003
     dropChance: 0
-    item: {fileID: 0}
-    dropMin: 0
-    dropMax: 0
+  itemDropChance: 0.2
   resourceLaunchPowerMin: 3
   resourceLaunchPowerMax: 4
-  ammoLaunchPowerMin: 5
-  ammoLaunchPowerMax: 6
 --- !u!1 &1739137396960974443
 GameObject:
   m_ObjectHideFlags: 0

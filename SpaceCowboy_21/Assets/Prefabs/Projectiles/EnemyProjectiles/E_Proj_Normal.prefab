@@ -4899,7 +4899,7 @@ GameObject:
   - component: {fileID: 6672809801243708868}
   - component: {fileID: -5107147801187730982}
   - component: {fileID: 5885827282753015796}
-  - component: {fileID: 5525266720489527263}
+  - component: {fileID: 3981932810688238564}
   - component: {fileID: 8683079615262098441}
   m_Layer: 10
   m_Name: E_Proj_Normal
@@ -4961,7 +4961,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.15
---- !u!114 &5525266720489527263
+--- !u!114 &3981932810688238564
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4970,7 +4970,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6292677011125795810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 393b8b0de368f3e4ea11a2d769659013, type: 3}
+  m_Script: {fileID: 11500000, guid: ed6e6b88ad8e3174997908ca395117cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 7424398827703927764, guid: 643ad9326050de0449bfcb494361b746, type: 3}

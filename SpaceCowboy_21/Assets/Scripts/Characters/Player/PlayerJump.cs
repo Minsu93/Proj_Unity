@@ -25,7 +25,6 @@ public class PlayerJump : MonoBehaviour
     int dashCount = 0;
     Vector2 jumpVector;     //실제 점프 방향벡터
     //ctor2 preVelocity;    //KnockBack 속도 계산용도.
-    
 
     //점프 Trail 관련
     public TrailRenderer sJumpTrail;    //슈퍼점프 트레일
@@ -49,6 +48,7 @@ public class PlayerJump : MonoBehaviour
     {
         GameManager.Instance.PlayerTeleportStart += ClearTrail;
         GameManager.Instance.PlayerTeleportEnd += ShowTrail;
+        playerBehavior.PlayerHitEvent += ResetDash;
     }
 
 
@@ -151,9 +151,10 @@ public class PlayerJump : MonoBehaviour
     {
         //대시 시작
         float timer = 0;
+        bool attackActivate = true;
         playerBehavior.PlayerInputControl(false);
         playerBehavior.PlayerIgnoreProjectile(true);
-        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet");
+        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject");
 
         while(doingDash && timer < dashTime)
         {
@@ -172,6 +173,7 @@ public class PlayerJump : MonoBehaviour
                     //적 데미지 & 넉백
                     if(hit.TryGetComponent<IHitable>(out IHitable hitable))
                     {
+                        attackActivate = false;
                         hitable.DamageEvent(dashDamage, transform.position);
                         hitable.KnockBackEvent(transform.position, dashKnockBackPower);
 
@@ -191,11 +193,13 @@ public class PlayerJump : MonoBehaviour
                     }
                 }
                 //대시 초기화
-                //ResetDash();
+                ResetDash();
                 
                 break;
             }
             yield return null;
+
+            if (!attackActivate) yield break;
         }
 
         //대시 종료

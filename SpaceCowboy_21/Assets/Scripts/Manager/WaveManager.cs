@@ -10,19 +10,22 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
-    public bool activate;
     public string stageName = "stage0";
-
+    //public GameObject portal;
+    [SerializeField] private StagePortal portal;
+    
     [Header("Wave Property")]
     [SerializeField] float waveClearBonusSubtractTime = 5.0f;
-    [SerializeField]
-    [Range(0f,1f)] float waveClearRatio;
+    //[SerializeField]
+    //[Range(0f,1f)] float waveClearRatio;
     float nextWaveTime; //웨이브 종료시까지 남은 시간
-    float bossTime; //보스 스폰까지 남은 시간
+    //float bossTime; //보스 스폰까지 남은 시간
     float gameTime; //게임 시간
 
     Stage stage;
     int stageIndex;
+    bool activatedWave;  //웨이브 활성화 여부
+    bool FinalWave = false;  //보스 웨이브 시작했나요?
     Coroutine spawnRoutine;
 
     //웨이브
@@ -55,19 +58,16 @@ public class WaveManager : MonoBehaviour
     [Header("UI")]
     //스크립트.
     Dictionary<string, GameObject> monsterDict;
+    WaveObjectRespawner objectRespawner;
 
     [Header("Wave UI")]
     //Wave UI관련
     [SerializeField] Image waveProgressImg;
-    [SerializeField] TextMeshProUGUI bossTimeLeftText;
-    [SerializeField] TextMeshProUGUI totalEnemyKilledCountText;
-    [SerializeField] TextMeshProUGUI regularSpawnEnemyCountText;
-    [SerializeField] MinimapManager minimapManager;
-
+    [SerializeField] TextMeshProUGUI currentWaveText;
+    [SerializeField] TextMeshProUGUI totalWaveText;
+    [SerializeField] ArrowIndicatorManager minimapManager;
     [SerializeField] GameObject MonsterIcon;
-    [SerializeField] GameObject BonusIcon;
     [SerializeField] GameObject BossIcon;
-    //List<GameObject> iconList = new List<GameObject>();
 
     //WaveUI관련 변수
     [SerializeField] RectTransform iconParent;
@@ -82,7 +82,7 @@ public class WaveManager : MonoBehaviour
     //test(임시)
     //public float timeSpeed;
 
-    public event System.Action StageClear;
+    public event System.Action MonsterDisappearEvent;
     public event System.Action WaveClear;
 
 
@@ -94,7 +94,9 @@ public class WaveManager : MonoBehaviour
     private void Start()
     {
         //Dictionary 불러오기
-        monsterDict = GetComponent<MonsterDictonary>().monsterDictionary;
+        //monsterDict = GetComponent<MonsterDictonary>().monsterDictionary;
+        monsterDict = GameManager.Instance.monsterDictonary.monsDictionary;
+        objectRespawner = GetComponent<WaveObjectRespawner>();  
 
         //CreateWaveJson();
         LoadWaveFromJson(stageName);
@@ -103,53 +105,28 @@ public class WaveManager : MonoBehaviour
     }
 
 
-    void CreateWaveJson()
-    {
-        //json테스트용
+    //void CreateWaveJson()
+    //{
+    //    //json테스트용
 
-        string path = Path.Combine(Application.dataPath + "/Data/", stageName + ".json");
+    //    string path = Path.Combine(Application.dataPath + "/Data/", stageName + ".json");
 
-        Enemy enemy_A = new Enemy();
-        enemy_A.name = "cannon";
-        enemy_A.delay = 0;
+    //    Enemy enemy_A = new Enemy();
+    //    enemy_A.name = "cannon";
+    //    enemy_A.delay = 0;
 
-        Enemy enemy_B = new Enemy();
-        enemy_B.name = "shooter";
-        enemy_B.delay = 0;
+    //    Enemy enemy_B = new Enemy();
+    //    enemy_B.name = "shooter";
+    //    enemy_B.delay = 0;
 
-        Spawn spawn_A = new Spawn();
-        spawn_A.enemy = enemy_A;
-        spawn_A.spawnCount = 5;
-        spawn_A.delayToNextWave = 5.0f;
-
-        Spawn spawn_B = new Spawn();
-        spawn_B.enemy = enemy_B;
-        spawn_B.spawnCount = 8;
-        spawn_B.delayToNextWave = 5.0f;
-
-        Wave wave_A = new Wave();
-        wave_A.waveIndex = 0;
-        wave_A.spawns.Add(spawn_A);
-        wave_A.spawns.Add(spawn_B);
-        wave_A.totalTime = 60f;
-
-        Wave wave_B = new Wave();
-        wave_B.waveIndex = 0;
-        wave_B.spawns.Add(spawn_A);
-        wave_B.spawns.Add(spawn_B);
-        wave_B.totalTime = 120f;
-
-        Stage stage = new Stage();
-        stage.waves.Add(wave_A);
-        stage.waves.Add(wave_B);
-
-        string str = JsonUtility.ToJson(stage, true);
-        File.WriteAllText(path, str);
-    }
+    //    string str = JsonUtility.ToJson(stage, true);
+    //    File.WriteAllText(path, str);
+    //}
     
     void LoadWaveFromJson(string filename)
     {
-        string path = Path.Combine(Application.dataPath + "/Data/", filename + ".json");
+        string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");
+        Debug.Log(path);
         string loadJson = File.ReadAllText(path);
         stage = JsonUtility.FromJson<Stage>(loadJson);
     }
@@ -170,86 +147,58 @@ public class WaveManager : MonoBehaviour
     void ResetWaveManager()
     {
         gameTime = 0;
-        nextWaveTime = 0;
+        nextWaveTime = stage.startTime;
+        iconSpawnTime = stage.startTime;
         stageIndex = 0;
         spawnRoutine = null;
-        bossTime = float.MaxValue;
+
         StopAllCoroutines();
     }
 
     public void WaveStart()
     {
         ResetWaveManager();
-        bossTime = stage.bossSpawnTime;
-        
+
         //소환될 적의 수 미리 계산
-        for(int i = 0; i < stage.waves.Count; i++)
+        for (int i = 0; i < stage.waves.Count; i++)
         {
-            for(int j = 0; j < stage.waves[i].spawns.Count; j++)
+            for (int j = 0; j < stage.waves[i].spawns.Count; j++)
             {
                 enemyRegularSpawned += stage.waves[i].spawns[j].spawnCount;
             }
         }
-        //UI에 적용
-        regularSpawnEnemyCountText.text = enemyRegularSpawned.ToString();
+        ////UI에 적용
+        currentWaveText.text = "0";
+        totalWaveText.text = stage.waves.Count.ToString();
 
-        //보스 아이콘 추가
-        GameObject bossobj = Instantiate(BossIcon, iconParent.transform);
-        RectTransform bossRect = bossobj.GetComponent<RectTransform>();
-        IconPairs.Add(bossRect, bossTime);
+        //포탈 초기화
+        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
 
-        activate = true;
+        activatedWave = true;
         GetStagePlanets();
     }
 
-
     private void Update()
     {
-        if (!activate) return;
+        if (!activatedWave) return;
 
         gameTime += Time.deltaTime;
-
-        //보스 스폰까지 남은 시간 UI 표시
-        //waveProgressImg.fillAmount = bossTimeLeft / stage.bossSpawnTime;
-        bossTimeLeftText.text = Mathf.FloorToInt(bossTime - gameTime).ToString() + "s";
 
         //UI아이콘 관련 
         IconSpawner();
         IconMover();
 
-        //보스 웨이브
-        if (bossTime <= gameTime)
-        {
-            Debug.Log("보스 웨이브 시작!");
-            activate = false;
-            MonsterDisapper();
-            SpawnWave(stage.bossWave);
-            //bossTimeLeft = float.MaxValue;
-            return;
-        }
-
         //다음 웨이브로
         if (nextWaveTime <= gameTime)
         {
             MoveToNextWave();
-            //waveTimeLeft = float.MaxValue;
-            return;
         }
 
+        PlayerPlanetUpdate();
 
-        //캐릭터 행성 업데이트? (몬스터 스폰 장소)
-        if (activate)
-        {
-            if (timer < updateCycle)
-            {
-                timer += Time.deltaTime;
-            }
-            else
-            {
-                timer = 0;
-                playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
-            }
-        }
+        //Stage 오브젝트 리스폰
+        objectRespawner.UpdateSpawner();
+
     }
 
     void IconSpawner()
@@ -269,13 +218,11 @@ public class WaveManager : MonoBehaviour
             }
             else
             {
-                //현재 시간에 아이콘 생성
-                GameObject obj = Instantiate(BonusIcon, iconParent.transform);
-                RectTransform rect = obj.GetComponent<RectTransform>();
-                IconPairs.Add(rect, iconSpawnTime);
-                //다음 시간 측정
-                iconSpawnTime += stage.bonusWave.totalTime;
-                spawnIndex++;
+                //보스 아이콘 추가
+                GameObject bossobj = Instantiate(BossIcon, iconParent.transform);
+                RectTransform bossRect = bossobj.GetComponent<RectTransform>();
+                IconPairs.Add(bossRect, iconSpawnTime);
+                iconSpawnTime = float.MaxValue; //더이상 스폰하지 못하도록
             }
         }
 
@@ -299,7 +246,21 @@ public class WaveManager : MonoBehaviour
 
     }
 
-    //몬스터가 죽을 때마다 실행. 
+    //캐릭터 행성 업데이트? (몬스터 스폰 장소)
+    void PlayerPlanetUpdate()
+    {
+        if (timer < updateCycle)
+        {
+            timer += Time.deltaTime;
+        }
+        else
+        {
+            timer = 0;
+            playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
+        }
+    }
+
+    //몬스터가 죽을 때마다 실행. (현재는 실행x -> 시간제한을 두고 적을 처리하게 함.)
     public void CountEnemyLeft(GameObject obj)
     {
         if(spawnedEnemyList.Contains(obj))
@@ -307,50 +268,78 @@ public class WaveManager : MonoBehaviour
             spawnedEnemyList.Remove(obj);
             enemyLeftInWave--;
             enemyTotalKilled++;
-            bossTime -= waveClearBonusSubtractTime;
 
             //UI 조절
-            //leftEnemyCountText.text = enemyLeft.ToString();
-            totalEnemyKilledCountText.text = enemyTotalKilled.ToString();
             minimapManager.RemoveMonster(obj);
 
-            //적들이 비율밑으로 감소하면 웨이브 조기 클리어
-            if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
+            ////적들이 비율밑으로 감소하면 웨이브 조기 클리어
+            //if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
+            //{
+            //    MoveToNextWave();
+            //}
+
+            //카운트
+            int index = stageIndex - 1;
+            float clearTime = gameTime - pastWaveTime;
+            float timeLeft = nextWaveTime - gameTime;
+            if(enemyLeftInWave <= 0)
             {
-                gameTime = nextWaveTime;
-                //MoveToNextWave();
+                Debug.Log("스테이지 " + index + "클리어타임 : " + clearTime + " , 잔여시간 : " + timeLeft);
+                if (FinalWave)
+                {
+                    StageClear();
+                }
+                else
+                {
+                    //남은 시간을 4초로 감축.
+                    //MoveToNextWave();
+                    if (nextWaveTime - gameTime > 4.0f)
+                    {
+                        gameTime = nextWaveTime - 4.0f;
+                    }
+                }
+                
             }
         }
-
     }
 
-    //보스가 죽었을 때 실행
-    public void BossKill()
-    {
+    float pastWaveTime = 0f;
 
-    }
-    void MoveToNextWave()
+    //웨이브(일반, 보스)를 무사히 스폰하면 true 반환, 스폰할 웨이브가 없음면 false 반환.
+    private void MoveToNextWave()
     {
-        Wave wave;
-        //보너스 웨이브 생성
-        if (stageIndex > stage.waves.Count - 1)
+        if(stageIndex < stage.waves.Count)
         {
-            Debug.Log("보너스 웨이브 시작");
-            wave = stage.bonusWave;
+            //기본 웨이브
+            Wave wave = stage.waves[stageIndex];
             SpawnWave(wave);
+            pastWaveTime = nextWaveTime;
+            gameTime = nextWaveTime;
+            //Debug.Log("웨이브 " + stageIndex  + "시작시간 : "  + gameTime);
+            stageIndex++;
+            nextWaveTime += wave.totalTime;
         }
         else
         {
-            Debug.Log("기본 웨이브 시작");
-            wave = stage.waves[stageIndex];
-            SpawnWave(wave);
+            if (activatedWave)
+            {
+                activatedWave = false;
+                FinalWave = true;
+            }
+
+            //보스 웨이브
+            if (stage.hasBossWave)
+            {
+                SpawnWave(stage.bossWave);
+            }
+
         }
 
-        if(stageIndex > 0)
-            WaveClearEvent();
+        //UI변경
+        //Debug.Log("웨이브 : " + stageIndex + " 스폰 완료");
+        currentWaveText.text = stageIndex.ToString();
+        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
 
-        stageIndex++;
-        nextWaveTime += wave.totalTime;
     }
 
     //웨이브 클리어 시 실행
@@ -359,12 +348,24 @@ public class WaveManager : MonoBehaviour
         if (WaveClear != null) WaveClear();
     }
 
+    //이 스테이지 클리어 시 실행. 보스를 잡는 경우, 혹은 (보스가 없는 경우에는) 맵에 있는 모든 몬스터를 제거했을 때 실행.
+    void StageClear()
+    {
+        MonsterDisapper();
+
+        Debug.Log("스테이지 클리어");
+        //포탈 생성. 포탈에 어떤 씬으로 이동할지 적혀있음. 
+        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
+        portal.ActivatePortal();
+    }
+
     #region Spawns
 
     //소환된 몬스터들을 돌려보낸다. 
     void MonsterDisapper()
     {
-        if (StageClear != null) StageClear();
+        Debug.Log("몬스터 제거");
+        if (MonsterDisappearEvent != null) MonsterDisappearEvent();
 
         //UI 조절
         spawnedEnemyList.Clear();
@@ -387,15 +388,10 @@ public class WaveManager : MonoBehaviour
         enemyLeftInWave = enemySpawnedInWave;
         //leftEnemyCountText.text = enemyLeft.ToString();
 
-        //UI를 업데이트 합니다.
-        //preWaveTime = nextWaveTime;
-        //waveIndexText.text = wave.waveIndex.ToString();
 
         //웨이브를 스폰합니다. 
         if (spawnRoutine != null) StopCoroutine(spawnRoutine);
         spawnRoutine = StartCoroutine(SpawnInOrder(wave.spawns));
-
-
     }
 
 
@@ -424,7 +420,7 @@ public class WaveManager : MonoBehaviour
             Vector2 safePoint;
             if (GetSafePointFromOutsideScreen(out safePoint))
             {
-                GameObject prefab = GameManager.Instance.poolManager.GetEnemy(enemyPrefab);
+                GameObject prefab = GameManager.Instance.poolManager.GetPoolObj(enemyPrefab,3);
                 prefab.transform.position = safePoint;
                 prefab.transform.rotation = Quaternion.identity;
                 EnemyAction act = prefab.GetComponent<EnemyAction>();
@@ -462,7 +458,7 @@ public class WaveManager : MonoBehaviour
     }
 
 
-    bool GetSafePointFromOutsideScreen(out Vector2 safePoint)
+    public bool GetSafePointFromOutsideScreen(out Vector2 safePoint)
     {
         //스크린 > 월드 좌표 측정. z = 10 은 카메라와의 거리.
         Vector3 screenSizeMin = new Vector3(0, 0, 10);
@@ -682,9 +678,9 @@ public class Wave
 [Serializable]
 public class Stage
 {
+    public float startTime; //게임 시작 ~ 몬스터 등장까지 대기시간
+    public bool hasBossWave;
     public List<Wave> waves = new List<Wave>();
-    public Wave bonusWave = new Wave();
     public Wave bossWave = new Wave();
-    public float bossSpawnTime;
 }
 

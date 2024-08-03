@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class ResourceDrop : AutoCollectable
 {
-
+    [SerializeField] ParticleSystem particle;
     protected override void ConsumeEffect()
     {
         GameManager.Instance.materialManager.AddMoney("gold", amount);
+    }
+
+    public void InitializeResource(float min, float max)
+    {
+        var mainModule = particle.main;
+        mainModule.startSize = new ParticleSystem.MinMaxCurve(min, max);
     }
 }
