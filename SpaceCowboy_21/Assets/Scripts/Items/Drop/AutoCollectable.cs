@@ -91,10 +91,11 @@ public abstract class AutoCollectable : Collectable
     {
         if (collision.CompareTag("Player"))
         {
+            ConsumeEvent();
             GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
             gameObject.SetActive(false);
         }
     }
 
-    protected abstract void ConsumeEffect();
+    protected abstract void ConsumeEvent();
 }

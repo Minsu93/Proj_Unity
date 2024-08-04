@@ -5,7 +5,7 @@ using UnityEngine;
 public class ResourceDrop : AutoCollectable
 {
     [SerializeField] ParticleSystem particle;
-    protected override void ConsumeEffect()
+    protected override void ConsumeEvent()
     {
         GameManager.Instance.materialManager.AddMoney("gold", amount);
     }

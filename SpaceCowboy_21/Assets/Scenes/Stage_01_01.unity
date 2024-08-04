@@ -475,43 +475,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f16b5ff75ee000847bb1aa0ec61ae362, type: 3}
---- !u!1 &85427161 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6693378624175202360, guid: 4912b07f77983254da39a8b7ece5116b, type: 3}
-  m_PrefabInstance: {fileID: 639470969}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &85427162 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6693378624175202361, guid: 4912b07f77983254da39a8b7ece5116b, type: 3}
   m_PrefabInstance: {fileID: 639470969}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 85427161}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc492f8158078454c81a0d5467942a43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!50 &85427166
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 85427161}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!1001 &99220935
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11997,14 +11971,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: WarpPortal
       objectReference: {fileID: 0}
-    - target: {fileID: 6693378624175202360, guid: 4912b07f77983254da39a8b7ece5116b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6693378624175202361, guid: 4912b07f77983254da39a8b7ece5116b, type: 3}
-      propertyPath: sceneName
-      value: Stage_01_02
-      objectReference: {fileID: 0}
     - target: {fileID: 6693378624175202364, guid: 4912b07f77983254da39a8b7ece5116b, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -16661,54 +16627,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 1}
---- !u!1 &1139248638
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1139248639}
-  - component: {fileID: 1139248640}
-  m_Layer: 0
-  m_Name: MaterialManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1139248639
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139248638}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1353278008}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1139248640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139248638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee7ca2401c01194981eb87011c73799, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  goldStr: gold
-  maxGold: 100000
-  starDustStr: starDust
-  maxStarDust: 1000
 --- !u!60 &1149760865 stripped
 PolygonCollider2D:
   m_CorrespondingSourceObject: {fileID: 9050133561539302921, guid: 74d9aa8b6fb37304aae77ea43f2131e7, type: 3}
@@ -17584,6 +17502,10 @@ PrefabInstance:
     - target: {fileID: 529613330717527068, guid: 863bf447858199047bff6115ddba168f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 529613330717527069, guid: 863bf447858199047bff6115ddba168f, type: 3}
+      propertyPath: playBGM
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 529613330717527071, guid: 863bf447858199047bff6115ddba168f, type: 3}
       propertyPath: m_Name
@@ -19094,7 +19016,6 @@ Transform:
   - {fileID: 244953156}
   - {fileID: 1940747514}
   - {fileID: 1005760865}
-  - {fileID: 1139248639}
   - {fileID: 1910210894}
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -27950,7 +27871,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1353278008}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

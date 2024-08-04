@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class StagePortal : MonoBehaviour
 {
+    [SerializeField] StageState stageState = StageState.Lobby;
+    //[SerializeField] bool autoActivate = false;
     [SerializeField] string sceneName;
     [SerializeField] private GameObject collObject;
     [SerializeField] private GameObject stageUI;
@@ -13,7 +15,13 @@ public class StagePortal : MonoBehaviour
 
     private void OnEnable()
     {
-        collObject.SetActive(false);
+        if (stageState == StageState.Lobby)
+        {   
+            //임시로, 시작하자마자 포탈 활성화
+            ActivatePortal();
+        }
+        else
+            collObject.SetActive(false);
     }
 
     //포털의 UI를 리프레쉬한다
@@ -31,6 +39,12 @@ public class StagePortal : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameManager.Instance.Loadscene(sceneName);
+        if (collision.CompareTag("Player"))
+        {
+            GameManager.Instance.LoadSceneByStageState(sceneName,stageState);
+
+        }
     }
 }
+public enum StageState { Lobby, Stage, BossLevel }
+

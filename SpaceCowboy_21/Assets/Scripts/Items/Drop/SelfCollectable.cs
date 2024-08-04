@@ -8,7 +8,7 @@ public abstract class SelfCollectable : Collectable
     {
         if (collision.CompareTag("Player"))
         {
-            if (ConsumeEffect())
+            if (ConsumeEvent())
             {
                 GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
                 gameObject.SetActive(false);
@@ -16,5 +16,5 @@ public abstract class SelfCollectable : Collectable
         }
     }
 
-    protected abstract bool ConsumeEffect();
+    protected abstract bool ConsumeEvent();
 }

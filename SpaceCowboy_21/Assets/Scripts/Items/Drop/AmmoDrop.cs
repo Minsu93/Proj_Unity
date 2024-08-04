@@ -6,7 +6,7 @@ public class AmmoDrop : AutoCollectable
 {
     [SerializeField] WeaponData weaponData;
 
-    protected override void ConsumeEffect()
+    protected override void ConsumeEvent()
     {
         //GameManager.Instance.playerManager.CollectWeaponEnergy(weaponData, amount);
     }

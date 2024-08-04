@@ -35,14 +35,15 @@ public class GameManager : MonoBehaviour
     public AudioManager audioManager { get; private set; }
     public ParticleManager particleManager { get; private set; }
     public PlayerManager playerManager { get; private set; }
-
     public CameraManager cameraManager { get; set; }
     public MaterialManager materialManager { get; set; }
-
     public TechDocument techDocument { get; private set; }
-
     public MonsterDictonary monsterDictonary { get; private set; }
 
+    //UI
+    [SerializeField] GameObject stageUI;
+    Transform stageStartUi;
+    Transform stageEndUi;
 
     [Space]
     public bool playBGM;
@@ -73,6 +74,14 @@ public class GameManager : MonoBehaviour
         playerManager = GetComponentInChildren<PlayerManager>();
         techDocument = GetComponentInChildren<TechDocument>();
         monsterDictonary = GetComponentInChildren<MonsterDictonary>();
+        materialManager= GetComponentInChildren<MaterialManager>();
+
+        GameObject ui = Instantiate(stageUI, this.transform);
+        stageStartUi = ui.transform.Find("StageStartUI");
+        stageEndUi = ui.transform.Find("StageEndUI");
+        stageStartUi.gameObject.SetActive(false);
+        stageEndUi.gameObject.SetActive(false);
+
 
     }
 
@@ -146,17 +155,25 @@ public class GameManager : MonoBehaviour
 
 
     //씬 로드
-    public void Loadscene(string sceneName)
-    {
-        //if(player != null)
-        //    playerManager.SavePlayerInfo();
-        if(materialManager!= null)
-            materialManager.SaveMoney();
+    //public void Loadscene(string sceneName)
+    //{
+    //    //if(player != null)
+    //    //    playerManager.SavePlayerInfo();
+    //    if(materialManager!= null)
+    //        materialManager.SaveMoney();
 
-        StartCoroutine(LoadSceneRoutine(sceneName));
+    //    Debug.Log("씬 불러오기 시작");
+
+    //    StartCoroutine(LoadSceneRoutine(sceneName));
+    //}
+
+    public void LoadSceneByStageState(string stageName, StageState stageState)
+    {
+        BeforeLoadEvent(stageState);
+        StartCoroutine(LoadSceneRoutine(stageName, stageState));
     }
 
-    IEnumerator LoadSceneRoutine(string sceneName)
+    IEnumerator LoadSceneRoutine(string sceneName, StageState stageState)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
@@ -164,11 +181,64 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
+        Debug.Log("씬 불러오기 완료");
+        AfterLoadEvent(stageState);
+    }
 
-        
+    IEnumerator BeforeLoadEvent(StageState stageState)
+    {
+        yield return null;
+        switch (stageState)
+        {
+            case StageState.Lobby:
+                //로비 화면 -> 스테이지
+                break;
+            case StageState.Stage:
+                //스테이지 -> 스테이지
+                materialManager.SaveMoney();
+                break;
+            case StageState.BossLevel:
+                //보스 레벨 -> 로비
+                materialManager.ResetMoney();
+                break;
+        }
+    }
+    IEnumerator AfterLoadEvent(StageState stageState)
+    {
+        yield return null;
+        switch (stageState)
+        {
+            case StageState.Lobby:
+                //로비 화면 -> 스테이지
+                StartCoroutine(ShowStageStartUI(3f, 5f));
+                break;
+            case StageState.Stage:
+                //스테이지 -> 스테이지
+                break;
+            case StageState.BossLevel:
+                //보스 레벨 -> 로비
+                break;
+        }
+    }
+
+    IEnumerator ShowStageStartUI(float startDelay, float endDelay)
+    {
+        yield return new WaitForSeconds(startDelay);
+        stageStartUi.gameObject.SetActive(true);
+        yield return new WaitForSeconds(endDelay);
+        stageStartUi.gameObject.SetActive(false);
+
+    }
+
+    IEnumerator ShowStageEndUI(float startDelay, float endDelay)
+    {
+        yield return new WaitForSeconds(startDelay);
+        stageEndUi.gameObject.SetActive(true);
+        yield return new WaitForSeconds(endDelay);
+        stageEndUi.gameObject.SetActive(false);
+
     }
 
 
 
-  
 }

@@ -45,11 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
-  firstWeaponData: {fileID: 0}
-  secondWeaponData: {fileID: 0}
-  thirdWeaponData: {fileID: 0}
-  fourthWeaponData: {fileID: 0}
-  baseWeaponData: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +140,7 @@ Transform:
   - {fileID: 529613329984358755}
   - {fileID: 105173996593381382}
   - {fileID: 3844769580556792900}
+  - {fileID: 1025595428065617024}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -457,3 +453,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f69134738d1ca439be2b87fe771407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8087919561416258188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1025595428065617024}
+  - component: {fileID: 433393150009324567}
+  m_Layer: 0
+  m_Name: MaterialManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1025595428065617024
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8087919561416258188}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 529613330717527068}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &433393150009324567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8087919561416258188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee7ca2401c01194981eb87011c73799, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goldStr: gold
+  maxGold: 100000
+  goldUI: {fileID: 1330024214267977046, guid: 65adcb1dda71102469e277164cb1d5c5, type: 3}

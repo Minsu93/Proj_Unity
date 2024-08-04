@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MaterialManager : MonoBehaviour
@@ -7,14 +8,17 @@ public class MaterialManager : MonoBehaviour
     public int gold { get; private set; }
     [SerializeField] string goldStr = "gold";
     [SerializeField] int maxGold = 100000;
-    public int starDust { get; private set; }
-    [SerializeField] string starDustStr = "starDust";
-    [SerializeField] int maxStarDust = 1000;
+    TextMeshProUGUI goldText;
+    [SerializeField] GameObject goldUI;
+    //public int starDust { get; private set; }
+    //[SerializeField] string starDustStr = "starDust";
+    //[SerializeField] int maxStarDust = 1000;
 
     private void Awake()
     {
-        GameManager.Instance.materialManager = this;
-
+        //GameManager.Instance.materialManager = this;
+        GameObject goldCanvas = Instantiate(goldUI,this.transform);
+        goldText = goldCanvas.transform.Find("GoldUI/GoldText").GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -27,14 +31,16 @@ public class MaterialManager : MonoBehaviour
     {
         if(str == goldStr)
         {
+            //Debug.Log("Get Gold");
             gold += amount;
             gold = Mathf.Clamp(gold, 0, maxGold);
+            goldText.text = gold.ToString();
         }
-        else if (str == starDustStr)
-        {
-            starDust += amount;
-            starDust = Mathf.Clamp(starDust, 0, maxStarDust);
-        }
+        //else if (str == starDustStr)
+        //{
+        //    starDust += amount;
+        //    starDust = Mathf.Clamp(starDust, 0, maxStarDust);
+        //}
     }
 
     //자원 소모
@@ -46,18 +52,19 @@ public class MaterialManager : MonoBehaviour
             else
             {
                 gold -= amount;
+                goldText.text = gold.ToString();
                 return true;
             }
         }
-        else if (str == starDustStr)
-        {
-            if (amount > starDust) return false;
-            else
-            {
-                starDust -= amount;
-                return true;
-            }
-        }
+        //else if (str == starDustStr)
+        //{
+        //    if (amount > starDust) return false;
+        //    else
+        //    {
+        //        starDust -= amount;
+        //        return true;
+        //    }
+        //}
         else return false;
        
     }
@@ -68,14 +75,22 @@ public class MaterialManager : MonoBehaviour
     public void SaveMoney()
     {
         PlayerPrefs.SetInt(goldStr, gold);
-        PlayerPrefs.SetInt(starDustStr, starDust);  
+        //PlayerPrefs.SetInt(starDustStr, starDust);  
     }
 
     //저장한 재화를 불러온다.
     void LoadMoney()
     {
         PlayerPrefs.GetInt(goldStr, gold);
-        PlayerPrefs.GetInt (starDustStr, starDust);
+        //PlayerPrefs.GetInt (starDustStr, starDust);
+        goldText.text = gold.ToString();
+
+    }
+
+    public void ResetMoney()
+    {
+        PlayerPrefs.SetInt(goldStr, 0);
+
     }
 }
 
