@@ -1,18 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public abstract class GoldObject : InteractableOBJ
 {
     [SerializeField] int price;
-    [SerializeField] protected GameObject collObj;
+    [SerializeField] protected TextMeshProUGUI goldText;
+    [SerializeField] protected Transform goldTransform;
+    [SerializeField] protected GameObject triggerObj;
+    [SerializeField] protected Collider2D kickColl;
 
-
+    protected override void Awake()
+    {
+        triggerObj.SetActive(true);
+        kickColl.enabled = false;
+        goldTransform.gameObject.SetActive(true);
+        goldText.text = price.ToString();
+    }
 
     public override void InteractAction()
     {
         if(GameManager.Instance.materialManager.PayMoney("gold", price))
         {
+            Debug.Log("오브젝트 활성화");
             ObjectActivate();
         }
     }

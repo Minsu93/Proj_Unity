@@ -5,28 +5,23 @@ using UnityEngine;
 
 public abstract class InteractableOBJ : MonoBehaviour
 {
-    public bool interactOn { get; set; }
+    //public bool interactOn { get; set; }
+    protected bool interactActive = true;
 
     [SerializeField] private GameObject outlineObject;
-    protected SpriteRenderer spr;
-    //protected CircleCollider2D circleColl;
-
-    //Material sprMat;
+   // protected SpriteRenderer spr;
 
 
     protected virtual void Awake()
     {
-        spr = GetComponentInChildren<SpriteRenderer>();
-        //circleColl = GetComponent<CircleCollider2D>();
-        //sprMat = spr.material;
+        //spr = GetComponentInChildren<SpriteRenderer>();
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (interactActive && collision.CompareTag("Player"))
         {
             DrawOutline();
-            interactOn = true;
             GameManager.Instance.playerManager.SetInteractableObj(this);
         }
     }
@@ -36,7 +31,6 @@ public abstract class InteractableOBJ : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             RemoveOutLine();
-            interactOn = false;
             GameManager.Instance.playerManager.RemoveInteractableObj(this);
         }
     }
@@ -44,7 +38,6 @@ public abstract class InteractableOBJ : MonoBehaviour
     public void StopInteract()
     {
         RemoveOutLine();
-        interactOn = false;
     }
 
     protected void DrawOutline()

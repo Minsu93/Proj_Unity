@@ -154,7 +154,7 @@ public class PlayerJump : MonoBehaviour
         bool attackActivate = true;
         playerBehavior.PlayerInputControl(false);
         playerBehavior.PlayerIgnoreProjectile(true);
-        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject") | 1 << LayerMask.NameToLayer("Object");
+        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject");
 
         while(doingDash && timer < dashTime)
         {
@@ -164,26 +164,35 @@ public class PlayerJump : MonoBehaviour
             Collider2D hit = Physics2D.OverlapCircle(transform.position, dashRadius,targetLayer);
             if(hit != null)
             {
-                float force = playerBehavior.knockBackForce;
-
-                //적 데미지 & 넉백
-                if (hit.TryGetComponent<IKickable>(out IKickable kickable))
+                if(hit.TryGetComponent<ITarget>(out ITarget target))
                 {
-                    //hitable.DamageEvent(dashDamage, transform.position);
-                    //hitable.KnockBackEvent(transform.position, dashKnockBackPower);
 
-                    kickable.Kicked(this.transform.position);
+                    float force;
+                    ParticleSystem kickParticle;
 
-                    playerBehavior.PlayerUnhittable(unHittableTime);
-                    force *= 2f;
+                    //적 데미지 & 넉백
+                    if (hit.TryGetComponent<IKickable>(out IKickable kickable))
+                    {
+                        kickable.Kicked(this.transform.position);
+
+                        playerBehavior.PlayerUnhittable(unHittableTime);
+                        force = 2f * playerBehavior.knockBackForce;
+                        kickParticle = impactParticle;
+                    }
+                    else
+                    {
+                        force = playerBehavior.knockBackForce;
+                        kickParticle = noImpactParticle;
+                    }
+
+                    playerBehavior.KnockBackEvent(hit.transform.position, force);
+                    GameManager.Instance.particleManager.GetParticle(kickParticle, transform.position, transform.rotation);
+
+
+                    //대시 초기화
+                    ResetDash();
                 }
-
-                playerBehavior.KnockBackEvent(hit.transform.position, force);
-                if (impactParticle != null)
-                    GameManager.Instance.particleManager.GetParticle(impactParticle, transform.position, transform.rotation);
-
-                //대시 초기화
-                ResetDash();
+                
                 
                 break;
             }

@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Progress;
 
-public class Gobj_HPVending : GoldObject, IKickable
+public class Gobj_HPVending : GoldObject, IKickable, ITarget
 {
-    [SerializeField] bool activated = false;
+    [SerializeField] bool kickActivate = false;
     [SerializeField] int maxCount = 3;
     [SerializeField] GameObject hpPotionPrefab;
     [SerializeField] float launchPower = 5f;
     int count;
 
+    public Collider2D GetCollider()
+    {
+        return null;
+    }
 
     public void Kicked(Vector2 hitPos)
     {
-        if (activated)
+        if (kickActivate)
         {
+            Debug.Log("Kicked");
             if(count > 0)
             {
                 count--;
@@ -38,14 +43,23 @@ public class Gobj_HPVending : GoldObject, IKickable
 
     protected override void ObjectActivate()
     {
-        activated = true;
-        //coll.enabled = true;
-        int count = maxCount;
+        //오브젝트 interaction을 끈다
+        interactActive = false;
+
+        //발차기 가능
+        kickActivate = true;
+        count = maxCount;
+        triggerObj.SetActive(false);
+        kickColl.enabled = true;
+
+        //costUI 제거
+        goldTransform.gameObject.SetActive(false);
     }
 
     protected override void ObjectDeactivate()
     {
-        activated = false;
-        //coll.enabled = false;
+        kickActivate = false;
+        triggerObj.SetActive(true);
+        kickColl.enabled = false;
     }
 }
