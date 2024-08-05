@@ -11,83 +11,83 @@ public class MissileOrb : Orb
     /// 적이 아예 없으면 랜덤한 장소를 타격한다. 
     /// </summary>
     /// 
-    [Header("Projectile Orb")]
-    //감지 범위
-    public float detectRadius = 5f;
-    //발사하는 projectile
-    public GameObject projectilePrefab;
-    //발사 반복 횟수
-    public int missileCount = 3;
-    [SerializeField] private float missileInterval = 0.3f;
+    //[Header("Projectile Orb")]
+    ////감지 범위
+    //public float detectRadius = 5f;
+    ////발사하는 projectile
+    //public GameObject projectilePrefab;
+    ////발사 반복 횟수
+    //public int missileCount = 3;
+    //[SerializeField] private float missileInterval = 0.3f;
 
-    //데미지 및 속도
-    [SerializeField] float damage;
-    [SerializeField] float speed;
-    [SerializeField] float lifeTime;
-    [SerializeField] float range;
-    [SerializeField] int penetrateCount;
-    [SerializeField] int reflectCount;
-    [SerializeField] int guideAmount;
-
-
-
-    protected override void ActivateOrb()
-    {
-        if (CheckTarget(out RaycastHit2D[] hits))
-        {
-            StartCoroutine(AimShoot(hits));
-        }
-        else
-            StartCoroutine(RandomShoot(missileCount));
-    }
+    ////데미지 및 속도
+    //[SerializeField] float damage;
+    //[SerializeField] float speed;
+    //[SerializeField] float lifeTime;
+    //[SerializeField] float range;
+    //[SerializeField] int penetrateCount;
+    //[SerializeField] int reflectCount;
+    //[SerializeField] int guideAmount;
 
 
-    bool CheckTarget(out RaycastHit2D[] hits)
-    {
-        //주변에 적이 있는지 체크        
-        hits = Physics2D.CircleCastAll(transform.position, detectRadius, Vector2.right, 0f, LayerMask.GetMask("Enemy"));
 
-        if (hits.Length > 0)
-        {
-            return true;
-        }
-        else return false;
+    //protected override void ActivateOrb()
+    //{
+    //    if (CheckTarget(out RaycastHit2D[] hits))
+    //    {
+    //        StartCoroutine(AimShoot(hits));
+    //    }
+    //    else
+    //        StartCoroutine(RandomShoot(missileCount));
+    //}
+
+
+    //bool CheckTarget(out RaycastHit2D[] hits)
+    //{
+    //    //주변에 적이 있는지 체크        
+    //    hits = Physics2D.CircleCastAll(transform.position, detectRadius, Vector2.right, 0f, LayerMask.GetMask("Enemy"));
+
+    //    if (hits.Length > 0)
+    //    {
+    //        return true;
+    //    }
+    //    else return false;
         
-    }
+    //}
 
-    IEnumerator AimShoot(RaycastHit2D[] targets)
-    {
-        for (int i = 0; i < missileCount; i++)
-        {
-            int targetNum = i % targets.Length;
-            Vector2 targetVec = (targets[targetNum].transform.position - transform.position).normalized;
-            Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
-            Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
+    //IEnumerator AimShoot(RaycastHit2D[] targets)
+    //{
+    //    for (int i = 0; i < missileCount; i++)
+    //    {
+    //        int targetNum = i % targets.Length;
+    //        Vector2 targetVec = (targets[targetNum].transform.position - transform.position).normalized;
+    //        Vector2 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
+    //        Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
 
-            //총알 생성
-            Shoot(transform.position, targetRot);
-            yield return new WaitForSeconds(missileInterval);
-        }
-    }
+    //        //총알 생성
+    //        Shoot(transform.position, targetRot);
+    //        yield return new WaitForSeconds(missileInterval);
+    //    }
+    //}
 
-    IEnumerator RandomShoot(int num)
-    {
-        //랜덤 방향으로 총알 발사
-        for (int i = 0; i < num; i++)
-        {
-            Quaternion randomRot = Quaternion.Euler(0, 0, Random.Range(-180, 180f));
+    //IEnumerator RandomShoot(int num)
+    //{
+    //    //랜덤 방향으로 총알 발사
+    //    for (int i = 0; i < num; i++)
+    //    {
+    //        Quaternion randomRot = Quaternion.Euler(0, 0, Random.Range(-180, 180f));
 
-            //총알 생성
-            Shoot(transform.position, randomRot);
-            yield return new WaitForSeconds(missileInterval);
-        }
-    }
-    void Shoot(Vector3 pos, Quaternion rot)
-    {
-        //총알 생성
-        GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
-        projectile.transform.position = pos;
-        projectile.transform.rotation = rot;
-        projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, range);
-    }
+    //        //총알 생성
+    //        Shoot(transform.position, randomRot);
+    //        yield return new WaitForSeconds(missileInterval);
+    //    }
+    //}
+    //void Shoot(Vector3 pos, Quaternion rot)
+    //{
+    //    //총알 생성
+    //    GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
+    //    projectile.transform.position = pos;
+    //    projectile.transform.rotation = rot;
+    //    projectile.GetComponent<Projectile_Player>().Init(damage, speed, lifeTime, range);
+    //}
 }

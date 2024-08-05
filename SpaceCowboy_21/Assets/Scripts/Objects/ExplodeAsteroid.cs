@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ExplodeAsteroid : MonoBehaviour, IHitable, ITarget, IKickable, IStageObject
+public class ExplodeAsteroid : MonoBehaviour, IHitable, ITarget, IStageObject
 {
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float touchDmg,knockbackAmount, damage, speed, lifeTime, range;
@@ -66,16 +66,16 @@ public class ExplodeAsteroid : MonoBehaviour, IHitable, ITarget, IKickable, ISta
     }
 
 
-    void IHitable.KnockBackEvent(Vector2 hitPos, float forceAmount)
+    void KnockBackEvent(Vector2 hitPos, float forceAmount)
     {
         Debug.Log("Knocked!");
         return;
     }
 
-    public void Kicked()
-    {
-        ((IHitable)this).DamageEvent(1f, Vector2.zero);
-    }
+    //public void Kicked()
+    //{
+    //    ((IHitable)this).DamageEvent(1f, Vector2.zero);
+    //}
 
     //폭발 특수 효과
     void Explode()

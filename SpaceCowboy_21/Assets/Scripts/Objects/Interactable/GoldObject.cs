@@ -5,6 +5,9 @@ using UnityEngine;
 public abstract class GoldObject : InteractableOBJ
 {
     [SerializeField] int price;
+    [SerializeField] protected GameObject collObj;
+
+
 
     public override void InteractAction()
     {
@@ -20,5 +23,8 @@ public abstract class GoldObject : InteractableOBJ
     /// 2. 발차기 시 함정 작동
     /// 3. 발차기 시 ...
     /// </summary>
+    /// 
     protected abstract void ObjectActivate();
+
+    protected abstract void ObjectDeactivate();
 }

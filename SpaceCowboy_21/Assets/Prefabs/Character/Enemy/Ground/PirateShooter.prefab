@@ -425,6 +425,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  knockbackable: 1
+  knockbackAmount: 8
   hitEffect: {fileID: 0}
   deadEffect: {fileID: 0}
   iconUI: {fileID: 3957556133272027459}

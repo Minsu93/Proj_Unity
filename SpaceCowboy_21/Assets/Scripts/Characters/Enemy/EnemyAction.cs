@@ -10,7 +10,7 @@ using static UnityEditor.Progress;
 using System;
 
 
-public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
+public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 {
     /// <summary>
     /// 적에 따라 다른 행동을 한다. EnemyAction은 Ground, Orbit, Ship 모두에 따라 다른 행동을 하도록 만들어져 있다. 이들의 공통점은 Brain 의 EnemyState를 매턴 받아와, State가 바뀔 때 그에 맞는 행동을 하도록 바뀌는 것이다. 
@@ -38,6 +38,10 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
     [SerializeField] float clearMoveDistance = 3.0f;
     [SerializeField] float clearMoveTime = 3.0f;
     [SerializeField] AnimationCurve clearCurve;
+
+    [Header("Kicked Property")]
+    [SerializeField] protected bool knockbackable = false;    //발차기 맞았을 때 넉백 되느냐 마느냐
+    [SerializeField] protected float knockbackAmount = 5.0f;
 
     //이펙트
     [Header("VFX")]
@@ -373,11 +377,19 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget
         if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
     }
 
-    void IHitable.KnockBackEvent(Vector2 hitPos, float forceAmount)
-    {
-        EnemyKnockBack(hitPos, forceAmount);
-    }
+    //void KnockBackEvent(Vector2 hitPos, float forceAmount)
+    //{
+    //    EnemyKnockBack(hitPos, forceAmount);
+    //}
 
+    public void Kicked(Vector2 hitPos)
+    {
+        if (knockbackable)
+        {
+            EnemyKnockBack(hitPos, knockbackAmount);
+        }
+        
+    }
     //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
     public abstract void EnemyKnockBack(Vector2 hitPos, float forceAmount);
 

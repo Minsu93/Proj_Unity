@@ -16,8 +16,8 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] float dashRadius = 0.5f;
     [SerializeField] int dashMaxCount = 1;
     [SerializeField] float dashTime = 0.5f; //대시 시작 시 무적 시간 (대시 작동 시간)
-    [SerializeField] float dashDamage = 10f;    //데미지
-    [SerializeField] float dashKnockBackPower = 5f; //넉백 파워
+    //[SerializeField] float dashDamage = 10f;    //데미지
+    //[SerializeField] float dashKnockBackPower = 5f; //넉백 파워
     [SerializeField] float unHittableTime = 1f;//대시 공격 성공 후 무적시간
 
 
@@ -154,7 +154,7 @@ public class PlayerJump : MonoBehaviour
         bool attackActivate = true;
         playerBehavior.PlayerInputControl(false);
         playerBehavior.PlayerIgnoreProjectile(true);
-        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject");
+        int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject") | 1 << LayerMask.NameToLayer("Object");
 
         while(doingDash && timer < dashTime)
         {
@@ -164,34 +164,24 @@ public class PlayerJump : MonoBehaviour
             Collider2D hit = Physics2D.OverlapCircle(transform.position, dashRadius,targetLayer);
             if(hit != null)
             {
-                if (hit.TryGetComponent<ITarget>(out ITarget target))
+                float force = playerBehavior.knockBackForce;
+
+                //적 데미지 & 넉백
+                if (hit.TryGetComponent<IKickable>(out IKickable kickable))
                 {
-                    float force = playerBehavior.knockBackForce;
-                    //캐릭터 넉백
-                    //playerBehavior.KnockBackEvent(hit.transform.position, playerBehavior.knockBackForce);
+                    //hitable.DamageEvent(dashDamage, transform.position);
+                    //hitable.KnockBackEvent(transform.position, dashKnockBackPower);
 
-                    //적 데미지 & 넉백
-                    if(hit.TryGetComponent<IHitable>(out IHitable hitable))
-                    {
-                        attackActivate = false;
-                        hitable.DamageEvent(dashDamage, transform.position);
-                        hitable.KnockBackEvent(transform.position, dashKnockBackPower);
+                    kickable.Kicked(this.transform.position);
 
-                        playerBehavior.KnockBackEvent(hit.transform.position, force * 2f);
-
-                        if (impactParticle != null)
-                            GameManager.Instance.particleManager.GetParticle(impactParticle, transform.position, transform.rotation);
-
-                        playerBehavior.PlayerUnhittable(unHittableTime);
-                    }
-                    else
-                    {
-                        playerBehavior.KnockBackEvent(hit.transform.position, force);
-
-                        if (noImpactParticle != null)
-                            GameManager.Instance.particleManager.GetParticle(noImpactParticle, transform.position, transform.rotation);
-                    }
+                    playerBehavior.PlayerUnhittable(unHittableTime);
+                    force *= 2f;
                 }
+
+                playerBehavior.KnockBackEvent(hit.transform.position, force);
+                if (impactParticle != null)
+                    GameManager.Instance.particleManager.GetParticle(impactParticle, transform.position, transform.rotation);
+
                 //대시 초기화
                 ResetDash();
                 

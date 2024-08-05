@@ -2,6 +2,7 @@ using Cinemachine;
 using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -169,8 +170,25 @@ public class GameManager : MonoBehaviour
 
     public void LoadSceneByStageState(string stageName, StageState stageState)
     {
-        BeforeLoadEvent(stageState);
-        StartCoroutine(LoadSceneRoutine(stageName, stageState));
+        //Before Load
+        switch (stageState)
+        {
+            case StageState.Lobby:
+                //로비 화면 -> 스테이지
+                StartCoroutine(LoadSceneRoutine(stageName, stageState));
+                break;
+            case StageState.Stage:
+                //스테이지 -> 스테이지
+                materialManager.SaveMoney();
+                StartCoroutine(LoadSceneRoutine(stageName, stageState));
+                break;
+            case StageState.BossLevel:
+                //보스 레벨 -> 로비
+                materialManager.ResetMoney();
+                StartCoroutine(ShowStageEndUI(1f, 5f, stageName, stageState));
+                break;
+        }
+
     }
 
     IEnumerator LoadSceneRoutine(string sceneName, StageState stageState)
@@ -182,35 +200,12 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         Debug.Log("씬 불러오기 완료");
-        AfterLoadEvent(stageState);
-    }
 
-    IEnumerator BeforeLoadEvent(StageState stageState)
-    {
-        yield return null;
         switch (stageState)
         {
             case StageState.Lobby:
                 //로비 화면 -> 스테이지
-                break;
-            case StageState.Stage:
-                //스테이지 -> 스테이지
-                materialManager.SaveMoney();
-                break;
-            case StageState.BossLevel:
-                //보스 레벨 -> 로비
-                materialManager.ResetMoney();
-                break;
-        }
-    }
-    IEnumerator AfterLoadEvent(StageState stageState)
-    {
-        yield return null;
-        switch (stageState)
-        {
-            case StageState.Lobby:
-                //로비 화면 -> 스테이지
-                StartCoroutine(ShowStageStartUI(3f, 5f));
+                StartCoroutine(ShowStageStartUI(1f, 5f));
                 break;
             case StageState.Stage:
                 //스테이지 -> 스테이지
@@ -230,12 +225,13 @@ public class GameManager : MonoBehaviour
 
     }
 
-    IEnumerator ShowStageEndUI(float startDelay, float endDelay)
+    IEnumerator ShowStageEndUI(float startDelay, float endDelay , string stageName, StageState stageState)
     {
         yield return new WaitForSeconds(startDelay);
         stageEndUi.gameObject.SetActive(true);
         yield return new WaitForSeconds(endDelay);
         stageEndUi.gameObject.SetActive(false);
+        StartCoroutine(LoadSceneRoutine(stageName, stageState));
 
     }
 

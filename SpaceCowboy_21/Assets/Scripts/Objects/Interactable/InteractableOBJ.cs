@@ -9,7 +9,7 @@ public abstract class InteractableOBJ : MonoBehaviour
 
     [SerializeField] private GameObject outlineObject;
     protected SpriteRenderer spr;
-    protected CircleCollider2D circleColl;
+    //protected CircleCollider2D circleColl;
 
     //Material sprMat;
 

@@ -5004,6 +5004,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  knockbackable: 1
+  knockbackAmount: 2
   hitEffect: {fileID: 0}
   deadEffect: {fileID: 0}
   iconUI: {fileID: 7508925075503968073}
@@ -5033,7 +5035,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  knockBackDistance: 1
   knockbackTime: 1
 --- !u!114 &652078404442559525
 MonoBehaviour:

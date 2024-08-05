@@ -41,8 +41,8 @@ public class StagePortal : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            collision.gameObject.SetActive(false);
             GameManager.Instance.LoadSceneByStageState(sceneName,stageState);
-
         }
     }
 }

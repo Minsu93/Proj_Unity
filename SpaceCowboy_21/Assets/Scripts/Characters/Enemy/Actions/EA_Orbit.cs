@@ -24,7 +24,6 @@ public class EA_Orbit : EnemyAction
 
     EnemyChase_Orbit chase_Orbit;
     [SerializeField] AnimationCurve knockBackCurve;
-    [SerializeField] float knockBackDistance = 1f;   //날아가는 거리
     [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
 
     //override 한 부분
@@ -222,7 +221,7 @@ public class EA_Orbit : EnemyAction
         Vector2 dir = (Vector2)transform.position - hitPos;
         dir = dir.normalized;
         Vector2 startPos = (Vector2)transform.position;
-        Vector2 targetPos = (Vector2)transform.position + (dir*knockBackDistance);
+        Vector2 targetPos = (Vector2)transform.position + (dir* forceAmount);
         StartCoroutine(KnockBackRoutine(startPos, targetPos));
         
         //rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);

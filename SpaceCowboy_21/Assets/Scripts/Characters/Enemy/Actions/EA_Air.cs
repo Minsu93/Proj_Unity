@@ -8,7 +8,8 @@ public class EA_Air : EnemyAction
     /// 공중 유닛은 어떠한 행동도 하지 않고, 플레이어가 다가왔을 때 공격한다. 
     /// 넉백 상황만 조금 고려하면 좋을 듯. 
     /// </summary>
-
+    [SerializeField] AnimationCurve knockBackCurve;
+    [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
     public override void BrainStateChange()
     {
         switch (enemyState)
@@ -64,7 +65,27 @@ public class EA_Air : EnemyAction
         {
             chase_Air.StopSwim();
         }
-        
+
+        EnemyPause(knockbackTime + 0.3f);
+
+        Vector2 dir = (Vector2)transform.position - hitPos;
+        dir = dir.normalized;
+        Vector2 startPos = (Vector2)transform.position;
+        Vector2 targetPos = (Vector2)transform.position + (dir * forceAmount);
+        StartCoroutine(KnockBackRoutine(startPos, targetPos));
+
+    }
+
+    IEnumerator KnockBackRoutine(Vector2 start, Vector2 end)
+    {
+        float time = 0;
+        while (time < 1)
+        {
+            time += Time.deltaTime / knockbackTime;
+            rb.MovePosition(Vector2.Lerp(start, end, knockBackCurve.Evaluate(time)));
+            yield return null;
+        }
+        //chase_Orbit.ResetCenterPoint();
     }
 
     protected override IEnumerator StrikeRoutine(Vector2 strikePos)
