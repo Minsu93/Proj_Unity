@@ -22,9 +22,12 @@ public class WeaponData : ScriptableObject
     public GunStyle GunStyle { get {  return gunStyle; } }
 
     [SerializeField]
-    Sprite icon;    //아이콘을 결정.
+    Sprite icon;    // 집었을 때 화면 하단에 들어갈 퀵 슬롯 이미지
     public Sprite Icon { get { return icon; } }
-
+    
+    [SerializeField]
+    Sprite bubbleIcon;    // Bubble_Weapon에 들어갈 이미지
+    public Sprite BubbleIcon { get { return bubbleIcon; } }
 
     [Header("Projectile Property")]
 

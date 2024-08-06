@@ -9,7 +9,10 @@ using static UnityEditor.Progress;
 /// </summary>
 public class Gobj_WeaponVending : GoldObject
 {
-    [SerializeField] int generateWeaponId;
+    //[SerializeField] int generateWeaponId;
+    [SerializeField] WeaponData generateWeaponData;
+    [SerializeField] GameObject weaponDropPrefab;
+
     [SerializeField] float generateCooltime = 30.0f;
     [SerializeField] GameObject circleObj;
     [SerializeField] Image circleImage;
@@ -35,19 +38,26 @@ public class Gobj_WeaponVending : GoldObject
             else
             {
                 timer = 0;
-                GenerateWeapon(generateWeaponId);
+                activateGenerate = false;
+
+                GenerateWeapon(generateWeaponData);
             }
         }
     }
 
-    void GenerateWeapon(int id)
+    void GenerateWeapon(WeaponData data)
     {
-        GameObject prefab = GameManager.Instance.techDocument.GetPrefab(id);
-        //아이템 생성
-        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(prefab, 2);
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponDropPrefab, 2);
         newOrb.transform.position = transform.position + (transform.up);
         newOrb.transform.rotation = Quaternion.identity;
+        if(newOrb.TryGetComponent<Bubble_Weapon>(out Bubble_Weapon bubble))
+        {
+            bubble.WeaponConsumeEvent += GenerationReactivate;
+        }
+        
     }
+
+    //오브젝트에 코인을 넣어서 활성화
     protected override void ObjectActivate()
     {
         //오브젝트 interaction을 끈다
@@ -62,8 +72,15 @@ public class Gobj_WeaponVending : GoldObject
 
     }
 
+    //오브젝트를 전부 사용하고 나서 ...비활성화
     protected override void ObjectDeactivate()
     {
         triggerObj.SetActive(true);
+    }
+
+    // 재생성 시작
+    void GenerationReactivate()
+    {
+        activateGenerate = true;
     }
 }

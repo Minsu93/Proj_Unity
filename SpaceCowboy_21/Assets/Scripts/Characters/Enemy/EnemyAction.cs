@@ -288,12 +288,21 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     IEnumerator PauseRoutine(float sec)
     {
         //지난 행동상태
-        EnemyState preState = enemyState;
+        //EnemyState preState = enemyState;
         enemyState = EnemyState.Wait;
 
         yield return new WaitForSeconds(sec);
-        enemyState = preState;
+        enemyState = EnemyState.Chase;
     }
+    public void EnemyForcePause()
+    {
+        enemyState = EnemyState.Wait;
+    }
+    public void EnemyForceWake()
+    {
+        enemyState = EnemyState.Chase;
+    }
+
 
     protected virtual void OnDieAction()
     {

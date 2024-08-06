@@ -18,10 +18,11 @@ public class EnemyChase_Air : EnemyChase
     public AnimationCurve moveCurve;
     public float moveDistPerRow = 2f;
     public float moveDuration = 1f;
-    public float delayDuration = 0.5f;
+    public float delayDuration = 0.5f;  //swim 이후 대기시간.
 
     public float nextWayPointDistance = 0.5f;
     public float randomTargetPointDistance = 5f;
+    [SerializeField] bool rotateWhileSwim = false;
     int currentWaypoint = 0;
     bool isSwim = false;
 
@@ -93,6 +94,14 @@ public class EnemyChase_Air : EnemyChase
         Vector2 dir = (targetPoint - rb.position).normalized;
         Vector2 MovePoint = startPoint + (dir * moveDistPerRow);
         float time = 0;
+
+        if (rotateWhileSwim)
+        {
+            //1회 회전
+            Vector2 upVec = Quaternion.Euler(0, 0, 90) * dir;
+            transform.rotation = Quaternion.LookRotation(Vector3.forward, upVec);
+        }
+
         while(time < moveDuration)
         {
             time += Time.deltaTime ;

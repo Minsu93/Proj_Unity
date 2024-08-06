@@ -60,11 +60,16 @@ public class EA_Air : EnemyAction
 
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
     {
+        //strike 중이면 정지한다. 
+        StopAllCoroutines();
+        //chase 중지
         EnemyChase_Air chase_Air = chase as EnemyChase_Air;
         if(chase_Air != null)
         {
             chase_Air.StopSwim();
         }
+        //attack 중지
+        attack.StopAttackAction();
 
         EnemyPause(knockbackTime + 0.3f);
 

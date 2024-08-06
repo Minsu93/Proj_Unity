@@ -234,6 +234,7 @@ MonoBehaviour:
     - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
     - {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
     - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
+    - {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
   - name: StageObjects
     pool:
     - {fileID: 1023907566023020907, guid: e7700e4c4582d8f4c8208de2ddbe9b62, type: 3}
@@ -385,6 +386,8 @@ MonoBehaviour:
     monsterPrefab: {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
   - name: air_shooter
     monsterPrefab: {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
+  - name: air_driller
+    monsterPrefab: {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
 --- !u!1 &2172668778671552628
 GameObject:
   m_ObjectHideFlags: 0

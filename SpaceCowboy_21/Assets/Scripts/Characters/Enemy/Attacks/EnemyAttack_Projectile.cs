@@ -36,10 +36,13 @@ public class EnemyAttack_Projectile : EnemyAttack
         if (_attackCool) return;
 
         _attackCool = true;
+        //공격 쿨타임 시작
         StartCoroutine(AttackCoolRoutine());
 
-        //enemyAction.EnemyPause(attackCoolTime);
+        //공격하는 동안 Enemy행동 정지
         enemyAction.AfterAttack();
+
+        //실제 공격 루틴
         StartCoroutine(AttackRoutine());     
     }
     

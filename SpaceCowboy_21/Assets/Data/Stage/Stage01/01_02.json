@@ -5,12 +5,13 @@
         {
             "waveIndex": 0,
             "spawns": [
+                
                 {
                     "enemy": {
-                        "name": "ground_rocketboy",
+                        "name": "air_driller",
                         "delay": 0.2
                     },
-                    "spawnCount": 1,
+                    "spawnCount": 4,
                     "delayToNextWave": 0.0
                 }
             ],

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using static UnityEditor.Progress;
 
@@ -27,11 +28,15 @@ public class Gobj_HPVending : GoldObject, IKickable, ITarget
                 //물약 생성
                 GameObject hpPotion = GameManager.Instance.poolManager.GetPoolObj(hpPotionPrefab, 2);
                 hpPotion.transform.position = this.transform.position;
+                HealthDrop hpDrop = hpPotion.GetComponent<HealthDrop>();
 
                 //아이템을 발사한다
-                Vector2 randomUpDir = (transform.up + (transform.right * UnityEngine.Random.Range(-1, 1f))).normalized;
-                float randomPow = UnityEngine.Random.Range(launchPower - 2f, launchPower + 2f);
-                hpPotion.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
+                Quaternion randomQuat = Quaternion.Euler(0, 0, UnityEngine.Random.Range(-180f, 180f));
+                Vector2 hemisphereDir = randomQuat * (Vector2)transform.up;
+                //Vector2 randomUpDir = (transform.up + (transform.right * UnityEngine.Random.Range(-1, 1f))).normalized;
+                float randomPow = UnityEngine.Random.Range(launchPower * 0.5f, launchPower);
+                hpDrop.LaunchPotion(hemisphereDir * randomPow);
+                //hpPotion.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
             }
             
             if(count == 0)
