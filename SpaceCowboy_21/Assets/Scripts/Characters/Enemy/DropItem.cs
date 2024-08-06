@@ -35,19 +35,8 @@ public class DropItem : MonoBehaviour
             GenerateResource(dropTable[i].dropChance, dropTable[i].item, dropTable[i].dropMin, dropTable[i].dropMax, resourceLaunchPowerMin, resourceLaunchPowerMax);
         }
 
-
-        //weapon Generate
-        //GenerateWeapon();
-
         //popperGenerate
-        float dropFloat = UnityEngine.Random.Range(0f, 1f);
-        if (dropFloat > itemDropChance)
-            return;
-
         GameManager.Instance.popperManager.CreatePopper(this.transform);
-        
-
-
 
     }
 
@@ -100,31 +89,31 @@ public class DropItem : MonoBehaviour
         }
     }
 
-    void GenerateWeapon()
-    {
-        //Item 생성
-        float dropFloat = UnityEngine.Random.Range(0f, 1f);
-        if (dropFloat > itemDropChance)
-            return;
+    //void GenerateWeapon()
+    //{
+    //    //Item 생성
+    //    float dropFloat = UnityEngine.Random.Range(0f, 1f);
+    //    if (dropFloat > itemDropChance)
+    //        return;
 
-        //drop할 아이템의 ID를 가져온다.
-        if (itemTables.Count == 0) return;
-        int id = itemTables[Choose(itemTables)].itemID;
+    //    //drop할 아이템의 ID를 가져온다.
+    //    if (itemTables.Count == 0) return;
+    //    int id = itemTables[Choose(itemTables)].itemID;
 
-        //아이템이 해금되어있는지 검사한다. 
-        if (GameManager.Instance.techDocument.GetItemState(id) > 0)
-        {
-            //아이템을 생성한다
-            GameObject _item = GameManager.Instance.poolManager.GetPoolObj(GameManager.Instance.techDocument.GetPrefab(id), 2);
-            _item.transform.position = transform.position;
-            _item.transform.rotation = transform.rotation;
+    //    //아이템이 해금되어있는지 검사한다. 
+    //    if (GameManager.Instance.techDocument.GetItemState(id) > 0)
+    //    {
+    //        //아이템을 생성한다
+    //        GameObject _item = GameManager.Instance.poolManager.GetPoolObj(GameManager.Instance.techDocument.GetPrefab(id), 2);
+    //        _item.transform.position = transform.position;
+    //        _item.transform.rotation = transform.rotation;
 
-            //아이템을 발사한다
-            Vector2 randomUpDir = (transform.up + (transform.right * UnityEngine.Random.Range(-1, 1f))).normalized;
-            float randomPow = UnityEngine.Random.Range(resourceLaunchPowerMin, resourceLaunchPowerMax);
-            _item.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
-        }
-    }
+    //        //아이템을 발사한다
+    //        Vector2 randomUpDir = (transform.up + (transform.right * UnityEngine.Random.Range(-1, 1f))).normalized;
+    //        float randomPow = UnityEngine.Random.Range(resourceLaunchPowerMin, resourceLaunchPowerMax);
+    //        _item.GetComponent<Rigidbody2D>().AddForce(randomUpDir * randomPow, ForceMode2D.Impulse);
+    //    }
+    //}
 
     int Choose(List<ItemTable> probs)
     {

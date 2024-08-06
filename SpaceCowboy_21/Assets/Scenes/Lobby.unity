@@ -6334,6 +6334,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5513014086323756826, guid: e629b6f1143225b4b9415e571929b638, type: 3}
+      propertyPath: weaponBubblePrefab
+      value: 
+      objectReference: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
     - target: {fileID: 5647222114111799538, guid: e629b6f1143225b4b9415e571929b638, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -8139,7 +8143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974514776678444346, guid: 26011cf25dfdf2b49b8cd468b41a7ea2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.71600294
+      value: 0.71600306
       objectReference: {fileID: 0}
     - target: {fileID: 4974514776678444346, guid: 26011cf25dfdf2b49b8cd468b41a7ea2, type: 3}
       propertyPath: m_LocalPosition.z

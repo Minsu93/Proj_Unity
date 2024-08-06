@@ -9,9 +9,7 @@ using static UnityEditor.Progress;
 /// </summary>
 public class Gobj_WeaponVending : GoldObject
 {
-    //[SerializeField] int generateWeaponId;
-    [SerializeField] WeaponData generateWeaponData;
-    [SerializeField] GameObject weaponDropPrefab;
+    [SerializeField] GameObject weaponBubblePrefab;
 
     [SerializeField] float generateCooltime = 30.0f;
     [SerializeField] GameObject circleObj;
@@ -38,16 +36,15 @@ public class Gobj_WeaponVending : GoldObject
             else
             {
                 timer = 0;
-                activateGenerate = false;
-
-                GenerateWeapon(generateWeaponData);
+                GenerateWeapon();
+                GenerationCompelete();
             }
         }
     }
 
-    void GenerateWeapon(WeaponData data)
+    void GenerateWeapon()
     {
-        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponDropPrefab, 2);
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubblePrefab, 2);
         newOrb.transform.position = transform.position + (transform.up);
         newOrb.transform.rotation = Quaternion.identity;
         if(newOrb.TryGetComponent<Bubble_Weapon>(out Bubble_Weapon bubble))
@@ -68,7 +65,6 @@ public class Gobj_WeaponVending : GoldObject
 
         //UIÁ¶Àý
         goldTransform.gameObject.SetActive(false);
-        circleObj.SetActive(true);
 
     }
 
@@ -82,5 +78,13 @@ public class Gobj_WeaponVending : GoldObject
     void GenerationReactivate()
     {
         activateGenerate = true;
+        circleObj.SetActive(true);
+
+    }
+
+    void GenerationCompelete()
+    {
+        activateGenerate = false;
+        circleObj.SetActive(false);
     }
 }

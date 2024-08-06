@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab634f7d5908b44e93e283a598ab6b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popperPrefab: {fileID: 0}
+  popperPrefab: {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
   gapBetweenOrbs: 4
   launchHeight: 7
   launchRadius: 7
@@ -280,8 +280,12 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   launchTimer: 1
-  popItems:
+  equippedWeaponBubbles:
   - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+  dropChanceIncrement: 0.1
+  dropChanceDecrement: 0.05
+  totalDropChance: 0.1
+  dropCoolTime: 5
 --- !u!1 &529613331651955589
 GameObject:
   m_ObjectHideFlags: 0
