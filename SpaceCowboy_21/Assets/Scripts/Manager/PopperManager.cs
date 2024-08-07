@@ -18,14 +18,25 @@ public class PopperManager : MonoBehaviour
     [SerializeField] private float launchTimer = 0.5f;  //발사 이동 시간
 
     //무기 생성관련
-    [SerializeField] List<GameObject> equippedWeaponBubbles;    //생성될 무기 목록
-    
+    [SerializeField] GameObject weaponBubble;
+    [SerializeField] List<WeaponData> equippedWeaponDatas;    //생성될 무기 목록
+
+    //드롭 확률 조절 관련
+    List<EquippedWeapon> equippedWeapons; // 드롭 가능한 아이템 목록
+    [SerializeField] float dropChanceIncrement = 0.1f; // 드롭 실패 시 확률 증가량
+    [SerializeField] float dropChanceDecrement = 0.05f; // 드롭 성공 시 확률 감소량
+    [SerializeField] float totalDropChance = 0.1f;  // Bubble 드롭 확률 
+    [SerializeField] float dropCoolTime = 5f;   //드롭 된 이후 다음 드롭까지 제한 최소 시간
+    bool dropReady = true;
+    float timer = 0f;
+
     public void CreatePopper(Transform targetTr)
     {
+        if (!dropReady) return;
+
         EquippedWeapon equip = TryDropItem();
         if(equip != null)
         {
-            dropReady = false;
 
             // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
             GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
@@ -33,7 +44,10 @@ public class PopperManager : MonoBehaviour
             firework.transform.rotation = targetTr.rotation;
             Vector2 targetPoint = GetEmptySpace(targetTr, 0)[0];
 
-            StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoint, equip.weaponBubble));
+            StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoint, equip.weaponData));
+
+            dropReady = false;
+            totalDropChance = 0.1f;     //초기화
         }
     }
     
@@ -106,7 +120,7 @@ public class PopperManager : MonoBehaviour
         return points;
     }
 
-    IEnumerator MoveAndExplode(GameObject firework,Vector2 startPos, Vector2 targetPos, GameObject item)
+    IEnumerator MoveAndExplode(GameObject firework,Vector2 startPos, Vector2 targetPos, WeaponData w_Data)
     {
         float time = 0f;
 
@@ -120,25 +134,22 @@ public class PopperManager : MonoBehaviour
         }
 
         // 오브 생성.
-        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(item, 2);
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
         newOrb.transform.position = targetPos;
         newOrb.transform.rotation = Quaternion.identity;
+        Bubble_Weapon bubble = newOrb.GetComponent<Bubble_Weapon>();
+        bubble.SetBubble(w_Data);
+
         firework.SetActive(false);
+
     }
 
 
-    List<EquippedWeapon> equippedWeapons; // 드롭 가능한 아이템 목록
-    [SerializeField] float dropChanceIncrement = 0.1f; // 드롭 실패 시 확률 증가량
-    [SerializeField] float dropChanceDecrement = 0.05f; // 드롭 성공 시 확률 감소량
-    [SerializeField] float totalDropChance = 0.1f;  // Bubble 드롭 확률 
-    [SerializeField] float dropCoolTime = 5f;   //드롭 된 이후 다음 드롭까지 제한 최소 시간
-    bool dropReady = true;
-    float timer = 0f;
 
     void Start()
     {
-        equippedWeapons = new List<EquippedWeapon> (equippedWeaponBubbles.Count );
-        foreach(GameObject prefab  in equippedWeaponBubbles)
+        equippedWeapons = new List<EquippedWeapon> (equippedWeaponDatas.Count );
+        foreach(WeaponData prefab  in equippedWeaponDatas)
         {
             equippedWeapons.Add(new EquippedWeapon(prefab, 0.1f));
         }
@@ -237,12 +248,12 @@ public class PopperManager : MonoBehaviour
 [Serializable]
 public class EquippedWeapon
 {
-    public GameObject weaponBubble;
+    public WeaponData weaponData;
     public float dropChance;
 
-    public EquippedWeapon(GameObject bubble, float chance)
+    public EquippedWeapon(WeaponData bubble, float chance)
     {
-        weaponBubble = bubble;
+        weaponData = bubble;
         dropChance = chance;
     }
 }

@@ -30,14 +30,14 @@ public class PlayerWeapon : MonoBehaviour
     public GameObject point2H;
 
 
-    //무기 슬롯
+    //무기 스폰을 위한 WeaponTypeDictionary
     public WeaponData baseWeaponData;
     Dictionary<WeaponData, WeaponType> weaponTypeDictionary = new Dictionary<WeaponData, WeaponType>();
+    //저장된 무기 슬롯
     Stack<AmmoInventory> ammoStack = new Stack<AmmoInventory>();
     
     //스크립트 관련
     PlayerBehavior playerBehavior;
-    //GameObject weaponSlot;  //WeaponType 보관 장소
     WeaponType currWeaponType;  //현재 웨폰 타입
 
 
@@ -49,14 +49,6 @@ public class PlayerWeapon : MonoBehaviour
 
         //weaponSight용 타겟 
         targetLayer = 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("Enemy");
-
-        //무기 슬롯생성.
-        //weaponSlot = new GameObject();
-        //weaponSlot.name = "WeaponSlot";
-        //weaponSlot.transform.parent = transform;
-        //weaponSlot.transform.position = Vector3.zero;
-
-
     }
     private void Update()
     {
@@ -204,8 +196,6 @@ public class PlayerWeapon : MonoBehaviour
         // 총알을 다 쓴 경우 
         if (!infiniteBullets && currAmmo <= 0)
         {
-            //currWeaponType.ConsumeItem();
-            //GameManager.Instance.playerManager.ChangeWeapon(0);             //무기 기본으로 변경
             PopWeapon();    //마지막 무기 꺼내기
         }
     }
@@ -224,10 +214,12 @@ public class PlayerWeapon : MonoBehaviour
             ammoInven.currAmmo = currAmmo;
             ammoStack.Push(ammoInven);
             
-            Debug.Log(ammoStack.Count);
             //신규 무기를 착용한다. 
             WeaponType wtype = InitializeWeapon(data);
             ChangeWeapon(wtype, wtype.maxAmmo);
+
+            //UI를 업데이트 한다 
+            GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
             
             canPush = true;
         }
@@ -250,6 +242,8 @@ public class PlayerWeapon : MonoBehaviour
         {
             BackToBaseWeapon();
         }
+        //UI를 업데이트 한다 
+        GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
     }
     //기본 총기 소환
     public void BackToBaseWeapon()
@@ -348,13 +342,11 @@ public class PlayerWeapon : MonoBehaviour
 
     #endregion
 
-    public class AmmoInventory
-    {
-        public WeaponData weaponData;
-        public float currAmmo;
-    }
-
-
 }
 
 
+public class AmmoInventory
+{
+    public WeaponData weaponData;
+    public float currAmmo;
+}

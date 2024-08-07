@@ -35,6 +35,19 @@ public class PlayerInput : MonoBehaviour
         if (playerBehavior == null)
             return;
 
+
+        //Interact
+        if (Input.GetButtonDown(InteractButton))
+        {
+            GameManager.Instance.playerManager.InteractSomething();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameManager.Instance.playerManager.StopInteractSomething();
+        }
+
+
+
         if (inputDisabled)
         {
             if (moveON)
@@ -76,12 +89,6 @@ public class PlayerInput : MonoBehaviour
             playerBehavior.StopSlide();
         }
 
-
-        //Interact
-        if (Input.GetButtonDown(InteractButton))
-        {
-            GameManager.Instance.playerManager.InteractSomething();
-        }
 
 
         //¿òÁ÷ÀÓ

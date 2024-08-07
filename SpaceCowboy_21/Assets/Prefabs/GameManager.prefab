@@ -280,8 +280,12 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   launchTimer: 1
-  equippedWeaponBubbles:
-  - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+  weaponBubble: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+  equippedWeaponDatas:
+  - {fileID: 11400000, guid: e7e084a76e9aae644a83072ca9990bfb, type: 2}
+  - {fileID: 11400000, guid: 5ad791c200cc6954c87c476f37601b71, type: 2}
+  - {fileID: 11400000, guid: 5ddc4624a28052a408963735b57cdc71, type: 2}
+  - {fileID: 11400000, guid: 028ba4b630c284b41a709106bcd16c0c, type: 2}
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05
   totalDropChance: 0.1

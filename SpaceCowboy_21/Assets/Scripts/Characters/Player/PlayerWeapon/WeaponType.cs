@@ -24,6 +24,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
     protected float lifeTime;
     protected float projectileSpread;
     protected float randomSpreadAngle;
+    protected float speedVariation;
     protected float burstInterval;
     protected int numberOfProjectile;
     protected int numberOfBurst;
@@ -58,6 +59,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         burstInterval = weaponData.BurstInterval;
         projectileSpread = weaponData.ProjectileSpread;
         randomSpreadAngle = weaponData.RandomSpreadAngle;
+        speedVariation = weaponData.SpeedVariation;
         numberOfProjectile = weaponData.NumberOfProjectile;
         numberOfBurst = weaponData.NumberOfBurst;
         lifeTime = weaponData.LifeTime;
@@ -125,7 +127,8 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
             projectile.transform.position = pos;
             projectile.transform.rotation = tempRot * randomRotation;
             Projectile proj = projectile.GetComponent<Projectile>();
-            proj.Init(weaponStats.damage, weaponStats.speed, lifeTime, range);
+            float ranSpd = UnityEngine.Random.Range(weaponStats.speed - speedVariation, weaponStats.speed + speedVariation);
+            proj.Init(weaponStats.damage, ranSpd, lifeTime, range);
             //총알에 Impact이벤트 등록
             if(weaponStats.weaponImpact != null)
             {

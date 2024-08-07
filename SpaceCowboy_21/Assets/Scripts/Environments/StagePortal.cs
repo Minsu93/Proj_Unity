@@ -8,6 +8,7 @@ public class StagePortal : MonoBehaviour
     [SerializeField] StageState stageState = StageState.Lobby;
     //[SerializeField] bool autoActivate = false;
     [SerializeField] string sceneName;
+    public string SceneName { get { return sceneName; } set { sceneName = value; } }
     [SerializeField] private GameObject collObject;
     [SerializeField] private GameObject stageUI;
     [SerializeField] private TextMeshProUGUI curStageText;
@@ -19,6 +20,7 @@ public class StagePortal : MonoBehaviour
         {   
             //임시로, 시작하자마자 포탈 활성화
             ActivatePortal();
+
         }
         else
             collObject.SetActive(false);

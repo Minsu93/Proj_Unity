@@ -11,7 +11,7 @@ public class TechDocImage : MonoBehaviour
     {
         if(controller != null)
         {
-            controller.ImageUpdate += UpdateItemData;
+            controller.UiUpdateEvent += UpdateItemData;
         }
     }
     public void UpdateItemData()

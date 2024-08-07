@@ -58,6 +58,11 @@ public class WeaponData : ScriptableObject
     [SerializeField]
     float speed;        //총알의 속도
     public float Speed { get { return speed; } }
+    
+    [SerializeField]
+    float speedVariation;        //총알의 속도 변화량
+    public float SpeedVariation { get { return speedVariation; } }
+
 
     [SerializeField]
     float lifeTime;        //총알의 지속시간
@@ -111,13 +116,13 @@ public class WeaponData : ScriptableObject
     //GameObject ammoPrefab;
     //public GameObject AmmoPrefab { get { return ammoPrefab; } }
 
-    [Header("Not use")]
-    [SerializeField]
-    Sprite weaponEnableSprite;
-    public Sprite WeaponEnableSprite { get { return weaponEnableSprite; } }
+    //[Header("Not use")]
+    //[SerializeField]
+    //Sprite weaponEnableSprite;
+    //public Sprite WeaponEnableSprite { get { return weaponEnableSprite; } }
 
-    [SerializeField]
-    Sprite weaponDisableSprite;
-    public Sprite WeaponDisableSprite { get { return weaponDisableSprite; } }
+    //[SerializeField]
+    //Sprite weaponDisableSprite;
+    //public Sprite WeaponDisableSprite { get { return weaponDisableSprite; } }
 }
 

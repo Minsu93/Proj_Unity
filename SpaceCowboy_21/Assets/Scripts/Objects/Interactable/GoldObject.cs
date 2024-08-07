@@ -11,7 +11,7 @@ public abstract class GoldObject : InteractableOBJ
     [SerializeField] protected GameObject triggerObj;
     [SerializeField] protected Collider2D kickColl;
 
-    protected override void Awake()
+    protected virtual void Awake()
     {
         triggerObj.SetActive(true);
         kickColl.enabled = false;

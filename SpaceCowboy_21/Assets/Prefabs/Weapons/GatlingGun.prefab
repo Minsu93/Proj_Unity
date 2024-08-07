@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6947177609064869105
+--- !u!1 &2168438980715346722
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3468311194866416261}
+  - component: {fileID: 3915390459107750895}
   m_Layer: 0
   m_Name: GunTip
   m_TagString: Untagged
@@ -16,22 +16,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3468311194866416261
+--- !u!4 &3915390459107750895
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6947177609064869105}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 2168438980715346722}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8846609444531549315}
+  m_Father: {fileID: 3722289161300030786}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7031208836157295159
+--- !u!1 &8118447952728890607
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,41 +39,41 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8846609444531549315}
-  - component: {fileID: -3604249915731822562}
+  - component: {fileID: 3722289161300030786}
+  - component: {fileID: 6897523088286515706}
   m_Layer: 0
-  m_Name: 20001_MachineGun
+  m_Name: GatlingGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8846609444531549315
+--- !u!4 &3722289161300030786
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7031208836157295159}
+  m_GameObject: {fileID: 8118447952728890607}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3468311194866416261}
+  - {fileID: 3915390459107750895}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-3604249915731822562
+--- !u!114 &6897523088286515706
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7031208836157295159}
+  m_GameObject: {fileID: 8118447952728890607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd60203d1af1344296149beee6e0903, type: 3}
+  m_Script: {fileID: 11500000, guid: def12ab46444fad4b8ed78ef929674b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 0
@@ -85,5 +85,6 @@ MonoBehaviour:
     damage: 0
     speed: 0
     shootInterval: 0
-  gunTipObj: {fileID: 6947177609064869105}
-  muzzleFlashVFX: {fileID: 8417428132932555912, guid: 7ee1ea38dbefffb4e9bb5d1207d3c67e, type: 3}
+  gunTipObj: {fileID: 2168438980715346722}
+  speedUpDuration: 3
+  speedMultiplierMax: 2

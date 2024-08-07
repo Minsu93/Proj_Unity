@@ -12,10 +12,7 @@ public abstract class InteractableOBJ : MonoBehaviour
    // protected SpriteRenderer spr;
 
 
-    protected virtual void Awake()
-    {
-        //spr = GetComponentInChildren<SpriteRenderer>();
-    }
+
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
@@ -35,7 +32,7 @@ public abstract class InteractableOBJ : MonoBehaviour
         }
     }
 
-    public void StopInteract()
+    public virtual void StopInteract()
     {
         RemoveOutLine();
     }

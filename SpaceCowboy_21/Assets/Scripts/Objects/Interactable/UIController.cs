@@ -10,9 +10,9 @@ public class UIController : InteractableOBJ
     /// </summary>
 
     private bool uiOpened;
-    [SerializeField] private Canvas techDocUICanvas;
+    [SerializeField] private Canvas UICanvas;
 
-    public event Action ImageUpdate;
+    public event Action UiUpdateEvent;
     
     public override void InteractAction()
     {
@@ -29,7 +29,7 @@ public class UIController : InteractableOBJ
     private void OpenUI()
     {
         uiOpened = true;
-        techDocUICanvas.gameObject.SetActive(true);
+        UICanvas.gameObject.SetActive(true);
         UpdateTechImage();
         GameManager.Instance.playerManager.DisablePlayerInput();
 
@@ -37,18 +37,23 @@ public class UIController : InteractableOBJ
     private void CloseUI()
     {
         uiOpened = false;
-        techDocUICanvas.gameObject.SetActive(false);
+        UICanvas.gameObject.SetActive(false);
         GameManager.Instance.playerManager.EnablePlayerInput();
 
     }
 
+    public override void StopInteract()
+    {
+        base.StopInteract();
+        CloseUI();
+    }
 
     /// <summary>
     /// 내용을 업데이트한다.
     /// </summary>
     public void UpdateTechImage()
     {
-        if (ImageUpdate != null) ImageUpdate();
+        if (UiUpdateEvent != null) UiUpdateEvent();
     }
 
 }

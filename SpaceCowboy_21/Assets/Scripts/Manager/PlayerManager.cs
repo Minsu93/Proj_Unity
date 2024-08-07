@@ -14,29 +14,17 @@ public class PlayerManager : MonoBehaviour
 
     //플레이어 UI관련
     [SerializeField] private GameObject playerUIPrefab;
-    //[SerializeField] private GameObject playerUIInteractPrefab;
     Image healthImg;
     Image shieldImg;
-    //WeaponWheelController weaponWheelController;
+    [SerializeField] Image slot_A;
+    [SerializeField] Image slot_B;
+    [SerializeField] Image slot_C;
     //마우스 포인트를 따라다니는 게이지 UI관련
     Gauge_Weapon gauge_Weapon;
-
-    //저장할 플레이어 정보
-    //[SerializeField] WeaponData firstWeaponData;
-    //[SerializeField] WeaponData secondWeaponData;
-    //[SerializeField] WeaponData thirdWeaponData;
-    //[SerializeField] WeaponData fourthWeaponData;
-
-    //웨펀 인벤토리
-    //public WeaponInventory[] weaponInventory = new WeaponInventory[4];
-    //WeaponData[] weaponInventory = new WeaponData[4];
-    //public WeaponData baseWeaponData;
 
     //플레이어 관련 스크립트
     PlayerInput playerInput;
     public PlayerBehavior playerBehavior { get; private set; }
-    //ArtifactPopperSlot playerOrbSlot;
-    //ArtifactBombSlot playerThrowSlot;
     PlayerHealth playerHealth;
     public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
@@ -65,7 +53,6 @@ public class PlayerManager : MonoBehaviour
         //LoadPlayerInfo();
 
         //플레이어의 기본 무기를 장착시킨다.
-        //ChangeWeapon(0);
         playerWeapon.BackToBaseWeapon();
     }
 
@@ -132,6 +119,7 @@ public class PlayerManager : MonoBehaviour
     //}
 
     //신규 WeaponData로 변경할 때 
+    
     public bool ChangeWeapon(WeaponData weaponData)
     {
         bool canPush = playerWeapon.PushWeapon(weaponData);
@@ -144,6 +132,7 @@ public class PlayerManager : MonoBehaviour
     {
         return playerBehavior.healEvent(amount);
     }
+  
     #region Player Input 관련
 
     //플레이어 입력 관련 
@@ -168,7 +157,6 @@ public class PlayerManager : MonoBehaviour
     #region Interaction
 
     //상호작용 관련
-
     public void SetInteractableObj(InteractableOBJ iObj)
     {
         //상호작용하던 물건이 있다면 상호작용 취소
@@ -188,6 +176,7 @@ public class PlayerManager : MonoBehaviour
             curObj = null;
         }
     }
+   
     public void InteractSomething()
     {
         if (curObj == null)
@@ -196,6 +185,12 @@ public class PlayerManager : MonoBehaviour
         //플레이어 Cancel만 가능하도록 조작 변경.
         //DisablePlayerInput();
         curObj.InteractAction();
+    }
+    
+    public void StopInteractSomething()
+    {
+        if (curObj == null) return;
+        curObj.StopInteract();
     }
 
     #endregion
@@ -232,8 +227,10 @@ public class PlayerManager : MonoBehaviour
         healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
         shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
-        //GameObject pUI_Int = Instantiate(playerUIInteractPrefab);
-        //weaponWheelController = pUI_Int.transform.Find("WeaponWheel").GetComponent<WeaponWheelController>();
+        slot_A = pUI.transform.Find("WeaponPanel/SlotA/WeaponImage").GetComponent<Image>();
+        slot_B = pUI.transform.Find("WeaponPanel/SlotB/WeaponImage").GetComponent<Image>();
+        slot_C = pUI.transform.Find("WeaponPanel/SlotC/WeaponImage").GetComponent<Image>();
+
     }
 
     //변화가 있을 때만 업데이트한다.
@@ -242,7 +239,6 @@ public class PlayerManager : MonoBehaviour
         healthImg.fillAmount = playerHealth.currHealth / playerHealth.maxHealth;
         shieldImg.fillAmount = playerHealth.currShield / playerHealth.maxShield;
     }
-
 
     //무기 게이지 관련 
     public void UpdateGaugeUIShootTime(float curAmmo)
@@ -262,6 +258,39 @@ public class PlayerManager : MonoBehaviour
         gauge_Weapon.setFollowTarget(reticleObj);
     }
 
+
+    public void UpdateAmmoStack(Stack<AmmoInventory> stack)
+    {
+        List<AmmoInventory> stackList = new List<AmmoInventory>(stack);
+
+        for(int i = 0; i < stackList.Count && i<3 ; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    if (stackList[i] != null)
+                        slot_A.sprite = stackList[i].weaponData.Icon;
+                    else
+                        slot_A.sprite = null;
+                    break;
+                case 1:
+                    if (stackList[i] != null)
+                        slot_B.sprite = stackList[i].weaponData.Icon;
+                    else
+                        slot_A.sprite = null;
+                    break;
+                case 2:
+                    if (stackList[i] != null)
+                        slot_C.sprite = stackList[i].weaponData.Icon;
+                    else
+                        slot_A.sprite = null;
+                    break;
+                default:
+                    Debug.Log("Slot OverFlow");
+                    break;
+            }
+        }
+    }
     #endregion
 }
 

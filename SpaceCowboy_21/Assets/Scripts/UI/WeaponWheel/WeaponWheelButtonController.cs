@@ -31,7 +31,7 @@ public class WeaponWheelButtonController : MonoBehaviour, IPointerEnterHandler, 
         this.weaponData = data;
         itemName = data.name;
         gaugeMaterial.SetFloat("_SegmentCount", energyMax);
-        icon.sprite = data.WeaponEnableSprite;
+        //icon.sprite = data.WeaponEnableSprite;
 
     }
 

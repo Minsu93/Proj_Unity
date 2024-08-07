@@ -12,7 +12,6 @@ public class Bubble_Weapon : SelfCollectable
     {
         base.Awake();
         spr = GetComponentInChildren<SpriteRenderer>();
-
     }
 
     protected override void OnEnable()
