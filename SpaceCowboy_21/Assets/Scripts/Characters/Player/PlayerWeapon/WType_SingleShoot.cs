@@ -16,7 +16,7 @@ public class WType_SingleShoot : WeaponType
         {
             shootOnce = true;
 
-            StartCoroutine(burstRoutine(pos, dir, numberOfBurst, burstInterval));
+            StartCoroutine(burstShootRoutine(pos, dir, numberOfBurst, burstInterval));
             
             //PlayerWeapon에서 후처리
             AfterShootProcess();
@@ -24,14 +24,7 @@ public class WType_SingleShoot : WeaponType
 
     }
 
-    IEnumerator burstRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
-    {
-        for(int i = 0; i < repeatNumber; i++)
-        {
-            Shoot(pos, dir);
-            yield return new WaitForSeconds(interval);
-        }
-    }
+
 
     public override void ShootButtonUp(Vector2 pos, Vector3 dir)
     {

@@ -148,7 +148,15 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
 
     }
 
-    
+    protected IEnumerator burstShootRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
+    {
+        for (int i = 0; i < repeatNumber; i++)
+        {
+            Shoot(pos, dir);
+            yield return new WaitForSeconds(interval);
+        }
+    }
+
     void WeaponShootEvent()
     {
         if(weaponStats.weaponShoot != null)
@@ -172,6 +180,8 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         //    GameManager.Instance.techDocument.ItemExpGain(weaponData.ItemID, count : 1);
         //}
     }
+
+
 }
 
 //자손에 전달하여 기술큐브로 변화시킬 무기의 스텟들
@@ -185,3 +195,5 @@ public class WeaponStats
     public WeaponShootDelegate weaponShoot;
     public WeaponImpactDelegate weaponImpact;
 }
+
+public enum BarrelType { PingPong, InOrder }
