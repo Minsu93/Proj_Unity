@@ -23,7 +23,9 @@ public class Bubble_Weapon : SelfCollectable
     {
         //무기 교체
         if(WeaponConsumeEvent != null) WeaponConsumeEvent();
-
+        
+        Debug.Log(weaponData.name);
+        
         return GameManager.Instance.playerManager.ChangeWeapon(weaponData);
     }
     public void SetBubble(WeaponData w_Data)
