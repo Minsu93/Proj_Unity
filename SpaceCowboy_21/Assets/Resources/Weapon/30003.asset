@@ -21,15 +21,15 @@ MonoBehaviour:
   damage: 5
   shootInterval: 0.2
   burstInterval: 1
-  numberOfProjectile: 5
+  numberOfProjectile: 6
   numberOfBurst: 1
-  speed: 20
+  speed: 50
   speedVariation: 5
   lifeTime: 0
-  range: 10
+  range: 8
   showRange: 1
-  maxAmmo: 30
+  maxAmmo: 15
   projectileSpread: 10
   randomSpreadAngle: 5
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}
+  weaponPrefab: {fileID: 5061795885844492922, guid: 154542a7ba2b2a749be2a5b062a7195c, type: 3}
