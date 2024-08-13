@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PM_Guide : ProjectileMovement
 {
-    [SerializeField] int guideAmount = 1;
+    //[SerializeField] int guideAmount = 1;
     [SerializeField] float guideRadius = 5f;
     [SerializeField] float rotationSpeed = 1f;
+    [SerializeField] float guideInterval = 0.2f;
+    float timer;
     float rspd;
 
     int targetLayer ;
@@ -26,7 +28,8 @@ public class PM_Guide : ProjectileMovement
         this.speed = speed;
         activate = true;
         targetTr = null;
-        rspd = rotationSpeed * guideAmount;
+        timer = 0;
+        rspd = rotationSpeed;
 
         //움직인다
         rb.velocity = transform.right * speed;
@@ -41,16 +44,25 @@ public class PM_Guide : ProjectileMovement
 
     }
 
+    private void Update()
+    {
+        if (targetTr) return;
+
+        if(timer < guideInterval)
+        {
+            timer += Time.deltaTime;
+
+        }else
+        {
+            timer = 0;
+            targetTr = chaseNearEnemy();
+        }
+    }
 
     public void FixedUpdate()
     {
         if (!activate)
             return;
-
-        if (targetTr == null)
-        {
-            targetTr = chaseNearEnemy();
-        }
 
         if (targetTr)
         {
@@ -58,7 +70,10 @@ public class PM_Guide : ProjectileMovement
             Vector3 targetVec = (targetTr.position - transform.position).normalized;
             Vector3 upVec = Quaternion.Euler(0, 0, 90) * targetVec;
             Quaternion targetRot = Quaternion.LookRotation(forward: Vector3.forward, upwards: upVec);
-            Quaternion rot = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rspd);
+
+            float angle = Quaternion.Angle(transform.rotation, targetRot);
+            angle = Mathf.Floor(Mathf.Clamp(angle, 0, 90f) / 30);
+            Quaternion rot = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rspd * angle);
 
             //방향을 회전시킨다. 
             rb.SetRotation(rot);
@@ -70,15 +85,24 @@ public class PM_Guide : ProjectileMovement
 
     Transform chaseNearEnemy()
     {
-        Transform targetTr = null;
+        Transform tr = null;
 
-        RaycastHit2D targetHit = Physics2D.CircleCast(transform.position, guideRadius, Vector2.zero, 0, targetLayer);
-
-        if (targetHit.collider != null)
+        Collider2D[] colls = new Collider2D[10];
+        int count = Physics2D.OverlapCircleNonAlloc(transform.position, guideRadius, colls, targetLayer);
+        if(count > 0)
         {
-            targetTr = targetHit.transform;
+            float minDist = float.MaxValue;
+            
+            for(int i = 0; i < count; i++)
+            {
+                float dist = Vector2.Distance(transform.position, colls[i].transform.position);
+                if(dist < minDist)
+                {
+                    minDist = dist;
+                    tr = colls[i].transform;
+                }
+            }
         }
-
-        return targetTr;
+        return tr;
     }
 }

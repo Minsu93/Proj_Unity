@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class WType_ChargeLaser : WType_Charge
 {
-    public ParticleSystem hitEffect;
     public ParticleSystem nonHitEffect;
 
     [SerializeField] Material laserMat;
@@ -111,9 +110,4 @@ public class WType_ChargeLaser : WType_Charge
 
 
 
-    protected void ShowHitEffect(ParticleSystem particle, Vector2 pos)
-    {
-        if (particle != null)
-            GameManager.Instance.particleManager.GetParticle(particle, pos, transform.rotation);
-    }
 }

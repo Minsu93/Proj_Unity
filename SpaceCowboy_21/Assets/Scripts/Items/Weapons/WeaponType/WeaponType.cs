@@ -40,6 +40,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
 
     protected Transform gunTipTr;
     [SerializeField] ParticleSystem muzzleFlashVFX;
+    [SerializeField] protected ParticleSystem hitEffect;
 
 
     protected float lastShootTime;   //Áö³­ ¹ß»ç ½Ã°£
@@ -158,7 +159,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         }
     }
 
-    void WeaponShootEvent()
+    protected void WeaponShootEvent()
     {
         if(weaponStats.weaponShoot != null)
         {
@@ -166,8 +167,14 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         }
     }
 
+    protected void ShowHitEffect(ParticleSystem particle, Vector2 pos)
+    {
+        if (particle != null)
+            GameManager.Instance.particleManager.GetParticle(particle, pos, transform.rotation);
+    }
+
     //ÃÑ±¸ ºÒºû VFX 
-    void MuzzleFlashEvent(Vector3 pos, Quaternion quat)
+    protected void MuzzleFlashEvent(Vector3 pos, Quaternion quat)
     {
         if(muzzleFlashVFX == null) { return; }
         GameManager.Instance.particleManager.GetParticle(muzzleFlashVFX, pos, quat);

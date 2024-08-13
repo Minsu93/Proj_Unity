@@ -113,7 +113,7 @@ public class Projectile : MonoBehaviour
     #endregion
 
 
-    void Update()
+    protected virtual void Update()
     {
         if (!activate)
         {
@@ -134,10 +134,8 @@ public class Projectile : MonoBehaviour
         //총알 거리 체크
         else
         {
-
             float dist = Vector2.Distance(startPos, (Vector2)transform.position);
             DistanceCheck(dist);          
-
         }
         
     }

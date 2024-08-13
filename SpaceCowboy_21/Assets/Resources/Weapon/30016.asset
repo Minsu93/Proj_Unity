@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
-  m_Name: 30012
+  m_Name: 30016
   m_EditorClassIdentifier: 
   itemID: 20001
-  itemName: DangerCircleGun
+  itemName: AutoGuideGun
   gunStyle: 1
   icon: {fileID: 0}
   bubbleIcon: {fileID: 0}
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 6292677011125795810, guid: 246c3e7346a163a4dbc076a90b703273, type: 3}
   damage: 5
   shootInterval: 0.2
   burstInterval: 1
   numberOfProjectile: 1
   numberOfBurst: 1
-  speed: 0
+  speed: 20
   speedVariation: 0
-  lifeTime: 0
+  lifeTime: 5
   range: 0
-  showRange: 0
-  maxAmmo: 40
+  showRange: 1
+  maxAmmo: 100
   projectileSpread: 0
-  randomSpreadAngle: 0
+  randomSpreadAngle: 10
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 7031208836157295159, guid: 888aee981a9766b44badee793888e814, type: 3}
+  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}
