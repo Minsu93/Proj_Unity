@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bubble_Weapon : SelfCollectable
@@ -33,5 +34,10 @@ public class Bubble_Weapon : SelfCollectable
         this.weaponData = w_Data;
         spr.sprite = w_Data.BubbleIcon;
     }
-    
+
+    private void OnDrawGizmos()
+    {
+        UnityEditor.Handles.color = Color.white;
+        UnityEditor.Handles.Label(transform.position + (Vector3.right * 1.1f), weaponData.name);
+    }
 }

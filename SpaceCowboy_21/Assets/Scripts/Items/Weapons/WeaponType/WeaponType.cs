@@ -38,7 +38,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
     public float range { get; set; }
     public int maxAmmo { get; set; }
 
-    [SerializeField] protected GameObject gunTipObj;
+    protected Transform gunTipTr;
     [SerializeField] ParticleSystem muzzleFlashVFX;
 
 
@@ -71,7 +71,8 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         showRange = weaponData.ShowRange;
         shootSFX = weaponData.ShootSFX;
 
-        gunTipObj.transform.localPosition = gunTipLocalPos;
+        gunTipTr = transform.GetChild(0);
+        gunTipTr.localPosition = gunTipLocalPos;
         
     }
 

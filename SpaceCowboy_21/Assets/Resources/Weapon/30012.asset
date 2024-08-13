@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
-  m_Name: 90001
+  m_Name: 30012
   m_EditorClassIdentifier: 
   itemID: 20001
-  itemName: ChargingPirateGun
+  itemName: AutoChargeGun
   gunStyle: 1
   icon: {fileID: 0}
+  bubbleIcon: {fileID: 0}
   projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
-  damage: 10
-  shootInterval: 0.1
-  burstInterval: 0
+  damage: 5
+  shootInterval: 0.5
+  burstInterval: 1
   numberOfProjectile: 1
   numberOfBurst: 1
-  speed: 15
+  speed: 0
+  speedVariation: 0
   lifeTime: 0
-  range: 10
-  showRange: 1
-  maxAmmo: 5
-  projectileSpread: 30
+  range: 0
+  showRange: 0
+  maxAmmo: 100
+  projectileSpread: 0
   randomSpreadAngle: 0
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 3288597760306613731, guid: ad4528897afe85d408db3963e4c35e55, type: 3}
-  weaponEnableSprite: {fileID: 0}
-  weaponDisableSprite: {fileID: 0}
+  weaponPrefab: {fileID: 7031208836157295159, guid: 888aee981a9766b44badee793888e814, type: 3}
