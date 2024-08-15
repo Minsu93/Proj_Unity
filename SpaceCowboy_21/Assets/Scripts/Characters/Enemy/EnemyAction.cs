@@ -4,10 +4,8 @@ using Spine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
-using Unity.VisualScripting;
-using static UnityEditor.Progress;
 using System;
+using UnityEngine.SocialPlatforms;
 
 
 public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
@@ -51,6 +49,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     //로컬 변수
     protected bool onAttack;  //공격중일 때 
     protected bool onChase = false;   //chase 중인가요
+    protected bool onWait = false;    // wait 중인가요?
+
     protected bool startChase;        //chase 시작 시 한번만 실행.
     protected float groggyChance = 1f;    //그로기 상태가 될 확률 * 100f
     protected bool groggyOn = false;
@@ -67,13 +67,13 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected EnemyChase chase;
     protected CharacterGravity gravity;
     protected Rigidbody2D rb;
-    protected Collider2D hitColl;
+    protected Collider2D enemyColl;
     public GameObject iconUI;
     protected Planet prePlanet;
     protected Health health;
     protected DropItem dropItem;
 
-
+    [SerializeField] protected Collider2D projHitColl;
 
 
     //이벤트
@@ -101,7 +101,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         brain = GetComponent<EnemyBrain>();
         attack = GetComponent<EnemyAttack>();
         chase = GetComponent<EnemyChase>();
-        hitColl = GetComponent<Collider2D>();
+        enemyColl = GetComponent<Collider2D>();
         health = GetComponent<Health>();
         dropItem = GetComponent<DropItem>();
 
@@ -111,15 +111,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         WaveManager.instance.MonsterDisappearEvent += WaveClearEvent;
         GameManager.Instance.PlayerDeadEvent += PlayerIsDead;   //플레이어가 죽은 경우 실행하는 이벤트 
-    }
-
-    protected virtual void OnEnable()
-    {
-        iconUI.SetActive(true);
-    }
-    private void OnDisable()
-    {
-        iconUI.SetActive(false);
     }
 
 
@@ -135,10 +126,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         BrainStateChange();
 
         //enemyState에 따른 Action 실행 
-        EnemyStateChanged();
+        DoAction();
 
         //pause 상태.
-        if (enemyState == EnemyState.Wait) return;
+        if (enemyState == EnemyState.Groggy) return;
+        //if (enemyState == EnemyState.Wait) return;
+        if (onWait) return;
 
         if (onAttack)
         {
@@ -157,7 +150,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected virtual bool BeforeUpdate()
     {
         if (!activate) return true;
-        if (enemyState == EnemyState.Groggy) return true;
         else if (enemyState == EnemyState.Die) return true;
         return false;
     }
@@ -166,29 +158,27 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     public abstract void BrainStateChange();
 
     // EnemyState에 따라 다른 행동 실행 
-    protected void EnemyStateChanged()
+    protected void DoAction()
     {
         if (enemyState != preState)
         {
-            DoAction(enemyState);
+            ActionByState(enemyState);
             if (EnemyChangeStateEvent != null) EnemyChangeStateEvent(enemyState);
             preState = enemyState;
         }
     }
 
     //상태가 바뀔 때 한번만 실행 
-    protected virtual void DoAction(EnemyState state)
+    protected virtual void ActionByState(EnemyState state)
     {
         switch (state)
         {
             case EnemyState.Idle:
-                StartIdleView();
                 onChase = false;
                 onAttack = false;
                 break;
 
             case EnemyState.Chase:
-                StartRunView();
                 onChase = true;
                 onAttack = false;
                 break;
@@ -198,7 +188,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
                 onChase = false;
                 onAttack = true;
                 break;
-
         }
     }
 
@@ -222,6 +211,15 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     protected abstract IEnumerator StrikeRoutine(Vector2 strikePos);
 
+    //Strike 끝나고 깨어나기. 
+    public virtual void AfterStrikeEvent()
+    {
+        //if (enemyState == EnemyState.Die) return;
+        enemyState = EnemyState.Chase;
+        activate = true;
+        gravity.activate = true;
+    }
+
     #endregion
 
     #region Wave Clear
@@ -233,8 +231,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
         StopAllCoroutines();
         attack.StopAttackAction();
-        iconUI.SetActive(false);
-        hitColl.enabled = false;
+        enemyColl.enabled = false;
 
         //이동완료 시 투명화.
         StartClearView();
@@ -259,10 +256,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     #region Basic Actions
     //공격 이후 적유닛 행동
-    public virtual void AfterAttack()
-    {
-        EnemyPause(attack.attackCoolTime);
-    }
+
 
     //플레이어가 죽은 경우 다시 잠든다. 
     public void PlayerIsDead()
@@ -277,7 +271,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         onChase = false;
         onAttack = false;
         
-        hitColl.enabled = true;
+        enemyColl.enabled = true;
+        EnemyIgnoreProjectile(false);
 
         preState = EnemyState.Strike;
 
@@ -285,13 +280,9 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         StartResetView();
     }
 
-    //Strike 끝나고 깨어나기. 
-    public virtual void WakeUpEvent()
+    public virtual void AfterAttack()
     {
-        //if (enemyState == EnemyState.Die) return;
-        enemyState = EnemyState.Chase;
-        activate = true;
-        gravity.activate = true;
+        EnemyPause(attack.attackCoolTime);
     }
 
     //유닛 정지
@@ -302,19 +293,18 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     IEnumerator PauseRoutine(float sec)
     {
         //지난 행동상태
-        //EnemyState preState = enemyState;
-        enemyState = EnemyState.Wait;
+        onWait = true;
 
         yield return new WaitForSeconds(sec);
-        enemyState = EnemyState.Chase;
+        onWait = false;
     }
     public void EnemyForcePause()
     {
-        enemyState = EnemyState.Wait;
+        onWait = true;
     }
     public void EnemyForceWake()
     {
-        enemyState = EnemyState.Chase;
+        onWait = false;
     }
 
 
@@ -354,6 +344,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     public virtual void DamageEvent(float damage, Vector2 hitVec)
     {
         if (enemyState == EnemyState.Die) return;
+        if( enemyState == EnemyState.Groggy) return;
 
         if (health.AnyDamage(damage))
         {
@@ -363,6 +354,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
                 //그로기 찬스
                 if( UnityEngine.Random.Range(0, 1f) < groggyChance)
                 {
+                    StopAllCoroutines();
                     StartCoroutine(GroggyEvent());
                 }
                 else
@@ -377,7 +369,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         }
     }
 
-
     protected IEnumerator GroggyEvent()
     {
         Debug.Log("Groggy");
@@ -387,8 +378,9 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         
         onChase = false;
         onAttack = false;
-        StopAllCoroutines();
         attack.StopAttackAction();
+        StartAimStop();
+        EnemyIgnoreProjectile(true);
 
         float time = 0;
 
@@ -401,6 +393,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         groggyOn = false;
         WhenDieEvent();
     }
+
     public virtual void WhenDieEvent()
     {
         enemyState = EnemyState.Die;
@@ -413,8 +406,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         attack.StopAttackAction();
         StartDieView();
 
-        iconUI.SetActive(false);
-        hitColl.enabled = false;
+        enemyColl.enabled = false;
 
         StartCoroutine(DieRoutine(3.0f));
 
@@ -442,12 +434,19 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         if(groggyOn)
         {
             groggyOn = false;
+            StartHitView();
             dropItem.GenerateItem();
         }
         
     }
     //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
     public abstract void EnemyKnockBack(Vector2 hitPos, float forceAmount);
+
+    public void EnemyIgnoreProjectile(bool ignore)
+    {
+        //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Enemy"), LayerMask.NameToLayer("PlayerProj"), ignore);
+        projHitColl.enabled = !ignore;
+    }
 
     #endregion
 
@@ -526,7 +525,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     public Collider2D GetCollider()
     {
-        return hitColl;
+        return enemyColl;
     }
 
 

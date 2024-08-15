@@ -14,9 +14,9 @@ TagManager:
   - Obstacle
   - Drop
   - PhysicsBody
-  - Block
   - SpaceBorder
   - Particle
+  - ProjHitCollider
   layers:
   - Default
   - TransparentFX
@@ -31,13 +31,13 @@ TagManager:
   - EnemyProj
   - Planet
   - Object
-  - 
+  - ProjHitCollider
   - Gravity
   - EnemyHitableProj
-  - Obstacle
+  - 
   - PhysicsBody
   - OrbProj
-  - Block
+  - 
   - Minimap
   - 
   - Post Processing

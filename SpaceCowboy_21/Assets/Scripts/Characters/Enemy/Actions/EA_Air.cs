@@ -34,7 +34,7 @@ public class EA_Air : EnemyAction
     }
 
 
-    protected override void DoAction(EnemyState state)
+    protected override void ActionByState(EnemyState state)
     {
         switch (state)
         {
@@ -118,10 +118,10 @@ public class EA_Air : EnemyAction
 
         yield return new WaitForSeconds(0.5f);
 
-        WakeUpEvent();
+        AfterStrikeEvent();
     }
 
-    public override void WakeUpEvent()
+    public override void AfterStrikeEvent()
     {
         enemyState = EnemyState.Chase;
         activate = true;

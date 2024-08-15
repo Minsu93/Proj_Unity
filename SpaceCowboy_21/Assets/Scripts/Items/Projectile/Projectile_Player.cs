@@ -12,9 +12,15 @@ public class Projectile_Player : Projectile
     {
         if (!activate) return;
 
-        if (collision.TryGetComponent<ITarget>(out ITarget target))
+        Transform tr = collision.transform;
+        if (collision.CompareTag("ProjHitCollider"))
         {
-            if (collision.TryGetComponent<IHitable>(out IHitable hitable))
+            tr = collision.transform.parent;
+        }
+
+        if (tr.TryGetComponent<ITarget>(out ITarget target))
+        {
+            if (tr.TryGetComponent<IHitable>(out IHitable hitable))
             {
                 HitEvent(target, hitable);
             }

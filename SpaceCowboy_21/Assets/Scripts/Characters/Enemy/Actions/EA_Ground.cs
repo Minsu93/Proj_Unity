@@ -24,8 +24,7 @@ public class EA_Ground : EnemyAction
     {
         if (!activate) return true;
 
-        if (enemyState == EnemyState.Groggy) return true;
-        else if (enemyState == EnemyState.Die) return true;
+        if (enemyState == EnemyState.Die) return true;
 
         //공중 체크 
         CheckOnAir();
@@ -110,7 +109,7 @@ public class EA_Ground : EnemyAction
         }
         //착지하면 활동 시작. 
         yield return new WaitForSeconds(0.5f);
-        WakeUpEvent();
+        AfterStrikeEvent();
     }
 
     //추가된 부분

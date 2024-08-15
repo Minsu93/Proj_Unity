@@ -23,9 +23,15 @@ public class Projectile_ReflectToEnemy : Projectile_Player
     {
         if (!activate) return;
 
-        if (collision.TryGetComponent<ITarget>(out ITarget target))
+        Transform tr = collision.transform;
+        if (collision.CompareTag("ProjHitCollider"))
         {
-            if (collision.TryGetComponent<IHitable>(out IHitable hitable))
+            tr = collision.transform.parent;
+        }
+
+        if (tr.TryGetComponent<ITarget>(out ITarget target))
+        {
+            if (tr.TryGetComponent<IHitable>(out IHitable hitable))
             {
                 hittedTargets.Add(collision.transform);
                 HitEvent(target, hitable);

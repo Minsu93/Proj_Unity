@@ -38,8 +38,7 @@ public class EA_Orbit : EnemyAction
     {
         if (!activate) return true;
 
-        if (enemyState == EnemyState.Groggy) return true;
-        else if (enemyState == EnemyState.Die) return true;
+        if (enemyState == EnemyState.Die) return true;
 
         //스턴 시간 추가
         if (pTime > 0)
@@ -62,9 +61,10 @@ public class EA_Orbit : EnemyAction
         BrainStateChange();
 
         //enemyState에 따른 Action 실행 
-        EnemyStateChanged();
+        DoAction();
 
         ///수정된 부분
+        if (enemyState == EnemyState.Groggy) return;
         if (enemyState == EnemyState.Wait) return;
 
         if (onAttack)
@@ -103,7 +103,7 @@ public class EA_Orbit : EnemyAction
     }
 
 
-    protected override void DoAction(EnemyState state)
+    protected override void ActionByState(EnemyState state)
     {
         switch (state)
         {
@@ -129,7 +129,7 @@ public class EA_Orbit : EnemyAction
     }
 
     
-    public override void WakeUpEvent()
+    public override void AfterStrikeEvent()
     {
         enemyState = EnemyState.Chase;
         activate = true;
@@ -149,6 +149,8 @@ public class EA_Orbit : EnemyAction
     public override void DamageEvent(float damage, Vector2 hitVec)
     {
         if (enemyState == EnemyState.Die) return;
+        if (enemyState == EnemyState.Groggy) return;
+
 
         if (health.AnyDamage(damage))
         {
@@ -206,7 +208,7 @@ public class EA_Orbit : EnemyAction
         //추가한 부분
         chase_Orbit.SetCenterPoint(planet);
 
-        WakeUpEvent();
+        AfterStrikeEvent();
     }
 
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)

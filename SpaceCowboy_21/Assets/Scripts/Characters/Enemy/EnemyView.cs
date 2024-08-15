@@ -33,12 +33,8 @@ public class EnemyView : MonoBehaviour
     {
         if (enemyAction == null) return;
 
-        //enemyAction.EnemyStartIdle += PlayIdle;
-        enemyAction.EnemyStartRun += PlayRun;
-        //enemyAction.EnemyStrikeEvent += PlayStrike;
         enemyAction.EnemyAttackEvent += PlayAttack;
         enemyAction.EnemyHitEvent += PlayDamaged;
-        //enemyAction.EnemyDieEvent += PlayDead;
         enemyAction.EnemyClearEvent += PlayStageClear;
         enemyAction.EnemyResetEvent += PlayReset;
         if(aimOn != null)
@@ -60,13 +56,13 @@ public class EnemyView : MonoBehaviour
 
     public void ChangeView(EnemyState state)
     {
-        
         switch (state)
         {
             case EnemyState.Idle:
                 PlayIdle();
                 break;
             case EnemyState.Chase:
+                PlayRun();
                 break;
             case EnemyState.Attack:
                 break;
@@ -79,6 +75,8 @@ public class EnemyView : MonoBehaviour
                 PlayStrike();
                 break;
             case EnemyState.Groggy:
+                PlayIdle();
+                PlayAimOff();
                 GroggyView();
                 break;
         }
@@ -171,12 +169,6 @@ public class EnemyView : MonoBehaviour
     {
         Debug.Log("Groggy Start");
 
-        skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
-        //색을 빨간색으로 변경
-        //int cID = Shader.PropertyToID("_Color");
-        //block.SetColor(cID, Color.red);
-        //_renderer.SetPropertyBlock(block);
-
         int bID = Shader.PropertyToID("_Black");
         block.SetColor(bID, Color.red);
         _renderer.SetPropertyBlock(block);
@@ -191,6 +183,8 @@ public class EnemyView : MonoBehaviour
         int cID = Shader.PropertyToID("_Color");
         Color deadColor = new Color(1, 1, 1, 1);
         block.SetColor(cID, deadColor);
+        int bID = Shader.PropertyToID("_Black");
+        block.SetColor(bID, Color.black);
         _renderer.SetPropertyBlock(block);
     
     }

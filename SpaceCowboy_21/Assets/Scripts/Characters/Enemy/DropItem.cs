@@ -36,7 +36,7 @@ public class DropItem : MonoBehaviour
         }
 
         //popperGenerate
-        GameManager.Instance.popperManager.CreatePopper(this.transform);
+        GameManager.Instance.popperManager.GiveWeaponToPlayer(this.transform);
 
     }
 

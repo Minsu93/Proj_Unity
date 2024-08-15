@@ -30,6 +30,7 @@ public class PopperManager : MonoBehaviour
     bool dropReady = true;
     float timer = 0f;
 
+    #region popper 방식
     public void CreatePopper(Transform targetTr)
     {
         if (!dropReady) return;
@@ -143,8 +144,45 @@ public class PopperManager : MonoBehaviour
         firework.SetActive(false);
 
     }
+    #endregion
 
+    #region 플레이어 다이렉트 드랍 방식
+    public void GiveWeaponToPlayer(Transform fromTr)
+    {
+        EquippedWeapon equip = ForceDropItem();
+        GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
+        firework.transform.position = fromTr.position;
+        firework.transform.rotation = fromTr.rotation;
 
+        StartCoroutine(MoveToPlayerRoutine(firework, fromTr.position, equip.weaponData));
+
+    }
+
+    IEnumerator MoveToPlayerRoutine(GameObject firework, Vector2 startPos, WeaponData w_Data)
+    {
+        float time = 0f;
+
+        // 폭죽이 목표 위치에 도달할 때까지 이동합니다.
+        while (time <= launchTimer)
+        {
+            Vector2 targetPos = GameManager.Instance.player.position;
+            time += Time.deltaTime;
+            
+            Vector2 pos = Vector2.Lerp(startPos, targetPos, fireworkCurve.Evaluate(time / launchTimer));
+            firework.transform.position = pos;
+            yield return null;
+        }
+
+        // 오브 생성.
+        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
+        newOrb.transform.position = GameManager.Instance.player.position;
+        newOrb.transform.rotation = Quaternion.identity;
+        Bubble_Weapon bubble = newOrb.GetComponent<Bubble_Weapon>();
+        bubble.SetBubble(w_Data);
+
+        firework.SetActive(false);
+    }
+    #endregion
 
     void Start()
     {
@@ -184,7 +222,7 @@ public class PopperManager : MonoBehaviour
             {
                 cumulativeChance += item.dropChance;
 
-                if (roll < cumulativeChance)
+                if (roll <= cumulativeChance)
                 {
                     AdjustDropChances(item, true);
                     totalDropChance = Mathf.Max(totalDropChance - dropChanceDecrement, 0.01f);
@@ -197,6 +235,27 @@ public class PopperManager : MonoBehaviour
         Debug.Log("No item dropped");
         return null;
 
+    }
+
+    EquippedWeapon ForceDropItem()
+    {
+        EquippedWeapon dropWeapon = null;
+        //드랍 종류 선택 
+        float roll = UnityEngine.Random.Range(0, 1.0f);
+        float cumulativeChance = 0.0f;
+
+        foreach (var item in equippedWeapons)
+        {
+            cumulativeChance += item.dropChance;
+
+            if (roll <= cumulativeChance)
+            {
+                AdjustDropChances(item, true);
+                totalDropChance = Mathf.Max(totalDropChance - dropChanceDecrement, 0.01f);
+                dropWeapon = item;
+            }
+        }
+        return dropWeapon;
     }
 
     //각 아이템들의 드롭 찬스 변경. 이미 나온 아이템이 나올 확률은 점점 줄어들고, 다른 아이템이 나올 확률은 높아진다.
