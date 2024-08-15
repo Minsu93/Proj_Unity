@@ -38,6 +38,9 @@ public class EA_Orbit : EnemyAction
     {
         if (!activate) return true;
 
+        if (enemyState == EnemyState.Groggy) return true;
+        else if (enemyState == EnemyState.Die) return true;
+
         //스턴 시간 추가
         if (pTime > 0)
         {
@@ -59,11 +62,7 @@ public class EA_Orbit : EnemyAction
         BrainStateChange();
 
         //enemyState에 따른 Action 실행 
-        if (enemyState != preState)
-        {
-            DoAction(enemyState);
-            preState = enemyState;
-        }
+        EnemyStateChanged();
 
         ///수정된 부분
         if (enemyState == EnemyState.Wait) return;
@@ -146,19 +145,6 @@ public class EA_Orbit : EnemyAction
 
     }
 
-
-    protected override void OnDieAction()
-    {
-        base.OnDieAction();
-
-        //죽으면 궤도 물체 지상으로 떨어짐.
-        gravity.activate = true;
-
-        //파티클 추가
-        if (boosterParticle != null) boosterParticle.Stop();
-    }
-
-
     //base에 피격시 정지하는 pTime 만 추가함.
     public override void DamageEvent(float damage, Vector2 hitVec)
     {
@@ -166,19 +152,28 @@ public class EA_Orbit : EnemyAction
 
         if (health.AnyDamage(damage))
         {
-            StartHitView();
 
             //피격시 정지 추가
             pTime = pauseTimer;
 
-            if (hitEffect != null) GameManager.Instance.particleManager.GetParticle(hitEffect, transform.position, transform.rotation);
 
             if (health.IsDead())
             {
-                WhenDieEvent();
-
-                //GameManager.Instance.playerManager.ChargeFireworkEnergy();
+                //그로기 찬스
+                if (UnityEngine.Random.Range(0, 1f) < groggyChance)
+                {
+                    StartCoroutine(GroggyEvent());
+                }
+                else
+                    WhenDieEvent();
             }
+            else
+            {
+                StartHitView();
+                if (hitEffect != null) GameManager.Instance.particleManager.GetParticle(hitEffect, transform.position, transform.rotation);
+
+            }
+
         }
     }
 
@@ -238,12 +233,16 @@ public class EA_Orbit : EnemyAction
         chase_Orbit.ResetCenterPoint();
     }
 
-    public override void AfterAttack()
+    public override void WhenDieEvent()
     {
-        //공격 이후에 따로 정지되는 로직 없음.
-        return;
-    }
+        base.WhenDieEvent();
 
+        //죽으면 궤도 물체 지상으로 떨어짐.
+        gravity.activate = true;
+
+        //파티클 추가
+        if (boosterParticle != null) boosterParticle.Stop();
+    }
 
     void ChangeDirection()
     {

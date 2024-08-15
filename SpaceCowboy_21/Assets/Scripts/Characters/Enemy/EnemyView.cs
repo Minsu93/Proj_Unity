@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 using System.Security.Cryptography;
 using SpaceCowboy;
 using System.Reflection;
+using UnityEditor.Experimental.RestService;
 
 public class EnemyView : MonoBehaviour
 {
@@ -32,12 +33,12 @@ public class EnemyView : MonoBehaviour
     {
         if (enemyAction == null) return;
 
-        enemyAction.EnemyStartIdle += PlayIdle;
+        //enemyAction.EnemyStartIdle += PlayIdle;
         enemyAction.EnemyStartRun += PlayRun;
-        enemyAction.EnemyStrikeEvent += PlayStrike;
+        //enemyAction.EnemyStrikeEvent += PlayStrike;
         enemyAction.EnemyAttackEvent += PlayAttack;
         enemyAction.EnemyHitEvent += PlayDamaged;
-        enemyAction.EnemyDieEvent += PlayDead;
+        //enemyAction.EnemyDieEvent += PlayDead;
         enemyAction.EnemyClearEvent += PlayStageClear;
         enemyAction.EnemyResetEvent += PlayReset;
         if(aimOn != null)
@@ -46,6 +47,8 @@ public class EnemyView : MonoBehaviour
             enemyAction.EnemyAimOffEvent += PlayAimOff;
         enemyAction.EnemySeeDirection += FlipScaleXToDirection;
 
+        //상태 변경 시 상태에 따른 애니메이션
+        enemyAction.EnemyChangeStateEvent += ChangeView;
 
         _renderer = GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();
@@ -55,6 +58,31 @@ public class EnemyView : MonoBehaviour
 
     }
 
+    public void ChangeView(EnemyState state)
+    {
+        
+        switch (state)
+        {
+            case EnemyState.Idle:
+                PlayIdle();
+                break;
+            case EnemyState.Chase:
+                break;
+            case EnemyState.Attack:
+                break;
+            case EnemyState.Die:
+                PlayDead();
+                break;
+            case EnemyState.Wait:
+                break;
+            case EnemyState.Strike:
+                PlayStrike();
+                break;
+            case EnemyState.Groggy:
+                GroggyView();
+                break;
+        }
+    }
 
     //루핑되는 애니메이션
     void PlayIdle()
@@ -137,6 +165,21 @@ public class EnemyView : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    void GroggyView()
+    {
+        Debug.Log("Groggy Start");
+
+        skeletonAnimation.AnimationState.SetAnimation(0, idle, true);
+        //색을 빨간색으로 변경
+        //int cID = Shader.PropertyToID("_Color");
+        //block.SetColor(cID, Color.red);
+        //_renderer.SetPropertyBlock(block);
+
+        int bID = Shader.PropertyToID("_Black");
+        block.SetColor(bID, Color.red);
+        _renderer.SetPropertyBlock(block);
     }
 
 

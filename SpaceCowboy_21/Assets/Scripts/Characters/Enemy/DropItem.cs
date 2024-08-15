@@ -22,9 +22,9 @@ public class DropItem : MonoBehaviour
 
     private void Awake()
     {
-        EnemyAction enemyAction = GetComponent<EnemyAction>();
-        if(enemyAction != null )
-            enemyAction.EnemyDieEvent += GenerateItem;
+        //EnemyAction enemyAction = GetComponent<EnemyAction>();
+        //if(enemyAction != null )
+        //    enemyAction.EnemyDieEvent += GenerateItem;
     }
 
     public void GenerateItem()
