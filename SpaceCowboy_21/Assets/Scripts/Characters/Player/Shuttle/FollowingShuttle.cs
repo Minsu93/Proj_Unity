@@ -1,19 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FollowingShuttle : MonoBehaviour
 {
-    [Header("ShuttleMovement")]
-    [SerializeField] Vector2 positionVector = new Vector2(-1, 1);
-    [SerializeField] float maxDistance = 2f;
-    [SerializeField] float minSmoothTime = 0.1f; // 최소 감속 시간
-    [SerializeField] float maxSmoothTime = 0.5f; // 최대 감속 시간
-    float smoothTime;
-    private Vector2 velocity = Vector2.zero; // 현재 속도 (SmoothDamp에서 사용)
     Rigidbody2D rb;
-
-
 
     private void Awake()
     {
@@ -22,6 +14,22 @@ public class FollowingShuttle : MonoBehaviour
 
     private void FixedUpdate()
     {
+        RigidBodyFollowPlayer();
+    }
+
+    #region BaseMovement
+
+    [Header("ShuttleMovement")]
+    [SerializeField] Vector2 positionVector = new Vector2(-1, 1);
+    [SerializeField] float maxDistance = 2f;
+    [SerializeField] float minSmoothTime = 0.1f; // 최소 감속 시간
+    [SerializeField] float maxSmoothTime = 0.5f; // 최대 감속 시간
+    float smoothTime;
+    private Vector2 velocity = Vector2.zero; // 현재 속도 (SmoothDamp에서 사용)
+
+
+    void RigidBodyFollowPlayer()
+    {
         Transform targetTr = GameManager.Instance.player;
         if (targetTr == null) return;
 
@@ -29,6 +37,13 @@ public class FollowingShuttle : MonoBehaviour
         bool right = GameManager.Instance.playerManager.playerBehavior.aimRight;
         int minus = right ? 1 : -1;
         Vector2 targetPosition = targetTr.position + (targetTr.up * positionVector.y) + (targetTr.right * positionVector.x * minus);
+
+        RigidBodyMoveToPosition(targetPosition);
+    }
+
+    void RigidBodyMoveToPosition(Vector2 targetPos)
+    {
+        Vector2 targetPosition = targetPos;
 
         // 현재 위치와 목표 위치 간의 거리
         float distance = Vector2.Distance(transform.position, targetPosition) / maxDistance;
@@ -40,6 +55,16 @@ public class FollowingShuttle : MonoBehaviour
         rb.MovePosition(Vector2.SmoothDamp(rb.position, targetPosition, ref velocity, smoothTime));
     }
 
+    #endregion
+
+    private void Update()
+    {
+        //기본 공격 
+        BaseAttackMethod();
+    }
+
+    #region BaseAttack
+
     [Header("Enemy Check Range")]
     [SerializeField] float enemyCheckRange = 10f;
     [SerializeField] float enemyCheckInterval = 0.2f;
@@ -47,33 +72,22 @@ public class FollowingShuttle : MonoBehaviour
     float checkTimer;
 
     [Header("AttackProperty")]
-    [SerializeField] int numberOfBurst = 1;
-    [SerializeField] float burstInterval = 0.2f;
-    [SerializeField] int numberOfProjectile = 1;
-    [SerializeField] float projectileSpread = 1;
-    [SerializeField] float randomSpreadAngle = 1;
-    [SerializeField] GameObject projectilePrefab;
-    [SerializeField] float damage = 1;
-    [SerializeField] float speed = 1;
-    [SerializeField] float lifeTime = 1;
-    [SerializeField] float range = 1;
-    [SerializeField] float shootCoolTime = 3.0f;
+    [SerializeField] ProjectileAttackProperty attackProperty;
     float lastShootTime;
 
-
-    private void Update()
+    void BaseAttackMethod()
     {
         //시간 체크
         checkTimer += Time.deltaTime;
         if (checkTimer < enemyCheckInterval) return;
-        
+
         //적 체크
         checkTimer = 0;
         Transform targetTr = CheckEnemyIsNear();
         if (targetTr == null) return;
-        
+
         //발사 체크
-        BasicAttack(targetTr);
+        GunAttack(targetTr);
     }
 
     Transform CheckEnemyIsNear()
@@ -97,9 +111,9 @@ public class FollowingShuttle : MonoBehaviour
         return targetTr;
     }
 
-    void BasicAttack(Transform targetTr)
+    void GunAttack(Transform targetTr)
     {
-        if (Time.time - lastShootTime > shootCoolTime)
+        if (Time.time - lastShootTime > attackProperty.shootCoolTime)
         {
             //쏜 시간 체크
             lastShootTime = Time.time;
@@ -111,40 +125,54 @@ public class FollowingShuttle : MonoBehaviour
 
     protected IEnumerator burstShootRoutine(Transform targetTr)
     {
-        for (int i = 0; i < numberOfBurst; i++)
+        for (int i = 0; i < attackProperty.numberOfBurst; i++)
         {
             Vector2 pos = transform.position;
             Vector2 dir = ((Vector2)targetTr.position - pos).normalized;
             Shoot(pos, dir);
-            yield return new WaitForSeconds(burstInterval);
+            yield return new WaitForSeconds(attackProperty.burstInterval);
         }
     }
 
-
-    //실제 쏘는 행동
     protected virtual void Shoot(Vector2 pos, Vector3 dir)
     {
-        float totalSpread = projectileSpread * (numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
+        float totalSpread = attackProperty.projectileSpread * (attackProperty.numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
 
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90 - (totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
 
         //랜덤 각도 추가
-        float randomAngle = UnityEngine.Random.Range(-randomSpreadAngle * 0.5f, randomSpreadAngle * 0.5f);
+        float randomAngle = UnityEngine.Random.Range(-attackProperty.randomSpreadAngle * 0.5f, attackProperty.randomSpreadAngle * 0.5f);
         Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
 
         //멀티샷
-        for (int i = 0; i < numberOfProjectile; i++)
+        for (int i = 0; i < attackProperty.numberOfProjectile; i++)
         {
-            Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
+            Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, attackProperty.projectileSpread * (i));
 
             //총알 생성
-            GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
+            GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(attackProperty.projectilePrefab, 0);
             projectile.transform.position = pos;
             projectile.transform.rotation = tempRot * randomRotation;
             Projectile proj = projectile.GetComponent<Projectile>();
-            proj.Init(damage, speed, lifeTime, range);
+            proj.Init(attackProperty.damage, attackProperty.speed, attackProperty.lifeTime, attackProperty.range);
         }
     }
+    #endregion
+}
 
+[Serializable] 
+public struct ProjectileAttackProperty
+{
+    public int numberOfBurst;
+    public float burstInterval;
+    public int numberOfProjectile;
+    public float projectileSpread;
+    public float randomSpreadAngle;
+    public GameObject projectilePrefab;
+    public float damage;
+    public float speed;
+    public float lifeTime;
+    public float range;
+    public float shootCoolTime ;
 }
