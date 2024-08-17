@@ -156,17 +156,10 @@ public class GameManager : MonoBehaviour
 
 
     //æ¿ ∑ŒµÂ
-    //public void Loadscene(string sceneName)
-    //{
-    //    //if(player != null)
-    //    //    playerManager.SavePlayerInfo();
-    //    if(materialManager!= null)
-    //        materialManager.SaveMoney();
-
-    //    Debug.Log("æ¿ ∫“∑Øø¿±‚ Ω√¿€");
-
-    //    StartCoroutine(LoadSceneRoutine(sceneName));
-    //}
+    public void LoadsceneByName(string sceneName)
+    {
+        StartCoroutine(LoadSceneRoutine(sceneName, StageState.Lobby));
+    }
 
     public void LoadSceneByStageState(string stageName, StageState stageState)
     {

@@ -38,8 +38,6 @@ public class EA_Orbit : EnemyAction
     {
         if (!activate) return true;
 
-        if (enemyState == EnemyState.Die) return true;
-
         //스턴 시간 추가
         if (pTime > 0)
         {
@@ -161,13 +159,7 @@ public class EA_Orbit : EnemyAction
 
             if (health.IsDead())
             {
-                //그로기 찬스
-                if (UnityEngine.Random.Range(0, 1f) < groggyChance)
-                {
-                    StartCoroutine(GroggyEvent());
-                }
-                else
-                    WhenDieEvent();
+                WhenDieEvent();
             }
             else
             {

@@ -150,7 +150,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected virtual bool BeforeUpdate()
     {
         if (!activate) return true;
-        else if (enemyState == EnemyState.Die) return true;
         return false;
     }
         
@@ -165,6 +164,11 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
             ActionByState(enemyState);
             if (EnemyChangeStateEvent != null) EnemyChangeStateEvent(enemyState);
             preState = enemyState;
+            //죽었으면 전체 비활성화.
+            if(enemyState == EnemyState.Die)
+            {
+                activate = false;
+            }
         }
     }
 
@@ -270,7 +274,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         onChase = false;
         onAttack = false;
-        
+        onWait = false;
+
         enemyColl.enabled = true;
         EnemyIgnoreProjectile(false);
 
@@ -351,14 +356,15 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
            
             if (health.IsDead())
             {
-                //그로기 찬스
-                if( UnityEngine.Random.Range(0, 1f) < groggyChance)
-                {
-                    StopAllCoroutines();
-                    StartCoroutine(GroggyEvent());
-                }
-                else
-                    WhenDieEvent();
+                ////그로기 찬스
+                //if( UnityEngine.Random.Range(0, 1f) < groggyChance)
+                //{
+                //    StopAllCoroutines();
+                //    StartCoroutine(GroggyEvent());
+                //}
+                //else
+                //    WhenDieEvent();
+                WhenDieEvent();
             } 
             else
             {
@@ -398,15 +404,16 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         enemyState = EnemyState.Die;
 
-        activate = false;
+        //activate = false;
         onChase = false;
         onAttack = false;
 
         StopAllCoroutines();
         attack.StopAttackAction();
-        StartDieView();
+        if (EnemyDieEvent != null) EnemyDieEvent();
 
         enemyColl.enabled = false;
+        EnemyIgnoreProjectile(true);
 
         StartCoroutine(DieRoutine(3.0f));
 
@@ -431,12 +438,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
             EnemyKnockBack(hitPos, knockbackAmount);
         }
 
-        if(groggyOn)
-        {
-            groggyOn = false;
-            StartHitView();
-            dropItem.GenerateItem();
-        }
+        //if(groggyOn)
+        //{
+        //    groggyOn = false;
+        //    StartHitView();
+        //    dropItem.GenerateItem();
+        //}
         
     }
     //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
@@ -479,12 +486,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         if (EnemyHitEvent != null)
             EnemyHitEvent();
-    }
-
-    public void StartDieView()
-    {
-        if (EnemyDieEvent != null)
-            EnemyDieEvent();
     }
 
     public void StartClearView()

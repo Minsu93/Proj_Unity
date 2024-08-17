@@ -24,8 +24,6 @@ public class EA_Ground : EnemyAction
     {
         if (!activate) return true;
 
-        if (enemyState == EnemyState.Die) return true;
-
         //공중 체크 
         CheckOnAir();
         //공중 회전

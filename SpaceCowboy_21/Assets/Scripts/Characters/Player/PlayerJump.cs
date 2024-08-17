@@ -178,6 +178,8 @@ public class PlayerJump : MonoBehaviour
                         playerBehavior.PlayerUnhittable(unHittableTime);
                         force = 2f * playerBehavior.knockBackForce;
                         kickParticle = impactParticle;
+
+                        //dashCount = 0;
                     }
                     else
                     {

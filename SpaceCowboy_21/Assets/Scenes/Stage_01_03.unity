@@ -5204,7 +5204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BoundingShape2D: {fileID: 0}
+  m_BoundingShape2D: {fileID: 575211591}
   m_Damping: 0.5
   m_MaxWindowSize: -1
 --- !u!1001 &554111956
@@ -13341,6 +13341,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a37fe681dbc2aa54e88cb835584828a7, type: 3}
+--- !u!60 &575211591 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 5150398847046816513, guid: a37fe681dbc2aa54e88cb835584828a7, type: 3}
+  m_PrefabInstance: {fileID: 575211590}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &611968118
 GameObject:
   m_ObjectHideFlags: 0

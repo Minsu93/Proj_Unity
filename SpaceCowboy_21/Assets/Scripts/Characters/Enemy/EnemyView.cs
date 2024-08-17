@@ -3,11 +3,6 @@ using Spine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System.Security.Cryptography;
-using SpaceCowboy;
-using System.Reflection;
-using UnityEditor.Experimental.RestService;
 
 public class EnemyView : MonoBehaviour
 {
@@ -67,6 +62,7 @@ public class EnemyView : MonoBehaviour
             case EnemyState.Attack:
                 break;
             case EnemyState.Die:
+                StopAllCoroutines();
                 PlayDead();
                 break;
             case EnemyState.Wait:
@@ -77,6 +73,7 @@ public class EnemyView : MonoBehaviour
             case EnemyState.Groggy:
                 PlayIdle();
                 PlayAimOff();
+                StopAllCoroutines();
                 GroggyView();
                 break;
         }

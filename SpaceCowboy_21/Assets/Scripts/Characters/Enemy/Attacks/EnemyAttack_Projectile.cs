@@ -94,4 +94,10 @@ public class EnemyAttack_Projectile : EnemyAttack
         }
     }
 
+    public override void StopAttackAction()
+    {
+        base.StopAttackAction();
+        enemyAction.StartAimStop();
+
+    }
 }
