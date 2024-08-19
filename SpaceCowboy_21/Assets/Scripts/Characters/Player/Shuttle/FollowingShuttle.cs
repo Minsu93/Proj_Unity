@@ -57,7 +57,7 @@ public class FollowingShuttle : MonoBehaviour
                 }
                 else
                 {
-                    //이동
+                    //스킬 위치까지 이동
                     RigidBodyMoveToPosition(ShuttleMoveTargetPos, out _ );
                 }
             }
@@ -78,7 +78,6 @@ public class FollowingShuttle : MonoBehaviour
     [SerializeField] float maxDistance = 2f;
     [SerializeField] float minSmoothTime = 0.1f; // 최소 감속 시간
     [SerializeField] float maxSmoothTime = 0.5f; // 최대 감속 시간
-    float smoothTime;
     private Vector2 velocity = Vector2.zero; // 현재 속도 (SmoothDamp에서 사용)
     Vector2 ShuttleMoveTargetPos = Vector2.zero;
 
@@ -111,10 +110,10 @@ public class FollowingShuttle : MonoBehaviour
         Vector2 targetPosition = targetPos;
 
         // 현재 위치와 목표 위치 간의 거리
-        distance = Vector2.Distance(transform.position, targetPosition) / maxDistance;
+        distance = Vector2.Distance(transform.position, targetPosition) ;
 
         // 거리 기반으로 smoothTime 조절
-        smoothTime = Mathf.Lerp(minSmoothTime, maxSmoothTime, distance);
+        float smoothTime = Mathf.Lerp(minSmoothTime, maxSmoothTime, distance / maxDistance);
 
         // 부드럽게 이동 (SmoothDamp)
         rb.MovePosition(Vector2.SmoothDamp(rb.position, targetPosition, ref velocity, smoothTime));

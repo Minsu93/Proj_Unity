@@ -124,4 +124,19 @@ public class Shut_Skill_KickBall : ShuttleSkill
         }
         return tr;
     }
+
+    Vector2 GetScreenSize()
+    {
+        // 화면의 왼쪽 아래 코너를 월드 좌표로 변환
+        Vector3 bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane));
+
+        // 화면의 오른쪽 위 코너를 월드 좌표로 변환
+        Vector3 topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.nearClipPlane));
+
+        // 유닛 크기 계산
+        float screenWidthInUnits = topRight.x - bottomLeft.x;
+        float screenHeightInUnits = topRight.y - bottomLeft.y;
+
+        return Vector2 size = new Vector2(screenWidthInUnits, screenHeightInUnits);
+    }
 }
