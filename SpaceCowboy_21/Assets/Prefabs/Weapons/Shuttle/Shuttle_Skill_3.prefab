@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2724964272932632010
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7150722898583262850, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_Name
+      value: Shuttle_Skill_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+--- !u!1 &5110877519637717832 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7150722898583262850, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+  m_PrefabInstance: {fileID: 2724964272932632010}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2683626696366397453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5110877519637717832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a32a1947b927c6443b17c25d2aed2405, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillCoolTime: 5
+  maxWaitTime: 5
+  maxUseTime: 10
+  sizeDefaultMultiplier: 2
+  kickedColl: {fileID: 5110877519637717838}
+  projHitColl: {fileID: 5110877519678150152}
+  enemyCheckRange: 15
+  enemyCheckInterval: 0.1
+  attackProperty:
+    numberOfBurst: 1
+    burstInterval: 0
+    numberOfProjectile: 1
+    projectileSpread: 1
+    randomSpreadAngle: 1
+    projectilePrefab: {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
+    damage: 10
+    speed: 40
+    lifeTime: 0
+    range: 15
+    shootCoolTime: 0
+  maxAmmo: 0
+--- !u!58 &5110877519637717838 stripped
+CircleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 7150722898583262852, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+  m_PrefabInstance: {fileID: 2724964272932632010}
+  m_PrefabAsset: {fileID: 0}
+--- !u!58 &5110877519678150152 stripped
+CircleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 7150722898615182274, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
+  m_PrefabInstance: {fileID: 2724964272932632010}
+  m_PrefabAsset: {fileID: 0}

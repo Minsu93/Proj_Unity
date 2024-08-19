@@ -14,10 +14,12 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
     float _useTimer;
     bool activate;  //가동 시작 
     protected bool useStart;  //발차기를 맞고 작동 시작
-    
-    [SerializeField] CircleCollider2D coll;
+    [SerializeField] protected float sizeDefaultMultiplier = 2.0f;
+
+    [SerializeField] CircleCollider2D kickedColl;
+    [SerializeField] protected Collider2D projHitColl;
     ResetDel resetShuttleDel;   //초기화용도 
-    [SerializeField] protected Rigidbody2D rb;
+    protected Rigidbody2D rb;
 
     //초기 생성 시 
     public void ShuttleSkillInitialize()
@@ -27,10 +29,12 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
     }
 
     //변신
-    public void ActivateShuttleSkill(ResetDel del)
+    public virtual void ActivateShuttleSkill(ResetDel del)
     {
         resetShuttleDel = del;
-        coll.enabled = true;
+        kickedColl.enabled = true;
+        projHitColl.enabled = true;
+        this.transform.localScale = Vector3.one * sizeDefaultMultiplier;
         activate = true;
     }
 
@@ -98,7 +102,10 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 
     void ResetSkill()
     {
-        coll.enabled = false;
+        this.transform.localScale = Vector3.one;
+        kickedColl.enabled = false;
+        projHitColl.enabled = false;
+
         _waitTimer = 0;
         _useTimer = 0;
         activate = false;
@@ -107,7 +114,7 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 
     public Collider2D GetCollider()
     {
-        return coll;
+        return kickedColl;
     }
 
 }

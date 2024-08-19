@@ -93,7 +93,7 @@ public class FollowingShuttle : MonoBehaviour
         Vector2 targetPosition = targetTr.position + (targetTr.up * positionVector.y) + (targetTr.right * positionVector.x * minus);
 
         RigidBodyMoveToPosition(targetPosition, out float distanceToPlayer);
-        if(distanceToPlayer < 0.1f)
+        if(distanceToPlayer < 1f)
         {
             physicsColl.enabled = true;
             stopAttack = false;
@@ -144,32 +144,36 @@ public class FollowingShuttle : MonoBehaviour
     [Header("Enemy Check Range")]
     [SerializeField] float enemyCheckRange = 10f;
     [SerializeField] float enemyCheckInterval = 0.2f;
-    Collider2D[] enemyColls = new Collider2D[10];
     float checkTimer;
 
     [Header("AttackProperty")]
     [SerializeField] ProjectileAttackProperty attackProperty;
     float lastShootTime;
+    Transform targetTr;
 
     void BaseAttackMethod()
     {
         //시간 체크
         checkTimer += Time.deltaTime;
-        if (checkTimer < enemyCheckInterval) return;
-
-        //적 체크
-        checkTimer = 0;
-        Transform targetTr = CheckEnemyIsNear();
-        if (targetTr == null) return;
-
-        //발사 체크
-        GunAttack(targetTr);
+        if (checkTimer >= enemyCheckInterval)
+        {
+            //적 체크
+            checkTimer = 0;
+            targetTr = CheckEnemyIsNear();
+        }
+        
+        if (targetTr != null)
+        {
+            //발사 
+            GunAttack(targetTr);
+        }
     }
 
     Transform CheckEnemyIsNear()
     {
         Transform targetTr = null;
         float minDist = float.MaxValue;
+        Collider2D[] enemyColls = new Collider2D[10];
         int num = Physics2D.OverlapCircleNonAlloc(transform.position, enemyCheckRange, enemyColls, LayerMask.GetMask("Enemy"));
         if(num > 0)
         {

@@ -40,9 +40,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2689976358477703547}
-  - component: {fileID: -1814446413938597715}
+  - component: {fileID: -5550864036511115069}
   m_Layer: 0
-  m_Name: SpringCoolerGun
+  m_Name: AutoParallelGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64,7 +64,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-1814446413938597715
+--- !u!114 &-5550864036511115069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,11 +73,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5608653004331721580}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0863925841f44a4fbafa182700b5526, type: 3}
+  m_Script: {fileID: 11500000, guid: 57c62cd389541b3478102d7bb23ec9fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   muzzleFlashVFX: {fileID: 0}
   hitEffect: {fileID: 0}
-  type: 0
   barrelCount: 3
-  angleDist: 30
+  concentrateDist: 0.25
