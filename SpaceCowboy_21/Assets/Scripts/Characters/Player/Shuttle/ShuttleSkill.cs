@@ -5,94 +5,109 @@ using UnityEngine;
 /// <summary>
 /// 셔틀 스킬의 부모 
 /// </summary>
-public class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
+public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 {
-    public float skillCoolTime; // 셔틀 스킬 재사용 대기 시간. 완전히 사용이 끝난 이후부터 재사용 대기 시작이 차기 시작한다. 
+    public float skillCoolTime = 5.0f; // 셔틀 스킬 재사용 대기 시간. 완전히 사용이 끝난 이후부터 재사용 대기 시작이 차기 시작한다. 
+    [SerializeField] float maxWaitTime = 10.0f;    // 상호작용 하지 않을 시 원래대로 돌아가는 시간
+    float _waitTimer;
+    [SerializeField] float maxUseTime = 5.0f; // 상호작용 시 작동 시간 
+    float _useTimer;
+    bool activate;  //가동 시작 
+    protected bool useStart;  //발차기를 맞고 작동 시작
+    
     [SerializeField] CircleCollider2D coll;
+    ResetDel resetShuttleDel;   //초기화용도 
+    [SerializeField] protected Rigidbody2D rb;
 
-    //초기화 시 
-    void ShuttleInitialize()
+    //초기 생성 시 
+    public void ShuttleSkillInitialize()
     {
-        coll.enabled = false;
+        ResetSkill();
+        rb = GetComponentInParent<Rigidbody2D>();
     }
-
-
-    //스킬 사용시 
-    public void PressSkillButton(Rigidbody2D rb ,float maxDistance, float minSmoothTime, float maxSmoothTime)
-    {
-        //마우스 위치를 가져온다. 
-        Vector2 mousePos = GameManager.Instance.playerManager.playerBehavior.mousePos;
-        //위치로 이동시킨다. 
-        MoveToTargetPosition(rb, mousePos, maxDistance, minSmoothTime,maxSmoothTime);
-    }
-
-    Vector2 velocity = Vector2.zero;
-
-    //특정 위치로 이동
-    void MoveToTargetPosition(Rigidbody2D rb,Vector2 targetPos, float maxDistance, float minSmoothTime, float maxSmoothTime)
-    {
-        Vector2 targetPosition = targetPos;
-
-        // 현재 위치와 목표 위치 간의 거리
-        float distance = Vector2.Distance(transform.position, targetPosition) / maxDistance;
-
-        // 거리 기반으로 smoothTime 조절
-        float smoothTime = Mathf.Lerp(minSmoothTime, maxSmoothTime, distance);
-
-        // 부드럽게 이동 (SmoothDamp)
-        rb.MovePosition(Vector2.SmoothDamp(rb.position, targetPosition, ref velocity, smoothTime));
-    }
-
-
 
     //변신
-    void TransformMethod()
+    public void ActivateShuttleSkill(ResetDel del)
     {
+        resetShuttleDel = del;
         coll.enabled = true;
+        activate = true;
     }
 
     //플레이어 총에 맞았을 때
-    void HitByPlayerProj()
-    {
-
-    }
+    public abstract void DamageEvent(float damage, Vector2 hitPoint);
 
     //플레이어 발차기에 맞았을 때 
-    void HitByPlayerKick()
-    {
+    public abstract void Kicked(Vector2 hitPos);
 
+
+
+    protected virtual void Update()
+    {
+        if (!activate) return;
+
+        if (!useStart)
+        {
+            CountWaitTimer();
+        }
+        else
+        {
+            CountUseTimer();
+        }
     }
 
+    #region Timer
     //대기시간 카운트
     void CountWaitTimer()
     {
-
+        if(_waitTimer < maxWaitTime)
+        {
+            _waitTimer += Time.deltaTime;
+        }
+        else
+        {
+            CompleteMethod();
+        }
     }
 
     //사용시간 카운트
     void CountUseTimer()
     {
-
+        if (_useTimer < maxUseTime)
+        {
+            _useTimer += Time.deltaTime;
+        }
+        else
+        {
+            CompleteMethod();
+        }
     }
 
-    //변신 해제
+    #endregion
+
+    //변신 해제, 사용 종료
     void CompleteMethod()
     {
+        CompleteEvent();
+        ResetSkill();
+        resetShuttleDel();
+        this.gameObject.SetActive(false);
+    }
 
+    public abstract void CompleteEvent();
+
+    void ResetSkill()
+    {
+        coll.enabled = false;
+        _waitTimer = 0;
+        _useTimer = 0;
+        activate = false;
+        useStart = false;
     }
 
     public Collider2D GetCollider()
     {
-        throw new System.NotImplementedException();
+        return coll;
     }
 
-    public void DamageEvent(float damage, Vector2 hitPoint)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Kicked(Vector2 hitPos)
-    {
-        throw new System.NotImplementedException();
-    }
 }

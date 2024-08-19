@@ -1,20 +1,74 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+
 
 public class FollowingShuttle : MonoBehaviour
 {
     Rigidbody2D rb;
+    public ShuttleSkill skill;
+    public bool shuttleActivate = false; //셔틀이 스폰되고 나서, 셔틀이 활성화되어 입력이 감지될 때 True. 플레이어가 죽으면 False
+    bool startSkill; //스킬 사용 시작. 스킬 버튼을 누른 순간 True, 스킬이 사용이 완료/취소 되어 변신이 풀리면 False
+    bool useSkill = false;      //완전히 스킬 사용으로 넘어감. 이동이 끝난 상태. 
+    bool stopAttack = false;    //공격을 잠시 중단하고 제 위치로 이동하는것에 집중
+
+    [SerializeField] Collider2D physicsColl;
+
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        //Test
+        InitializeShuttle();
+        skill.ShuttleSkillInitialize();
+        
+    }
+
+    // 셔틀 처음 스테이지에 생성 시 
+    public void InitializeShuttle()
+    {
+        shuttleActivate = true;
+        ResetShuttle();
     }
 
     private void FixedUpdate()
     {
-        RigidBodyFollowPlayer();
+        if (!shuttleActivate) return;
+
+        //스킬 버튼 클릭시 
+        if (startSkill)
+        {
+            if(!useSkill)
+            {
+                //거리 계산
+                float dist = Vector2.Distance(transform.position, ShuttleMoveTargetPos);
+                if(dist < 0.1f)
+                {
+                    //스킬 진짜 시작
+                    useSkill = true;
+                    physicsColl.enabled = false;
+                    skill.gameObject.SetActive(true);
+
+                    ResetDel resetDel = new ResetDel(ResetShuttle);
+                    skill.ActivateShuttleSkill(resetDel);
+                }
+                else
+                {
+                    //이동
+                    RigidBodyMoveToPosition(ShuttleMoveTargetPos, out _ );
+                }
+            }
+            
+        }
+        else
+        {
+            //평소
+            RigidBodyFollowPlayer();
+        } 
+        
     }
 
     #region BaseMovement
@@ -26,6 +80,7 @@ public class FollowingShuttle : MonoBehaviour
     [SerializeField] float maxSmoothTime = 0.5f; // 최대 감속 시간
     float smoothTime;
     private Vector2 velocity = Vector2.zero; // 현재 속도 (SmoothDamp에서 사용)
+    Vector2 ShuttleMoveTargetPos = Vector2.zero;
 
 
     void RigidBodyFollowPlayer()
@@ -38,15 +93,25 @@ public class FollowingShuttle : MonoBehaviour
         int minus = right ? 1 : -1;
         Vector2 targetPosition = targetTr.position + (targetTr.up * positionVector.y) + (targetTr.right * positionVector.x * minus);
 
-        RigidBodyMoveToPosition(targetPosition);
+        RigidBodyMoveToPosition(targetPosition, out float distanceToPlayer);
+        if(distanceToPlayer < 0.1f)
+        {
+            physicsColl.enabled = true;
+            stopAttack = false;
+        }
+        else if (distanceToPlayer > 5.0f)
+        {
+            physicsColl.enabled = false;
+            stopAttack = true;
+        }
     }
 
-    void RigidBodyMoveToPosition(Vector2 targetPos)
+    void RigidBodyMoveToPosition(Vector2 targetPos, out float distance)
     {
         Vector2 targetPosition = targetPos;
 
         // 현재 위치와 목표 위치 간의 거리
-        float distance = Vector2.Distance(transform.position, targetPosition) / maxDistance;
+        distance = Vector2.Distance(transform.position, targetPosition) / maxDistance;
 
         // 거리 기반으로 smoothTime 조절
         smoothTime = Mathf.Lerp(minSmoothTime, maxSmoothTime, distance);
@@ -59,7 +124,19 @@ public class FollowingShuttle : MonoBehaviour
 
     private void Update()
     {
+        //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
+        if (!shuttleActivate) return;
+
+        if (!startSkill && Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            startSkill = true;
+            physicsColl.enabled = false;
+            ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
+        }
+
         //기본 공격 
+        if (startSkill || stopAttack) return;
+        
         BaseAttackMethod();
     }
 
@@ -159,7 +236,20 @@ public class FollowingShuttle : MonoBehaviour
         }
     }
     #endregion
+
+    void ResetShuttle()
+    {
+        startSkill = false;
+        useSkill = false;
+        stopAttack = false;
+        physicsColl.enabled = true;
+    }
+
+
 }
+
+public delegate void ResetDel();
+
 
 [Serializable] 
 public struct ProjectileAttackProperty
