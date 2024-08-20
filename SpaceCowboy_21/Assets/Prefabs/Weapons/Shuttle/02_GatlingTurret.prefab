@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7150722898583262850, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
       propertyPath: m_Name
-      value: Shuttle_Skill_2
+      value: 02_GatlingTurret
       objectReference: {fileID: 0}
     - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
       propertyPath: m_RootOrder
@@ -88,7 +88,7 @@ MonoBehaviour:
     numberOfProjectile: 1
     projectileSpread: 30
     randomSpreadAngle: 5
-    projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
+    projectilePrefab: {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
     damage: 5
     speed: 40
     lifeTime: 0

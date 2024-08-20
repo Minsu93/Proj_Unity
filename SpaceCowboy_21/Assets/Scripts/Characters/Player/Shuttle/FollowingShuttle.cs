@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,7 +9,9 @@ using UnityEngine;
 public class FollowingShuttle : MonoBehaviour
 {
     Rigidbody2D rb;
-    public ShuttleSkill skill;
+    //public ShuttleSkill skill;
+    public List<ShuttleSkill> skillList = new List<ShuttleSkill>();
+    ShuttleSkill curSkill;
     public bool shuttleActivate = false; //셔틀이 스폰되고 나서, 셔틀이 활성화되어 입력이 감지될 때 True. 플레이어가 죽으면 False
     bool startSkill; //스킬 사용 시작. 스킬 버튼을 누른 순간 True, 스킬이 사용이 완료/취소 되어 변신이 풀리면 False
     bool useSkill = false;      //완전히 스킬 사용으로 넘어감. 이동이 끝난 상태. 
@@ -23,7 +26,7 @@ public class FollowingShuttle : MonoBehaviour
 
         //Test
         InitializeShuttle();
-        skill.ShuttleSkillInitialize();
+        //skill.ShuttleSkillInitialize();
         
     }
 
@@ -32,7 +35,32 @@ public class FollowingShuttle : MonoBehaviour
     {
         shuttleActivate = true;
         ResetShuttle();
+        LoadSkillData();
     }
+
+    #region Save & Load SkillData
+    void LoadSkillData()
+    {
+        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/skillData.json");
+        string loadJson = File.ReadAllText(path);
+        skillDatas skillDatas = JsonUtility.FromJson<skillDatas>(loadJson);
+
+        foreach(string dataName in skillDatas.dataNames)
+        {
+            GameObject skillPrefab = GameManager.Instance.playerManager.skillDictionary.GetSkillPrefab(dataName);
+            GameObject obj = Instantiate(skillPrefab,this.transform);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            if( obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
+            {
+                skillList.Add(skill);
+                skill.ShuttleSkillInitialize();
+            }
+            obj.SetActive(false);
+        }
+    }
+
+    #endregion
 
     private void FixedUpdate()
     {
@@ -50,10 +78,10 @@ public class FollowingShuttle : MonoBehaviour
                     //스킬 진짜 시작
                     useSkill = true;
                     physicsColl.enabled = false;
-                    skill.gameObject.SetActive(true);
+                    curSkill.gameObject.SetActive(true);
 
                     ResetDel resetDel = new ResetDel(ResetShuttle);
-                    skill.ActivateShuttleSkill(resetDel);
+                    curSkill.ActivateShuttleSkill(resetDel);
                 }
                 else
                 {
@@ -126,12 +154,37 @@ public class FollowingShuttle : MonoBehaviour
         //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
         if (!shuttleActivate) return;
 
-        if (!startSkill && Input.GetKeyDown(KeyCode.Alpha1))
+        if (!startSkill)
         {
-            startSkill = true;
-            physicsColl.enabled = false;
-            ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
+            //1번
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                if (skillList.Count > 0)
+                    curSkill = skillList[0];
+            }
+            //2번
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                if(skillList.Count > 1)
+                    curSkill = skillList[1];
+            }
+            //3번
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                if(skillList.Count > 2)
+                    curSkill = skillList[2];
+            }
+
+            //뭔가 선택된 스킬이 있으면 사용 시작.
+            if (curSkill != null)
+            {
+                startSkill = true;
+                physicsColl.enabled = false;
+                ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
+            }
         }
+
+
 
         //기본 공격 
         if (startSkill || stopAttack) return;
@@ -242,6 +295,7 @@ public class FollowingShuttle : MonoBehaviour
 
     void ResetShuttle()
     {
+        curSkill = null;
         startSkill = false;
         useSkill = false;
         stopAttack = false;
@@ -268,4 +322,10 @@ public struct ProjectileAttackProperty
     public float lifeTime;
     public float range;
     public float shootCoolTime ;
+}
+
+
+public class skillDatas
+{
+    public List<string> dataNames = new List<string>();
 }

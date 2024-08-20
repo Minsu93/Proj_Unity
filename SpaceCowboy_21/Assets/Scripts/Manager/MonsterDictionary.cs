@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterDictonary : MonoBehaviour
+public class MonsterDictionary : MonoBehaviour
 {
     //몬스터 이름 string , 그리고 값 prefab이 들어가있는 Dictonary이다. 
     

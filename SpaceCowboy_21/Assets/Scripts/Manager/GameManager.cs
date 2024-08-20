@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     public CameraManager cameraManager { get; set; }
     public MaterialManager materialManager { get; set; }
     public TechDocument techDocument { get; private set; }
-    public MonsterDictonary monsterDictonary { get; private set; }
+    public MonsterDictionary monsterDictonary { get; private set; }
 
     //UI
     [SerializeField] GameObject stageUI;
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
         particleManager = GetComponentInChildren<ParticleManager>();
         playerManager = GetComponentInChildren<PlayerManager>();
         techDocument = GetComponentInChildren<TechDocument>();
-        monsterDictonary = GetComponentInChildren<MonsterDictonary>();
+        monsterDictonary = GetComponentInChildren<MonsterDictionary>();
         materialManager= GetComponentInChildren<MaterialManager>();
 
         GameObject ui = Instantiate(stageUI, this.transform);
