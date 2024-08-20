@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
@@ -19,7 +20,7 @@ public class PopperManager : MonoBehaviour
 
     //무기 생성관련
     [SerializeField] GameObject weaponBubble;
-    [SerializeField] List<WeaponData> equippedWeaponDatas;    //생성될 무기 목록
+    List<WeaponData> WeaponDataList = new List<WeaponData>();    //생성될 무기 목록
 
     //드롭 확률 조절 관련
     List<EquippedWeapon> equippedWeapons; // 드롭 가능한 아이템 목록
@@ -186,12 +187,29 @@ public class PopperManager : MonoBehaviour
 
     void Start()
     {
-        equippedWeapons = new List<EquippedWeapon> (equippedWeaponDatas.Count );
-        foreach(WeaponData prefab  in equippedWeaponDatas)
+        LoadEquippedWeapons();
+
+        equippedWeapons = new List<EquippedWeapon> (WeaponDataList.Count );
+        foreach(WeaponData prefab  in WeaponDataList)
         {
             equippedWeapons.Add(new EquippedWeapon(prefab, 0.1f));
         }
         ResizeDropChance();
+    }
+
+    void LoadEquippedWeapons()
+    {
+        WeaponDataList.Clear();
+
+        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+        string loadJson = File.ReadAllText(path);
+        EquippedWeaponData data = JsonUtility.FromJson<EquippedWeaponData>(loadJson);
+
+        foreach (string dataName in data.equippedWeaponNames)
+        {
+            WeaponData dataGot = GameManager.Instance.weaponDictionary.GetWeaponData(dataName);
+            WeaponDataList.Add(dataGot);
+        }
     }
 
     private void Update()
@@ -315,4 +333,9 @@ public class EquippedWeapon
         weaponData = bubble;
         dropChance = chance;
     }
+}
+
+public class EquippedWeaponData
+{
+    public List<string> equippedWeaponNames = new List<string>();
 }

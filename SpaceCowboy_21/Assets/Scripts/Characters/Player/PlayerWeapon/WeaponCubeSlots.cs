@@ -4,11 +4,16 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// OnShootEvent가 null이 아니고 실제로 구현되었는지 확인하는 이벤트 있음.
+/// </summary>
+/// 
+
 public class WeaponCubeSlots : MonoBehaviour
 {
-    public string[] combinationsA = new string[2];
-    public string[] combinationsB = new string[2];
-    public string[] combinationsC = new string[2];
+    //public string[] combinationsA = new string[2];
+    //public string[] combinationsB = new string[2];
+    //public string[] combinationsC = new string[2];
 
     //큐브 장착
 

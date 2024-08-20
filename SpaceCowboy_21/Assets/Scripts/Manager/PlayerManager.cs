@@ -29,13 +29,6 @@ public class PlayerManager : MonoBehaviour
     public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
 
-    //플레이어 관련 Dictionary 
-    public SkillDictionary skillDictionary { get; private set; }
-
-    private void Awake()
-    {
-        skillDictionary = GetComponent<SkillDictionary>();
-    }
 
 
     //플레이어 스크립트 업데이트

@@ -23,11 +23,6 @@ public class FollowingShuttle : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        //Test
-        InitializeShuttle();
-        //skill.ShuttleSkillInitialize();
-        
     }
 
     // 셔틀 처음 스테이지에 생성 시 
@@ -47,7 +42,7 @@ public class FollowingShuttle : MonoBehaviour
 
         foreach(string dataName in skillDatas.dataNames)
         {
-            GameObject skillPrefab = GameManager.Instance.playerManager.skillDictionary.GetSkillPrefab(dataName);
+            GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(dataName);
             GameObject obj = Instantiate(skillPrefab,this.transform);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;

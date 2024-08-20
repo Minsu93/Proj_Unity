@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     //플레이어 관련 
     [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject shuttlePrefab;
     public Transform player { get; private set; }
     public bool playerIsAlive { get; private set; } //적들이 플레이어가 살았는지 죽었는지 참고
 
@@ -39,7 +40,11 @@ public class GameManager : MonoBehaviour
     public CameraManager cameraManager { get; set; }
     public MaterialManager materialManager { get; set; }
     public TechDocument techDocument { get; private set; }
+    
+    //Dictionary들
     public MonsterDictionary monsterDictonary { get; private set; }
+    public SkillDictionary skillDictionary { get; private set; }
+    public WeaponDictionary weaponDictionary { get; private set; }
 
     //UI
     [SerializeField] GameObject stageUI;
@@ -74,8 +79,11 @@ public class GameManager : MonoBehaviour
         particleManager = GetComponentInChildren<ParticleManager>();
         playerManager = GetComponentInChildren<PlayerManager>();
         techDocument = GetComponentInChildren<TechDocument>();
-        monsterDictonary = GetComponentInChildren<MonsterDictionary>();
         materialManager= GetComponentInChildren<MaterialManager>();
+
+        monsterDictonary = GetComponentInChildren<MonsterDictionary>();
+        skillDictionary = GetComponentInChildren<SkillDictionary>();
+        weaponDictionary = GetComponentInChildren<WeaponDictionary>();
 
         GameObject ui = Instantiate(stageUI, this.transform);
         stageStartUi = ui.transform.Find("StageStartUI");
@@ -103,9 +111,9 @@ public class GameManager : MonoBehaviour
 
     }
 
+    #region 캐릭터, 셔틀 스폰
     public void SpawnPlayer()
     {
-
         //스폰 포인트를 가져온다. 
         StartPoint spawnPoint = GameObject.FindObjectOfType<StartPoint>();
         Vector2 pos = Vector2.zero;
@@ -127,8 +135,18 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void SpawnShuttle(Vector2 pos, Quaternion rot)
+    {
+        GameObject shuttleObj = Instantiate(shuttlePrefab, pos, rot);
+        if(shuttleObj.TryGetComponent<FollowingShuttle>(out FollowingShuttle shuttle))
+        {
+            shuttle.InitializeShuttle();
+        }
+    }
 
+    #endregion
 
+    #region 전역 이벤트
     // 플레이어가 죽으면 전역에 이벤트 발생
     public void PlayerIsDead()
     {
@@ -153,8 +171,9 @@ public class GameManager : MonoBehaviour
             if(PlayerTeleportEnd != null) PlayerTeleportEnd();  
         }
     }
+    #endregion
 
-
+    #region 씬 관련 
     //씬 로드
     public void LoadsceneByName(string sceneName)
     {
@@ -229,5 +248,5 @@ public class GameManager : MonoBehaviour
     }
 
 
-
+    #endregion
 }

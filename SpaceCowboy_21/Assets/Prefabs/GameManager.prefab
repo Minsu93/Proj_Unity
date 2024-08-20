@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 529613329984358755}
   - component: {fileID: 529613329984358752}
-  - component: {fileID: 6747359924043689150}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -49,22 +48,6 @@ MonoBehaviour:
   slot_A: {fileID: 0}
   slot_B: {fileID: 0}
   slot_C: {fileID: 0}
---- !u!114 &6747359924043689150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 529613329984358754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8e1df7694ce93f44ac44302eb124627, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillList:
-  - {fileID: 1657642907275852195, guid: 2c50456502715cb41a7afdf3fa626aca, type: 3}
-  - {fileID: 5110877519637717832, guid: 5e3f4e923b41cab46bc5efa3d9f6cefa, type: 3}
-  - {fileID: 5110877519637717832, guid: 0280c3ede2f6cca4a8c991c60fdfeffe, type: 3}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,8 +361,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3844769580556792900}
   - component: {fileID: 7388029682735944180}
+  - component: {fileID: 3716002422430267783}
+  - component: {fileID: 4185339236932033795}
   m_Layer: 0
-  m_Name: MonstertDictionary
+  m_Name: Dictionaries
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -423,6 +408,53 @@ MonoBehaviour:
     monsterPrefab: {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
   - name: air_driller
     monsterPrefab: {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
+--- !u!114 &3716002422430267783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938671263256324434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e1df7694ce93f44ac44302eb124627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillList:
+  - {fileID: 1657642907275852195, guid: 2c50456502715cb41a7afdf3fa626aca, type: 3}
+  - {fileID: 5110877519637717832, guid: 5e3f4e923b41cab46bc5efa3d9f6cefa, type: 3}
+  - {fileID: 5110877519637717832, guid: 0280c3ede2f6cca4a8c991c60fdfeffe, type: 3}
+--- !u!114 &4185339236932033795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938671263256324434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b4d3fdf835ca4aa50fc0a85297cdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponDataList:
+  - {fileID: 11400000, guid: e7e084a76e9aae644a83072ca9990bfb, type: 2}
+  - {fileID: 11400000, guid: 5ad791c200cc6954c87c476f37601b71, type: 2}
+  - {fileID: 11400000, guid: 5ddc4624a28052a408963735b57cdc71, type: 2}
+  - {fileID: 11400000, guid: 028ba4b630c284b41a709106bcd16c0c, type: 2}
+  - {fileID: 11400000, guid: 206bf72000fa2ce4f91e27caed419655, type: 2}
+  - {fileID: 11400000, guid: 1263ba58e3fc89f47b274177cd5f9572, type: 2}
+  - {fileID: 11400000, guid: d1e39653aace7fd45b2394b84fb0ddf3, type: 2}
+  - {fileID: 11400000, guid: 8414b9e339bf25047982a71d95311738, type: 2}
+  - {fileID: 11400000, guid: bb84844a63c318948b0cf9be4ed3a80d, type: 2}
+  - {fileID: 11400000, guid: cf362e74c12f3884d8dc2119872e27d4, type: 2}
+  - {fileID: 11400000, guid: a1395c25ee2393743aa2f5f24fc51d85, type: 2}
+  - {fileID: 11400000, guid: 10f671e4721b80a4bb44dbd4ad23965a, type: 2}
+  - {fileID: 11400000, guid: 9737df5b37df197459289a56a42e8346, type: 2}
+  - {fileID: 11400000, guid: 9551ec246b1ebcb4f9abb682934386ba, type: 2}
+  - {fileID: 11400000, guid: cfc318027eb6a0848a6a53de02e8adc9, type: 2}
+  - {fileID: 11400000, guid: 84677081ce46e7f4db93a7cdeca13f03, type: 2}
+  - {fileID: 11400000, guid: 0e5bd9d7cca47e441b14b99dfde2ae3a, type: 2}
+  - {fileID: 11400000, guid: 4439c385956f89b4280993193843ffee, type: 2}
 --- !u!1 &2172668778671552628
 GameObject:
   m_ObjectHideFlags: 0
