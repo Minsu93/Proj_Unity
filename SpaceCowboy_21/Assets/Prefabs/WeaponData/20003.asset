@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
-  m_Name: 30005
+  m_Name: 20003
   m_EditorClassIdentifier: 
-  itemID: 10001
-  itemName: DoubleBarrelMG
+  itemID: 20001
+  itemName: FashShotgun
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: e3030030244662f47a20adb838d9a635, type: 3}
-  projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+  projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
   damage: 5
-  shootInterval: 0.1
+  shootInterval: 0.2
   burstInterval: 1
-  numberOfProjectile: 1
+  numberOfProjectile: 6
   numberOfBurst: 1
-  speed: 20
-  speedVariation: 0
+  speed: 50
+  speedVariation: 5
   lifeTime: 0
-  range: 15
+  range: 8
   showRange: 1
-  maxAmmo: 100
-  projectileSpread: 0
-  randomSpreadAngle: 0
+  maxAmmo: 15
+  projectileSpread: 10
+  randomSpreadAngle: 5
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 3237513224218637995, guid: 65202b34031f75a4a9e7cc55095e2333, type: 3}
+  weaponPrefab: {fileID: 5061795885844492922, guid: 154542a7ba2b2a749be2a5b062a7195c, type: 3}

@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
-  m_Name: 30002
+  m_Name: 20007
   m_EditorClassIdentifier: 
-  itemID: 20001
-  itemName: MutiShotMG
+  itemID: 10001
+  itemName: PointConcentrateGun
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: e3030030244662f47a20adb838d9a635, type: 3}
   projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
-  damage: 3
-  shootInterval: 0.18
+  damage: 5
+  shootInterval: 0.1
   burstInterval: 1
-  numberOfProjectile: 5
+  numberOfProjectile: 1
   numberOfBurst: 1
-  speed: 30
+  speed: 20
   speedVariation: 0
   lifeTime: 0
   range: 15
   showRange: 1
-  maxAmmo: 60
-  projectileSpread: 10
+  maxAmmo: 100
+  projectileSpread: 0
   randomSpreadAngle: 0
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}
+  weaponPrefab: {fileID: 5608653004331721580, guid: 2220114df007db94498d3c37b8eccde4, type: 3}

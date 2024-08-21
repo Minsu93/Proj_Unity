@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
-  m_Name: 30014
+  m_Name: 20017
   m_EditorClassIdentifier: 
   itemID: 20001
-  itemName: DelayGun
+  itemName: ReflectToEnemyGun
   gunStyle: 1
   icon: {fileID: 0}
   bubbleIcon: {fileID: 0}
-  projectilePrefab: {fileID: 6292677011125795810, guid: 01bd4efd844011243bfe0f5474075048, type: 3}
+  projectilePrefab: {fileID: 6292677011125795810, guid: dc540ecdbbb13e64083faf7cf6c8c99b, type: 3}
   damage: 5
-  shootInterval: 0.1
+  shootInterval: 0.2
   burstInterval: 1
   numberOfProjectile: 1
   numberOfBurst: 1
@@ -28,8 +28,8 @@ MonoBehaviour:
   lifeTime: 0
   range: 15
   showRange: 1
-  maxAmmo: 60
+  maxAmmo: 100
   projectileSpread: 0
-  randomSpreadAngle: 20
+  randomSpreadAngle: 10
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 7031208836157295159, guid: 058e4be8a1865b143ab38a383abb1095, type: 3}
+  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

@@ -187,7 +187,7 @@ public class PopperManager : MonoBehaviour
 
     void Start()
     {
-        LoadEquippedWeapons();
+        //LoadEquippedWeapons();
 
         equippedWeapons = new List<EquippedWeapon> (WeaponDataList.Count );
         foreach(WeaponData prefab  in WeaponDataList)
@@ -197,7 +197,17 @@ public class PopperManager : MonoBehaviour
         ResizeDropChance();
     }
 
-    void LoadEquippedWeapons()
+    public void SaveEquippedWeapons(List<string> names)
+    {
+        EquippedWeaponData data = new EquippedWeaponData();
+        data.equippedWeaponNames = names;
+
+        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+        string str = JsonUtility.ToJson(data,true);
+        File.WriteAllText(path, str);
+    }
+
+    public List<string> LoadEquippedWeapons()
     {
         WeaponDataList.Clear();
 
@@ -207,9 +217,11 @@ public class PopperManager : MonoBehaviour
 
         foreach (string dataName in data.equippedWeaponNames)
         {
-            WeaponData dataGot = GameManager.Instance.weaponDictionary.GetWeaponData(dataName);
+            WeaponData dataGot = GameManager.Instance.weaponDictionary.GetWeaponState(dataName).weaponData;
             WeaponDataList.Add(dataGot);
         }
+
+        return data.equippedWeaponNames;
     }
 
     private void Update()
