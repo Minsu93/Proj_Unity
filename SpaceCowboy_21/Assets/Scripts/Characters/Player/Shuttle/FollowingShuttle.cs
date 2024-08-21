@@ -36,11 +36,9 @@ public class FollowingShuttle : MonoBehaviour
     #region Save & Load SkillData
     void LoadSkillData()
     {
-        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/skillData.json");
-        string loadJson = File.ReadAllText(path);
-        skillDatas skillDatas = JsonUtility.FromJson<skillDatas>(loadJson);
+        List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
 
-        foreach(string dataName in skillDatas.dataNames)
+        foreach(string dataName in skillDatas)
         {
             GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(dataName);
             GameObject obj = Instantiate(skillPrefab,this.transform);
@@ -319,8 +317,3 @@ public struct ProjectileAttackProperty
     public float shootCoolTime ;
 }
 
-
-public class skillDatas
-{
-    public List<string> dataNames = new List<string>();
-}

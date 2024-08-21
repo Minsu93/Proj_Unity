@@ -35,6 +35,21 @@ public class LobbyWeaponButton : MonoBehaviour
         button.onClick.AddListener(() => EquipmentDisarmEvent(state, lobby));
     }
 
+    public void SetSkillEquipButton(Sprite icon, string name, LobbySkill lobby)
+    {
+        image.sprite = icon;
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => SkillEquipEvent(name, lobby));
+
+    }
+    public void SetSkillDisarmButton(Sprite icon, string name, LobbySkill lobby)
+    {
+        image.sprite = icon;
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => SkillDisarmEvent(name, lobby));
+
+    }
+
     //버튼 클릭 시 장착을 시도
     void EquipEvent(WeaponState state, LobbyWeapon lobby)
     {
@@ -63,12 +78,15 @@ public class LobbyWeaponButton : MonoBehaviour
     {
         //해당하는 버튼의 아이템을 장착 해제헌다. 
         lobby.DisarmItem(state);
-        image.sprite = null;
-        if (button.interactable)
-        {
-            SetInteractableButton(false);
-        }
-        
+    }
+    void SkillEquipEvent(string name, LobbySkill lobby)
+    {
+        lobby.EquipSkill(name);
+    }
+
+    void SkillDisarmEvent(string name, LobbySkill lobby)
+    {
+        lobby.DisarmSkill(name);
     }
 
     public void SetInteractableButton(bool enable)
@@ -76,6 +94,13 @@ public class LobbyWeaponButton : MonoBehaviour
         button.interactable = enable;
     }
 
+    public void ClearButton()
+    {
+        image.sprite = Resources.Load<Sprite>("UI/Empty");
+        if(text!= null) text.text = "";
+        button.onClick.RemoveAllListeners();
+        SetInteractableButton(false);
 
+    }
 
 }

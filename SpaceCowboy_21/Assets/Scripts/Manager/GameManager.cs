@@ -133,6 +133,9 @@ public class GameManager : MonoBehaviour
         //플레이어생명 변수 업데이트
         playerIsAlive = true;
 
+        //무기 정보 업데이트
+        popperManager.LoadEquippedWeapons();
+
     }
 
     public void SpawnShuttle(Vector2 pos, Quaternion rot)

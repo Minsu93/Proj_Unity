@@ -111,7 +111,7 @@ public class LobbyWeapon : MonoBehaviour
 
         foreach(var button in equipmentButton)
         {
-            button.SetInteractableButton(false);
+            button.ClearButton();
         }
         for (int i = 0; i < names.Count; i++)
         {

@@ -161,6 +161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 9007588099006207600, guid: d54a103f216825a40a94f2675f1a6ca3, type: 3}
+  shuttlePrefab: {fileID: 9189689044929776396, guid: 8cd04a682b60a034abed6accc0972826, type: 3}
   worldGravity: 900
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
@@ -291,11 +292,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   launchTimer: 1
   weaponBubble: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
-  equippedWeaponDatas:
-  - {fileID: 11400000, guid: e7e084a76e9aae644a83072ca9990bfb, type: 2}
-  - {fileID: 11400000, guid: 5ad791c200cc6954c87c476f37601b71, type: 2}
-  - {fileID: 11400000, guid: 5ddc4624a28052a408963735b57cdc71, type: 2}
-  - {fileID: 11400000, guid: 028ba4b630c284b41a709106bcd16c0c, type: 2}
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05
   totalDropChance: 0.1
@@ -455,6 +451,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 84677081ce46e7f4db93a7cdeca13f03, type: 2}
   - {fileID: 11400000, guid: 0e5bd9d7cca47e441b14b99dfde2ae3a, type: 2}
   - {fileID: 11400000, guid: 4439c385956f89b4280993193843ffee, type: 2}
+  myWeaponStates:
+    states: []
 --- !u!1 &2172668778671552628
 GameObject:
   m_ObjectHideFlags: 0
