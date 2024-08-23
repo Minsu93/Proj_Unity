@@ -10,20 +10,17 @@ public class MaterialManager : MonoBehaviour
     [SerializeField] int maxGold = 100000;
     TextMeshProUGUI goldText;
     [SerializeField] GameObject goldUI;
-    //public int starDust { get; private set; }
-    //[SerializeField] string starDustStr = "starDust";
-    //[SerializeField] int maxStarDust = 1000;
+
 
     private void Awake()
     {
-        //GameManager.Instance.materialManager = this;
-        GameObject goldCanvas = Instantiate(goldUI,this.transform);
-        goldText = goldCanvas.transform.Find("GoldUI/GoldText").GetComponent<TextMeshProUGUI>();
+        //GameObject goldCanvas = Instantiate(goldUI,this.transform);
+        //goldText = goldCanvas.transform.Find("GoldUI/GoldText").GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
     {
-        LoadMoney();
+        //LoadMoney();
     }
 
     //ÀÚ¿ø È¹µæ

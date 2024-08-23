@@ -4,10 +4,34 @@ using UnityEngine;
 
 public class StartPoint : MonoBehaviour
 {
+    [SerializeField] float launchPower = 5.0f;
+    [SerializeField] Vector2 launchDir;
+    GameObject playerObj;
+    GameObject shuttleObj;
+    [SerializeField] Animator animator;
+
     private void Start()
     {
-        GameManager.Instance.SpawnPlayer();
-        Vector2 spawnPos = transform.position + (transform.up * 2f);
-        GameManager.Instance.SpawnShuttle(spawnPos, Quaternion.identity) ;
+        ReadyPlayer();
+        //애니메이션 시작 
+        animator.SetTrigger("spawn");
+    }
+
+    void ReadyPlayer()
+    {
+        Vector2 pos = transform.position;
+        Quaternion rot = transform.rotation;
+        playerObj = GameManager.Instance.SpawnPlayer(pos,rot);
+        shuttleObj = GameManager.Instance.SpawnShuttle(pos, rot);
+    }
+
+    //포탈 생성 > 뱉어내기 애니메이션 실행 시 자동으로 실행할 메소드
+    void StartLauchPlayer()
+    {
+        launchDir = transform.right;
+        playerObj.SetActive(true);
+        shuttleObj.SetActive(true);
+        GameManager.Instance.playerManager.playerBehavior.LauchPlayer(launchDir, launchPower);
+
     }
 }

@@ -52,6 +52,12 @@ public class LobbyUIManager : MonoBehaviour
         mainCanvasGroup.interactable = true;
     }
 
+    public void DisableAllButtons()
+    {
+        mainCanvasGroup.interactable = false;
+        mainCanvasGroup.alpha = 0.0f;
+    }
+
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))

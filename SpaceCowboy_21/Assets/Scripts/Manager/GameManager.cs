@@ -112,18 +112,18 @@ public class GameManager : MonoBehaviour
     }
 
     #region 캐릭터, 셔틀 스폰
-    public void SpawnPlayer()
+    public GameObject SpawnPlayer(Vector2 pos, Quaternion rot)
     {
-        //스폰 포인트를 가져온다. 
-        StartPoint spawnPoint = GameObject.FindObjectOfType<StartPoint>();
-        Vector2 pos = Vector2.zero;
-        Quaternion rot = Quaternion.identity;
-        //스폰 포인트가 있으면 그 장소, 없으면 0,0 에 플레이어를 소환한다. 
-        if(spawnPoint != null)
-        {
-            pos = spawnPoint.transform.position;
-            rot = spawnPoint.transform.rotation;
-        }
+        ////스폰 포인트를 가져온다. 
+        //StartPoint spawnPoint = GameObject.FindObjectOfType<StartPoint>();
+        //Vector2 pos = Vector2.zero;
+        //Quaternion rot = Quaternion.identity;
+        ////스폰 포인트가 있으면 그 장소, 없으면 0,0 에 플레이어를 소환한다. 
+        //if(spawnPoint != null)
+        //{
+        //    pos = spawnPoint.transform.position;
+        //    rot = spawnPoint.transform.rotation;
+        //}
         GameObject playerObj = Instantiate(playerPrefab, pos, rot);
 
         //플레이어의 정보를 할당한다. 
@@ -136,15 +136,20 @@ public class GameManager : MonoBehaviour
         //무기 정보 업데이트
         popperManager.LoadEquippedWeapons();
 
+        playerObj.SetActive(false);
+        return playerObj;
     }
 
-    public void SpawnShuttle(Vector2 pos, Quaternion rot)
+    public GameObject SpawnShuttle(Vector2 pos, Quaternion rot)
     {
         GameObject shuttleObj = Instantiate(shuttlePrefab, pos, rot);
         if(shuttleObj.TryGetComponent<FollowingShuttle>(out FollowingShuttle shuttle))
         {
             shuttle.InitializeShuttle();
         }
+
+        shuttleObj.SetActive(false);
+        return shuttleObj;
     }
 
     #endregion
@@ -229,6 +234,8 @@ public class GameManager : MonoBehaviour
                 //보스 레벨 -> 로비
                 break;
         }
+        TransitionFadeOut(false);
+        
     }
 
     IEnumerator ShowStageStartUI(float startDelay, float endDelay)
@@ -250,6 +257,13 @@ public class GameManager : MonoBehaviour
 
     }
 
+    //씬 페이드 인,아웃
+    [SerializeField] public Animator fadeoutAnimator;
+    public void TransitionFadeOut(bool fadeOut)
+    {
+        if (!fadeoutAnimator.gameObject.activeSelf) fadeoutAnimator.gameObject.SetActive(true);
+        fadeoutAnimator.SetBool("fade", fadeOut);
+    }
 
     #endregion
 }

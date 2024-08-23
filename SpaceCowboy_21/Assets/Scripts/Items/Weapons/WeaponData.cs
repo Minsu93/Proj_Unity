@@ -3,7 +3,7 @@ using SpaceCowboy;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "Weapon Data", menuName ="Weapon/Weapon Data", order = int.MaxValue)]
+[CreateAssetMenu(fileName = "Weapon Data", menuName ="Data/WeaponData", order = int.MaxValue)]
 public class WeaponData : ScriptableObject
 {
 
