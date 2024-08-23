@@ -7,14 +7,20 @@ using UnityEngine;
 /// </summary>
 public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 {
+    [Header("Icon")]
+    public Sprite icon;
+
+    [Header("Shuttle Base")]
     public float skillCoolTime = 5.0f; // 셔틀 스킬 재사용 대기 시간. 완전히 사용이 끝난 이후부터 재사용 대기 시작이 차기 시작한다. 
     [SerializeField] float maxWaitTime = 10.0f;    // 상호작용 하지 않을 시 원래대로 돌아가는 시간
     float _waitTimer;
     [SerializeField] float maxUseTime = 5.0f; // 상호작용 시 작동 시간 
     float _useTimer;
+
     bool activate;  //가동 시작 
     protected bool useStart;  //발차기를 맞고 작동 시작
     [SerializeField] protected float sizeDefaultMultiplier = 2.0f;
+
 
     [SerializeField] CircleCollider2D kickedColl;
     [SerializeField] protected Collider2D projHitColl;

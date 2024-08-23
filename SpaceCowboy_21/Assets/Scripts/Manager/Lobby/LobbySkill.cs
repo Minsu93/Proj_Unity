@@ -44,8 +44,10 @@ public class LobbySkill : MonoBehaviour
         {
             if(j < unlockedSkilNames.Count)
             {
+                Sprite icon = GameManager.Instance.skillDictionary.GetSkillIcon(unlockedSkilNames[j]);
+                skill_InventoryButtons[j].SetSkillEquipButton(icon, unlockedSkilNames[j], this);
                 skill_InventoryButtons[j].gameObject.SetActive(true);
-                skill_InventoryButtons[j].SetSkillEquipButton(null, unlockedSkilNames[j], this);
+
             }
             else
             {
@@ -66,7 +68,8 @@ public class LobbySkill : MonoBehaviour
         for (int i = 0; i < equippedList.Count; i++)
         {
             //1. equipped 버튼을 활성화.
-            skillEquipmentButtons[i].SetSkillDisarmButton(null, equippedList[i], this);
+            Sprite icon = GameManager.Instance.skillDictionary.GetSkillIcon(equippedList[i]);
+            skillEquipmentButtons[i].SetSkillDisarmButton(icon, equippedList[i], this);
             skillEquipmentButtons[i].SetInteractableButton(true);
 
             //인벤토리 버튼 비활성화

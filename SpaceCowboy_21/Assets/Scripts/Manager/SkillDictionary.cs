@@ -9,6 +9,7 @@ public class SkillDictionary : MonoBehaviour
     [SerializeField] 
     List<GameObject> skillList = new List<GameObject>();
     Dictionary<string, GameObject> skillPrefabDictionary = new Dictionary<string, GameObject>();
+    Dictionary<string, Sprite> iconDictionary = new Dictionary<string, Sprite>();
     bool once = false;
 
 
@@ -17,12 +18,14 @@ public class SkillDictionary : MonoBehaviour
     void SetskillDictionary()
     {
         skillPrefabDictionary.Clear();
+        iconDictionary.Clear();
 
         for (int i = 0; i < skillTotal.skillDataList.Count; i++)
         {
             string skillName = skillTotal.skillDataList[i].name;
             GameObject skillPrefab = skillList.Find(item => item.name.Equals(skillName));
             skillPrefabDictionary.Add(skillName, skillPrefab);
+            iconDictionary.Add(skillName, skillPrefab.GetComponent<ShuttleSkill>().icon);
         }
     }
 
@@ -34,6 +37,16 @@ public class SkillDictionary : MonoBehaviour
         }
 
         return obj;
+    }
+
+    public Sprite GetSkillIcon(string name)
+    {
+        if (!iconDictionary.TryGetValue(name, out Sprite icon))
+        {
+            Debug.Log("해당 skill이 Dictionary에 없습니다");
+        }
+
+        return icon;
     }
 
     #region Skill 전체 데이터 저장 & 불러오기 
@@ -66,8 +79,11 @@ public class SkillDictionary : MonoBehaviour
 
     public void SaveEquippedSkill(List<string> equippedSkills)
     {
+        EquippedSkill equip = new EquippedSkill();
+        equip.skillNames = equippedSkills;
+
         string path = Path.Combine(Application.dataPath + "/Data/PlayerData/skillData.json");
-        string str = JsonUtility.ToJson(equippedSkills, true);
+        string str = JsonUtility.ToJson(equip, true);
         File.WriteAllText(path, str);
     }
 
@@ -75,7 +91,8 @@ public class SkillDictionary : MonoBehaviour
     {
         string path = Path.Combine(Application.dataPath + "/Data/PlayerData/skillData.json");
         string loadJson = File.ReadAllText(path);
-        return JsonUtility.FromJson<List<string>>(loadJson);
+        EquippedSkill equip =JsonUtility.FromJson<EquippedSkill>(loadJson);
+        return equip.skillNames;
     }
     #endregion
 }
@@ -90,4 +107,10 @@ public class SkillData
 public class SkillTotalData
 {
     public List<SkillData> skillDataList = new List<SkillData>();
+}
+
+[Serializable]
+public class EquippedSkill
+{
+    public List<string> skillNames = new List<string>();
 }

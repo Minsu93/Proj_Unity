@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7150722898583262850, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
       propertyPath: m_Name
-      value: Shuttle_Skill_3
+      value: 03_Bouncer
       objectReference: {fileID: 0}
     - target: {fileID: 7150722898583262853, guid: 8c4d7f2738fdddc4ab306a68058d0f75, type: 3}
       propertyPath: m_RootOrder
@@ -74,6 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a32a1947b927c6443b17c25d2aed2405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: d7d85a0108cb1734c9d5f97a26a56177, type: 3}
   skillCoolTime: 5
   maxWaitTime: 5
   maxUseTime: 10
