@@ -28,10 +28,13 @@ public class StartPoint : MonoBehaviour
     //포탈 생성 > 뱉어내기 애니메이션 실행 시 자동으로 실행할 메소드
     void StartLauchPlayer()
     {
+        Debug.Log("Launch");
         launchDir = transform.right;
         playerObj.SetActive(true);
         shuttleObj.SetActive(true);
         GameManager.Instance.playerManager.playerBehavior.LauchPlayer(launchDir, launchPower);
+        //플레이어의 기본 무기를 장착시킨다.
+        GameManager.Instance.playerManager.playerWeapon.BackToBaseWeapon();
 
     }
 }

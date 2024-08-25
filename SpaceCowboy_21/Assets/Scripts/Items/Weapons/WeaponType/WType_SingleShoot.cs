@@ -30,4 +30,11 @@ public class WType_SingleShoot : WeaponType
     {
         shootOnce = false;
     }
+
+    public override void ResetWeapon(WeaponStats bonusStats)
+    {
+        base.ResetWeapon(bonusStats);
+
+        shootOnce = false;
+    }
 }

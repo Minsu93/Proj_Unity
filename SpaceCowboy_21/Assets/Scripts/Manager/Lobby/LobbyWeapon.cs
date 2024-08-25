@@ -8,9 +8,8 @@ public class LobbyWeapon : MonoBehaviour
     WeaponStates lobbyWeaponStates;
     void Start()
     {
-        GameManager.Instance.weaponDictionary.LoadWeaponDictionary();
         lobbyWeaponStates = GameManager.Instance.weaponDictionary.myWeaponStates;
-        equippedWeaponNames = GameManager.Instance.popperManager.LoadEquippedWeapons();
+        equippedWeaponNames = GameManager.Instance.weaponDictionary.equippedNamesList;
 
         SetWeaponList();
         SetInventory();
@@ -139,7 +138,7 @@ public class LobbyWeapon : MonoBehaviour
             //UI를 업데이트한다
             UpdateEquippedInventory(equippedWeaponNames);
             //저장한다
-            GameManager.Instance.popperManager.SaveEquippedWeapons(equippedWeaponNames);
+            GameManager.Instance.weaponDictionary.SaveEquippedWeapons(equippedWeaponNames);
             //장착 성공 시 true
             return true;
         }
@@ -159,7 +158,7 @@ public class LobbyWeapon : MonoBehaviour
         //UI를 업데이트한다
         UpdateEquippedInventory(equippedWeaponNames);
         //저장한다
-        GameManager.Instance.popperManager.SaveEquippedWeapons(equippedWeaponNames);
+        GameManager.Instance.weaponDictionary.SaveEquippedWeapons(equippedWeaponNames);
         
         //해제한 버튼을 다시 활성화한다. 
         //무기 목록 index를 찾아서 

@@ -72,6 +72,38 @@ public class WeaponDictionary : MonoBehaviour
 
     #endregion
 
+
+    #region EquippedWeapon 장착된 무기 저장 & 불러오기
+
+    public List<string> equippedNamesList { get; private set; }
+    public void SaveEquippedWeapons(List<string> names)
+    {
+        equippedNamesList = names;
+
+        EquippedWeaponData data = new EquippedWeaponData();
+        data.equippedWeaponNames = equippedNamesList;
+
+        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+        string str = JsonUtility.ToJson(data, true);
+        File.WriteAllText(path, str);
+    }
+
+    public void LoadEquippedWeapons()
+    {
+
+        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+        string loadJson = File.ReadAllText(path);
+        EquippedWeaponData data = JsonUtility.FromJson<EquippedWeaponData>(loadJson);
+
+        equippedNamesList = data.equippedWeaponNames;
+
+
+
+    }
+
+
+    #endregion
+
 }
 
 [Serializable]
@@ -88,4 +120,10 @@ public class WeaponState
 public class WeaponStates
 {
     public List<WeaponState> states = new List<WeaponState>();
+}
+
+[Serializable]
+public class EquippedWeaponData
+{
+    public List<string> equippedWeaponNames = new List<string>();
 }

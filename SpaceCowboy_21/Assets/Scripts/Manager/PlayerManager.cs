@@ -51,8 +51,6 @@ public class PlayerManager : MonoBehaviour
         //저장 정보를 불러온다.
         //LoadPlayerInfo();
 
-        //플레이어의 기본 무기를 장착시킨다.
-        playerWeapon.BackToBaseWeapon();
     }
 
     //플레이어가 사용하는 장비, 유물, 업그레이드 수치 등을 저장한다.

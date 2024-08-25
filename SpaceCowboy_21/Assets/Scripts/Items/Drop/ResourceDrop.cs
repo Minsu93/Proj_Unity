@@ -7,7 +7,7 @@ public class ResourceDrop : AutoCollectable
     [SerializeField] ParticleSystem particle;
     protected override void ConsumeEvent()
     {
-        GameManager.Instance.materialManager.AddMoney("gold", amount);
+        //GameManager.Instance.materialManager.AddMoney("gold", amount);
     }
 
     public void InitializeResource(float min, float max)

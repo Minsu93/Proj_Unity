@@ -185,44 +185,24 @@ public class PopperManager : MonoBehaviour
     }
     #endregion
 
-    void Start()
-    {
-        //LoadEquippedWeapons();
 
-        equippedWeapons = new List<EquippedWeapon> (WeaponDataList.Count );
-        foreach(WeaponData prefab  in WeaponDataList)
-        {
-            equippedWeapons.Add(new EquippedWeapon(prefab, 0.1f));
-        }
-        ResizeDropChance();
-    }
-
-    public void SaveEquippedWeapons(List<string> names)
-    {
-        EquippedWeaponData data = new EquippedWeaponData();
-        data.equippedWeaponNames = names;
-
-        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
-        string str = JsonUtility.ToJson(data,true);
-        File.WriteAllText(path, str);
-    }
-
-    public List<string> LoadEquippedWeapons()
+    public void PopperReady()
     {
         WeaponDataList.Clear();
-
-        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
-        string loadJson = File.ReadAllText(path);
-        EquippedWeaponData data = JsonUtility.FromJson<EquippedWeaponData>(loadJson);
-
-        foreach (string dataName in data.equippedWeaponNames)
+        foreach (string dataName in GameManager.Instance.weaponDictionary.equippedNamesList)
         {
             WeaponData dataGot = GameManager.Instance.weaponDictionary.GetWeaponState(dataName).weaponData;
             WeaponDataList.Add(dataGot);
         }
 
-        return data.equippedWeaponNames;
+        equippedWeapons = new List<EquippedWeapon> (WeaponDataList.Count );
+        foreach(WeaponData data  in WeaponDataList)
+        {
+            equippedWeapons.Add(new EquippedWeapon(data, 0.1f));
+        }
+        ResizeDropChance();
     }
+
 
     private void Update()
     {
@@ -236,6 +216,7 @@ public class PopperManager : MonoBehaviour
         }
     }
 
+    #region ItemDrop
     public EquippedWeapon TryDropItem()
     {
         //드랍 확률 선택
@@ -331,6 +312,7 @@ public class PopperManager : MonoBehaviour
             equippedWeapons[i].dropChance /= totalChance;
         }
     }
+    #endregion
 }
 
 
@@ -347,7 +329,3 @@ public class EquippedWeapon
     }
 }
 
-public class EquippedWeaponData
-{
-    public List<string> equippedWeaponNames = new List<string>();
-}

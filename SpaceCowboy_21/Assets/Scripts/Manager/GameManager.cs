@@ -92,6 +92,10 @@ public class GameManager : MonoBehaviour
         stageEndUi.gameObject.SetActive(false);
 
 
+        weaponDictionary.LoadWeaponDictionary();
+        weaponDictionary.LoadEquippedWeapons();
+        skillDictionary.LoadSkillDictionary();
+
     }
 
 
@@ -100,6 +104,8 @@ public class GameManager : MonoBehaviour
         //if(playBGM) AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
+
+        fadeCanvas = fadeoutAnimator.transform.parent.gameObject;    
     }
 
 
@@ -114,16 +120,6 @@ public class GameManager : MonoBehaviour
     #region 캐릭터, 셔틀 스폰
     public GameObject SpawnPlayer(Vector2 pos, Quaternion rot)
     {
-        ////스폰 포인트를 가져온다. 
-        //StartPoint spawnPoint = GameObject.FindObjectOfType<StartPoint>();
-        //Vector2 pos = Vector2.zero;
-        //Quaternion rot = Quaternion.identity;
-        ////스폰 포인트가 있으면 그 장소, 없으면 0,0 에 플레이어를 소환한다. 
-        //if(spawnPoint != null)
-        //{
-        //    pos = spawnPoint.transform.position;
-        //    rot = spawnPoint.transform.rotation;
-        //}
         GameObject playerObj = Instantiate(playerPrefab, pos, rot);
 
         //플레이어의 정보를 할당한다. 
@@ -134,7 +130,7 @@ public class GameManager : MonoBehaviour
         playerIsAlive = true;
 
         //무기 정보 업데이트
-        popperManager.LoadEquippedWeapons();
+        popperManager.PopperReady();
 
         playerObj.SetActive(false);
         return playerObj;
@@ -259,9 +255,10 @@ public class GameManager : MonoBehaviour
 
     //씬 페이드 인,아웃
     [SerializeField] public Animator fadeoutAnimator;
+    GameObject fadeCanvas;
     public void TransitionFadeOut(bool fadeOut)
     {
-        if (!fadeoutAnimator.gameObject.activeSelf) fadeoutAnimator.gameObject.SetActive(true);
+        if (!fadeCanvas.activeSelf) fadeCanvas.SetActive(true);
         fadeoutAnimator.SetBool("fade", fadeOut);
     }
 

@@ -78,7 +78,7 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
     }
 
     //이미 생성된 무기를 다시 꺼낼 때 , 버프 물약을 먹었을 때, 버프 물약을 해제했을 때.
-    public void ResetWeapon(WeaponStats bonusStats)
+    public virtual void ResetWeapon(WeaponStats bonusStats)
     {
         //베이스 Stat + 보너스 Stat
         WeaponStats totalStats = baseStats;

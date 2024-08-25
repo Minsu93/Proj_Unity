@@ -18,7 +18,6 @@ public class LobbySkill : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.skillDictionary.LoadSkillDictionary();
         SkillTotalData totalSkill = GameManager.Instance.skillDictionary.skillTotal;
         SetSkill_Inventory(totalSkill);
 
