@@ -48,7 +48,7 @@ public class CameraManager : MonoBehaviour
 
     public void InitCam()
     {
-        cameraPos.CameraPosInit();
+        cameraPos.CameraPosInitInStage();
     }
     //카메라 이벤트
     public void StopCameraFollow()

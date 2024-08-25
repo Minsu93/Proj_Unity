@@ -51,6 +51,7 @@ public class UIController : InteractableOBJ
     /// <summary>
     /// 내용을 업데이트한다.
     /// </summary>
+    /// 
     public void UpdateTechImage()
     {
         if (UiUpdateEvent != null) UiUpdateEvent();
