@@ -7,11 +7,48 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class Projectile_Player : Projectile
 {
-
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    float overlapRadius;
+    int overlapLayer;
+    protected override void Awake()
     {
-        if (!activate) return;
+        base.Awake();
+        CircleCollider2D circleColl = coll as CircleCollider2D;
+        overlapRadius = circleColl.radius;
+        overlapLayer = 1 << LayerMask.NameToLayer("ProjHitCollider") | 1 << LayerMask.NameToLayer("Planet") | LayerMask.NameToLayer("EnemyHitableProj");
 
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if(!activate) return;
+        
+        //충돌 체크
+        OverlapCheck();
+    }
+
+
+    public override void Init(float damage, float speed, float lifeTime, float distance)
+    {
+        base.Init(damage, speed, lifeTime, distance);
+        //총알 생성 시 충돌 체크(테스트)
+        OverlapCheck();
+        
+    }
+
+    //충돌 체크
+    void OverlapCheck()
+    {
+        Collider2D col = Physics2D.OverlapCircle(transform.position, overlapRadius, overlapLayer);
+        if (col != null)
+        {
+            OverlapTarget(col);
+        }
+    }
+
+    protected virtual void OverlapTarget(Collider2D collision)
+    {
         Transform tr = collision.transform;
         if (collision.CompareTag("ProjHitCollider"))
         {
@@ -32,6 +69,31 @@ public class Projectile_Player : Projectile
             WeaponImpactEvent();
         }
     }
+
+    //protected virtual void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (!activate) return;
+
+    //    Transform tr = collision.transform;
+    //    if (collision.CompareTag("ProjHitCollider"))
+    //    {
+    //        tr = collision.transform.parent;
+    //    }
+
+    //    if (tr.TryGetComponent<ITarget>(out ITarget target))
+    //    {
+    //        if (tr.TryGetComponent<IHitable>(out IHitable hitable))
+    //        {
+    //            HitEvent(target, hitable);
+    //        }
+    //        else
+    //        {
+    //            NonHitEvent(target);
+    //        }
+
+    //        WeaponImpactEvent();
+    //    }
+    //}
 
 
     protected virtual void HitEvent(ITarget target, IHitable hitable)

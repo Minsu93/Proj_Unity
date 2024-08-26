@@ -10,7 +10,8 @@ public class WType_ChargeLaser : WType_Charge
     [SerializeField] Material laserMat;
     [SerializeField] Color laserColor;
     List<LineRenderer> lasers = new List<LineRenderer>();
-    
+    [SerializeField] protected ParticleSystem hitEffect;
+
     public override void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
         base.Initialize(weaponData, gunTipLocalPos);

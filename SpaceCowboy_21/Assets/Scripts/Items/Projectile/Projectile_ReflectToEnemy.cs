@@ -19,10 +19,8 @@ public class Projectile_ReflectToEnemy : Projectile_Player
         hittedTargets.Clear();
     }
 
-    protected override void OnTriggerEnter2D(Collider2D collision)
+    protected override void OverlapTarget(Collider2D collision)
     {
-        if (!activate) return;
-
         Transform tr = collision.transform;
         if (collision.CompareTag("ProjHitCollider"))
         {
@@ -33,7 +31,7 @@ public class Projectile_ReflectToEnemy : Projectile_Player
         {
             if (tr.TryGetComponent<IHitable>(out IHitable hitable))
             {
-                hittedTargets.Add(collision.transform);
+                hittedTargets.Add(collision.transform); //수정한 부분
                 HitEvent(target, hitable);
             }
             else

@@ -66,6 +66,8 @@ public class Projectile : MonoBehaviour
 
         ResetProjectile();
         projectileMovement.StartMovement(speed);
+
+        //시작 지점에서 충돌 감지 
     }
 
 

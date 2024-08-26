@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 4974514776678444346}
   - component: {fileID: 1077076670}
   - component: {fileID: 4974514776678444347}
-  - component: {fileID: -8449839152114459915}
   m_Layer: 12
   m_Name: IdeaMachine
   m_TagString: Object
@@ -154,20 +153,6 @@ MonoBehaviour:
   zRotation: 0
   coll: {fileID: 0}
   currPlanet: {fileID: 0}
---- !u!114 &-8449839152114459915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4974514776678444341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae30fd39ad3ed1c449d85c14417724dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineObject: {fileID: 1834157170}
-  techDocUICanvas: {fileID: 0}
 --- !u!1 &4974514777092378294
 GameObject:
   m_ObjectHideFlags: 0

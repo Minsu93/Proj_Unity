@@ -56,10 +56,10 @@ public class Projectile_DamageCircle : Projectile_Player
         }
     }
 
-    protected override void OnTriggerEnter2D(Collider2D collision)
-    {
-        return;
-    }
+    //protected override void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    return;
+    //}
 
     void DamageCheck()
     {

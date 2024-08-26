@@ -40,7 +40,6 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
 
     protected Transform gunTipTr;
     [SerializeField] ParticleSystem muzzleFlashVFX;
-    [SerializeField] protected ParticleSystem hitEffect;
 
 
     protected float lastShootTime;   //지난 발사 시간

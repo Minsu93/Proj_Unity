@@ -21,6 +21,9 @@ public class WType_DangerCircleGun : WeaponType
     GameObject dangerCircleObj;
     int layerMask;
 
+    [SerializeField] protected ParticleSystem hitEffect;
+
+
     public override void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
         base.Initialize(weaponData, gunTipLocalPos);
