@@ -48,7 +48,7 @@ public class MapBorder : MonoBehaviour
         //TeleportStart 이벤트
         GameManager.Instance.PlayerIsTeleport(true);
         //카메라 off
-        GameManager.Instance.cameraManager.ActiveVirtualCam(false);
+        GameManager.Instance.cameraManager.SetActiveVirtualCam(false);
 
         StartCoroutine(NextFrameRoutine(movePos));
     }
@@ -61,7 +61,7 @@ public class MapBorder : MonoBehaviour
         Vector2 limitVec = new Vector2(width * 0.5f, height * 0.5f);
         GameManager.Instance.cameraManager.MoveCamera(movePos, limitVec);
         //카메라 on
-        GameManager.Instance.cameraManager.ActiveVirtualCam(true);
+        GameManager.Instance.cameraManager.SetActiveVirtualCam(true);
         //TeleportEnd이벤트
         GameManager.Instance.PlayerIsTeleport(false);
     }

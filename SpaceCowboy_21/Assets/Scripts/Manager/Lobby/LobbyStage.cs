@@ -64,7 +64,7 @@ public class LobbyStage : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         GameManager.Instance.TransitionFadeOut(true);
         yield return new WaitForSeconds(1.0f);
-        GameManager.Instance.LoadsceneByName(stageDatas[curStageIndex].SceneAddress);
+        GameManager.Instance.LoadSceneByStageState(stageDatas[curStageIndex].SceneAddress, StageState.Stage);
 
     }
 }

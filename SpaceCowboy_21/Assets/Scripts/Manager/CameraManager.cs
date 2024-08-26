@@ -5,51 +5,62 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] CameraPos cameraPos;
-    [SerializeField] CinemachineVirtualCamera virtualCamera;
-
-    //카메라FOV 관련
-    //public float defaultFOV = 90f;
-    //public float currFOV { get; private set; }
-    //float targetFOV;
-
-    //float approx = 0.05f;
-    //[SerializeField] float defaultFovControlSpd = 5.0f;
-    //float fovControlSpd;
+    CinemachineVirtualCamera virtualCamera;
 
     //CameraPos관련
-    //public float defaultCamSpeed = 3f;
-    //public float defaultThreshold = 2f;
+    [Header("CameraPos")]
+    [SerializeField] float movementInfluence = 40.0f;
+    [SerializeField] float camSpeed = 3f;
+    [SerializeField] float threshold = 2f;
+    CameraPos cameraPos;
 
 
-    private void Awake()
+    private void FixedUpdate()
     {
-        GameManager.Instance.cameraManager = this;
-
-        //초기 FOV
-        //fovControlSpd = defaultFovControlSpd;
-        //currFOV = defaultFOV;
-        //targetFOV = currFOV;
+        ControlCamLens();
     }
 
-
-    //private void FixedUpdate()
-    //{
-    //    //카메라 조절
-    //    if (virtualCamera == null) return;
-
-    //    if (Mathf.Abs(currFOV - targetFOV) > approx)
-    //    {
-    //        currFOV = Mathf.Lerp(currFOV, targetFOV, Time.deltaTime * fovControlSpd);
-    //        virtualCamera.m_Lens.FieldOfView = currFOV;
-    //    }
-
-    //}
-
+    #region Initialize Camera
     public void InitCam()
     {
-        cameraPos.CameraPosInitInStage();
+        cameraPos = CreateCamPos();
+        cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
+
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = cameraPos.transform;
+
+        curLensSize = middleGroundDist;
+        targetLensSize = curLensSize;
+        defaultLensSize = curLensSize;
+
+        virtualCamera.m_Lens.OrthographicSize = curLensSize;
     }
+    public void InitLobbyCam(Transform tr)
+    {
+        cameraPos = CreateCamPos();
+        cameraPos.CamPosInitLobby(tr);
+
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = cameraPos.transform;
+
+        curLensSize = middleGroundDist;
+        targetLensSize = curLensSize;
+        defaultLensSize = curLensSize;
+
+
+        virtualCamera.m_Lens.OrthographicSize = curLensSize;
+    }
+
+    CameraPos CreateCamPos()
+    {
+        GameObject camPosObj = new GameObject();
+        CameraPos camPos = camPosObj.AddComponent<CameraPos>();
+        return camPos;
+    }
+
+    #endregion
+
+    #region Map Border Events
     //카메라 이벤트
     public void StopCameraFollow()
     {
@@ -61,23 +72,7 @@ public class CameraManager : MonoBehaviour
         cameraPos.StartCameraFollow();
     }
 
-    //행성 이동시 기본 FOV 변경
-    public void ChangeCamera(float fov)
-    {
-        //defaultFOV = fov;
-        //targetFOV = defaultFOV;
-        //fovControlSpd = defaultFovControlSpd;
-    }
-
-    //속도 지정 식 카메라 확대,축소 
-    public void ChangeCamera(float fov, float spd)
-    {
-        //defaultFOV = fov;
-        //targetFOV = defaultFOV;
-        //fovControlSpd = spd;
-    }
-
-    public void ActiveVirtualCam(bool active)
+    public void SetActiveVirtualCam(bool active)
     {
         virtualCamera.gameObject.SetActive(active);
     }
@@ -100,5 +95,71 @@ public class CameraManager : MonoBehaviour
         //이동 시 pos가 화면 가장자리라면, 화면 절반 내부로 이동시킨다. 
         cameraPos.MoveCamPos(newPos);
     }
+    #endregion
+
+    #region Camera Zoom
+    [Header("CameraZoom")]
+    [SerializeField] float foreGroundDist= 5.0f;
+    [SerializeField] float middleGroundDist = 10.0f;
+    [SerializeField] float backGroundDist = 20.0f;
+    [SerializeField] float fastZoomSeed = 1.0f;
+    [SerializeField] float slowZoomSeed = 3.0f;
+    public float curLensSize { get; private set; }
+    public float defaultLensSize { get; private set; }
+    float targetLensSize;
+    float zoomSpeed;
+    float curVelocity;
+    //test
+
+    public void ZoomCamera(CamDist targetLensSize, ZoomSpeed zoomSpeed)
+    {
+        Debug.Log("ZoomCamera");
+
+        switch (targetLensSize)
+        {
+            case CamDist.Fore:
+                this. targetLensSize = foreGroundDist;
+                break;
+            case CamDist.Middle:
+                this.targetLensSize = middleGroundDist;
+                break;
+            case CamDist.Back:
+                this.targetLensSize = backGroundDist;
+                break;
+        }
+        switch(zoomSpeed)
+        {
+            case ZoomSpeed.Slow:
+                this. zoomSpeed = slowZoomSeed;
+                break;
+            case ZoomSpeed.Fast:
+                this. zoomSpeed = fastZoomSeed;
+                break;
+        }
+    }
+
+    //Update에서 카메라 렌즈 조절
+    void ControlCamLens()
+    {
+        if (Mathf.Abs(curLensSize - targetLensSize) > 0.01f)
+        {
+            curLensSize = Mathf.SmoothDamp(curLensSize, targetLensSize, ref curVelocity, zoomSpeed);
+            virtualCamera.m_Lens.OrthographicSize = curLensSize;
+        }
+    }
+
+
+    public void StageStartCameraZoomin()
+    {
+        curLensSize = backGroundDist ;
+        virtualCamera.m_Lens.OrthographicSize = curLensSize;
+
+        targetLensSize = middleGroundDist;
+        zoomSpeed = slowZoomSeed;
+    }
+
+    public enum CamDist { Fore, Middle, Back}
+    public enum ZoomSpeed { Fast, Slow}
+    #endregion
 
 }

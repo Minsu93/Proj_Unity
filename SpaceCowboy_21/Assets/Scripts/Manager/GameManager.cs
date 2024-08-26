@@ -2,7 +2,9 @@ using Cinemachine;
 using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Security.Cryptography.X509Certificates;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -80,6 +82,7 @@ public class GameManager : MonoBehaviour
         playerManager = GetComponentInChildren<PlayerManager>();
         techDocument = GetComponentInChildren<TechDocument>();
         materialManager= GetComponentInChildren<MaterialManager>();
+        cameraManager = GetComponentInChildren<CameraManager>();
 
         monsterDictonary = GetComponentInChildren<MonsterDictionary>();
         skillDictionary = GetComponentInChildren<SkillDictionary>();
@@ -105,7 +108,8 @@ public class GameManager : MonoBehaviour
 
         //Cursor.visible = false;
 
-        fadeCanvas = fadeoutAnimator.transform.parent.gameObject;    
+        fadeCanvas = fadeoutAnimator.transform.parent.gameObject;
+
     }
 
 
@@ -131,6 +135,9 @@ public class GameManager : MonoBehaviour
 
         //무기 정보 업데이트
         popperManager.PopperReady();
+
+        //카메라 정보 업데이트
+        cameraManager.InitCam();
 
         playerObj.SetActive(false);
         return playerObj;
@@ -181,30 +188,18 @@ public class GameManager : MonoBehaviour
     //씬 로드
     public void LoadsceneByName(string sceneName)
     {
-        StartCoroutine(LoadSceneRoutine(sceneName, StageState.Lobby));
+        StartCoroutine(LoadSceneRoutine(sceneName, StageState.None));
     }
 
-    public void LoadSceneByStageState(string stageName, StageState stageState)
+    public void LoadSceneByStageState(string sceneName, StageState state)
     {
-        //Before Load
-        switch (stageState)
-        {
-            case StageState.Lobby:
-                //로비 화면 -> 스테이지
-                StartCoroutine(LoadSceneRoutine(stageName, stageState));
-                break;
-            case StageState.Stage:
-                //스테이지 -> 스테이지
-                materialManager.SaveMoney();
-                StartCoroutine(LoadSceneRoutine(stageName, stageState));
-                break;
-            case StageState.BossLevel:
-                //보스 레벨 -> 로비
-                materialManager.ResetMoney();
-                StartCoroutine(ShowStageEndUI(1f, 5f, stageName, stageState));
-                break;
-        }
+        StartCoroutine(LoadSceneRoutine(sceneName, state));
+    }
 
+    [SerializeField] private string lobbyName = "LobbyUI";
+    public void StageClear()
+    {
+        StartCoroutine(LoadSceneRoutine(lobbyName, StageState.BossLevel));
     }
 
     IEnumerator LoadSceneRoutine(string sceneName, StageState stageState)
@@ -217,22 +212,26 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("씬 불러오기 완료");
 
-        switch (stageState)
+
+        if(stageState == StageState.Stage)
+        {
+            StartCoroutine(ShowStageStartUI(1f, 5f));
+
+        }
+        switch(stageState)
         {
             case StageState.Lobby:
-                //로비 화면 -> 스테이지
-                StartCoroutine(ShowStageStartUI(1f, 5f));
+                cameraManager.StageStartCameraZoomin();
                 break;
             case StageState.Stage:
-                //스테이지 -> 스테이지
-                break;
-            case StageState.BossLevel:
-                //보스 레벨 -> 로비
+                cameraManager.StageStartCameraZoomin();
+                StartCoroutine(ShowStageStartUI(1f, 5f));
+
                 break;
         }
         TransitionFadeOut(false);
-        
     }
+
 
     IEnumerator ShowStageStartUI(float startDelay, float endDelay)
     {
@@ -240,7 +239,6 @@ public class GameManager : MonoBehaviour
         stageStartUi.gameObject.SetActive(true);
         yield return new WaitForSeconds(endDelay);
         stageStartUi.gameObject.SetActive(false);
-
     }
 
     IEnumerator ShowStageEndUI(float startDelay, float endDelay , string stageName, StageState stageState)
@@ -264,3 +262,4 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
+public enum StageState { None, Lobby, Stage, BossLevel }

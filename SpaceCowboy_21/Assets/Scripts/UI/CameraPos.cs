@@ -5,13 +5,9 @@ using UnityEngine.Rendering.Universal;
 
 public class CameraPos : MonoBehaviour
 {
-    //public GameObject ReticleOBJ;
-    public float movementInfluence;
-    public float camSpeed = 3f;
-    public float threshold = 2f;
-
-    //public Sprite reticleSprite;
-
+    float movementInfluence = 40.0f;
+    float camSpeed = 3f;
+    float threshold = 2f;
 
     Vector2 prePlayerPos;
     Vector2 currCamPos;
@@ -22,30 +18,41 @@ public class CameraPos : MonoBehaviour
     bool activate = false;
 
 
-    public void CameraPosInitInStage()
+    public void CameraPosInitInStage(float movementInfluence, float camSpeed, float threshold)
     {
-        this.player = GameManager.Instance.player;
-        this.transform.position = player.transform.position;
+        this.movementInfluence = movementInfluence;
+        this.camSpeed = camSpeed;
+        this.threshold = threshold;
+
+        GameManager.Instance.PlayerDeadEvent -= StopCameraFollow;
         GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
-        activate = true;
 
         GameObject reticle =  CreateRecticle();
         GameManager.Instance.playerManager.SetReticleFollower(reticle);
 
+        activate = true;
     }
 
     public void CamPosInitLobby(Transform playerTr)
     {
-        activate = true;
         player = playerTr;
         CreateRecticle();
+
+        activate = true;
+
     }
 
     [SerializeField] Vector2 ret;
     private void Update()
     {
-        if (!activate || player == null)
+        if (!activate)
         {
+            return;
+        }
+
+        if(player == null)
+        {
+            player = GameManager.Instance.player;
             return;
         }
 

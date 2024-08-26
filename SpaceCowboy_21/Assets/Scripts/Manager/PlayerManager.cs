@@ -46,7 +46,7 @@ public class PlayerManager : MonoBehaviour
         SpawnPlayerUI();
 
         //Camera를 업데이트한다.
-        GameManager.Instance.cameraManager.InitCam();
+        //GameManager.Instance.cameraManager.InitCam();
 
         //저장 정보를 불러온다.
         //LoadPlayerInfo();
