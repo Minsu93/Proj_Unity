@@ -7,14 +7,15 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class Projectile_Player : Projectile
 {
+    [SerializeField] protected LayerMask overlapTarget;
     float overlapRadius;
-    int overlapLayer;
+    //int overlapLayer;
     protected override void Awake()
     {
         base.Awake();
         CircleCollider2D circleColl = coll as CircleCollider2D;
         overlapRadius = circleColl.radius;
-        overlapLayer = 1 << LayerMask.NameToLayer("ProjHitCollider") | 1 << LayerMask.NameToLayer("Planet") | LayerMask.NameToLayer("EnemyHitableProj");
+        //overlapLayer = 1 << LayerMask.NameToLayer("ProjHitCollider") | 1 << LayerMask.NameToLayer("Planet") | LayerMask.NameToLayer("EnemyHitableProj");
 
     }
 
@@ -40,7 +41,7 @@ public class Projectile_Player : Projectile
     //충돌 체크
     void OverlapCheck()
     {
-        Collider2D col = Physics2D.OverlapCircle(transform.position, overlapRadius, overlapLayer);
+        Collider2D col = Physics2D.OverlapCircle(transform.position, overlapRadius, overlapTarget);
         if (col != null)
         {
             OverlapTarget(col);

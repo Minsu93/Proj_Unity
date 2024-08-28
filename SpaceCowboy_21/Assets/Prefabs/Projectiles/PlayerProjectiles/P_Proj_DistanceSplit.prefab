@@ -186,6 +186,9 @@ MonoBehaviour:
   nonHitEffect: {fileID: 7196136449052729651, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
   ViewObj: {fileID: 6832387849340162882}
   trail: {fileID: 7996533325830838344}
+  overlapTarget:
+    serializedVersion: 2
+    m_Bits: 43264
   splitPrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
   numberOfSplit: 3
   projectileSpread: 15

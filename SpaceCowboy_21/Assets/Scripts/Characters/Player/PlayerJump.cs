@@ -1,9 +1,6 @@
 using SpaceCowboy;
-using Spine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
 public class PlayerJump : MonoBehaviour
 {

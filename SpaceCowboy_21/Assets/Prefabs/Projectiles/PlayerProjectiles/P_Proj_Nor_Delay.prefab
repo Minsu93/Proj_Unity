@@ -102,6 +102,9 @@ MonoBehaviour:
   nonHitEffect: {fileID: 7196136449052729651, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
   ViewObj: {fileID: 8991112628740824846}
   trail: {fileID: 5543431350520239108}
+  overlapTarget:
+    serializedVersion: 2
+    m_Bits: 43264
   delay: 1
 --- !u!1 &6535184387503664083
 GameObject:

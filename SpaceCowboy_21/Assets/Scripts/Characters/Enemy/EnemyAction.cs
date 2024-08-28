@@ -517,17 +517,20 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     #endregion
 
+    public Collider2D GetCollider()
+    {
+        return enemyColl;
+    }
 
+
+#if (UNITY_EDITOR)
     private void OnDrawGizmos()
     {
         UnityEditor.Handles.color = Color.white;
         UnityEditor.Handles.Label(transform.position, preState.ToString());
     }
 
-    public Collider2D GetCollider()
-    {
-        return enemyColl;
-    }
+#endif
 
 
 }

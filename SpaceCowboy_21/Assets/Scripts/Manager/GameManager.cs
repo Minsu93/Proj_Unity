@@ -99,6 +99,8 @@ public class GameManager : MonoBehaviour
         weaponDictionary.LoadEquippedWeapons();
         skillDictionary.LoadSkillDictionary();
 
+        fadeCanvas = fadeoutAnimator.transform.parent.gameObject;
+
     }
 
 
@@ -108,7 +110,6 @@ public class GameManager : MonoBehaviour
 
         //Cursor.visible = false;
 
-        fadeCanvas = fadeoutAnimator.transform.parent.gameObject;
 
     }
 
@@ -212,28 +213,10 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("씬 불러오기 완료");
 
-
-        if(stageState == StageState.Stage)
-        {
-            StartCoroutine(ShowStageStartUI(1f, 5f));
-
-        }
-        switch(stageState)
-        {
-            case StageState.Lobby:
-                cameraManager.StageStartCameraZoomin();
-                break;
-            case StageState.Stage:
-                cameraManager.StageStartCameraZoomin();
-                StartCoroutine(ShowStageStartUI(1f, 5f));
-
-                break;
-        }
-        TransitionFadeOut(false);
     }
 
 
-    IEnumerator ShowStageStartUI(float startDelay, float endDelay)
+    public IEnumerator ShowStageStartUI(float startDelay, float endDelay)
     {
         yield return new WaitForSeconds(startDelay);
         stageStartUi.gameObject.SetActive(true);

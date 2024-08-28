@@ -60,6 +60,7 @@ public class EnemyView : MonoBehaviour
                 PlayRun();
                 break;
             case EnemyState.Attack:
+                PlayIdle();
                 break;
             case EnemyState.Die:
                 StopAllCoroutines();

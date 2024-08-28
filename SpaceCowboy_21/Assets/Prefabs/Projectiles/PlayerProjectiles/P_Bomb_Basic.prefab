@@ -126,6 +126,9 @@ MonoBehaviour:
   nonHitEffect: {fileID: 0}
   ViewObj: {fileID: 7694809346379838156}
   trail: {fileID: 0}
+  overlapTarget:
+    serializedVersion: 2
+    m_Bits: 43264
   explodeRadius: 3
   targetLayer:
     serializedVersion: 2

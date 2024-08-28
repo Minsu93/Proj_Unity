@@ -16,30 +16,9 @@ public class WaveObjectRespawner : MonoBehaviour
 {
     public StageObject[] stageObjects;
 
-    ////생성할 오브젝트
-    //[SerializeField] GameObject spawnPrefab;    //생성 오브젝트
-    //[SerializeField] int spawnCountAtOnce = 1;  //한번에 생겨나는 수
-    //[SerializeField] float spawnInterval = 10.0f;   //업데이트 간격
-
-    //float timer;
-
 
     public void UpdateSpawner()
     {
-        //if(timer< spawnInterval)
-        //{
-        //    timer += Time.deltaTime;
-        //}
-        //else
-        //{
-        //    timer = 0;
-        //    for(int i = 0; i < spawnCountAtOnce; i++)
-        //    {
-        //        SpawnObjectOutsideScreen();
-        //    }
-            
-        //}
-
         foreach(var stageObj in stageObjects)
         {
             stageObj.timer += Time.deltaTime;

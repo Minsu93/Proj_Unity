@@ -4,6 +4,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
 
+#if UNITY_EDITOR
+
 [ExecuteInEditMode]
 public class NodeAttach : MonoBehaviour
 {
@@ -97,3 +99,5 @@ public class NodeAttach : MonoBehaviour
         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
     }
 }
+
+#endif

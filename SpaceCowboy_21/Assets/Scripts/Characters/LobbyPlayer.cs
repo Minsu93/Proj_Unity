@@ -6,6 +6,7 @@ public class LobbyPlayer : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 3.0f;
     [SerializeField] BoxCollider2D movementArea;
+    [SerializeField] Transform viewObj;
     float minX;
     float maxX;
     Rigidbody2D rb;
@@ -15,6 +16,10 @@ public class LobbyPlayer : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         GameManager.Instance.cameraManager.InitLobbyCam(this.transform);
+
+        GameManager.Instance.TransitionFadeOut(false);
+        GameManager.Instance.cameraManager.StageStartCameraZoomin();
+
         minX = movementArea.bounds.min.x + movementArea.transform.position.x;
         maxX = movementArea.bounds.max.x + movementArea.transform.position.x;
     }
@@ -40,6 +45,7 @@ public class LobbyPlayer : MonoBehaviour
         
     }
 
+    bool isRight = true;
     private void FixedUpdate()
     {
         float AxisInput = Input.GetAxisRaw("Horizontal");
@@ -52,6 +58,17 @@ public class LobbyPlayer : MonoBehaviour
             
 
             rb.MovePosition(curPos);
+        }
+        
+        if(!isRight && AxisInput > 0)
+        {
+            isRight = true;
+            viewObj.localScale = new Vector3(1, 1, 1);
+        }
+        else if(isRight && AxisInput < 0)
+        {
+            isRight = false;
+            viewObj.localScale = new Vector3(-1, 1, 1);
         }
     }
 

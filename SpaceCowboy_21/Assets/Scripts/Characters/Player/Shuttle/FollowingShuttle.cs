@@ -18,11 +18,13 @@ public class FollowingShuttle : MonoBehaviour
     bool stopAttack = false;    //공격을 잠시 중단하고 제 위치로 이동하는것에 집중
 
     [SerializeField] Collider2D physicsColl;
-
+    [SerializeField] Transform viewTr;
+    Vector3 viewScale;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        viewScale = viewTr.localScale;
     }
 
     // 셔틀 처음 스테이지에 생성 시 
@@ -126,6 +128,7 @@ public class FollowingShuttle : MonoBehaviour
         }
     }
 
+    bool isRight = true;
     void RigidBodyMoveToPosition(Vector2 targetPos, out float distance)
     {
         Vector2 targetPosition = targetPos;
@@ -138,6 +141,18 @@ public class FollowingShuttle : MonoBehaviour
 
         // 부드럽게 이동 (SmoothDamp)
         rb.MovePosition(Vector2.SmoothDamp(rb.position, targetPosition, ref velocity, smoothTime));
+
+        //이동 속도에 따라 view회전
+        if(velocity.x > 0 && !isRight)
+        {
+            isRight = true;
+            viewTr.localScale = new Vector3(viewScale.x, viewScale.y, viewScale.z);
+        }
+        else if(velocity.x < 0 && isRight)
+        {
+            isRight = false;
+            viewTr.localScale = new Vector3(-viewScale.x, viewScale.y, viewScale.z); 
+        }
     }
 
     #endregion

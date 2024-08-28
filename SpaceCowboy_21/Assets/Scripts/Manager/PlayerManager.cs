@@ -44,85 +44,20 @@ public class PlayerManager : MonoBehaviour
 
         //UI를 업데이트한다. 
         SpawnPlayerUI();
-
-        //Camera를 업데이트한다.
-        //GameManager.Instance.cameraManager.InitCam();
-
-        //저장 정보를 불러온다.
-        //LoadPlayerInfo();
-
     }
-
-    //플레이어가 사용하는 장비, 유물, 업그레이드 수치 등을 저장한다.
-    //public void SavePlayerInfo()
-    //{
-    //    string path = Path.Combine(Application.dataPath , "Data/PlayerData", "playerData.json");
-
-    //    //Test
-
-    //    PlayerData pData = new PlayerData();
-    //    pData.weaponName = weaponData.name;
-    //    pData.orbName = orbData.name;
-    //    pData.throwSatelliteName = throwData.name;
-
-    //    string str = JsonUtility.ToJson(pData, true);
-    //    File.WriteAllText(path, str);
-    //}
-
-    //public void LoadPlayerInfo()
-    //{
-    //    string path = Path.Combine(Application.dataPath, "Data/PlayerData", "weaponData.json");
-    //    string loadJson = File.ReadAllText(path);
-    //    PlayerData pData = JsonUtility.FromJson<PlayerData>(loadJson);
-
-    //    WeaponData first = Resources.Load<WeaponData>("Weapon/" + pData.firstWeaponName);
-    //    WeaponData second = Resources.Load<WeaponData>("Weapon/" + pData.secondWeaponName);
-    //    WeaponData third = Resources.Load<WeaponData>("Weapon/" + pData.thirdWeaponName);
-    //    WeaponData fourth = Resources.Load<WeaponData>("Weapon/" + pData.fourthWeaponName);
-
-    //    //인벤토리를 지정합니다.
-    //    if(first != null)
-    //    {
-    //        SetInventory(first, 0);
-    //    }
-    //    if(second != null)
-    //    {
-    //        SetInventory(second, 1);
-    //    }
-    //    if(third != null)
-    //    {
-    //        SetInventory(third, 2);
-    //    }
-    //    if(fourth != null)
-    //    {
-    //        SetInventory(fourth, 3);
-    //    }
-    //}
-
-    //void SetInventory(WeaponData weaponData, int index)
-    //{
-    //    weaponInventory[index] = weaponData;
-    //}
-
-    //BaseWeapon 들로 변경할 때 
-    //public void ChangeWeapon(int index)
-    //{
-    //    WeaponData data = weaponInventory[index];
-    //    //무기 변경
-    //    playerWeapon.InitializeWeapon(data);
-
-    //    //UI 전달
-    //    UpdatePlayerGaugeUI(data);
-    //}
 
     //신규 WeaponData로 변경할 때 
     
     public bool ChangeWeapon(WeaponData weaponData)
     {
-        bool canPush = playerWeapon.PushWeapon(weaponData);
-        //Ammo 게이지 UI전달
-        UpdatePlayerGaugeUI(weaponData);
-        return canPush;
+        //bool canPush = playerWeapon.PushWeapon(weaponData);
+        ////Ammo 게이지 UI전달
+        //UpdatePlayerGaugeUI(weaponData);
+        //return canPush;
+        
+        WeaponType wType = playerWeapon.InitializeWeapon(weaponData);
+        playerWeapon.ChangeWeapon(wType, wType.maxAmmo);
+        return true;    //임시로 무조건 true를 반환하게 함.
     }
 
     public bool HealthUp(float amount)
@@ -194,29 +129,6 @@ public class PlayerManager : MonoBehaviour
 
     #region  UI관련
 
-    //public void OpenWeaponWheel()
-    //{
-    //    weaponWheelController.ToggleWheel(true);
-    //}
-    //public void CloseWeaponWheel()
-    //{
-    //    weaponWheelController.ToggleWheel(false);
-    //}
-
-    //총을 다 쓰고 나서 초기화시키기
-    //public void ResetPlayerWeaponUI()
-    //{
-    //    weaponWheelController.CancelItem();
-    //}
-
-
-    //Orb 충전
-    //public void ChargeFireworkEnergy()
-    //{
-    //    playerOrbSlot.EnergyIncrease(1f);
-    //}
-
-
     //player UI 스폰
     void SpawnPlayerUI()
     {
@@ -227,7 +139,6 @@ public class PlayerManager : MonoBehaviour
         slot_A = pUI.transform.Find("WeaponPanel/SlotA/WeaponImage").GetComponent<Image>();
         slot_B = pUI.transform.Find("WeaponPanel/SlotB/WeaponImage").GetComponent<Image>();
         slot_C = pUI.transform.Find("WeaponPanel/SlotC/WeaponImage").GetComponent<Image>();
-
     }
 
     //변화가 있을 때만 업데이트한다.
@@ -291,44 +202,3 @@ public class PlayerManager : MonoBehaviour
     #endregion
 }
 
-
-//저장할 데이터
-
-//[Serializable]
-//public class PlayerData
-//{
-//    public string firstWeaponName;
-//    public string secondWeaponName;
-//    public string thirdWeaponName;
-//    public string fourthWeaponName;
-//}
-
-//[Serializable]
-
-//public class WeaponInventory
-//{
-//    public WeaponData weaponData;
-//    public int maxWeaponEnergy;
-//    public int curWeaponEnergy;
-//    public bool activate = false;
-    
-//    public void CollectEnergy(int i)
-//    {
-//        curWeaponEnergy += i;
-
-//        if(curWeaponEnergy >= maxWeaponEnergy)
-//        {
-//            curWeaponEnergy = maxWeaponEnergy;
-//            activate = true;
-//        }
-//    }
-
-//    public void Use()
-//    {
-//        curWeaponEnergy = 0;
-//        if(weaponData.MaxAmmo != 0)
-//        {
-//            activate = false;
-//        }
-//    }
-//}

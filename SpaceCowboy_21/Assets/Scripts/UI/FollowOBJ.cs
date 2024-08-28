@@ -6,7 +6,7 @@ public class FollowOBJ : MonoBehaviour
 {
     public GameObject followingObj;
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (followingObj == null)
             return;

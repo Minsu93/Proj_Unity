@@ -4978,6 +4978,9 @@ MonoBehaviour:
   nonHitEffect: {fileID: 7424398827703927764, guid: ffd0b535168a07e49b32ca3ad3da9471, type: 3}
   ViewObj: {fileID: 5378794336492907785}
   trail: {fileID: 0}
+  overlapTarget:
+    serializedVersion: 2
+    m_Bits: 43264
   enhancePerCharges:
   - damage: 1
     radius: 1

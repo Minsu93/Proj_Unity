@@ -289,7 +289,6 @@ public class PlayerWeapon : MonoBehaviour
         }
 
         return wtype;
-        //ChangeWeapon(wtype);
     }
 
     public void ChangeWeapon(WeaponType weaponType, float curAmmo)

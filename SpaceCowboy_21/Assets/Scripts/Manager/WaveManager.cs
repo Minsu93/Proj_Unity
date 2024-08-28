@@ -11,15 +11,11 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
     public string stageName = "stage0";
-    //public GameObject portal;
     [SerializeField] private StagePortal portal;
     
     [Header("Wave Property")]
     [SerializeField] float waveClearBonusSubtractTime = 5.0f;
-    //[SerializeField]
-    //[Range(0f,1f)] float waveClearRatio;
     float nextWaveTime; //웨이브 종료시까지 남은 시간
-    //float bossTime; //보스 스폰까지 남은 시간
     float gameTime; //게임 시간
 
     Stage stage;
@@ -94,35 +90,12 @@ public class WaveManager : MonoBehaviour
     private void Start()
     {
         //Dictionary 불러오기
-        //monsterDict = GetComponent<MonsterDictonary>().monsterDictionary;
         monsterDict = GameManager.Instance.monsterDictonary.monsDictionary;
         objectRespawner = GetComponent<WaveObjectRespawner>();  
 
-        //CreateWaveJson();
         LoadWaveFromJson(stageName);
-
-        WaveStart();
     }
 
-
-    //void CreateWaveJson()
-    //{
-    //    //json테스트용
-
-    //    string path = Path.Combine(Application.dataPath + "/Data/", stageName + ".json");
-
-    //    Enemy enemy_A = new Enemy();
-    //    enemy_A.name = "cannon";
-    //    enemy_A.delay = 0;
-
-    //    Enemy enemy_B = new Enemy();
-    //    enemy_B.name = "shooter";
-    //    enemy_B.delay = 0;
-
-    //    string str = JsonUtility.ToJson(stage, true);
-    //    File.WriteAllText(path, str);
-    //}
-    
     void LoadWaveFromJson(string filename)
     {
         string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");
@@ -131,18 +104,6 @@ public class WaveManager : MonoBehaviour
         stage = JsonUtility.FromJson<Stage>(loadJson);
     }
 
-    //public void UpdateWaveManager(int invasionMinute, AnimationCurve waveCurve, EnemyTeam[] enemies)
-    //{
-    //    this.invasionMinute = invasionMinute;
-    //    this.waveTimeCurve = waveCurve;
-    //    this.enemyTeams = enemies;
-
-    //    ResetWaveManager();
-
-    //    waveTime = waveTimeCurve.Evaluate(waveIndex);   //웨이브Curve 의 0번째 시간, 즉 첫 웨이브 시작시간 업데이트
-    //    if (waveUI != null) waveUI.UpdateProgressBar(waveTime, gameTime, waveIndex);    
-    //    if (invasionUI != null) invasionUI.UpdateInvasionUI(InvasionTime);
-    //}
 
     void ResetWaveManager()
     {
@@ -393,8 +354,6 @@ public class WaveManager : MonoBehaviour
         if (spawnRoutine != null) StopCoroutine(spawnRoutine);
         spawnRoutine = StartCoroutine(SpawnInOrder(wave.spawns));
     }
-
-
 
     #endregion
 

@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3140605196254949026, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
+      propertyPath: overlapTarget.m_Bits
+      value: 35072
+      objectReference: {fileID: 0}
     - target: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
       propertyPath: m_Name
       value: P_Proj_Normal_OrbLayer

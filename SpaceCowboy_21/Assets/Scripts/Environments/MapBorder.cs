@@ -19,22 +19,24 @@ public class MapBorder : MonoBehaviour
             float x = playerPos.x;
             float y = playerPos.y;
 
-            if (x > width * 0.5f)
+            
+
+            if (x > transform.position.x + width * 0.5f)
             {
-                x = -width * 0.5f;
+                x = transform.position.x - width * 0.5f;
             }
-            else if (x < -width * 0.5f)
+            else if (x < transform.position.x - width * 0.5f)
             {
-                x = width * 0.5f;
+                x = transform.position.x + width * 0.5f;
             }
 
-            if (y > height * 0.5f)
+            if (y > transform.position.y + height * 0.5f)
             {
-                y = -height * 0.5f;
+                y = transform.position.y - height * 0.5f;
             }
-            else if (y < -height * 0.5f)
+            else if (y < transform.position.y - height * 0.5f)
             {
-                y = height * 0.5f;
+                y = transform.position.y + height * 0.5f;
             }
 
             Vector2 movePos = new Vector2(x, y);
@@ -45,21 +47,24 @@ public class MapBorder : MonoBehaviour
 
     void TeleportPlayer(Vector2 movePos)
     {
-        //TeleportStart 이벤트
-        GameManager.Instance.PlayerIsTeleport(true);
-        //카메라 off
-        GameManager.Instance.cameraManager.SetActiveVirtualCam(false);
-
         StartCoroutine(NextFrameRoutine(movePos));
     }
 
     IEnumerator NextFrameRoutine(Vector2 movePos)
     {
-        yield return null;
+        //TeleportStart 이벤트
+        GameManager.Instance.PlayerIsTeleport(true);
+        //카메라 off
+        GameManager.Instance.cameraManager.SetActiveVirtualCam(false);
+
+        yield return new WaitForFixedUpdate();
 
         GameManager.Instance.player.position = movePos;
-        Vector2 limitVec = new Vector2(width * 0.5f, height * 0.5f);
-        GameManager.Instance.cameraManager.MoveCamera(movePos, limitVec);
+        Vector2 halfSize = new Vector2(width * 0.5f, height * 0.5f);
+        GameManager.Instance.cameraManager.MoveCamera(movePos, halfSize, transform.position);
+
+        yield return new WaitForFixedUpdate();
+
         //카메라 on
         GameManager.Instance.cameraManager.SetActiveVirtualCam(true);
         //TeleportEnd이벤트

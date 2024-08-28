@@ -10,12 +10,18 @@ public class ParralaxBackground : MonoBehaviour
     [Range(-1f, 1f)]
     [SerializeField] private float speed = 0;
     
-    private Vector3 lastCameraPosition;
     Vector2 basePositionFromCamera;
 
     private void Start()
     {
-        basePositionFromCamera = transform.position;    
+        basePositionFromCamera = transform.position;
+
+        //자손 스프라이트들의 SortingOrder 조절
+        SpriteRenderer[] sprs = transform.GetComponentsInChildren<SpriteRenderer>();
+        for(int i = 0;  i < sprs.Length; i++)
+        {
+            sprs[i].sortingOrder = Mathf.FloorToInt(speed * -100);
+        }
     }
 
 

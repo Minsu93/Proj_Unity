@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
+
 
 /// <summary>
 /// 쿨타임마다 무기ID를 가지고 아이템을 생성시킨다.

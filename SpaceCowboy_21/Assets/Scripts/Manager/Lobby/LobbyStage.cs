@@ -17,6 +17,7 @@ public class LobbyStage : MonoBehaviour
 
     [Header("Portal")]
     [SerializeField] private GameObject portalObj;
+    [SerializeField] Transform playerTr;
     Animator portalAnim;
     private int curStageIndex = 0;
 
@@ -60,6 +61,7 @@ public class LobbyStage : MonoBehaviour
     IEnumerator StageStartRoutine()
     {
         portalObj.SetActive(true);
+        portalObj.transform.position = playerTr.position;
         portalAnim.SetTrigger("PortalOpen");
         yield return new WaitForSeconds(2.0f);
         GameManager.Instance.TransitionFadeOut(true);

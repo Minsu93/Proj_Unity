@@ -1,11 +1,15 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    CinemachineVirtualCamera virtualCamera;
+    CinemachineVirtualCamera virtualCameraMain;
+
+
+    CinemachineConfiner2D confiner;
 
     //CameraPos관련
     [Header("CameraPos")]
@@ -26,29 +30,31 @@ public class CameraManager : MonoBehaviour
         cameraPos = CreateCamPos();
         cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
 
-        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-        virtualCamera.Follow = cameraPos.transform;
-
-        curLensSize = middleGroundDist;
-        targetLensSize = curLensSize;
-        defaultLensSize = curLensSize;
-
-        virtualCamera.m_Lens.OrthographicSize = curLensSize;
+        PrepareVirtualCam();
     }
     public void InitLobbyCam(Transform tr)
     {
         cameraPos = CreateCamPos();
         cameraPos.CamPosInitLobby(tr);
 
-        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-        virtualCamera.Follow = cameraPos.transform;
+        PrepareVirtualCam();
+    }
+
+    void PrepareVirtualCam()
+    {
+
+
+        virtualCameraMain = GameObject.FindGameObjectWithTag("Vcam").GetComponent<CinemachineVirtualCamera>();
+        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
+        virtualCameraMain.Follow = cameraPos.transform;
+        
 
         curLensSize = middleGroundDist;
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
 
 
-        virtualCamera.m_Lens.OrthographicSize = curLensSize;
+        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
     }
 
     CameraPos CreateCamPos()
@@ -74,11 +80,11 @@ public class CameraManager : MonoBehaviour
 
     public void SetActiveVirtualCam(bool active)
     {
-        virtualCamera.gameObject.SetActive(active);
+        virtualCameraMain.gameObject.SetActive(active);
     }
 
     //카메라 이동.
-    public void MoveCamera(Vector2 pos, Vector2 limitSize)
+    public void MoveCamera(Vector2 pos, Vector2 borderHalfSize, Vector2 borderPos)
     {
         //화면 절반의 넓이를 구한다. 
         Camera cam = Camera.main;
@@ -88,8 +94,10 @@ public class CameraManager : MonoBehaviour
 
         float x = pos.x;
         float y = pos.y;
-        x = Mathf.Clamp(x, -limitSize.x + cameraWidthHalf, limitSize.x - cameraWidthHalf);
-        y = Mathf.Clamp(y, -limitSize.y + cameraHeightHalf, limitSize.y - cameraHeightHalf);
+
+
+        x = Mathf.Clamp(x, borderPos.x - borderHalfSize.x + cameraWidthHalf, borderPos.x + borderHalfSize.x - cameraWidthHalf);
+        y = Mathf.Clamp(y, borderPos.y - borderHalfSize.y  + cameraHeightHalf, borderPos.y + borderHalfSize.y - cameraHeightHalf);
         Vector2 newPos = new Vector2(x, y);
 
         //이동 시 pos가 화면 가장자리라면, 화면 절반 내부로 이동시킨다. 
@@ -139,20 +147,29 @@ public class CameraManager : MonoBehaviour
     }
 
     //Update에서 카메라 렌즈 조절
+    float timer = 0;
     void ControlCamLens()
     {
-        if (Mathf.Abs(curLensSize - targetLensSize) > 0.01f)
+        if (Mathf.Abs(curLensSize - targetLensSize) > 0.1f)
         {
             curLensSize = Mathf.SmoothDamp(curLensSize, targetLensSize, ref curVelocity, zoomSpeed);
-            virtualCamera.m_Lens.OrthographicSize = curLensSize;
+            virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
+
+            //confiner 를 0.2초마다 업데이트
+            
+            timer += Time.deltaTime;
+            if (timer > 0.2f)
+            {
+                timer = 0;
+                if(confiner != null) confiner.InvalidateCache();
+            }
         }
     }
-
 
     public void StageStartCameraZoomin()
     {
         curLensSize = backGroundDist ;
-        virtualCamera.m_Lens.OrthographicSize = curLensSize;
+        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
 
         targetLensSize = middleGroundDist;
         zoomSpeed = slowZoomSeed;
