@@ -21,6 +21,8 @@ public class FollowingShuttle : MonoBehaviour
     [SerializeField] Transform viewTr;
     Vector3 viewScale;
 
+    List<SkillCoolTime> skillCoolTimeList = new List<SkillCoolTime>();
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,9 +35,10 @@ public class FollowingShuttle : MonoBehaviour
         shuttleActivate = true;
         ResetShuttle();
         LoadSkillData();
+        SetSkillCoolTime();
     }
 
-    #region Save & Load SkillData
+    #region Load SkillData
     void LoadSkillData()
     {
         List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
@@ -55,6 +58,14 @@ public class FollowingShuttle : MonoBehaviour
         }
     }
 
+    void SetSkillCoolTime()
+    {
+        for(int i = 0; i < skillList.Count; i++)
+        {
+            SkillCoolTime cool = new SkillCoolTime(false, skillList[i].skillCoolTime);
+            skillCoolTimeList.Add(cool);
+        }
+    }
     #endregion
 
     private void FixedUpdate()
@@ -162,25 +173,44 @@ public class FollowingShuttle : MonoBehaviour
         //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
         if (!shuttleActivate) return;
 
+        //스킬별로 쿨타임을 카운트.
+        if(!startSkill &&  skillCoolTimeList.Count > 0 )
+        {
+            for(int i = 0; i < skillCoolTimeList.Count; i++)
+            {
+                if (!skillCoolTimeList[i].isReady)
+                    skillCoolTimeList[i].CoolTimeWait();
+            }
+        }
+
         if (!startSkill)
         {
             //1번
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                if (skillList.Count > 0)
+                if (skillList.Count > 0 && skillCoolTimeList[0].isReady)
+                {
                     curSkill = skillList[0];
+                    skillCoolTimeList[0].ResetReady();
+                }
             }
             //2번
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            else if (Input.GetKeyDown(KeyCode.Alpha2) && skillCoolTimeList[1].isReady)
             {
                 if(skillList.Count > 1)
+                {
                     curSkill = skillList[1];
+                    skillCoolTimeList[1].ResetReady();
+                }
             }
             //3번
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            else if (Input.GetKeyDown(KeyCode.Alpha3) && skillCoolTimeList[2].isReady)
             {
                 if(skillList.Count > 2)
+                {
                     curSkill = skillList[2];
+                    skillCoolTimeList[2].ResetReady();
+                }
             }
 
             //뭔가 선택된 스킬이 있으면 사용 시작.
@@ -332,3 +362,39 @@ public struct ProjectileAttackProperty
     public float shootCoolTime ;
 }
 
+
+[Serializable]
+public class SkillCoolTime
+{
+    public bool isReady;
+    public float coolTime;
+    float curTime;
+
+    public SkillCoolTime(bool isReady, float coolTime)
+    {
+        this.isReady = isReady;
+        this.coolTime = coolTime;
+        this.curTime = coolTime;
+    }
+
+    public void CoolTimeWait()
+    {
+        if (!isReady)
+        {
+            curTime -= Time.deltaTime;
+            if (curTime <= 0)
+            {
+                isReady = true;
+                curTime = coolTime;
+            }
+        }
+    }
+
+    public void ResetReady()
+    {
+        isReady = false;
+        curTime = coolTime;
+    }
+
+
+}
