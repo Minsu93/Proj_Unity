@@ -25,7 +25,7 @@ public class SkillDictionary : MonoBehaviour
             string skillName = skillTotal.skillDataList[i].name;
             GameObject skillPrefab = skillList.Find(item => item.name.Equals(skillName));
             skillPrefabDictionary.Add(skillName, skillPrefab);
-            iconDictionary.Add(skillName, skillPrefab.GetComponent<ShuttleSkill>().icon);
+            iconDictionary.Add(skillName, skillPrefab.GetComponent<ShuttleSkill>().fillicon);
         }
     }
 

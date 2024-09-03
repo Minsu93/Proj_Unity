@@ -8,7 +8,8 @@ using UnityEngine;
 public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 {
     [Header("Icon")]
-    public Sprite icon;
+    public Sprite backicon;
+    public Sprite fillicon;
 
     [Header("Shuttle Base")]
     public float skillCoolTime = 5.0f; // 셔틀 스킬 재사용 대기 시간. 완전히 사용이 끝난 이후부터 재사용 대기 시작이 차기 시작한다. 

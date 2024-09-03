@@ -74,7 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a32a1947b927c6443b17c25d2aed2405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: d7d85a0108cb1734c9d5f97a26a56177, type: 3}
+  backicon: {fileID: 21300000, guid: 3acd93912bf41e940a034bd16fa472cb, type: 3}
+  fillicon: {fileID: 21300000, guid: 94ae10937ef08814b9c194c1f6121a92, type: 3}
   skillCoolTime: 5
   maxWaitTime: 5
   maxUseTime: 10

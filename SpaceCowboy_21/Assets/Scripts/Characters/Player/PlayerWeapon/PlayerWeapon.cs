@@ -203,47 +203,50 @@ public class PlayerWeapon : MonoBehaviour
     #endregion
    
     #region ChangeWeapon
-    public bool PushWeapon(WeaponData data)
-    {
-        bool canPush;
-        if(ammoStack.Count < 3)
-        {
-            //사용하던 무기를 집어넣는다. 
-            AmmoInventory ammoInven = new AmmoInventory();
-            ammoInven.weaponData = currWeaponType.weaponData;
-            ammoInven.currAmmo = currAmmo;
-            ammoStack.Push(ammoInven);
+    //public bool PushWeapon(WeaponData data)
+    //{
+    //    bool canPush;
+    //    if(ammoStack.Count < 3)
+    //    {
+    //        //사용하던 무기를 집어넣는다. 
+    //        AmmoInventory ammoInven = new AmmoInventory();
+    //        ammoInven.weaponData = currWeaponType.weaponData;
+    //        ammoInven.currAmmo = currAmmo;
+    //        ammoStack.Push(ammoInven);
             
-            //신규 무기를 착용한다. 
-            WeaponType wtype = InitializeWeapon(data);
-            ChangeWeapon(wtype, wtype.maxAmmo);
+    //        //신규 무기를 착용한다. 
+    //        WeaponType wtype = InitializeWeapon(data);
+    //        ChangeWeapon(wtype, wtype.maxAmmo);
 
-            //UI를 업데이트 한다 
-            GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
+    //        //UI를 업데이트 한다 
+    //        GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
             
-            canPush = true;
-        }
-        else
-        {
-            canPush = false;
-        }
-        return canPush;
-    }
+    //        canPush = true;
+    //    }
+    //    else
+    //    {
+    //        canPush = false;
+    //    }
+    //    return canPush;
+    //}
     public void PopWeapon()
     {
-        //스택에 있으면 가져오기
-        if(ammoStack.TryPop(out AmmoInventory ammoInven))
-        {
-            WeaponType wtype = InitializeWeapon(ammoInven.weaponData);
-            ChangeWeapon(wtype, ammoInven.currAmmo);
-        }
+        ////스택에 있으면 가져오기
+        //if(ammoStack.TryPop(out AmmoInventory ammoInven))
+        //{
+        //    WeaponType wtype = InitializeWeapon(ammoInven.weaponData);
+        //    ChangeWeapon(wtype, ammoInven.currAmmo);
+        //}
+        ////스택에 없으면 기본 총기로 
+        //else
+        //{
+        //    BackToBaseWeapon();
+        //}
+        ////UI를 업데이트 한다 
+        //GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
+
         //스택에 없으면 기본 총기로 
-        else
-        {
-            BackToBaseWeapon();
-        }
-        //UI를 업데이트 한다 
-        GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
+        BackToBaseWeapon();
     }
     //기본 총기 소환
     public void BackToBaseWeapon()

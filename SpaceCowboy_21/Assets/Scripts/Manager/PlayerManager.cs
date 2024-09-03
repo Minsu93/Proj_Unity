@@ -12,15 +12,7 @@ public class PlayerManager : MonoBehaviour
     //인터렉트 오브젝트
     public InteractableOBJ curObj { get; set; }
 
-    //플레이어 UI관련
-    [SerializeField] private GameObject playerUIPrefab;
-    Image healthImg;
-    Image shieldImg;
-    [SerializeField] Image slot_A;
-    [SerializeField] Image slot_B;
-    [SerializeField] Image slot_C;
-    //마우스 포인트를 따라다니는 게이지 UI관련
-    Gauge_Weapon gauge_Weapon;
+
 
     //플레이어 관련 스크립트
     PlayerInput playerInput;
@@ -128,17 +120,28 @@ public class PlayerManager : MonoBehaviour
     #endregion
 
     #region  UI관련
-
+    //플레이어 UI관련
+    [SerializeField] private GameObject playerUIPrefab;
+    Image healthImg;
+    Image shieldImg;
+    [SerializeField] Image slot_A;
+    [SerializeField] Image slot_B;
+    [SerializeField] Image slot_C;
+    //마우스 포인트를 따라다니는 게이지 UI관련
+    Gauge_Weapon gauge_Weapon;
+    UISkillPanel skillPanel;
     //player UI 스폰
     void SpawnPlayerUI()
     {
         GameObject pUI = Instantiate(playerUIPrefab);
+        skillPanel = pUI.GetComponentInChildren<UISkillPanel>();
+
         healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
         shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
-        slot_A = pUI.transform.Find("WeaponPanel/SlotA/WeaponImage").GetComponent<Image>();
-        slot_B = pUI.transform.Find("WeaponPanel/SlotB/WeaponImage").GetComponent<Image>();
-        slot_C = pUI.transform.Find("WeaponPanel/SlotC/WeaponImage").GetComponent<Image>();
+        //slot_A = pUI.transform.Find("WeaponPanel/SlotA/WeaponImage").GetComponent<Image>();
+        //slot_B = pUI.transform.Find("WeaponPanel/SlotB/WeaponImage").GetComponent<Image>();
+        //slot_C = pUI.transform.Find("WeaponPanel/SlotC/WeaponImage").GetComponent<Image>();
     }
 
     //변화가 있을 때만 업데이트한다.
@@ -167,37 +170,55 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public void UpdateAmmoStack(Stack<AmmoInventory> stack)
-    {
-        List<AmmoInventory> stackList = new List<AmmoInventory>(stack);
+    //public void UpdateAmmoStack(Stack<AmmoInventory> stack)
+    //{
+    //    List<AmmoInventory> stackList = new List<AmmoInventory>(stack);
 
-        for(int i = 0; i < stackList.Count && i<3 ; i++)
-        {
-            switch (i)
-            {
-                case 0:
-                    if (stackList[i] != null)
-                        slot_A.sprite = stackList[i].weaponData.Icon;
-                    else
-                        slot_A.sprite = null;
-                    break;
-                case 1:
-                    if (stackList[i] != null)
-                        slot_B.sprite = stackList[i].weaponData.Icon;
-                    else
-                        slot_A.sprite = null;
-                    break;
-                case 2:
-                    if (stackList[i] != null)
-                        slot_C.sprite = stackList[i].weaponData.Icon;
-                    else
-                        slot_A.sprite = null;
-                    break;
-                default:
-                    Debug.Log("Slot OverFlow");
-                    break;
-            }
-        }
+    //    for(int i = 0; i < stackList.Count && i<3 ; i++)
+    //    {
+    //        switch (i)
+    //        {
+    //            case 0:
+    //                if (stackList[i] != null)
+    //                    slot_A.sprite = stackList[i].weaponData.Icon;
+    //                else
+    //                    slot_A.sprite = null;
+    //                break;
+    //            case 1:
+    //                if (stackList[i] != null)
+    //                    slot_B.sprite = stackList[i].weaponData.Icon;
+    //                else
+    //                    slot_A.sprite = null;
+    //                break;
+    //            case 2:
+    //                if (stackList[i] != null)
+    //                    slot_C.sprite = stackList[i].weaponData.Icon;
+    //                else
+    //                    slot_A.sprite = null;
+    //                break;
+    //            default:
+    //                Debug.Log("Slot OverFlow");
+    //                break;
+    //        }
+    //    }
+    //}
+
+    /// <summary>
+    /// 셔틀 스킬을 업데이트한다. 
+    /// </summary>
+
+    public void UpdateSkillUIImage(int index, Sprite backSprite, Sprite fillSprite)
+    {
+        //아이콘을 변경한다. 쿨타임을 적용해야 하므로 윗부분, 밑부분 2가지로
+        skillPanel.SetSkillImages(index, backSprite, fillSprite);
+    }
+
+    /// <summary>
+    /// 셔틀 스킬의 쿨타임을 적용한다.
+    /// </summary>
+    public void UpdateSkillUICoolTime(int index, float amount)
+    {
+        skillPanel.UpdateSkillFillamount(index, amount);
     }
     #endregion
 }

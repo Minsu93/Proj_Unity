@@ -10,7 +10,7 @@ public class FollowingShuttle : MonoBehaviour
 {
     Rigidbody2D rb;
     //public ShuttleSkill skill;
-    public List<ShuttleSkill> skillList = new List<ShuttleSkill>();
+    //public List<ShuttleSkill> skillList = new List<ShuttleSkill>();
     ShuttleSkill curSkill;
     public bool shuttleActivate = false; //셔틀이 스폰되고 나서, 셔틀이 활성화되어 입력이 감지될 때 True. 플레이어가 죽으면 False
     bool startSkill; //스킬 사용 시작. 스킬 버튼을 누른 순간 True, 스킬이 사용이 완료/취소 되어 변신이 풀리면 False
@@ -21,7 +21,8 @@ public class FollowingShuttle : MonoBehaviour
     [SerializeField] Transform viewTr;
     Vector3 viewScale;
 
-    List<SkillCoolTime> skillCoolTimeList = new List<SkillCoolTime>();
+    //스킬 및 현재 쿨타임 
+    public List<SkillCoolTime> skillCoolTimeList = new List<SkillCoolTime>();
 
     private void Awake()
     {
@@ -35,14 +36,15 @@ public class FollowingShuttle : MonoBehaviour
         shuttleActivate = true;
         ResetShuttle();
         LoadSkillData();
-        SetSkillCoolTime();
+
     }
 
     #region Load SkillData
     void LoadSkillData()
     {
         List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
-
+        skillCoolTimeList.Clear();
+        //쿨타임 리스트 제작
         foreach(string dataName in skillDatas)
         {
             GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(dataName);
@@ -51,21 +53,30 @@ public class FollowingShuttle : MonoBehaviour
             obj.transform.localRotation = Quaternion.identity;
             if( obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
             {
-                skillList.Add(skill);
+                //skillList.Add(skill);
+                SkillCoolTime cool = new SkillCoolTime(skill, skill.skillCoolTime);
+                skillCoolTimeList.Add(cool);
+                
                 skill.ShuttleSkillInitialize();
             }
             obj.SetActive(false);
         }
-    }
 
-    void SetSkillCoolTime()
-    {
-        for(int i = 0; i < skillList.Count; i++)
+        //스킬 아이콘 등록
+        for(int i = 0; i < skillCoolTimeList.Count; i++)
         {
-            SkillCoolTime cool = new SkillCoolTime(false, skillList[i].skillCoolTime);
-            skillCoolTimeList.Add(cool);
+            GameManager.Instance.playerManager.UpdateSkillUIImage(i, skillCoolTimeList[i].skill_Instance.backicon, skillCoolTimeList[i].skill_Instance.fillicon);
         }
     }
+
+    //void SetSkillCoolTime()
+    //{
+    //    for(int i = 0; i < skillList.Count; i++)
+    //    {
+    //        SkillCoolTime cool = new SkillCoolTime(false, skillList[i].skillCoolTime);
+    //        skillCoolTimeList.Add(cool);
+    //    }
+    //}
     #endregion
 
     private void FixedUpdate()
@@ -170,46 +181,55 @@ public class FollowingShuttle : MonoBehaviour
 
     private void Update()
     {
-        //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
-        if (!shuttleActivate) return;
-
         //스킬별로 쿨타임을 카운트.
-        if(!startSkill &&  skillCoolTimeList.Count > 0 )
+        if(skillCoolTimeList.Count > 0 )
         {
             for(int i = 0; i < skillCoolTimeList.Count; i++)
             {
                 if (!skillCoolTimeList[i].isReady)
+                {
                     skillCoolTimeList[i].CoolTimeWait();
+                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
+                }
             }
         }
+
+        //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
+        if (!shuttleActivate) return;
 
         if (!startSkill)
         {
             //1번
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                if (skillList.Count > 0 && skillCoolTimeList[0].isReady)
+                if (skillCoolTimeList.Count > 0 && skillCoolTimeList[0].isReady)
                 {
-                    curSkill = skillList[0];
+                    curSkill = skillCoolTimeList[0].skill_Instance;
                     skillCoolTimeList[0].ResetReady();
+                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(0, skillCoolTimeList[0].GetCoolTimeFillAmount());
+                    skillCoolTimeList[0].isUsing = true;
                 }
             }
             //2번
-            else if (Input.GetKeyDown(KeyCode.Alpha2) && skillCoolTimeList[1].isReady)
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                if(skillList.Count > 1)
+                if(skillCoolTimeList.Count > 1 && skillCoolTimeList[1].isReady)
                 {
-                    curSkill = skillList[1];
+                    curSkill = skillCoolTimeList[1].skill_Instance;
                     skillCoolTimeList[1].ResetReady();
+                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(1, skillCoolTimeList[1].GetCoolTimeFillAmount());
+
                 }
             }
             //3번
-            else if (Input.GetKeyDown(KeyCode.Alpha3) && skillCoolTimeList[2].isReady)
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                if(skillList.Count > 2)
+                if(skillCoolTimeList.Count > 2 && skillCoolTimeList[2].isReady)
                 {
-                    curSkill = skillList[2];
+                    curSkill = skillCoolTimeList[2].skill_Instance;
                     skillCoolTimeList[2].ResetReady();
+                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(2, skillCoolTimeList[2].GetCoolTimeFillAmount());
+
                 }
             }
 
@@ -331,7 +351,7 @@ public class FollowingShuttle : MonoBehaviour
     }
     #endregion
 
-    void ResetShuttle()
+    void ResetShuttle(int index)
     {
         curSkill = null;
         startSkill = false;
@@ -343,7 +363,7 @@ public class FollowingShuttle : MonoBehaviour
 
 }
 
-public delegate void ResetDel();
+public delegate void ResetDel(int index);
 
 
 [Serializable] 
@@ -366,23 +386,27 @@ public struct ProjectileAttackProperty
 [Serializable]
 public class SkillCoolTime
 {
+    public ShuttleSkill skill_Instance;
+    public bool isUsing;
     public bool isReady;
-    public float coolTime;
+    float coolTime;
     float curTime;
 
-    public SkillCoolTime(bool isReady, float coolTime)
+    public SkillCoolTime(ShuttleSkill instance, float coolTime)
     {
-        this.isReady = isReady;
+        this .skill_Instance = instance;
+        this.isUsing = false;
+        this.isReady = false;
         this.coolTime = coolTime;
-        this.curTime = coolTime;
+        this.curTime = 0;
     }
 
     public void CoolTimeWait()
     {
         if (!isReady)
         {
-            curTime -= Time.deltaTime;
-            if (curTime <= 0)
+            curTime += Time.deltaTime;
+            if (curTime >= coolTime) 
             {
                 isReady = true;
                 curTime = coolTime;
@@ -393,8 +417,16 @@ public class SkillCoolTime
     public void ResetReady()
     {
         isReady = false;
-        curTime = coolTime;
+        curTime = 0;
     }
 
+    public float GetCoolTimeFillAmount()
+    {
+        if(coolTime == 0)
+        {
+            return 0;
+        }
+        else return curTime / coolTime;
+    }
 
 }
