@@ -25,12 +25,15 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
 
     [SerializeField] CircleCollider2D kickedColl;
     [SerializeField] protected Collider2D projHitColl;
-    ResetDel resetShuttleDel;   //초기화용도 
     protected Rigidbody2D rb;
 
+    ResetDel resetShuttleDel;   //초기화용도 
+    int curIndex;
+
     //초기 생성 시 
-    public void ShuttleSkillInitialize()
+    public void ShuttleSkillInitialize(int index)
     {
+        curIndex = index;
         ResetSkill();
         rb = GetComponentInParent<Rigidbody2D>();
     }
@@ -101,7 +104,7 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
     {
         CompleteEvent();
         ResetSkill();
-        resetShuttleDel();
+        resetShuttleDel(curIndex);
         this.gameObject.SetActive(false);
     }
 

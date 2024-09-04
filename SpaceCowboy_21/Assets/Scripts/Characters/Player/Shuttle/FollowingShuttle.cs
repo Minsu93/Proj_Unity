@@ -9,8 +9,6 @@ using UnityEngine;
 public class FollowingShuttle : MonoBehaviour
 {
     Rigidbody2D rb;
-    //public ShuttleSkill skill;
-    //public List<ShuttleSkill> skillList = new List<ShuttleSkill>();
     ShuttleSkill curSkill;
     public bool shuttleActivate = false; //셔틀이 스폰되고 나서, 셔틀이 활성화되어 입력이 감지될 때 True. 플레이어가 죽으면 False
     bool startSkill; //스킬 사용 시작. 스킬 버튼을 누른 순간 True, 스킬이 사용이 완료/취소 되어 변신이 풀리면 False
@@ -45,19 +43,18 @@ public class FollowingShuttle : MonoBehaviour
         List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
         skillCoolTimeList.Clear();
         //쿨타임 리스트 제작
-        foreach(string dataName in skillDatas)
+        for(int j = 0; j < skillDatas.Count; j++)
         {
-            GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(dataName);
-            GameObject obj = Instantiate(skillPrefab,this.transform);
+            GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(skillDatas[j]);
+            GameObject obj = Instantiate(skillPrefab, this.transform);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
-            if( obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
+            if (obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
             {
-                //skillList.Add(skill);
                 SkillCoolTime cool = new SkillCoolTime(skill, skill.skillCoolTime);
                 skillCoolTimeList.Add(cool);
-                
-                skill.ShuttleSkillInitialize();
+                //skill에 인덱스 할당 및 초기화
+                skill.ShuttleSkillInitialize(j);
             }
             obj.SetActive(false);
         }
@@ -66,17 +63,10 @@ public class FollowingShuttle : MonoBehaviour
         for(int i = 0; i < skillCoolTimeList.Count; i++)
         {
             GameManager.Instance.playerManager.UpdateSkillUIImage(i, skillCoolTimeList[i].skill_Instance.backicon, skillCoolTimeList[i].skill_Instance.fillicon);
+            GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
         }
     }
 
-    //void SetSkillCoolTime()
-    //{
-    //    for(int i = 0; i < skillList.Count; i++)
-    //    {
-    //        SkillCoolTime cool = new SkillCoolTime(false, skillList[i].skillCoolTime);
-    //        skillCoolTimeList.Add(cool);
-    //    }
-    //}
     #endregion
 
     private void FixedUpdate()
@@ -97,7 +87,7 @@ public class FollowingShuttle : MonoBehaviour
                     physicsColl.enabled = false;
                     curSkill.gameObject.SetActive(true);
 
-                    ResetDel resetDel = new ResetDel(ResetShuttle);
+                    ResetDel resetDel = ResetEachSkill;
                     curSkill.ActivateShuttleSkill(resetDel);
                 }
                 else
@@ -186,7 +176,7 @@ public class FollowingShuttle : MonoBehaviour
         {
             for(int i = 0; i < skillCoolTimeList.Count; i++)
             {
-                if (!skillCoolTimeList[i].isReady)
+                if (!skillCoolTimeList[i].isReady && !skillCoolTimeList[i].isUsing)
                 {
                     skillCoolTimeList[i].CoolTimeWait();
                     GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
@@ -199,47 +189,33 @@ public class FollowingShuttle : MonoBehaviour
 
         if (!startSkill)
         {
+            int tempInt =  -1;
             //1번
             if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                if (skillCoolTimeList.Count > 0 && skillCoolTimeList[0].isReady)
-                {
-                    curSkill = skillCoolTimeList[0].skill_Instance;
-                    skillCoolTimeList[0].ResetReady();
-                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(0, skillCoolTimeList[0].GetCoolTimeFillAmount());
-                    skillCoolTimeList[0].isUsing = true;
-                }
-            }
+                tempInt = 0;
+
             //2번
             else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                if(skillCoolTimeList.Count > 1 && skillCoolTimeList[1].isReady)
-                {
-                    curSkill = skillCoolTimeList[1].skill_Instance;
-                    skillCoolTimeList[1].ResetReady();
-                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(1, skillCoolTimeList[1].GetCoolTimeFillAmount());
+                tempInt = 1;
 
-                }
-            }
             //3번
             else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                if(skillCoolTimeList.Count > 2 && skillCoolTimeList[2].isReady)
-                {
-                    curSkill = skillCoolTimeList[2].skill_Instance;
-                    skillCoolTimeList[2].ResetReady();
-                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(2, skillCoolTimeList[2].GetCoolTimeFillAmount());
+                tempInt = 2;
 
-                }
-            }
-
-            //뭔가 선택된 스킬이 있으면 사용 시작.
-            if (curSkill != null)
+            //버튼이 눌렸다면?
+            if (tempInt > -1 && skillCoolTimeList.Count > tempInt && skillCoolTimeList[tempInt].isReady)
             {
+                curSkill = skillCoolTimeList[tempInt].skill_Instance;
+                skillCoolTimeList[tempInt].ResetReady();    //사용 시작
+                GameManager.Instance.playerManager.UpdateSkillUICoolTime(tempInt, skillCoolTimeList[tempInt].GetCoolTimeFillAmount());  //아이콘 업데이트
+                skillCoolTimeList[tempInt].isUsing = true;
+
+                // 사용 시작.
                 startSkill = true;
                 physicsColl.enabled = false;
                 ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
             }
+            
         }
 
 
@@ -351,7 +327,15 @@ public class FollowingShuttle : MonoBehaviour
     }
     #endregion
 
-    void ResetShuttle(int index)
+    void ResetEachSkill(int index)
+    {
+        //선택한 인덱스 스킬만 초기화
+        skillCoolTimeList[index].isUsing = false;
+        //전체 초기화
+        ResetShuttle();
+    }
+
+    void ResetShuttle()
     {
         curSkill = null;
         startSkill = false;
