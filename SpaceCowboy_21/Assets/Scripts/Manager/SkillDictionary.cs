@@ -7,14 +7,16 @@ using UnityEngine;
 public class SkillDictionary : MonoBehaviour
 {
     [SerializeField] 
-    List<GameObject> skillList = new List<GameObject>();
-    Dictionary<string, GameObject> skillPrefabDictionary = new Dictionary<string, GameObject>();
-    Dictionary<string, Sprite> iconDictionary = new Dictionary<string, Sprite>();
+    List<GameObject> skillList = new List<GameObject>();    //게임에 존재하는 모든 스킬의 Prefab 리스트
+    public SkillTotalData skillTotal = new SkillTotalData();    //게임에 존재하는 모든 스킬 해금 여부
+    Dictionary<string, GameObject> skillPrefabDictionary = new Dictionary<string, GameObject>();    //현재 착용중인 스킬 프리팹
+    Dictionary<string, Sprite> iconDictionary = new Dictionary<string, Sprite>();   //착용중인 스킬의 아이콘
+    Dictionary<string, ShuttleSkill> shuttleSkillDictionary = new Dictionary<string, ShuttleSkill>();//착용중인 스킬의 정보 
     bool once = false;
 
 
 
-    //스킬 Dictionary 를 등록한다.게임 실행 시 한번만 하면 된다. 
+    //스킬 D로드 시 실행. skillList에서 프리팹을 뽑아 skillPrefabDictionary와 IconList에 넣는다. 
     void SetskillDictionary()
     {
         skillPrefabDictionary.Clear();
@@ -26,6 +28,7 @@ public class SkillDictionary : MonoBehaviour
             GameObject skillPrefab = skillList.Find(item => item.name.Equals(skillName));
             skillPrefabDictionary.Add(skillName, skillPrefab);
             iconDictionary.Add(skillName, skillPrefab.GetComponent<ShuttleSkill>().fillicon);
+            shuttleSkillDictionary.Add(skillName, skillPrefab.GetComponent<ShuttleSkill>());
         }
     }
 
@@ -49,8 +52,17 @@ public class SkillDictionary : MonoBehaviour
         return icon;
     }
 
+    public ShuttleSkill GetSkillData(string name)
+    {
+        if(!shuttleSkillDictionary.TryGetValue(name, out ShuttleSkill skill))
+        {
+            Debug.Log("해당 skill이 Dictionary에 없습니다");
+        }
+        return skill;
+
+    }
+
     #region Skill 전체 데이터 저장 & 불러오기 
-    public SkillTotalData skillTotal = new SkillTotalData();
     public void SaveSkillDictionary()
     {
         string path = Path.Combine(Application.dataPath, "Data/ItemData", "skillTotalData.json");
@@ -98,12 +110,15 @@ public class SkillDictionary : MonoBehaviour
 }
 
 [Serializable]
+//skillTotal에 사용. 전체 스킬의 해금 여부 확인
 public class SkillData
 {
     public bool unlocked;
     public string name;
 }
+
 [Serializable]
+//데이터 리스트
 public class SkillTotalData
 {
     public List<SkillData> skillDataList = new List<SkillData>();

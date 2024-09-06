@@ -12,6 +12,8 @@ public abstract class ShuttleSkill : MonoBehaviour, ITarget, IHitable, IKickable
     public Sprite fillicon;
 
     [Header("Shuttle Base")]
+    public float energyUse = 5.0f;
+
     public float skillCoolTime = 5.0f; // 셔틀 스킬 재사용 대기 시간. 완전히 사용이 끝난 이후부터 재사용 대기 시작이 차기 시작한다. 
     [SerializeField] float maxWaitTime = 10.0f;    // 상호작용 하지 않을 시 원래대로 돌아가는 시간
     float _waitTimer;
