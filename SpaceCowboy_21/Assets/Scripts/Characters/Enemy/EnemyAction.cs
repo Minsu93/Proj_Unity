@@ -129,8 +129,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         DoAction();
 
         //pause 상태.
-        if (enemyState == EnemyState.Groggy) return;
-        //if (enemyState == EnemyState.Wait) return;
         if (onWait) return;
 
         if (onAttack)
@@ -153,7 +151,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         return false;
     }
         
-    // 유닛 종류에 따라 다르게 상황을 감지한다. 
+    //상황(Brain에서 감지한) 에 따른 판단(상태enemyState 변경)
     public abstract void BrainStateChange();
 
     // EnemyState에 따라 다른 행동 실행 
@@ -162,8 +160,11 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         if (enemyState != preState)
         {
             ActionByState(enemyState);
+            //View에서 애니메이션 변경
             if (EnemyChangeStateEvent != null) EnemyChangeStateEvent(enemyState);
+
             preState = enemyState;
+
             //죽었으면 전체 비활성화.
             if(enemyState == EnemyState.Die)
             {
@@ -188,7 +189,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
                 break;
 
             case EnemyState.Attack:
-                StartIdleView();
                 onChase = false;
                 onAttack = true;
                 break;
@@ -196,14 +196,16 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     }
 
 
-    #region Strike Mode
+    #region Strike Mode 몬스터 생성
     //지상 및 궤도 타입의 Strike 방식
     public void EnemyStartStrike(Vector2 strikePos)
     {
+        //초기화
         ResetAction();
 
+        //Strike 상태로 변경
         enemyState = EnemyState.Strike;
-        StartStrikeView();
+        StartStrikeView(); 
 
         //캐릭터를 회전한다. 
         Vector2 rotateVec = (Vector2)transform.position - strikePos;
@@ -218,8 +220,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     //Strike 끝나고 깨어나기. 
     public virtual void AfterStrikeEvent()
     {
-        //if (enemyState == EnemyState.Die) return;
-        enemyState = EnemyState.Chase;
+        enemyState = EnemyState.Idle;
         activate = true;
         gravity.activate = true;
     }
@@ -261,11 +262,9 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     #region Basic Actions
     //공격 이후 적유닛 행동
 
-
     //플레이어가 죽은 경우 다시 잠든다. 
     public void PlayerIsDead()
     {
-        //if (enemyState == EnemyState.Die) return;
         enemyState = EnemyState.Idle;
     }
 
@@ -295,6 +294,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         StartCoroutine(PauseRoutine(second));
     }
+
     IEnumerator PauseRoutine(float sec)
     {
         //지난 행동상태
@@ -303,6 +303,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         yield return new WaitForSeconds(sec);
         onWait = false;
     }
+
     public void EnemyForcePause()
     {
         onWait = true;
@@ -311,22 +312,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     {
         onWait = false;
     }
-
-
-    //protected virtual void OnDieAction()
-    //{
-    //    activate = false;
-
-    //    StopAllCoroutines();
-    //    attack.StopAttackAction();
-    //    StartDieView();
-
-    //    iconUI.SetActive(false);
-    //    hitColl.enabled = false;
-
-    //    StartCoroutine(DieRoutine(3.0f));
-    //}
-
 
     #endregion
 
@@ -349,21 +334,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     public virtual void DamageEvent(float damage, Vector2 hitVec)
     {
         if (enemyState == EnemyState.Die) return;
-        if( enemyState == EnemyState.Groggy) return;
 
         if (health.AnyDamage(damage))
         {
            
             if (health.IsDead())
             {
-                ////그로기 찬스
-                //if( UnityEngine.Random.Range(0, 1f) < groggyChance)
-                //{
-                //    StopAllCoroutines();
-                //    StartCoroutine(GroggyEvent());
-                //}
-                //else
-                //    WhenDieEvent();
                 WhenDieEvent();
             } 
             else
@@ -373,31 +349,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
                 if (hitEffect != null) GameManager.Instance.particleManager.GetParticle(hitEffect, transform.position, transform.rotation);
             }
         }
-    }
-
-    protected IEnumerator GroggyEvent()
-    {
-        Debug.Log("Groggy");
-
-        groggyOn = true;
-        enemyState = EnemyState.Groggy;
-        
-        onChase = false;
-        onAttack = false;
-        attack.StopAttackAction();
-        StartAimStop();
-        EnemyIgnoreProjectile(true);
-
-        float time = 0;
-
-        while(groggyOn && time < groggyTime)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        groggyOn = false;
-        WhenDieEvent();
     }
 
     public virtual void WhenDieEvent()
@@ -420,6 +371,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         //WaveManager에 전달.
         if (WaveManager.instance != null)
             WaveManager.instance.CountEnemyLeft(this.gameObject);
+        
 
         if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
     }
@@ -438,20 +390,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
             EnemyKnockBack(hitPos, knockbackAmount);
         }
 
-        //if(groggyOn)
-        //{
-        //    groggyOn = false;
-        //    StartHitView();
-        //    dropItem.GenerateItem();
-        //}
-        
     }
     //넉백 루틴은 각자 다름. 플레이어와 같은 Ground인 경우, Orbit인 경우.
     public abstract void EnemyKnockBack(Vector2 hitPos, float forceAmount);
 
     public void EnemyIgnoreProjectile(bool ignore)
     {
-        //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Enemy"), LayerMask.NameToLayer("PlayerProj"), ignore);
         projHitColl.enabled = !ignore;
     }
 
@@ -564,8 +508,7 @@ public enum EnemyState
     Attack,
     Die,
     Wait,
-    Strike,
-    Groggy
+    Strike
 }
 
 public enum EnemyType

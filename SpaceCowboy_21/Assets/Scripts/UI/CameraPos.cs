@@ -33,6 +33,7 @@ public class CameraPos : MonoBehaviour
         activate = true;
     }
 
+
     public void CamPosInitLobby(Transform playerTr)
     {
         player = playerTr;

@@ -21,7 +21,6 @@ public class EnemyChase_Ground : EnemyChase
 
     EA_Ground action_Ground;
     EnemyBrain brain;
-    CharacterGravity charGravity;
 
     //debug
 
@@ -29,7 +28,6 @@ public class EnemyChase_Ground : EnemyChase
     {
         base.Awake();
         brain = GetComponent<EnemyBrain>();
-        charGravity = GetComponent<CharacterGravity>();
         action_Ground = GetComponent<EA_Ground>();
     }
 

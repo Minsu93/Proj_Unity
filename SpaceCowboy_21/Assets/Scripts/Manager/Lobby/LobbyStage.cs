@@ -17,7 +17,6 @@ public class LobbyStage : MonoBehaviour
 
     [Header("Portal")]
     [SerializeField] private GameObject portalObj;
-    [SerializeField] Transform playerTr;
     Animator portalAnim;
     private int curStageIndex = 0;
 
@@ -27,6 +26,14 @@ public class LobbyStage : MonoBehaviour
         portalObj.SetActive(false);
     }
 
+    private void Start()
+    {
+        ////임시?
+        if (GameManager.Instance.player == null)
+        {
+            GameManager.Instance.SpawnLobbyPlayer(Vector3.zero, Quaternion.identity);
+        }
+    }
     public void SelectStage(int index)
     {
         //현재 스테이지 수보다 더 크면 작동x
@@ -53,7 +60,6 @@ public class LobbyStage : MonoBehaviour
     {
         //눈앞에 포탈이 나타난다. 
         //주인공은 포탈로 빠져들어가며 화이트아웃?
-
         StartCoroutine(StageStartRoutine());
     }
 
@@ -61,12 +67,12 @@ public class LobbyStage : MonoBehaviour
     IEnumerator StageStartRoutine()
     {
         portalObj.SetActive(true);
-        portalObj.transform.position = playerTr.position;
+        portalObj.transform.position = GameManager.Instance.player.position;
         portalAnim.SetTrigger("PortalOpen");
         yield return new WaitForSeconds(2.0f);
         GameManager.Instance.TransitionFadeOut(true);
         yield return new WaitForSeconds(1.0f);
-        GameManager.Instance.LoadSceneByStageState(stageDatas[curStageIndex].SceneAddress, StageState.Stage);
+        GameManager.Instance.LoadSceneByStageState(stageDatas[curStageIndex].SceneAddress, StageState.None);
 
     }
 }

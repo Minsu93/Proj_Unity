@@ -1,9 +1,6 @@
-using SpaceCowboy;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Threading;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class EA_Orbit : EnemyAction
 {
@@ -14,17 +11,20 @@ public class EA_Orbit : EnemyAction
     /// 
 
     [Header("Orbit")]
-    public float pauseTimer = 0.1f; //피격 시 정지 시간
+    [SerializeField] float pauseTimer = 0.1f; //피격 시 정지 시간
+
+    [Header("KnockBack_Orbit")]
+    [SerializeField] AnimationCurve knockBackCurve;
+    [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
+    [SerializeField] float stopDuration = 1f;
 
     //변수
     float pTime;
 
     //파티클
-    public ParticleSystem boosterParticle;
-
+    [SerializeField] ParticleSystem boosterParticle;
     EnemyChase_Orbit chase_Orbit;
-    [SerializeField] AnimationCurve knockBackCurve;
-    [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
+
 
     //override 한 부분
 
@@ -34,19 +34,7 @@ public class EA_Orbit : EnemyAction
         chase_Orbit = chase as EnemyChase_Orbit;
     }
 
-    protected override bool BeforeUpdate()
-    {
-        if (!activate) return true;
-
-        //스턴 시간 추가
-        if (pTime > 0)
-        {
-            pTime -= Time.deltaTime;
-            return true;
-        }
-
-        return false;
-    }
+   
     protected override void Update()
     {
         //Enemy가 죽거나 Strike가 끝나기 전에는 Update하지 않는다. 
@@ -62,7 +50,6 @@ public class EA_Orbit : EnemyAction
         DoAction();
 
         ///수정된 부분
-        if (enemyState == EnemyState.Groggy) return;
         if (enemyState == EnemyState.Wait) return;
 
         if (onAttack)
@@ -71,11 +58,28 @@ public class EA_Orbit : EnemyAction
                 attack.OnAttackAction();
         }
 
+        if (gravity.nearestPlanet == null) return;
+
         if (onChase)
         {
-            if (chase != null)
-                chase.OnChaseAction();
+            if (chase_Orbit != null)
+            {
+                chase_Orbit.OnChaseAction();
+            }
         }
+    }
+ protected override bool BeforeUpdate()
+    {
+        if (!activate) return true;
+
+        //스턴 시간 추가
+        if (pTime > 0)
+        {
+            pTime -= Time.deltaTime;
+            return true;
+        }
+
+        return false;
     }
 
     public override void BrainStateChange()
@@ -100,15 +104,14 @@ public class EA_Orbit : EnemyAction
         }
     }
 
-
     protected override void ActionByState(EnemyState state)
     {
         switch (state)
         {
             case EnemyState.Idle:
+                StartIdleView();
                 onChase = false;
                 onAttack = false;
-                StartIdleView();
                 break;
 
             case EnemyState.Chase:
@@ -127,27 +130,10 @@ public class EA_Orbit : EnemyAction
     }
 
     
-    public override void AfterStrikeEvent()
-    {
-        enemyState = EnemyState.Chase;
-        activate = true;
-
-        //중력 활성화 제거
-        //gravity.activate = true;
-
-        //방향 지정 추가
-        ChangeDirection(brain.playerIsRight);
-
-        //파티클 조절 추가
-        if (boosterParticle != null) boosterParticle.Play();
-
-    }
-
     //base에 피격시 정지하는 pTime 만 추가함.
     public override void DamageEvent(float damage, Vector2 hitVec)
     {
         if (enemyState == EnemyState.Die) return;
-        if (enemyState == EnemyState.Groggy) return;
 
 
         if (health.AnyDamage(damage))
@@ -183,9 +169,11 @@ public class EA_Orbit : EnemyAction
 
         Vector2 strikeStartPos = transform.position;
         Vector2 strikeTargetPos = hit.point;
+        
         float strikeTime = hit.distance / strikeSpeed;
         float time = 0; 
         float distance = hit.distance; 
+
         while (distance > distanceFromStrikePoint + enemyHeight)
         {
             time += Time.deltaTime;
@@ -203,28 +191,64 @@ public class EA_Orbit : EnemyAction
         AfterStrikeEvent();
     }
 
+    public override void AfterStrikeEvent()
+    {
+        enemyState = EnemyState.Chase;
+        activate = true;
+
+        //중력 활성화 제거
+        //gravity.activate = true;
+
+        //방향 지정 추가
+        ChangeDirection(brain.playerIsRight);
+
+        //파티클 조절 추가
+        if (boosterParticle != null) boosterParticle.Play();
+
+    }
+
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
     {
         EnemyPause(knockbackTime + 0.3f);
 
+        chase_Orbit.ResetCenterPoint();
+
         Vector2 dir = (Vector2)transform.position - hitPos;
         dir = dir.normalized;
-        Vector2 startPos = (Vector2)transform.position;
-        Vector2 targetPos = (Vector2)transform.position + (dir* forceAmount);
-        StartCoroutine(KnockBackRoutine(startPos, targetPos));
-        
-        //rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+
+        rb.velocity = Vector2.zero;
+        rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
+
+        StartCoroutine(StopRoutine(knockbackTime + 0.3f));
     }
-    IEnumerator KnockBackRoutine(Vector2 start, Vector2 end)
+
+    IEnumerator StopRoutine(float waitTime)
     {
-        float time = 0;
-        while (time < 1)
+        yield return new WaitForSeconds(waitTime);
+
+        Planet nearestPlanet = gravity.nearestPlanet;
+        while(nearestPlanet == null)
         {
-            time += Time.deltaTime / knockbackTime;
-            rb.MovePosition(Vector2.Lerp(start, end, knockBackCurve.Evaluate(time)));
             yield return null;
         }
-        chase_Orbit.ResetCenterPoint();
+        
+
+        float timer = 0;
+        Vector2 vel = rb.velocity;
+
+        //속도를 늦춰서 정지합니다. 시간은 1초.
+        float secToStop = 1.0f;
+        while(timer < secToStop)
+        {
+            timer += Time.deltaTime;
+            rb.velocity = Vector2.Lerp(vel, Vector2.zero, knockBackCurve.Evaluate(timer));
+            yield return null;
+        }
+
+        if(nearestPlanet != null)
+        {
+            chase_Orbit.SetCenterPoint(nearestPlanet);
+        }
     }
 
     public override void WhenDieEvent()
@@ -237,6 +261,7 @@ public class EA_Orbit : EnemyAction
         //파티클 추가
         if (boosterParticle != null) boosterParticle.Stop();
     }
+
 
     void ChangeDirection()
     {

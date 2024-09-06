@@ -29,10 +29,7 @@ public class EnemyChase_Orbit : EnemyChase
         coll = curPlanet.transform.GetComponent<Collider2D>();
         targetAltitude = Random.Range(lowAltitude, highAltitude);
 
-        float signedAngle = Vector2.SignedAngle(Vector2.up, (Vector2)transform.position - centerPoint);
-        degree = (-signedAngle + 360) % 360;
-
-        transform.rotation = Quaternion.Euler(0, 0, degree * -1); //가운데를 바라보게 각도 조절
+        SetDegree();
 
     }
 
@@ -41,16 +38,26 @@ public class EnemyChase_Orbit : EnemyChase
     /// </summary>
     public void ResetCenterPoint()
     {
+        curPlanet = null;
+        coll = null;
+    }
+
+    //degree 변수를 조절합니다. 
+    void SetDegree()
+    {
         float signedAngle = Vector2.SignedAngle(Vector2.up, (Vector2)transform.position - centerPoint);
         degree = (-signedAngle + 360) % 360;
 
         transform.rotation = Quaternion.Euler(0, 0, degree * -1); //가운데를 바라보게 각도 조절
     }
 
-
+    //float updateTimer = 0f;
     public override void OnChaseAction()
     {
-        if (curPlanet == null) return;
+        if (curPlanet == null)
+        {
+            return;
+        }
 
         Vector2 targetVec = ((Vector2)transform.position - centerPoint);
         float radius = targetVec.magnitude;

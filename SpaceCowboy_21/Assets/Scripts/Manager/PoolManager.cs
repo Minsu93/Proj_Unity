@@ -63,11 +63,22 @@ public class PoolManager : MonoBehaviour
         //없으면 새로 생성한다
         if (!select)
         {
-            select = Instantiate(prefabs[index], transform);
+            select = Instantiate(prefabs[index]);
             targetList.Add(select);
         }
 
         return select;
+    }
+
+    public void ResetPools()
+    {
+        foreach(PoolList pool in poolLists)
+        {
+            foreach(List<GameObject> objList in pool.poolObjList)
+            {
+                objList.Clear();
+            }
+        }
     }
 }
 

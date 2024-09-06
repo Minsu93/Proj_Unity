@@ -4,6 +4,5 @@ using UnityEngine;
 /// </summary>
 public interface IKickable 
 {
-
     void Kicked(Vector2 hitPos);
 }

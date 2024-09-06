@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,8 +6,8 @@ using UnityEngine;
 public class LobbyPlayer : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 3.0f;
-    [SerializeField] BoxCollider2D movementArea;
     [SerializeField] Transform viewObj;
+    
     float minX;
     float maxX;
     Rigidbody2D rb;
@@ -15,11 +16,7 @@ public class LobbyPlayer : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        GameManager.Instance.cameraManager.InitLobbyCam(this.transform);
-
-        GameManager.Instance.TransitionFadeOut(false);
-        GameManager.Instance.cameraManager.StageStartCameraZoomin();
-
+        BoxCollider2D movementArea = GameObject.FindGameObjectWithTag("MovableArea").GetComponent<BoxCollider2D>();
         minX = movementArea.bounds.min.x + movementArea.transform.position.x;
         maxX = movementArea.bounds.max.x + movementArea.transform.position.x;
     }
@@ -34,15 +31,13 @@ public class LobbyPlayer : MonoBehaviour
         //테스트 용도
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            GameManager.Instance.cameraManager.ZoomCamera(CameraManager.CamDist.Back, CameraManager.ZoomSpeed.Fast);
+            GameManager.Instance.cameraManager.ZoomCamera(CamDist.Back, ZoomSpeed.Fast);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            GameManager.Instance.cameraManager.ZoomCamera(CameraManager.CamDist.Fore, CameraManager.ZoomSpeed.Slow);
+            GameManager.Instance.cameraManager.ZoomCamera(CamDist.Fore, ZoomSpeed.Slow);
         }
 
-
-        
     }
 
     bool isRight = true;

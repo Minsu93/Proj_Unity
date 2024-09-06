@@ -32,6 +32,7 @@ public class EnemyView : MonoBehaviour
         enemyAction.EnemyHitEvent += PlayDamaged;
         enemyAction.EnemyClearEvent += PlayStageClear;
         enemyAction.EnemyResetEvent += PlayReset;
+        enemyAction.EnemyStrikeEvent += PlayStrike;
         if(aimOn != null)
             enemyAction.EnemyAimOnEvent += PlayAimOn;
         if (aimOn != null)
@@ -67,16 +68,14 @@ public class EnemyView : MonoBehaviour
                 PlayDead();
                 break;
             case EnemyState.Wait:
-                break;
-            case EnemyState.Strike:
-                PlayStrike();
-                break;
-            case EnemyState.Groggy:
                 PlayIdle();
                 PlayAimOff();
                 StopAllCoroutines();
-                GroggyView();
                 break;
+            //case EnemyState.Strike:
+            //    PlayStrike();
+            //    break;
+
         }
     }
 
@@ -163,14 +162,7 @@ public class EnemyView : MonoBehaviour
         }
     }
 
-    void GroggyView()
-    {
-        Debug.Log("Groggy Start");
 
-        int bID = Shader.PropertyToID("_Black");
-        block.SetColor(bID, Color.red);
-        _renderer.SetPropertyBlock(block);
-    }
 
 
     private void PlayReset()

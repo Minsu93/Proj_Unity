@@ -11,7 +11,7 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
     public string stageName = "stage0";
-    [SerializeField] private StagePortal portal;
+    //[SerializeField] private StagePortal portal;
     
     [Header("Wave Property")]
     [SerializeField] float waveClearBonusSubtractTime = 5.0f;
@@ -74,10 +74,6 @@ public class WaveManager : MonoBehaviour
     Dictionary<RectTransform, float> IconPairs = new Dictionary<RectTransform, float>();
     List<RectTransform> keyToRemove = new List<RectTransform>();
 
-
-    //test(임시)
-    //public float timeSpeed;
-
     public event System.Action MonsterDisappearEvent;
     public event System.Action WaveClear;
 
@@ -93,6 +89,7 @@ public class WaveManager : MonoBehaviour
         monsterDict = GameManager.Instance.monsterDictonary.monsDictionary;
         objectRespawner = GetComponent<WaveObjectRespawner>();  
 
+        //스테이지 시작
         LoadWaveFromJson(stageName);
     }
 
@@ -103,7 +100,6 @@ public class WaveManager : MonoBehaviour
         string loadJson = File.ReadAllText(path);
         stage = JsonUtility.FromJson<Stage>(loadJson);
     }
-
 
     void ResetWaveManager()
     {
@@ -132,9 +128,6 @@ public class WaveManager : MonoBehaviour
         currentWaveText.text = "0";
         totalWaveText.text = stage.waves.Count.ToString();
 
-        //포탈 초기화
-        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
-
         activatedWave = true;
         GetStagePlanets();
     }
@@ -159,9 +152,9 @@ public class WaveManager : MonoBehaviour
 
         //Stage 오브젝트 리스폰
         objectRespawner.UpdateSpawner();
-
     }
 
+    #region 웨이브 아이콘 관련 
     void IconSpawner()
     {
         //icon스폰
@@ -206,6 +199,8 @@ public class WaveManager : MonoBehaviour
         }
 
     }
+
+    #endregion
 
     //캐릭터 행성 업데이트? (몬스터 스폰 장소)
     void PlayerPlanetUpdate()
@@ -264,8 +259,8 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    float pastWaveTime = 0f;
 
+    float pastWaveTime = 0f;
     //웨이브(일반, 보스)를 무사히 스폰하면 true 반환, 스폰할 웨이브가 없음면 false 반환.
     private void MoveToNextWave()
     {
@@ -282,25 +277,33 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
-            if (activatedWave)
-            {
-                activatedWave = false;
-                FinalWave = true;
-            }
-
             //보스 웨이브
             if (stage.hasBossWave)
             {
                 SpawnWave(stage.bossWave);
+                FinalWave = true;
+                activatedWave = false;
             }
-
         }
 
-        //UI변경
-        //Debug.Log("웨이브 : " + stageIndex + " 스폰 완료");
-        currentWaveText.text = stageIndex.ToString();
-        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
 
+        //다음 웨이브 체크
+        if (stageIndex >= stage.waves.Count)
+        {
+            if(stage.hasBossWave)
+            {
+                //아직 아님
+            }
+            else
+            {
+                FinalWave = true;
+                activatedWave = false;
+            }
+        }
+
+
+        //UI변경
+        currentWaveText.text = stageIndex.ToString();
     }
 
     //웨이브 클리어 시 실행
@@ -312,12 +315,19 @@ public class WaveManager : MonoBehaviour
     //이 스테이지 클리어 시 실행. 보스를 잡는 경우, 혹은 (보스가 없는 경우에는) 맵에 있는 모든 몬스터를 제거했을 때 실행.
     void StageClear()
     {
-        MonsterDisapper();
 
         Debug.Log("스테이지 클리어");
-        //포탈 생성. 포탈에 어떤 씬으로 이동할지 적혀있음. 
-        portal.RefreshPortalUi(stageIndex, stage.waves.Count);
-        portal.ActivatePortal();
+        StartCoroutine(ClearRoutine());
+    }
+
+    IEnumerator ClearRoutine()
+    {
+        MonsterDisapper();
+        StartCoroutine(GameManager.Instance.ShowStageEndUI(2f, 3f));
+        yield return new WaitForSeconds(5f);
+        GameManager.Instance.TransitionFadeOut(true);
+        yield return new WaitForSeconds(1.0f);
+        GameManager.Instance.LoadStageClear();
     }
 
     #region Spawns
@@ -347,8 +357,6 @@ public class WaveManager : MonoBehaviour
         }
         enemySpawnedInWave = newEnemyCount + spawnedEnemyList.Count;
         enemyLeftInWave = enemySpawnedInWave;
-        //leftEnemyCountText.text = enemyLeft.ToString();
-
 
         //웨이브를 스폰합니다. 
         if (spawnRoutine != null) StopCoroutine(spawnRoutine);

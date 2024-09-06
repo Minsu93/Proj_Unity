@@ -173,7 +173,7 @@ public class PlayerJump : MonoBehaviour
                         kickable.Kicked(this.transform.position);
 
                         playerBehavior.PlayerUnhittable(unHittableTime);
-                        force = 2f * playerBehavior.knockBackForce;
+                        force = playerBehavior.knockBackForce;
                         kickParticle = impactParticle;
 
                         //dashCount = 0;

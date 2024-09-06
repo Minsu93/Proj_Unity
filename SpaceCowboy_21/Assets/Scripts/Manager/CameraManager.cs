@@ -7,8 +7,6 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     CinemachineVirtualCamera virtualCameraMain;
-
-
     CinemachineConfiner2D confiner;
 
     //CameraPos관련
@@ -18,10 +16,22 @@ public class CameraManager : MonoBehaviour
     [SerializeField] float threshold = 2f;
     CameraPos cameraPos;
 
+    private void Awake()
+    {
+        curLensSize = middleGroundDist;
+        targetLensSize = curLensSize;
+        defaultLensSize = curLensSize;
+        
+        //test. 해당 씬에서 그냥 시작할때.
+        //if(virtualCameraMain == null)
+        //{
+        //    SetVirtualCam();
+        //}
+    }
 
     private void FixedUpdate()
     {
-        ControlCamLens();
+        UpdateCamLens();
     }
 
     #region Initialize Camera
@@ -29,30 +39,31 @@ public class CameraManager : MonoBehaviour
     {
         cameraPos = CreateCamPos();
         cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
+        
+        virtualCameraMain.Follow = cameraPos.transform;
 
-        PrepareVirtualCam();
     }
     public void InitLobbyCam(Transform tr)
     {
         cameraPos = CreateCamPos();
         cameraPos.CamPosInitLobby(tr);
-
-        PrepareVirtualCam();
+        
+        virtualCameraMain.Follow = cameraPos.transform;
     }
 
-    void PrepareVirtualCam()
+    public void SetVirtualCam()
     {
+        Debug.Log("Set Vcam");
 
-
-        virtualCameraMain = GameObject.FindGameObjectWithTag("Vcam").GetComponent<CinemachineVirtualCamera>();
-        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
-        virtualCameraMain.Follow = cameraPos.transform;
+        GameObject camObj = GameObject.FindGameObjectWithTag("Vcam");
+        if (camObj == null) return;
         
-
+        virtualCameraMain = camObj.GetComponent<CinemachineVirtualCamera>();
+        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
+        
         curLensSize = middleGroundDist;
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
-
 
         virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
     }
@@ -62,6 +73,13 @@ public class CameraManager : MonoBehaviour
         GameObject camPosObj = new GameObject();
         CameraPos camPos = camPosObj.AddComponent<CameraPos>();
         return camPos;
+    }
+
+    public void ResetCam()
+    {
+        Debug.Log("Reset Vcam");
+
+        virtualCameraMain = null;
     }
 
     #endregion
@@ -117,38 +135,10 @@ public class CameraManager : MonoBehaviour
     float targetLensSize;
     float zoomSpeed;
     float curVelocity;
-    //test
-
-    public void ZoomCamera(CamDist targetLensSize, ZoomSpeed zoomSpeed)
-    {
-        Debug.Log("ZoomCamera");
-
-        switch (targetLensSize)
-        {
-            case CamDist.Fore:
-                this. targetLensSize = foreGroundDist;
-                break;
-            case CamDist.Middle:
-                this.targetLensSize = middleGroundDist;
-                break;
-            case CamDist.Back:
-                this.targetLensSize = backGroundDist;
-                break;
-        }
-        switch(zoomSpeed)
-        {
-            case ZoomSpeed.Slow:
-                this. zoomSpeed = slowZoomSeed;
-                break;
-            case ZoomSpeed.Fast:
-                this. zoomSpeed = fastZoomSeed;
-                break;
-        }
-    }
 
     //Update에서 카메라 렌즈 조절
     float timer = 0;
-    void ControlCamLens()
+    void UpdateCamLens()
     {
         if (Mathf.Abs(curLensSize - targetLensSize) > 0.1f)
         {
@@ -165,18 +155,58 @@ public class CameraManager : MonoBehaviour
             }
         }
     }
+    
 
-    public void StageStartCameraZoomin()
+    //카메라 줌 인 & 아웃
+    public void ZoomCamera(CamDist targetLensSize, ZoomSpeed zoomSpeed)
     {
-        curLensSize = backGroundDist ;
-        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
-
-        targetLensSize = middleGroundDist;
-        zoomSpeed = slowZoomSeed;
+        this.targetLensSize =  SelectCameraDist(targetLensSize);
+        this.zoomSpeed = SelectZoomSpeed(zoomSpeed);
     }
 
-    public enum CamDist { Fore, Middle, Back}
-    public enum ZoomSpeed { Fast, Slow}
+    
+    //렌즈 즉시 변경
+    public void SetStartCamera(CamDist startCamDist)
+    {
+        curLensSize = SelectCameraDist(startCamDist);
+        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
+    }
+
+
+    //enum 에 따라 float 불러오는 함수
+    float SelectCameraDist(CamDist camDist)
+    {
+        switch (camDist)
+        {
+            case CamDist.Fore:
+                return foreGroundDist;
+            case CamDist.Middle:
+                return  middleGroundDist;
+            case CamDist.Back:
+                return backGroundDist;
+            default:
+                return 0;
+        }
+    }
+
+    float SelectZoomSpeed(ZoomSpeed zoomSpeed)
+    {
+        switch (zoomSpeed)
+        {
+            case ZoomSpeed.Slow:
+                return slowZoomSeed;
+            case ZoomSpeed.Fast:
+                return fastZoomSeed;
+
+            default:
+                return 0;
+        }
+
+    }
+
+
     #endregion
 
 }
+public enum CamDist { Fore, Middle, Back }
+public enum ZoomSpeed { Fast, Slow }

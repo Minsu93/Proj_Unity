@@ -15,11 +15,13 @@ public abstract class EnemyChase : MonoBehaviour
     //스크립트
     protected Rigidbody2D rb;
     protected Planet curPlanet;
+    protected CharacterGravity charGravity;
 
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        charGravity = GetComponent<CharacterGravity>();
     }
 
     public abstract void OnChaseAction();

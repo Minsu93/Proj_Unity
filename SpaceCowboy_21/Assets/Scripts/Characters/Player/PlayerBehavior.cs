@@ -590,7 +590,7 @@ namespace SpaceCowboy
         #endregion
 
 
-        #region Damage and Die
+        #region 데미지 피격, 체력관련, 죽음 관련, 피격 후 스턴, 조작불가
         public void DamageEvent(float damage, Vector2 hitPoint)
         {
             if (!activate) return;
@@ -646,7 +646,6 @@ namespace SpaceCowboy
 
             currSpeed = 0;
             targetSpeed = 0;
-            //jumpViewer.Activate = false;
 
             activate = false;
             PlayerIgnoreProjectile(true);
@@ -663,14 +662,25 @@ namespace SpaceCowboy
 
             //전역 이벤트 발동. 적들에게 캐릭터가 죽었다고 전달. 
             GameManager.Instance.PlayerIsDead();
+
+            //로비로 이동
+            StartCoroutine(DieRoutine()); 
+            
         }
+
+        IEnumerator DieRoutine()
+        {
+            yield return new WaitForSeconds(2.0f);
+            GameManager.Instance.TransitionFadeOut(true);
+            yield return new WaitForSeconds(1.0f);
+            GameManager.Instance.LoadPlayerDie();
+        }
+
 
         //총알에 맞을 수 있다.
         public void PlayerIgnoreProjectile(bool ignore)
         {
             Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("EnemyProj"), ignore);
-            //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("StageObject"), ignore);
-
         }
 
         Coroutine unHitRoutine;

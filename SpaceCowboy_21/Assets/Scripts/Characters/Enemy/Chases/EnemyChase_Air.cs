@@ -63,7 +63,7 @@ public class EnemyChase_Air : EnemyChase
 
         if (path != null)
         {
-            StartCoroutine(AirSwimRoutine());
+            moveRoutine = StartCoroutine(AirSwimRoutine());
         }
 
     }

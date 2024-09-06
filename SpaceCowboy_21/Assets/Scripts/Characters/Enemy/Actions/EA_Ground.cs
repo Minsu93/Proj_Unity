@@ -165,7 +165,7 @@ public class EA_Ground : EnemyAction
 
 
 
-    //#region KnockBackMethod
+    //#region  
     //public void EnemyKnockBack(Vector2 hitPoint)
     //{
     //    //움직임, 슈팅 등의 루틴들을 정지한다. 

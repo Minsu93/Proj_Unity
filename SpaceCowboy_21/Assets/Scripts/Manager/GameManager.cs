@@ -1,10 +1,5 @@
-using Cinemachine;
-using SpaceCowboy;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data.SqlTypes;
-using System.Security.Cryptography.X509Certificates;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +8,9 @@ public class GameManager : MonoBehaviour
     //플레이어 관련 
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject shuttlePrefab;
+    [SerializeField] GameObject lobbyPlayerPrefab;
+    [SerializeField] GameObject lobbyShuttlePrefab;
+
     public Transform player { get; private set; }
     public bool playerIsAlive { get; private set; } //적들이 플레이어가 살았는지 죽었는지 참고
 
@@ -109,8 +107,6 @@ public class GameManager : MonoBehaviour
         //if(playBGM) AudioManager.instance.PlayBgm(true);
 
         //Cursor.visible = false;
-
-
     }
 
 
@@ -138,7 +134,9 @@ public class GameManager : MonoBehaviour
         popperManager.PopperReady();
 
         //카메라 정보 업데이트
+        cameraManager.SetVirtualCam();
         cameraManager.InitCam();
+        DoCamEventByLobbyState();
 
         playerObj.SetActive(false);
         return playerObj;
@@ -156,9 +154,24 @@ public class GameManager : MonoBehaviour
         return shuttleObj;
     }
 
+    public void SpawnLobbyPlayer(Vector2 pos, Quaternion rot)
+    {
+        GameObject playerObj = Instantiate(lobbyPlayerPrefab, pos, rot);
+        player = playerObj.transform;
+
+        //카메라 업데이트
+        cameraManager.SetVirtualCam();
+        cameraManager.InitLobbyCam(playerObj.transform);
+        DoCamEventByLobbyState();
+
+        //셔틀 소환
+        GameObject shuttleObj =  Instantiate(lobbyShuttlePrefab, pos, rot);
+        shuttleObj.GetComponent<LobbyDrone>().SetTarget(playerObj.transform);
+    }
+
     #endregion
 
-    #region 전역 이벤트
+    #region 플레이어 전역 이벤트(사망 시, 순간이동 시)
     // 플레이어가 죽으면 전역에 이벤트 발생
     public void PlayerIsDead()
     {
@@ -171,6 +184,7 @@ public class GameManager : MonoBehaviour
         if(cameraManager != null)
             cameraManager.StopCameraFollow();
     }
+
     //플레이어가 위치 이동을 했을 때(맵 경계, 혹은 텔레포트 기계)
     public void PlayerIsTeleport(bool start )
     {
@@ -185,34 +199,98 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region 씬 관련 
+    #region 씬 불러오기 관련 
+
     //씬 로드
+    //GameStart -> LobbyUI
     public void LoadsceneByName(string sceneName)
     {
-        StartCoroutine(LoadSceneRoutine(sceneName, StageState.None));
+        curState = StageState.None;
+        StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
     public void LoadSceneByStageState(string sceneName, StageState state)
     {
-        StartCoroutine(LoadSceneRoutine(sceneName, state));
+        curState = state;
+        StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
+    
+    //상황에 따른 로비 진입 이벤트
     [SerializeField] private string lobbyName = "LobbyUI";
-    public void StageClear()
+
+    //게임 시작 > 로비 진입 시 
+    public void LoadGameStart()
     {
-        StartCoroutine(LoadSceneRoutine(lobbyName, StageState.BossLevel));
+        curState = StageState.GameStart;
+        StartCoroutine(LoadSceneRoutine(lobbyName));
+    }
+    
+    //플레이어 사망  > 로비 진입 시 
+    public void LoadPlayerDie()
+    {
+        curState = StageState.Die;
+        StartCoroutine(LoadSceneRoutine(lobbyName));
+        poolManager.ResetPools();
+    }
+    //스테이지 클리어 > 로비 진입 시 
+    public void LoadStageClear()
+    {
+        curState = StageState.StageClear;
+        StartCoroutine(LoadSceneRoutine(lobbyName));
+        poolManager.ResetPools();
     }
 
-    IEnumerator LoadSceneRoutine(string sceneName, StageState stageState)
+
+    IEnumerator LoadSceneRoutine(string sceneName)
     {
+        //카메라 초기화..(다른것도 초기화 필요한게 있으면 여기서)
+        cameraManager.ResetCam();
+
+
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
+
         Debug.Log("씬 불러오기 완료");
 
+
+
+        ////현재 씬의 이름이 로비일 경우 로비 캐릭터를 스폰한다. 
+        //Scene scene = SceneManager.GetActiveScene();
+        //if (scene.name == lobbyName && player == null)
+        //{
+        //    SpawnLobbyPlayer(Vector2.zero, Quaternion.identity);
+        //}
+    }
+
+    StageState curState = StageState.None;
+
+    void DoCamEventByLobbyState()
+    {
+        //로비로 들어올 때 
+        switch (curState)
+        {
+            case StageState.GameStart:
+
+                TransitionFadeOut(false);
+                cameraManager.SetStartCamera(CamDist.Back);
+                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
+                break;
+            case StageState.Die:
+                TransitionFadeOut(false);
+                cameraManager.SetStartCamera(CamDist.Fore);
+                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
+                break;
+            case StageState.StageClear:
+                TransitionFadeOut(false);
+                cameraManager.SetStartCamera(CamDist.Fore);
+                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
+                break;
+        }
     }
 
 
@@ -224,14 +302,14 @@ public class GameManager : MonoBehaviour
         stageStartUi.gameObject.SetActive(false);
     }
 
-    IEnumerator ShowStageEndUI(float startDelay, float endDelay , string stageName, StageState stageState)
+    public IEnumerator ShowStageEndUI(float startDelay, float endDelay )
     {
         yield return new WaitForSeconds(startDelay);
+        Debug.Log("UI오픈");
+
         stageEndUi.gameObject.SetActive(true);
         yield return new WaitForSeconds(endDelay);
         stageEndUi.gameObject.SetActive(false);
-        StartCoroutine(LoadSceneRoutine(stageName, stageState));
-
     }
 
     //씬 페이드 인,아웃
@@ -245,4 +323,4 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
-public enum StageState { None, Lobby, Stage, BossLevel }
+public enum StageState { None, GameStart, StageClear, Die }

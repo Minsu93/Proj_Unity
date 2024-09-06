@@ -5,15 +5,23 @@ using UnityEngine;
 
 public class LobbyDrone : MonoBehaviour
 {
-    [SerializeField] Transform targetTr;
+    Transform targetTr;
     [SerializeField] Transform viewTr;
     
     [SerializeField] float speed = 3f;
     Vector2 vel;
     bool isRight = true;
 
+    public void SetTarget(Transform tr)
+    {
+        targetTr = tr;
+    }
+
     private void Update()
     {
+        if (!targetTr)
+            return;
+
         //플레이어를 따라다닌다. 
         Vector2 targetPos = targetTr.position;
         Vector2 movePos = Vector2.SmoothDamp(transform.position, targetPos, ref vel, speed);
