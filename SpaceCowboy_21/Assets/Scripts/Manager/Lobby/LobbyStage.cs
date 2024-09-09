@@ -11,6 +11,7 @@ public class LobbyStage : MonoBehaviour
     ///
 
     [SerializeField] private StageData[] stageDatas;
+    [SerializeField] private GameObject stagePanel;
     [SerializeField] private Image mainStageImage;
     [SerializeField] private TextMeshProUGUI mainStageNameText;
     [SerializeField] private TextMeshProUGUI stageDescriptionText;
@@ -24,6 +25,7 @@ public class LobbyStage : MonoBehaviour
     {
         portalAnim = portalObj.GetComponent<Animator>();
         portalObj.SetActive(false);
+        stagePanel.SetActive(false);
     }
 
     private void Start()
@@ -42,7 +44,11 @@ public class LobbyStage : MonoBehaviour
             Debug.Log("존재하지 않는 스테이지입니다");
             return;
         }
-
+        //스테이지 패널이 꺼져 있으면 켠다.
+        if (!stagePanel.activeSelf)
+        {
+            stagePanel.SetActive(true);
+        }
         //stageData를 가져온다
         StageData curData = stageDatas[index];
         //스테이지 정보를 변경한다. (이미지, 설명...)
