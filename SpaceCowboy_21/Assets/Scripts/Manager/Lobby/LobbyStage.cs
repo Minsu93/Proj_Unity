@@ -28,14 +28,7 @@ public class LobbyStage : MonoBehaviour
         stagePanel.SetActive(false);
     }
 
-    private void Start()
-    {
-        ////임시?
-        if (GameManager.Instance.player == null)
-        {
-            GameManager.Instance.SpawnLobbyPlayer(Vector3.zero, Quaternion.identity);
-        }
-    }
+
     public void SelectStage(int index)
     {
         //현재 스테이지 수보다 더 크면 작동x
@@ -78,7 +71,7 @@ public class LobbyStage : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         GameManager.Instance.TransitionFadeOut(true);
         yield return new WaitForSeconds(1.0f);
-        GameManager.Instance.LoadSceneByStageState(stageDatas[curStageIndex].SceneAddress, StageState.None);
+        GameManager.Instance.LoadSceneByStageState(stageDatas[curStageIndex].SceneAddress, LobbyEnterState.None);
 
     }
 }

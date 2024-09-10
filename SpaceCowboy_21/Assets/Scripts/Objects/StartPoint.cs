@@ -17,7 +17,7 @@ public class StartPoint : MonoBehaviour
 
         GameManager.Instance.TransitionFadeOut(false);
         GameManager.Instance.cameraManager.SetStartCamera(CamDist.Back);
-        GameManager.Instance.cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
+        GameManager.Instance.cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
         //애니메이션 시작 
         animator.SetTrigger("spawn");
     }
@@ -48,9 +48,9 @@ public class StartPoint : MonoBehaviour
     IEnumerator AfterLaunchPlayer()
     {
         //시작 UI
-        StartCoroutine(GameManager.Instance.ShowStageStartUI(1f, 3f));
+        //StartCoroutine(GameManager.Instance.ShowStageStartUI(1f, 3f));
 
-        yield return new WaitForSeconds(4f);
+        yield return null;
         //4초 후 웨이브 시작
         WaveManager.instance.WaveStart();
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LobbyUIManager : MonoBehaviour
 {
@@ -9,6 +10,27 @@ public class LobbyUIManager : MonoBehaviour
     UiPanel[] uiPanels;
     [SerializeField]
     CanvasGroup mainCanvasGroup;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OpenStageUI;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OpenStageUI;
+    }
+
+    void OpenStageUI(Scene scene, LoadSceneMode mode)
+    {
+        if (GameManager.Instance.fromStageUI)
+        {
+            //stageUI를 오픈한 상태에서 시작한다.
+            OpenPanel(0);
+        }
+    }
+
+
     /// <summary>
     /// 탭을 연다
     /// </summary>

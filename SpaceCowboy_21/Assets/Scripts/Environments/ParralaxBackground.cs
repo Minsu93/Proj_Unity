@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
@@ -12,6 +13,8 @@ public class ParralaxBackground : MonoBehaviour
     
     Vector2 basePositionFromCamera;
 
+    public event System.Func<Vector2> pMoveAction;
+
     private void Start()
     {
         basePositionFromCamera = transform.position;
@@ -23,29 +26,46 @@ public class ParralaxBackground : MonoBehaviour
             sprs[i].sortingOrder = Mathf.FloorToInt(speed * -100);
         }
     }
-
-
+    [SerializeField] float ratio;
+    [SerializeField] float _scale;
+    [SerializeField] float _pos;
+    [SerializeField] float reducingRatio;
+    [SerializeField] Vector2 moveVec = Vector2.zero;
+    [SerializeField] float r;
     private void FixedUpdate()
     {
         ////렌즈에 따른 베이스 위치, 스케일 
         float curSize = GameManager.Instance.cameraManager.curLensSize;
         float defaultSize = GameManager.Instance.cameraManager.defaultLensSize;
-        float ratio = curSize / defaultSize;
+        ratio = curSize / defaultSize;
 
         //거리에 따른 스케일링. 
-        float pos = ratio * speed + (1 - speed);    // 0 ~ 1 >> 1 ~ ratio
-        float neg = ratio * (1 - speed) + speed;  // 0 ~ 1 >> ratio ~ 1
+        _scale = ratio * speed + (1 - speed);    // 0 ~ 1 >> 1 ~ ratio
+        _pos = ratio * (1 - speed) + speed;  // 0 ~ 1 >> ratio ~ 1
 
-        transform.localScale = Vector3.one * pos;
+        transform.localScale = Vector3.one * _scale;
 
-        //기본 위치 
-        Vector2 scaledBasePos = basePositionFromCamera * pos;
+        //스케일에 따른 기본 위치 
+        Vector2 scaledBasePos = basePositionFromCamera * _scale;
 
         //카메라에 따른 변경된 위치, 카메라는 (0,0) 에서 시작되기 때문에 cameraPos는 카메라가 움직인 정도. 
         Vector3 cameraPos = Camera.main.transform.position;
-        Vector2 baseCamMovement = (Vector2)cameraPos * speed;
-        Vector2 scaledCamMove = baseCamMovement / neg;
+        reducingRatio =  speed / ratio;
+        //float reducingRatio = speed / _pos;
+        Vector2 scaledCamMove = (Vector2)cameraPos * reducingRatio;
 
-        transform.position = scaledBasePos + scaledCamMove;
+        //뭔지 모르지만...움직임 구현
+        //pMoveAction()에서 시간에 따른 움직임 정도를 받아온다.
+        if (pMoveAction != null)
+        {
+            r = (1-speed) * _scale;
+            //float r = (1 - speed) / _scale;
+            //r = 1 - (speed / _scale);
+            moveVec = pMoveAction() * r;
+        }
+
+        transform.position = scaledBasePos + moveVec + scaledCamMove;
+
+
     }
 }

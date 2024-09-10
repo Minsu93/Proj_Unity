@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
         //카메라 정보 업데이트
         cameraManager.SetVirtualCam();
         cameraManager.InitCam();
-        DoCamEventByLobbyState();
+        //DoCamEventByLobbyState();
 
         playerObj.SetActive(false);
         return playerObj;
@@ -156,17 +156,17 @@ public class GameManager : MonoBehaviour
 
     public void SpawnLobbyPlayer(Vector2 pos, Quaternion rot)
     {
-        GameObject playerObj = Instantiate(lobbyPlayerPrefab, pos, rot);
-        player = playerObj.transform;
+        //GameObject playerObj = Instantiate(lobbyPlayerPrefab, pos, rot);
+        //player = playerObj.transform;
 
         //카메라 업데이트
         cameraManager.SetVirtualCam();
-        cameraManager.InitLobbyCam(playerObj.transform);
-        DoCamEventByLobbyState();
+        //cameraManager.InitLobbyCam(playerObj.transform);
+        //DoCamEventByLobbyState();
 
-        //셔틀 소환
-        GameObject shuttleObj =  Instantiate(lobbyShuttlePrefab, pos, rot);
-        shuttleObj.GetComponent<LobbyDrone>().SetTarget(playerObj.transform);
+        ////셔틀 소환
+        //GameObject shuttleObj =  Instantiate(lobbyShuttlePrefab, pos, rot);
+        //shuttleObj.GetComponent<LobbyDrone>().SetTarget(playerObj.transform);
     }
 
     #endregion
@@ -205,11 +205,11 @@ public class GameManager : MonoBehaviour
     //GameStart -> LobbyUI
     public void LoadsceneByName(string sceneName)
     {
-        curState = StageState.None;
+        curState = LobbyEnterState.None;
         StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
-    public void LoadSceneByStageState(string sceneName, StageState state)
+    public void LoadSceneByStageState(string sceneName, LobbyEnterState state)
     {
         curState = state;
         StartCoroutine(LoadSceneRoutine(sceneName));
@@ -218,25 +218,28 @@ public class GameManager : MonoBehaviour
     
     //상황에 따른 로비 진입 이벤트
     [SerializeField] private string lobbyName = "LobbyUI";
-
+    public bool fromStageUI { get; set; }
     //게임 시작 > 로비 진입 시 
     public void LoadGameStart()
     {
-        curState = StageState.GameStart;
+        curState = LobbyEnterState.GameStart;
+        fromStageUI = false;
         StartCoroutine(LoadSceneRoutine(lobbyName));
     }
     
     //플레이어 사망  > 로비 진입 시 
     public void LoadPlayerDie()
     {
-        curState = StageState.Die;
+        curState = LobbyEnterState.Die;
+        fromStageUI = true;
         StartCoroutine(LoadSceneRoutine(lobbyName));
         poolManager.ResetPools();
     }
     //스테이지 클리어 > 로비 진입 시 
     public void LoadStageClear()
     {
-        curState = StageState.StageClear;
+        curState = LobbyEnterState.StageClear;
+        fromStageUI = true;
         StartCoroutine(LoadSceneRoutine(lobbyName));
         poolManager.ResetPools();
     }
@@ -257,6 +260,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("씬 불러오기 완료");
 
+        TransitionFadeOut(false);
 
 
         ////현재 씬의 이름이 로비일 경우 로비 캐릭터를 스폰한다. 
@@ -267,30 +271,32 @@ public class GameManager : MonoBehaviour
         //}
     }
 
-    StageState curState = StageState.None;
+    LobbyEnterState curState = LobbyEnterState.None;
 
     void DoCamEventByLobbyState()
     {
-        //로비로 들어올 때 
-        switch (curState)
-        {
-            case StageState.GameStart:
+        TransitionFadeOut(false);
 
-                TransitionFadeOut(false);
-                cameraManager.SetStartCamera(CamDist.Back);
-                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
-                break;
-            case StageState.Die:
-                TransitionFadeOut(false);
-                cameraManager.SetStartCamera(CamDist.Fore);
-                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
-                break;
-            case StageState.StageClear:
-                TransitionFadeOut(false);
-                cameraManager.SetStartCamera(CamDist.Fore);
-                cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Slow);
-                break;
-        }
+        //로비로 들어올 때 
+        //switch (curState)
+        //{
+        //    case LobbyEnterState.GameStart:
+
+        //        TransitionFadeOut(false);
+        //        cameraManager.SetStartCamera(CamDist.Back);
+        //        cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
+        //        break;
+        //    case LobbyEnterState.Die:
+        //        TransitionFadeOut(false);
+        //        cameraManager.SetStartCamera(CamDist.Fore);
+        //        cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
+        //        break;
+        //    case LobbyEnterState.StageClear:
+        //        TransitionFadeOut(false);
+        //        cameraManager.SetStartCamera(CamDist.Fore);
+        //        cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
+        //        break;
+        //}
     }
 
 
@@ -323,4 +329,4 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
-public enum StageState { None, GameStart, StageClear, Die }
+public enum LobbyEnterState { None, GameStart, StageClear, Die }

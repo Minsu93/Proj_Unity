@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 529613330717527068}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1173796350
 MonoBehaviour:
@@ -197,8 +197,8 @@ Transform:
   - {fileID: 105173996593381382}
   - {fileID: 3844769580556792900}
   - {fileID: 1025595428065617024}
-  - {fileID: 4681951793294967368}
   - {fileID: 1173796349}
+  - {fileID: 4681951793294967368}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -222,6 +222,7 @@ MonoBehaviour:
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
   lobbyName: LobbyUI
+  stageUIName: StageUI
   fadeoutAnimator: {fileID: 2814280024513161853}
 --- !u!1 &529613330943597974
 GameObject:
@@ -712,7 +713,7 @@ RectTransform:
   m_Children:
   - {fileID: 4374933358103197790}
   m_Father: {fileID: 529613330717527068}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

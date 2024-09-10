@@ -18,6 +18,7 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
+
         curLensSize = middleGroundDist;
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
