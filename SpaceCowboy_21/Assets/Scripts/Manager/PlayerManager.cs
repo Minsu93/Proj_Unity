@@ -124,6 +124,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private GameObject playerUIPrefab;
     Image healthImg;
     Image shieldImg;
+    Image boosterImg;
     [SerializeField] Image slot_A;
     [SerializeField] Image slot_B;
     [SerializeField] Image slot_C;
@@ -138,6 +139,8 @@ public class PlayerManager : MonoBehaviour
 
         healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
         shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
+        boosterImg = pUI.transform.Find("StatusPanel/Booster/BoosterFill").GetComponent<Image>();
+
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
         //slot_A = pUI.transform.Find("WeaponPanel/SlotA/WeaponImage").GetComponent<Image>();
         //slot_B = pUI.transform.Find("WeaponPanel/SlotB/WeaponImage").GetComponent<Image>();
@@ -150,6 +153,13 @@ public class PlayerManager : MonoBehaviour
         healthImg.fillAmount = playerHealth.currHealth / playerHealth.maxHealth;
         shieldImg.fillAmount = playerHealth.currShield / playerHealth.maxShield;
     }
+
+    //부스터 게이지 관련
+    public void UpdateBoosterUI(float fillAmount)
+    {
+        boosterImg.fillAmount = fillAmount;
+    }
+
 
     //무기 게이지 관련 
     public void UpdateGaugeUIShootTime(float curAmmo)

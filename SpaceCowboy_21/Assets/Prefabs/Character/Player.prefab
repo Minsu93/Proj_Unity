@@ -10504,6 +10504,7 @@ MonoBehaviour:
   acceleration: 2
   inputResetTime: 0.5
   slideSpeed: 1.8
+  boostOn: 0
   turnSpeedOnLand: 100
   onAirTime: 1
   onAirVelocityRotateSpeed: 1
@@ -10529,9 +10530,14 @@ MonoBehaviour:
   dashRadius: 0.8
   dashMaxCount: 1
   dashTime: 0.4
-  dashDamage: 5
-  dashKnockBackPower: 10
   unHittableTime: 1
+  boostForce: 15
+  speedLimit: 15
+  rechargeSpeed: 100
+  boostGaugeRate: 50
+  boostMaxGauge: 100
+  boostCurGauge: 0
+  waitSecondToRecharge: 2
   doingDash: 0
   sJumpTrail: {fileID: 2056016844}
   impactParticle: {fileID: 7196136449052729651, guid: 6df6c92d894b04149ada091485ba5bd3, type: 3}

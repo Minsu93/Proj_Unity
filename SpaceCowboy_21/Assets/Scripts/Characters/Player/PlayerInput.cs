@@ -34,6 +34,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (playerBehavior == null)
             return;
+        if (!playerBehavior.activate) return;
 
 
         //Interact

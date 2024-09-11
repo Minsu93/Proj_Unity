@@ -35,7 +35,8 @@ namespace SpaceCowboy
 
         [Header("Sliding")]
         public float slideSpeed;
-        bool slideON;
+        public bool boostOn = false;
+
 
         [Header("OnAir")]
         public float turnSpeedOnLand = 100f;
@@ -134,18 +135,27 @@ namespace SpaceCowboy
             if (!activate) return;
 
             //캐릭터 회전
-            if (!playerJump.doingDash) RotateCharacterToGround();
+            if (!playerJump.doingDash && !boostOn) RotateCharacterToGround();
 
             //공중에 오래 있으면 지표면 방향으로 떨어진다.
             if (OnAir)
             {
-                if (airTimer <= onAirTime)
+                airTimer += Time.fixedDeltaTime;
+
+                if (boostOn)
                 {
-                    airTimer += Time.fixedDeltaTime;
+                    if (!playerJump.Boost())
+                    {
+                        //부스트가 중간에 꺼졌을 때 
+                        boostOn = false;
+                        playerJump.UsingBoost = false;
+                        characterGravity.activate = true;
+                    }
                 }
-                else
+                else if ( airTimer > onAirTime)
                 {
                     MoveUpdateOnAir();
+
                 }
             }
             else
@@ -255,8 +265,11 @@ namespace SpaceCowboy
             if (!activate) return;
             if (OnAir)
             {
-                //doingAirJump = true;
-                playerJump.Dash();
+                if(playerJump.Dash())
+                {
+                    playerJump.UsingBoost = false;
+                }
+                
             }
             else if(playerState != PlayerState.Jumping )
             {
@@ -309,26 +322,41 @@ namespace SpaceCowboy
 
         public void TrySlide()
         {
-            slideON = true;
-
             if (!activate) return;
-            if (OnAir) return;
+            if (OnAir)
+            {
+                //부스트가 활성화 가능할 때 > 활성화
+                if (playerJump.Boost())
+                {
+                    boostOn = true;
+                    playerJump.UsingBoost = true;
+                    characterGravity.activate = false;
+                }
+            }
+            //슬라이딩 관련
+            else
+            {
+                playerState = PlayerState.Sliding;
 
-            playerState = PlayerState.Sliding;
+                speedMultiplier = slideSpeed;
 
-            speedMultiplier = slideSpeed;
-            //targetSpeed = slideSpeed;
-            
-            slidingEffect.Play();
-            slidingEffect.transform.localScale = new Vector3(faceRight? 1 : -1 , 1, 1);
-
+                slidingEffect.Play();
+                slidingEffect.transform.localScale = new Vector3(faceRight ? 1 : -1, 1, 1);
+            }
         }
 
         public void StopSlide()
         {
-            if(playerState != PlayerState.Sliding) { return; }
-
-            slideON = false;
+            //부스트가 활성화 되고 있을 때 > 비활성화
+            if (boostOn)
+            {
+                boostOn = false;
+                playerJump.UsingBoost = false;
+                characterGravity.activate = true;
+            }
+            
+            //이외에는 슬라이딩 관련 
+            if (playerState != PlayerState.Sliding) { return; }
 
             playerState = PlayerState.Running;
             targetSpeed = 0;
