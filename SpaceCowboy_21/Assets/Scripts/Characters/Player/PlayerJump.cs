@@ -194,17 +194,17 @@ public class PlayerJump : MonoBehaviour
     //공격형 점프
     public bool Dash()
     {
-        if(boostCurGauge < dashGaugeCost)
-        {
-            return false;
-        }
+        //if(boostCurGauge < dashGaugeCost)
+        //{
+        //    return false;
+        //}
         if (dashCount >= dashMaxCount)
         {
             return false;
         }
 
         dashCount++;
-        boostCurGauge = 0;
+        //boostCurGauge = 0;
 
         doingDash = true;
         StartCoroutine(DashAttackRoutine());
@@ -297,9 +297,6 @@ public class PlayerJump : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     #region Boost
-
-
-
     public bool Boost()
     {
         if(boostCurGauge <= 0)

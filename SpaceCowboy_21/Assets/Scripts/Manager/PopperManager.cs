@@ -12,11 +12,11 @@ public class PopperManager : MonoBehaviour
     [SerializeField] private float launchHeight = 5.0f;
     [SerializeField] private float launchRadius = 5.0f;
     [SerializeField] private float launchInterval = 0.3f;   //발사 사이 간격 
-    [SerializeField] private AnimationCurve fireworkCurve;  //발사 움직임 
-    [SerializeField] private float launchTimer = 0.5f;  //발사 이동 시간
+    //[SerializeField] private AnimationCurve fireworkCurve;  //발사 움직임 
+    //[SerializeField] private float launchTimer = 0.5f;  //발사 이동 시간
 
     //무기 생성관련
-    [SerializeField] GameObject weaponBubble;
+    //[SerializeField] GameObject weaponBubble;
     List<WeaponData> WeaponDataList = new List<WeaponData>();    //생성될 무기 목록
 
     //드롭 확률 조절 관련
@@ -43,32 +43,14 @@ public class PopperManager : MonoBehaviour
             firework.transform.rotation = targetTr.rotation;
             Vector2 targetPoint = GetEmptySpace(targetTr, 0)[0];
 
-            StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoint, equip.weaponData));
+            StartCoroutine(firework.GetComponent<Popper>().MoveAndExplode(firework, targetTr.position, targetPoint, equip.weaponData));
+            //StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoint, equip.weaponData));
 
             dropReady = false;
             totalDropChance = 0.1f;     //초기화
         }
     }
     
-    ////여러개 발사하는 로직
-    //IEnumerator LaunchFireWork(Transform targetTr, GameObject[] items)
-    //{
-    //    List<Vector2> targetPoints = GetEmptySpace(targetTr,items.Length);
-
-    //    for(int i = 0; i < items.Length; i++)
-    //    {
-    //        // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
-    //        GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
-    //        firework.transform.position = targetTr.position;
-    //        firework.transform.rotation = targetTr.rotation;
-    //        StartCoroutine(MoveAndExplode(firework, targetTr.position, targetPoints[i], items[i]));
-
-    //        // 다음 폭죽 발사까지 딜레이를 줍니다.
-    //        yield return new WaitForSeconds(launchInterval);
-    //    }
-
-    //    yield return null;
-    //}
 
     //타겟 윗부분 주변의 포인트 가져옴. 행성이 없는 장소. 
     List<Vector2> GetEmptySpace(Transform targetTr, int number)
@@ -119,68 +101,45 @@ public class PopperManager : MonoBehaviour
         return points;
     }
 
-    IEnumerator MoveAndExplode(GameObject firework,Vector2 startPos, Vector2 targetPos, WeaponData w_Data)
-    {
-        float time = 0f;
-
-        // 폭죽이 목표 위치에 도달할 때까지 이동합니다.
-        while (time <= launchTimer)
-        {
-            time += Time.deltaTime;
-            Vector2 pos = Vector2.Lerp(startPos, targetPos, fireworkCurve.Evaluate(time / launchTimer));
-            firework.transform.position = pos;
-            yield return null;
-        }
-
-        // 오브 생성.
-        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
-        newOrb.transform.position = targetPos;
-        newOrb.transform.rotation = Quaternion.identity;
-        Bubble_Weapon bubble = newOrb.GetComponent<Bubble_Weapon>();
-        bubble.SetBubble(w_Data);
-
-        firework.SetActive(false);
-
-    }
     #endregion
 
-    #region 플레이어 다이렉트 드랍 방식
-    public void GiveWeaponToPlayer(Transform fromTr)
-    {
-        EquippedWeapon equip = ForceDropItem();
-        GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
-        firework.transform.position = fromTr.position;
-        firework.transform.rotation = fromTr.rotation;
+    //#region 플레이어 다이렉트 드랍 방식
+    //public void GiveWeaponToPlayer(Transform fromTr)
+    //{
+    //    EquippedWeapon equip = ForceDropItem();
+    //    GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
+    //    firework.transform.position = fromTr.position;
+    //    firework.transform.rotation = fromTr.rotation;
 
-        StartCoroutine(MoveToPlayerRoutine(firework, fromTr.position, equip.weaponData));
+    //    StartCoroutine(MoveToPlayerRoutine(firework, fromTr.position, equip.weaponData));
 
-    }
+    //}
 
-    IEnumerator MoveToPlayerRoutine(GameObject firework, Vector2 startPos, WeaponData w_Data)
-    {
-        float time = 0f;
+    //IEnumerator MoveToPlayerRoutine(GameObject firework, Vector2 startPos, WeaponData w_Data)
+    //{
+    //    float time = 0f;
 
-        // 폭죽이 목표 위치에 도달할 때까지 이동합니다.
-        while (time <= launchTimer)
-        {
-            Vector2 targetPos = GameManager.Instance.player.position;
-            time += Time.deltaTime;
+    //    // 폭죽이 목표 위치에 도달할 때까지 이동합니다.
+    //    while (time <= launchTimer)
+    //    {
+    //        Vector2 targetPos = GameManager.Instance.player.position;
+    //        time += Time.deltaTime;
             
-            Vector2 pos = Vector2.Lerp(startPos, targetPos, fireworkCurve.Evaluate(time / launchTimer));
-            firework.transform.position = pos;
-            yield return null;
-        }
+    //        Vector2 pos = Vector2.Lerp(startPos, targetPos, fireworkCurve.Evaluate(time / launchTimer));
+    //        firework.transform.position = pos;
+    //        yield return null;
+    //    }
 
-        // 오브 생성.
-        GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
-        newOrb.transform.position = GameManager.Instance.player.position;
-        newOrb.transform.rotation = Quaternion.identity;
-        Bubble_Weapon bubble = newOrb.GetComponent<Bubble_Weapon>();
-        bubble.SetBubble(w_Data);
+    //    // 오브 생성.
+    //    GameObject newOrb = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
+    //    newOrb.transform.position = GameManager.Instance.player.position;
+    //    newOrb.transform.rotation = Quaternion.identity;
+    //    Bubble_Weapon bubble = newOrb.GetComponent<Bubble_Weapon>();
+    //    bubble.SetBubble(w_Data);
 
-        firework.SetActive(false);
-    }
-    #endregion
+    //    firework.SetActive(false);
+    //}
+    //#endregion
 
 
     public void PopperReady()

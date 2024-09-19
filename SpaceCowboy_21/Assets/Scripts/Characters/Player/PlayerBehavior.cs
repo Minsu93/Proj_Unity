@@ -260,18 +260,21 @@ namespace SpaceCowboy
         }
 
 
-        public void TrySpeedJump()
+        public void TryJump()
         {
             if (!activate) return;
+
             if (OnAir)
             {
-                if(playerJump.Dash())
+                //부스트가 활성화 가능할 때 > 활성화
+                if (playerJump.Boost())
                 {
-                    playerJump.UsingBoost = false;
+                    boostOn = true;
+                    playerJump.UsingBoost = true;
+                    characterGravity.activate = false;
                 }
-                
             }
-            else if(playerState != PlayerState.Jumping )
+            else if (playerState != PlayerState.Jumping )
             {
                 //슬라이딩 중일 때는 슬라이딩 취소
                 if (playerState == PlayerState.Sliding) StopSlide();
@@ -291,7 +294,32 @@ namespace SpaceCowboy
             TryJumpEvent();
 
         }
+        public void TryStopBoost()
+        {
+            //부스트가 활성화 되고 있을 때 > 비활성화
+            if (boostOn)
+            {
+                boostOn = false;
+                playerJump.UsingBoost = false;
+                characterGravity.activate = true;
+            }
 
+        }
+
+        public void TryDash()
+        {
+            if (!activate) return;
+            if (OnAir)
+            {
+                if (playerJump.Dash())
+                {
+                    playerJump.UsingBoost = false;
+                }
+
+            }
+        }
+        
+       
 
         public void LauchPlayer(Vector2 Vec, float force)
         {
@@ -317,44 +345,24 @@ namespace SpaceCowboy
 
         #endregion
 
-
         #region Sliding
 
         public void TrySlide()
         {
             if (!activate) return;
-            if (OnAir)
-            {
-                //부스트가 활성화 가능할 때 > 활성화
-                if (playerJump.Boost())
-                {
-                    boostOn = true;
-                    playerJump.UsingBoost = true;
-                    characterGravity.activate = false;
-                }
-            }
+
             //슬라이딩 관련
-            else
-            {
-                playerState = PlayerState.Sliding;
+            playerState = PlayerState.Sliding;
 
-                speedMultiplier = slideSpeed;
+            speedMultiplier = slideSpeed;
 
-                slidingEffect.Play();
-                slidingEffect.transform.localScale = new Vector3(faceRight ? 1 : -1, 1, 1);
-            }
+            slidingEffect.Play();
+            slidingEffect.transform.localScale = new Vector3(faceRight ? 1 : -1, 1, 1);
         }
 
         public void StopSlide()
         {
-            //부스트가 활성화 되고 있을 때 > 비활성화
-            if (boostOn)
-            {
-                boostOn = false;
-                playerJump.UsingBoost = false;
-                characterGravity.activate = true;
-            }
-            
+
             //이외에는 슬라이딩 관련 
             if (playerState != PlayerState.Sliding) { return; }
 
@@ -701,7 +709,7 @@ namespace SpaceCowboy
             yield return new WaitForSeconds(2.0f);
             GameManager.Instance.TransitionFadeOut(true);
             yield return new WaitForSeconds(1.0f);
-            GameManager.Instance.LoadPlayerDie();
+            GameManager.Instance.ReturnToLobby();
         }
 
 

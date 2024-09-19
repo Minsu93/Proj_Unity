@@ -6,6 +6,7 @@ using UnityEngine;
 public class PoolManager : MonoBehaviour
 {
     public PoolList[] poolLists;
+    
 
     private void Awake()
     {
@@ -14,13 +15,13 @@ public class PoolManager : MonoBehaviour
 
     void Init()
     {
-        //수정본
+        //풀 리스트의 수 만큼 Pool들을 생성
         for(int i = 0; i < poolLists.Length; i++)
         {
-            poolLists[i].poolObjList = new List<GameObject>[poolLists[i].pool.Length];
-            for(int j = 0; j < poolLists[i].pool.Length; j++)
+            poolLists[i].objPools = new List<GameObject>[poolLists[i].prefabArray.Length];
+            for(int j = 0; j < poolLists[i].prefabArray.Length; j++)
             {
-                poolLists[i].poolObjList[j] = new List<GameObject>();
+                poolLists[i].objPools[j] = new List<GameObject>();
             }
         }
 
@@ -32,13 +33,14 @@ public class PoolManager : MonoBehaviour
     /// <param name="obj"></param>
     /// <param name="poolIndex"> "0 = PlayerProj", "1 = EnemyProj" , "2 = DropItems" , "3 = Enemies" , "4 = StageObjs"  </param>
     /// <returns></returns>
+    /// 
     public GameObject GetPoolObj(GameObject obj, int poolIndex)
     {
         GameObject select = null;
         int index = 0;
 
-        GameObject[] prefabs = poolLists[poolIndex].pool;
-        List<GameObject>[] objLists = poolLists[poolIndex].poolObjList;
+        GameObject[] prefabs = poolLists[poolIndex].prefabArray;
+        List<GameObject>[] objLists = poolLists[poolIndex].objPools;
         
         for (int i = 0; i < prefabs.Length; i++)
         {
@@ -74,10 +76,11 @@ public class PoolManager : MonoBehaviour
     {
         foreach(PoolList pool in poolLists)
         {
-            foreach(List<GameObject> objList in pool.poolObjList)
+            foreach(List<GameObject> objList in pool.objPools)
             {
                 objList.Clear();
             }
+            
         }
     }
 }
@@ -87,6 +90,6 @@ public class PoolManager : MonoBehaviour
 public class PoolList
 {
     public string name;
-    public GameObject[] pool;
-    public List<GameObject>[] poolObjList;
+    public GameObject[] prefabArray;   //풀에 들어갈 오브젝트 프리팹의 리스트
+    public List<GameObject>[] objPools;  //생성될 오브젝트 각각의 풀 배열
 }

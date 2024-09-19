@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
-    public string stageName = "stage0";
+    //public string stageName = "stage0";
     //[SerializeField] private StagePortal portal;
     
     [Header("Wave Property")]
@@ -90,15 +91,22 @@ public class WaveManager : MonoBehaviour
         objectRespawner = GetComponent<WaveObjectRespawner>();  
 
         //스테이지 시작
-        LoadWaveFromJson(stageName);
+        LoadWaveFromJson();
     }
 
-    void LoadWaveFromJson(string filename)
+    void LoadWaveFromJson()
     {
-        string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");
-        Debug.Log(path);
-        string loadJson = File.ReadAllText(path);
-        stage = JsonUtility.FromJson<Stage>(loadJson);
+        string sceneName = SceneManager.GetActiveScene().name;
+        string[] words = sceneName.Split('_');  // words[0] = Stage, words[1] = 챕터index, words[2] = 스테이지 index
+
+        string address = "Stage/" + words[0] + words[1] + "/" + words[2] + ".json";
+        Debug.Log(address);
+        stage = LoadManager.Load<Stage>(address);
+
+        //string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");
+        //Debug.Log(path);
+        //string loadJson = File.ReadAllText(path);
+        //stage = JsonUtility.FromJson<Stage>(loadJson);
     }
 
     void ResetWaveManager()
@@ -315,9 +323,20 @@ public class WaveManager : MonoBehaviour
     //이 스테이지 클리어 시 실행. 보스를 잡는 경우, 혹은 (보스가 없는 경우에는) 맵에 있는 모든 몬스터를 제거했을 때 실행.
     void StageClear()
     {
-
         Debug.Log("스테이지 클리어");
-        StartCoroutine(ClearRoutine());
+
+        //다음 스테이지가 가능하다면
+        if (GameManager.Instance.IsNextStageAvailable())
+        {
+            //다음 스테이지로 이동
+            GameManager.Instance.MoveToNextStage();
+        }
+        else
+        {
+            //챕터 클리어! 
+            StartCoroutine(ClearRoutine());
+        }
+        
     }
 
     IEnumerator ClearRoutine()
@@ -327,7 +346,7 @@ public class WaveManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
         GameManager.Instance.TransitionFadeOut(true);
         yield return new WaitForSeconds(1.0f);
-        GameManager.Instance.LoadStageClear();
+        GameManager.Instance.ChapterClear();
     }
 
     #region Spawns

@@ -60,10 +60,20 @@ public class PlayerInput : MonoBehaviour
         }
         
 
-        // Jump
+        // Jump & Dash
         if (Input.GetButtonDown(JumpButton))
         {
-            playerBehavior.TrySpeedJump();
+            playerBehavior.TryJump();
+        }
+        if (Input.GetButtonUp(JumpButton))
+        {
+            playerBehavior.TryStopBoost();
+        }
+
+        // Dash
+        if (Input.GetMouseButtonDown(1))
+        {
+            playerBehavior.TryDash();
         }
 
         // Shoot
