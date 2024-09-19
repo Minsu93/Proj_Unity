@@ -3,33 +3,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class LobbyUIManager : MonoBehaviour
 {
-    [SerializeField]
-    UiPanel[] uiPanels;
-    [SerializeField]
-    CanvasGroup mainCanvasGroup;
+    [Header("LobbyUI")]
 
+    [SerializeField]
+    UiPanel[] lobbyPanels;
+
+    [Header("StageUI")]
+    [SerializeField]
+    UiPanel stageUIPanel;
+    [SerializeField]
+    UiPanel[] stagePanels;
+    bool stageOn;
+
+
+    [SerializeField]
+    CanvasGroup lobbyCanvasGroup;
+    [SerializeField]
+    CanvasGroup stageCanvasGroup;
+
+    #region Start from StageUI
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OpenStageUI;
+        SceneManager.sceneLoaded += StartFromStageUI;
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OpenStageUI;
+        SceneManager.sceneLoaded -= StartFromStageUI;
     }
 
-    void OpenStageUI(Scene scene, LoadSceneMode mode)
+    void StartFromStageUI(Scene scene, LoadSceneMode mode)
     {
         if (GameManager.Instance.fromStageUI)
         {
             //stageUI를 오픈한 상태에서 시작한다.
-            OpenPanel(0);
+            SwitchLobbyAndStage(true);
         }
     }
 
+    #endregion
+
+    public void SwitchLobbyAndStage(bool stageOn)
+    {
+        this.stageOn = stageOn;
+        stageUIPanel.opened = stageOn;
+        stageUIPanel.panel.SetActive(stageOn);
+
+        //각 상태에 따른 메뉴 버튼 활성화.
+        lobbyCanvasGroup.interactable = !stageOn;
+        stageCanvasGroup.interactable = stageOn;
+    }
 
     /// <summary>
     /// 탭을 연다
@@ -37,21 +64,17 @@ public class LobbyUIManager : MonoBehaviour
     /// <param name="panel"></param>
     public void OpenPanel(int index)
     {
-        if(index > uiPanels.Length)
+        if(stageOn)
         {
-            Debug.Log("존재하지 않는 패널입니다");
-            return;
+            stagePanels[index].opened = true;
+            stagePanels[index].panel.SetActive(true);
+            stageCanvasGroup.interactable = false;
         }
-
-        if(!uiPanels[index].opened)
+        else
         {
-            ////다른 패널을 모두 닫는다
-            //CloseAllTab();
-            //원하는 패널을 연다
-            uiPanels[index].opened = true;
-            uiPanels[index].panel.SetActive(true);
-            //메인 메뉴 비활성화
-            mainCanvasGroup.interactable = false;
+            lobbyPanels[index].opened = true;
+            lobbyPanels[index].panel.SetActive(true);
+            lobbyCanvasGroup.interactable = false;
         }
     }
 
@@ -60,24 +83,38 @@ public class LobbyUIManager : MonoBehaviour
     /// </summary>
     public void CloseAllTab()
     {
-        for (int i = 0; i < uiPanels.Length; i++)
+        if (stageOn)
         {
-            //열려 있으면 닫는다.
-            if (uiPanels[i].opened)
+            for (int i = 0; i < stagePanels.Length; i++)
             {
-                uiPanels[i].opened = false;
-                uiPanels[i].panel.SetActive(false);
+                //열려 있으면 닫는다.
+                if (stagePanels[i].opened)
+                {
+                    stagePanels[i].opened = false;
+                    stagePanels[i].panel.SetActive(false);
+                }
             }
+
+            //메인 메뉴 활성화
+            stageCanvasGroup.interactable = true;
+        }
+        else
+        {
+            for (int i = 0; i < lobbyPanels.Length; i++)
+            {
+                //열려 있으면 닫는다.
+                if (lobbyPanels[i].opened)
+                {
+                    lobbyPanels[i].opened = false;
+                    lobbyPanels[i].panel.SetActive(false);
+                }
+            }
+
+            //메인 메뉴 활성화
+            lobbyCanvasGroup.interactable = true;
         }
 
-        //메인 메뉴 활성화
-        mainCanvasGroup.interactable = true;
-    }
-
-    public void DisableAllButtons()
-    {
-        mainCanvasGroup.interactable = false;
-        mainCanvasGroup.alpha = 0.0f;
+        
     }
 
     private void Update()
