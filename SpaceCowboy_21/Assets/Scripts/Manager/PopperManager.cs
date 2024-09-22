@@ -38,7 +38,7 @@ public class PopperManager : MonoBehaviour
         {
 
             // ÆøÁ× ÇÁ¸®ÆÕÀ» ·£´ýÇÑ À§Ä¡¿¡ »ý¼ºÇÕ´Ï´Ù.
-            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 1);
+            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
             firework.transform.position = targetTr.position;
             firework.transform.rotation = targetTr.rotation;
             Vector2 targetPoint = GetEmptySpace(targetTr, 0)[0];

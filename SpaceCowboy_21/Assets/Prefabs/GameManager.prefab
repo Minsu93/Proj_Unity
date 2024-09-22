@@ -49,9 +49,9 @@ MonoBehaviour:
   threshold: 2
   foreGroundDist: 5
   middleGroundDist: 10
-  backGroundDist: 20
-  fastZoomSeed: 1
-  slowZoomSeed: 3
+  backGroundDist: 14
+  fastZoomSeed: 1.5
+  slowZoomSeed: 2
 --- !u!1 &529613329984358754
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,10 +96,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5eb30e9a5ae7c24db8e3ca8939274d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponSlots: 2
+  droneSlots: 3
+  emptySprite: {fileID: 0}
+  lifeMax: 3
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
-  slot_A: {fileID: 0}
-  slot_B: {fileID: 0}
-  slot_C: {fileID: 0}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,6 +222,8 @@ MonoBehaviour:
   worldGravity: 700
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
+  chapterIndex: 1
+  stageIndex: 1
   lobbyName: LobbyUI
   fadeoutAnimator: {fileID: 2814280024513161853}
 --- !u!1 &529613330943597974
@@ -270,43 +273,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolLists:
   - name: PlayerProjectile
-    pool:
+    prefabArray:
     - {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
-    - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
-    - {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
-    - {fileID: 2641103605245567174, guid: 7e447c85009070b40be110ffb6df1629, type: 3}
-    - {fileID: 589853217845385795, guid: 5f823c7afaec7724ca8f310a5221721e, type: 3}
     - {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
-    - {fileID: 8449678307122149294, guid: 7e8d082e79407744498fc762237ba051, type: 3}
-    - {fileID: 6292677011125795810, guid: 01bd4efd844011243bfe0f5474075048, type: 3}
-    - {fileID: 6292677011125795810, guid: 2050542b951974b4d8fe6db941181a7f, type: 3}
-    - {fileID: 6292677011125795810, guid: 246c3e7346a163a4dbc076a90b703273, type: 3}
     - {fileID: 6292677011125795810, guid: dc540ecdbbb13e64083faf7cf6c8c99b, type: 3}
+    - {fileID: 6292677011125795810, guid: 246c3e7346a163a4dbc076a90b703273, type: 3}
+    - {fileID: 6292677011125795810, guid: 01bd4efd844011243bfe0f5474075048, type: 3}
+    - {fileID: 2641103605245567174, guid: 7e447c85009070b40be110ffb6df1629, type: 3}
+    - {fileID: 8449678307122149294, guid: 7e8d082e79407744498fc762237ba051, type: 3}
+    - {fileID: 6292677011125795810, guid: 2050542b951974b4d8fe6db941181a7f, type: 3}
+    - {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+    - {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
   - name: EnemyProjectile
-    pool:
-    - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
-    - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
+    prefabArray:
     - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
+    - {fileID: 6292677011125795810, guid: d799bcaed36d8f5469bfa88e7f4a6486, type: 3}
     - {fileID: 2641103605245567174, guid: e0cfe839a7286344ca2a0b92ce87edef, type: 3}
   - name: DropItems
-    pool:
+    prefabArray:
+    - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
     - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
-    - {fileID: 4446144700685440698, guid: 02c3da36b4de1d44babb36c4fc92fc9c, type: 3}
-    - {fileID: 4446144700685440698, guid: c45295ed7bd14c74eb81114932178842, type: 3}
-    - {fileID: 4446144700685440698, guid: 92cc2f43ce4757b4ca8b8a75eb067d8a, type: 3}
     - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
-    - {fileID: 7158106260931719753, guid: 496205cd47966d14a9c203f2ecd9c2b0, type: 3}
-    - {fileID: 7158106260931719753, guid: 905f0eecb90697c4ab18b4834bc52b0e, type: 3}
   - name: Enemies
-    pool:
+    prefabArray:
     - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
-    - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
     - {fileID: 1321431719441981273, guid: e687b0aca4052bb4f913ca1734c60337, type: 3}
     - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
     - {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
+    - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
   - name: StageObjects
-    pool:
+    prefabArray:
     - {fileID: 1023907566023020907, guid: e7700e4c4582d8f4c8208de2ddbe9b62, type: 3}
+  - name: Drones
+    prefabArray:
+    - {fileID: 7829265998662957305, guid: 057b3c1263b67e343b4daf584a272ccc, type: 3}
+    - {fileID: 2611145516192744299, guid: 9d0502a6073f5d843935f91b0152fdd5, type: 3}
 --- !u!114 &4217476810000004336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,32 +325,6 @@ MonoBehaviour:
   launchHeight: 7
   launchRadius: 7
   launchInterval: 0.6
-  fireworkCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  launchTimer: 1
-  weaponBubble: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05
   totalDropChance: 0.1

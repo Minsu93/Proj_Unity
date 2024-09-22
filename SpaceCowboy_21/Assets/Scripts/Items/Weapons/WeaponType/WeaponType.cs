@@ -1,4 +1,3 @@
-using SpaceCowboy;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ public delegate void WeaponShootDelegate();
 public delegate void WeaponImpactDelegate();
 
 
-public abstract class WeaponType : MonoBehaviour, IItemConsume
+public abstract class WeaponType : MonoBehaviour
 {
     /// <summary>
     /// 부모. 총 쏘는 방식이 들어있다. 
@@ -178,16 +177,6 @@ public abstract class WeaponType : MonoBehaviour, IItemConsume
         if(muzzleFlashVFX == null) { return; }
         GameManager.Instance.particleManager.GetParticle(muzzleFlashVFX, pos, quat);
     }
-
-    //아이템 사용 시 
-    public void ConsumeItem()
-    {
-        //if(GameManager.Instance.techDocument.GetItemState(weaponData.ItemID) == (int)ItemStateName.Available)
-        //{
-        //    GameManager.Instance.techDocument.ItemExpGain(weaponData.ItemID, count : 1);
-        //}
-    }
-
 
 }
 

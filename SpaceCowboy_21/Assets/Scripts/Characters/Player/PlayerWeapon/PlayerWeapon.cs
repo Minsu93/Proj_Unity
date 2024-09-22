@@ -1,22 +1,23 @@
-using SpaceCowboy;
-using Spine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class PlayerWeapon : MonoBehaviour
 {
     //총기 관련
+    [Header("Weapon Property")]
+    [SerializeField] float weaponChangeTime = 0.5f; //무기 교체하는데 걸리는 시간
+
+    public int weaponSlots { get; set; }
     public float maxAmmo { get; private set; }    //총알 탄창의 max수치
     public float currAmmo { get; private set; }     //현재 총의 총알
-    [SerializeField] float weaponChangeTime = 0.5f; //무기 교체하는데 걸리는 시간
     public bool shootOn { get; set; }   //총쏘는 중인가요? 
     bool infiniteBullets;    //총알이 무한
     bool isChanging;    //무기를 바꾸는 중인가요?
     float range;    //거리 표시 용 
 
+
+    [Header("Weapon Sight")]
     //WeaponSight관련
     GameObject weaponRangeSight;     //사정거리 가늠자
     GameObject weaponRangePoint;    //가늠자 끝 spritePoint
@@ -24,21 +25,22 @@ public class PlayerWeapon : MonoBehaviour
     bool pointOn;
     int targetLayer;
     [SerializeField] LineRenderer sightLineRenderer;
+
+
     [SerializeField] GameObject bone1H;
     [SerializeField] GameObject bone2H;
     public GameObject point1H;
     public GameObject point2H;
 
-
-    //무기 스폰을 위한 WeaponTypeDictionary
     public WeaponData baseWeaponData;
     Dictionary<WeaponData, WeaponType> weaponTypeDictionary = new Dictionary<WeaponData, WeaponType>();
-    //저장된 무기 슬롯
-    Stack<AmmoInventory> ammoStack = new Stack<AmmoInventory>();
-    
+    public Queue<WeaponData> wDataQueue= new Queue<WeaponData>();
+
     //스크립트 관련
     PlayerBehavior playerBehavior;
-    WeaponType currWeaponType;  //현재 웨폰 타입
+    public WeaponType currWeaponType;  //현재 웨폰 타입
+
+    public event System.Action weaponShootAction;
 
 
     private void Awake()
@@ -196,66 +198,68 @@ public class PlayerWeapon : MonoBehaviour
         // 총알을 다 쓴 경우 
         if (!infiniteBullets && currAmmo <= 0)
         {
-            PopWeapon();    //마지막 무기 꺼내기
+            DequeueData();    //마지막 무기 꺼내기
         }
+
+        // 총알 발사 이벤트 실행
+        if (weaponShootAction != null) weaponShootAction();
     }
 
     #endregion
-   
+
     #region ChangeWeapon
-    //public bool PushWeapon(WeaponData data)
-    //{
-    //    bool canPush;
-    //    if(ammoStack.Count < 3)
-    //    {
-    //        //사용하던 무기를 집어넣는다. 
-    //        AmmoInventory ammoInven = new AmmoInventory();
-    //        ammoInven.weaponData = currWeaponType.weaponData;
-    //        ammoInven.currAmmo = currAmmo;
-    //        ammoStack.Push(ammoInven);
-            
-    //        //신규 무기를 착용한다. 
-    //        WeaponType wtype = InitializeWeapon(data);
-    //        ChangeWeapon(wtype, wtype.maxAmmo);
 
-    //        //UI를 업데이트 한다 
-    //        GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
-            
-    //        canPush = true;
-    //    }
-    //    else
-    //    {
-    //        canPush = false;
-    //    }
-    //    return canPush;
-    //}
-    public void PopWeapon()
+    public bool EnqueueData(WeaponData data)
     {
-        ////스택에 있으면 가져오기
-        //if(ammoStack.TryPop(out AmmoInventory ammoInven))
-        //{
-        //    WeaponType wtype = InitializeWeapon(ammoInven.weaponData);
-        //    ChangeWeapon(wtype, ammoInven.currAmmo);
-        //}
-        ////스택에 없으면 기본 총기로 
-        //else
-        //{
-        //    BackToBaseWeapon();
-        //}
-        ////UI를 업데이트 한다 
-        //GameManager.Instance.playerManager.UpdateAmmoStack(ammoStack);
+        if(currWeaponType.weaponData == baseWeaponData)
+        {
+            WeaponType wtype = GetWeaponType(data);
+            ChangeWeapon(wtype, wtype.maxAmmo, false);
+            GameManager.Instance.playerManager.UpdateWeaponQueue();
+            return true;
+        }
 
+        if (wDataQueue.Count < weaponSlots)
+        {
+            wDataQueue.Enqueue(data);
+            Debug.Log("Queue Count is : " + wDataQueue.Count);
+           
+            //UI를 업데이트 한다 
+            GameManager.Instance.playerManager.UpdateWeaponQueue();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void DequeueData()
+    {
+        //스택에 있으면 가져오기
+        if (wDataQueue.TryDequeue(out WeaponData wData))
+        {
+            WeaponType wtype = GetWeaponType(wData);
+            ChangeWeapon(wtype, wData.MaxAmmo, false);
+
+        }
         //스택에 없으면 기본 총기로 
-        BackToBaseWeapon();
-    }
-    //기본 총기 소환
-    public void BackToBaseWeapon()
-    {
-        WeaponType wtype = InitializeWeapon(baseWeaponData);
-        ChangeWeapon(wtype, wtype.maxAmmo);
+        else
+        {
+            BackToBaseWeapon(false);
+        }
+        //UI를 업데이트 한다 
+        GameManager.Instance.playerManager.UpdateWeaponQueue();
+
     }
 
-    public WeaponType InitializeWeapon(WeaponData data)
+    //기본 총기 소환
+    public void BackToBaseWeapon(bool instant)
+    {
+        WeaponType wtype = GetWeaponType(baseWeaponData);
+        ChangeWeapon(wtype, wtype.maxAmmo, instant);
+
+    }
+
+    public WeaponType GetWeaponType(WeaponData data)
     {
         WeaponType wtype;
 
@@ -294,9 +298,9 @@ public class PlayerWeapon : MonoBehaviour
         return wtype;
     }
 
-    public void ChangeWeapon(WeaponType weaponType, float curAmmo)
+    public void ChangeWeapon(WeaponType weaponType, float curAmmo, bool instant)
     {
-        isChanging = true;
+        isChanging = !instant;
         shootOn = false;
 
         //현재 사용중인 무기는 숨긴다
@@ -322,7 +326,8 @@ public class PlayerWeapon : MonoBehaviour
         ResetBuff();
 
         //무기 교체 쿨타임
-        StartCoroutine(ChangePauseRoutine());
+        if(!instant)
+            StartCoroutine(ChangePauseRoutine());
     }
 
     //버프 초기화 시 현재 무기 스텟을 리셋한다. Player Stats Buff에서 콜, 총기 변경 시마다 콜.

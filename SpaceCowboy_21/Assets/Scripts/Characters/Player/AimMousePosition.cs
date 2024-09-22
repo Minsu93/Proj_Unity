@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Spine.Unity;
 using Spine;
-using SpaceCowboy;
 
 public class AimMousePosition : MonoBehaviour
 {

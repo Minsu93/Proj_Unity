@@ -20,12 +20,13 @@ public class FollowingShuttle : MonoBehaviour
     Vector3 viewScale;
 
     //스킬 및 현재 쿨타임 
-    public List<SkillCoolTime> skillCoolTimeList = new List<SkillCoolTime>();
+    //public List<SkillCoolTime> skillCoolTimeList = new List<SkillCoolTime>();
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         viewScale = viewTr.localScale;
+        InitializeShuttle();
     }
 
     // 셔틀 처음 스테이지에 생성 시 
@@ -33,77 +34,77 @@ public class FollowingShuttle : MonoBehaviour
     {
         shuttleActivate = true;
         ResetShuttle();
-        LoadSkillData();
-
+        //LoadSkillData();
     }
 
-    #region Load SkillData
-    void LoadSkillData()
-    {
-        List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
-        skillCoolTimeList.Clear();
-        //쿨타임 리스트 제작
-        for(int j = 0; j < skillDatas.Count; j++)
-        {
-            GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(skillDatas[j]);
-            GameObject obj = Instantiate(skillPrefab, this.transform);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            if (obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
-            {
-                SkillCoolTime cool = new SkillCoolTime(skill, skill.skillCoolTime);
-                skillCoolTimeList.Add(cool);
-                //skill에 인덱스 할당 및 초기화
-                skill.ShuttleSkillInitialize(j);
-            }
-            obj.SetActive(false);
-        }
+    //#region Load SkillData
+    //void LoadSkillData()
+    //{
+    //    List<string> skillDatas = GameManager.Instance.skillDictionary.LoadEquippedSkill();
+    //    skillCoolTimeList.Clear();
+    //    //쿨타임 리스트 제작
+    //    for(int j = 0; j < skillDatas.Count; j++)
+    //    {
+    //        GameObject skillPrefab = GameManager.Instance.skillDictionary.GetSkillPrefab(skillDatas[j]);
+    //        GameObject obj = Instantiate(skillPrefab, this.transform);
+    //        obj.transform.localPosition = Vector3.zero;
+    //        obj.transform.localRotation = Quaternion.identity;
+    //        if (obj.TryGetComponent<ShuttleSkill>(out ShuttleSkill skill))
+    //        {
+    //            SkillCoolTime cool = new SkillCoolTime(skill, skill.skillCoolTime);
+    //            skillCoolTimeList.Add(cool);
+    //            //skill에 인덱스 할당 및 초기화
+    //            skill.ShuttleSkillInitialize(j);
+    //        }
+    //        obj.SetActive(false);
+    //    }
 
-        //스킬 아이콘 등록
-        for(int i = 0; i < skillCoolTimeList.Count; i++)
-        {
-            GameManager.Instance.playerManager.UpdateSkillUIImage(i, skillCoolTimeList[i].skill_Instance.backicon, skillCoolTimeList[i].skill_Instance.fillicon);
-            GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
-        }
-    }
+    //    //스킬 아이콘 등록
+    //    for(int i = 0; i < skillCoolTimeList.Count; i++)
+    //    {
+    //        GameManager.Instance.playerManager.UpdateSkillUIImage(i, skillCoolTimeList[i].skill_Instance.backicon, skillCoolTimeList[i].skill_Instance.fillicon);
+    //        GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
+    //    }
+    //}
 
-    #endregion
+    //#endregion
 
     private void FixedUpdate()
     {
         if (!shuttleActivate) return;
 
-        //스킬 버튼 클릭시 
-        if (startSkill)
-        {
-            if(!useSkill)
-            {
-                //거리 계산
-                float dist = Vector2.Distance(transform.position, ShuttleMoveTargetPos);
-                if(dist < 0.1f)
-                {
-                    //스킬 진짜 시작
-                    useSkill = true;
-                    physicsColl.enabled = false;
-                    curSkill.gameObject.SetActive(true);
+        ////스킬 버튼 클릭시 
+        //if (startSkill)
+        //{
+        //    if(!useSkill)
+        //    {
+        //        //거리 계산
+        //        float dist = Vector2.Distance(transform.position, ShuttleMoveTargetPos);
+        //        if(dist < 0.1f)
+        //        {
+        //            //스킬 진짜 시작
+        //            useSkill = true;
+        //            physicsColl.enabled = false;
+        //            curSkill.gameObject.SetActive(true);
 
-                    ResetDel resetDel = ResetEachSkill;
-                    curSkill.ActivateShuttleSkill(resetDel);
-                }
-                else
-                {
-                    //스킬 위치까지 이동
-                    RigidBodyMoveToPosition(ShuttleMoveTargetPos, out _ );
-                }
-            }
-            
-        }
-        else
-        {
-            //평소
-            RigidBodyFollowPlayer();
-        } 
-        
+        //            ResetDel resetDel = ResetEachSkill;
+        //            curSkill.ActivateShuttleSkill(resetDel);
+        //        }
+        //        else
+        //        {
+        //            //스킬 위치까지 이동
+        //            RigidBodyMoveToPosition(ShuttleMoveTargetPos, out _ );
+        //        }
+        //    }
+
+        //}
+        //else
+        //{
+        //    //평소
+        //    RigidBodyFollowPlayer();
+        //} 
+
+        RigidBodyFollowPlayer();
     }
 
     #region BaseMovement
@@ -141,6 +142,7 @@ public class FollowingShuttle : MonoBehaviour
     }
 
     bool isRight = true;
+
     void RigidBodyMoveToPosition(Vector2 targetPos, out float distance)
     {
         Vector2 targetPosition = targetPos;
@@ -171,59 +173,58 @@ public class FollowingShuttle : MonoBehaviour
 
     private void Update()
     {
-        //스킬별로 쿨타임을 카운트.
-        if(skillCoolTimeList.Count > 0 )
-        {
-            for(int i = 0; i < skillCoolTimeList.Count; i++)
-            {
-                if (!skillCoolTimeList[i].isReady && !skillCoolTimeList[i].isUsing)
-                {
-                    skillCoolTimeList[i].CoolTimeWait();
-                    GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
-                }
-            }
-        }
+        ////스킬별로 쿨타임을 카운트.
+        //if(skillCoolTimeList.Count > 0 )
+        //{
+        //    for(int i = 0; i < skillCoolTimeList.Count; i++)
+        //    {
+        //        if (!skillCoolTimeList[i].isReady && !skillCoolTimeList[i].isUsing)
+        //        {
+        //            skillCoolTimeList[i].CoolTimeWait();
+        //            GameManager.Instance.playerManager.UpdateSkillUICoolTime(i, skillCoolTimeList[i].GetCoolTimeFillAmount());
+        //        }
+        //    }
+        //}
 
-        //스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
-        if (!shuttleActivate) return;
+        ////스킬 사용 입력 감지 >> 스킬 사용을 위한 이동 시작.
+        //if (!shuttleActivate) return;
 
-        if (!startSkill)
-        {
-            int tempInt =  -1;
-            //1번
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-                tempInt = 0;
+        //if (!startSkill)
+        //{
+        //    int tempInt =  -1;
+        //    //1번
+        //    if (Input.GetKeyDown(KeyCode.Alpha1))
+        //        tempInt = 0;
 
-            //2번
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-                tempInt = 1;
+        //    //2번
+        //    else if (Input.GetKeyDown(KeyCode.Alpha2))
+        //        tempInt = 1;
 
-            //3번
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-                tempInt = 2;
+        //    //3번
+        //    else if (Input.GetKeyDown(KeyCode.Alpha3))
+        //        tempInt = 2;
 
-            //버튼이 눌렸다면?
-            if (tempInt > -1 && skillCoolTimeList.Count > tempInt && skillCoolTimeList[tempInt].isReady)
-            {
-                curSkill = skillCoolTimeList[tempInt].skill_Instance;
-                skillCoolTimeList[tempInt].ResetReady();    //사용 시작
-                GameManager.Instance.playerManager.UpdateSkillUICoolTime(tempInt, skillCoolTimeList[tempInt].GetCoolTimeFillAmount());  //아이콘 업데이트
-                skillCoolTimeList[tempInt].isUsing = true;
+        //    //버튼이 눌렸다면?
+        //    if (tempInt > -1 && skillCoolTimeList.Count > tempInt && skillCoolTimeList[tempInt].isReady)
+        //    {
+        //        curSkill = skillCoolTimeList[tempInt].skill_Instance;
+        //        skillCoolTimeList[tempInt].ResetReady();    //사용 시작
+        //        GameManager.Instance.playerManager.UpdateSkillUICoolTime(tempInt, skillCoolTimeList[tempInt].GetCoolTimeFillAmount());  //아이콘 업데이트
+        //        skillCoolTimeList[tempInt].isUsing = true;
 
-                // 사용 시작.
-                startSkill = true;
-                physicsColl.enabled = false;
-                ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
-            }
+        //        // 사용 시작.
+        //        startSkill = true;
+        //        physicsColl.enabled = false;
+        //        ShuttleMoveTargetPos = GameManager.Instance.playerManager.playerBehavior.mousePos;
+        //    }
             
-        }
+        //}
 
 
-
-        //기본 공격 
-        if (startSkill || stopAttack) return;
+        ////기본 공격 
+        //if (startSkill || stopAttack) return;
         
-        BaseAttackMethod();
+        //BaseAttackMethod();
     }
 
     #region BaseAttack
@@ -327,13 +328,13 @@ public class FollowingShuttle : MonoBehaviour
     }
     #endregion
 
-    void ResetEachSkill(int index)
-    {
-        //선택한 인덱스 스킬만 초기화
-        skillCoolTimeList[index].isUsing = false;
-        //전체 초기화
-        ResetShuttle();
-    }
+    //void ResetEachSkill(int index)
+    //{
+    //    //선택한 인덱스 스킬만 초기화
+    //    skillCoolTimeList[index].isUsing = false;
+    //    //전체 초기화
+    //    ResetShuttle();
+    //}
 
     void ResetShuttle()
     {
@@ -350,67 +351,51 @@ public class FollowingShuttle : MonoBehaviour
 public delegate void ResetDel(int index);
 
 
-[Serializable] 
-public struct ProjectileAttackProperty
-{
-    public int numberOfBurst;
-    public float burstInterval;
-    public int numberOfProjectile;
-    public float projectileSpread;
-    public float randomSpreadAngle;
-    public GameObject projectilePrefab;
-    public float damage;
-    public float speed;
-    public float lifeTime;
-    public float range;
-    public float shootCoolTime ;
-}
 
+//[Serializable]
+//public class SkillCoolTime
+//{
+//    public ShuttleSkill skill_Instance;
+//    public bool isUsing;
+//    public bool isReady;
+//    float coolTime;
+//    float curTime;
 
-[Serializable]
-public class SkillCoolTime
-{
-    public ShuttleSkill skill_Instance;
-    public bool isUsing;
-    public bool isReady;
-    float coolTime;
-    float curTime;
+//    public SkillCoolTime(ShuttleSkill instance, float coolTime)
+//    {
+//        this .skill_Instance = instance;
+//        this.isUsing = false;
+//        this.isReady = false;
+//        this.coolTime = coolTime;
+//        this.curTime = 0;
+//    }
 
-    public SkillCoolTime(ShuttleSkill instance, float coolTime)
-    {
-        this .skill_Instance = instance;
-        this.isUsing = false;
-        this.isReady = false;
-        this.coolTime = coolTime;
-        this.curTime = 0;
-    }
+//    public void CoolTimeWait()
+//    {
+//        if (!isReady)
+//        {
+//            curTime += Time.deltaTime;
+//            if (curTime >= coolTime) 
+//            {
+//                isReady = true;
+//                curTime = coolTime;
+//            }
+//        }
+//    }
 
-    public void CoolTimeWait()
-    {
-        if (!isReady)
-        {
-            curTime += Time.deltaTime;
-            if (curTime >= coolTime) 
-            {
-                isReady = true;
-                curTime = coolTime;
-            }
-        }
-    }
+//    public void ResetReady()
+//    {
+//        isReady = false;
+//        curTime = 0;
+//    }
 
-    public void ResetReady()
-    {
-        isReady = false;
-        curTime = 0;
-    }
+//    public float GetCoolTimeFillAmount()
+//    {
+//        if(coolTime == 0)
+//        {
+//            return 0;
+//        }
+//        else return curTime / coolTime;
+//    }
 
-    public float GetCoolTimeFillAmount()
-    {
-        if(coolTime == 0)
-        {
-            return 0;
-        }
-        else return curTime / coolTime;
-    }
-
-}
+//}

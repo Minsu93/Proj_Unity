@@ -421,7 +421,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 17458089}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2075,9 +2075,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 164493980}
+      - m_Target: {fileID: 17458089}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7331,9 +7331,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 511561866}
+      - m_Target: {fileID: 17458089}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11818,9 +11818,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 827511458}
+      - m_Target: {fileID: 17458089}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17805,7 +17805,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1225983784}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21237,9 +21237,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1441758503}
+      - m_Target: {fileID: 17458089}
         m_TargetAssemblyTypeName: LoadSceneMethod, Assembly-CSharp
-        m_MethodName: Loadscene
+        m_MethodName: StageStart
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

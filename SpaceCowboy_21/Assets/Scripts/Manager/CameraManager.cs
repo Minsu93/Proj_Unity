@@ -54,8 +54,6 @@ public class CameraManager : MonoBehaviour
 
     public void SetVirtualCam()
     {
-        Debug.Log("Set Vcam");
-
         GameObject camObj = GameObject.FindGameObjectWithTag("Vcam");
         if (camObj == null) return;
         
@@ -78,8 +76,6 @@ public class CameraManager : MonoBehaviour
 
     public void ResetCam()
     {
-        Debug.Log("Reset Vcam");
-
         virtualCameraMain = null;
     }
 

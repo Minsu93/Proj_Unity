@@ -29,6 +29,8 @@ public class PlayerHealth : MonoBehaviour
         currHealth = maxHealth;
         currShield = maxShield;
         //healthState = HealthState.Default;
+        GameManager.Instance.playerManager.UpdatePlayerStatusUI();
+
     }
 
     public bool AnyDamage(float dmg)

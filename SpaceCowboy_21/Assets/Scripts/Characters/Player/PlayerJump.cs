@@ -1,4 +1,3 @@
-using SpaceCowboy;
 using System.Collections;
 using UnityEngine;
 
@@ -133,9 +132,9 @@ public class PlayerJump : MonoBehaviour
 
     #region  Jump
 
-    public void RemoveJumpArrow()
+    public void RemoveJumpArrow(bool activate)
     {
-        jumpArrowViewer.gameObject.SetActive(false);
+        jumpArrowViewer.gameObject.SetActive(activate);
     }
 
     //점프에 사용되는 변수 JumpVector를 업데이트한다.

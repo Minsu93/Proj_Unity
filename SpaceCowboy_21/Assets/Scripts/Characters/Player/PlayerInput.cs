@@ -1,4 +1,3 @@
-using SpaceCowboy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -101,6 +100,19 @@ public class PlayerInput : MonoBehaviour
         }
 
 
+        //드론 사용
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            GameManager.Instance.playerManager.UseDrone(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            GameManager.Instance.playerManager.UseDrone(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            GameManager.Instance.playerManager.UseDrone(2);
+        }
 
         //움직임
         MoveUpdate();

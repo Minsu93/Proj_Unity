@@ -1,4 +1,3 @@
-using SpaceCowboy;
 using Spine.Unity;
 using Spine;
 using System.Collections;

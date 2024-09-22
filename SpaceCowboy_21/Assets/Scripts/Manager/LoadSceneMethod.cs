@@ -9,4 +9,9 @@ public class LoadSceneMethod : MonoBehaviour
         GameManager.Instance.LoadsceneByName(sceneName);
     }
 
+    public void StageStart(string sceneName)
+    {
+        GameManager.Instance.StageStart(sceneName);
+    }
+
 }

@@ -10399,6 +10399,7 @@ GameObject:
   - component: {fileID: 9007588099006207609}
   - component: {fileID: 9007588099006207589}
   - component: {fileID: 7998577281222330454}
+  - component: {fileID: 7052567145415845298}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -10531,12 +10532,12 @@ MonoBehaviour:
   dashMaxCount: 1
   dashTime: 0.4
   unHittableTime: 1
+  dashGaugeCost: 100
   boostForce: 15
   speedLimit: 15
   rechargeSpeed: 100
   boostGaugeRate: 50
   boostMaxGauge: 100
-  boostCurGauge: 0
   waitSecondToRecharge: 2
   doingDash: 0
   sJumpTrail: {fileID: 2056016844}
@@ -10554,6 +10555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0233c0ee869337a45aa7ed07257ee445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponSlot: 3
   weaponChangeTime: 0.3
   sightLineRenderer: {fileID: 9038096803213095484}
   bone1H: {fileID: 3446928774385788913}
@@ -10593,7 +10595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 10
-  maxShield: 10
+  maxShield: 0
   InvincibleTime: 0
 --- !u!114 &7998577281222330454
 MonoBehaviour:
@@ -10605,6 +10607,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85d1ec31be56da14296982163519d586, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7052567145415845298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9007588099006207600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebf429e8d44e58418e861f71e764694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &9007588099135374057

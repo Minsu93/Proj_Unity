@@ -100,7 +100,6 @@ public class WaveManager : MonoBehaviour
         string[] words = sceneName.Split('_');  // words[0] = Stage, words[1] = 챕터index, words[2] = 스테이지 index
 
         string address = "Stage/" + words[0] + words[1] + "/" + words[2] + ".json";
-        Debug.Log(address);
         stage = LoadManager.Load<Stage>(address);
 
         //string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");

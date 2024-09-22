@@ -136,21 +136,32 @@ public class GameManager : MonoBehaviour
         cameraManager.SetVirtualCam();
         cameraManager.InitCam();
 
+        
         playerObj.SetActive(false);
         return playerObj;
     }
 
-    public GameObject SpawnShuttle(Vector2 pos, Quaternion rot)
+    public void RespawnPlayer(Vector2 pos, Quaternion rot)
     {
-        GameObject shuttleObj = Instantiate(shuttlePrefab, pos, rot);
-        if(shuttleObj.TryGetComponent<FollowingShuttle>(out FollowingShuttle shuttle))
-        {
-            shuttle.InitializeShuttle();
-        }
+        playerIsAlive = true;
+        cameraManager.StartCameraFollow();
 
-        shuttleObj.SetActive(false);
-        return shuttleObj;
+        playerManager.playerBehavior.InitPlayer();
+
+
     }
+
+    //public GameObject SpawnShuttle(Vector2 pos, Quaternion rot)
+    //{
+    //    GameObject shuttleObj = Instantiate(shuttlePrefab, pos, rot);
+    //    if(shuttleObj.TryGetComponent<FollowingShuttle>(out FollowingShuttle shuttle))
+    //    {
+    //        shuttle.InitializeShuttle();
+    //    }
+
+    //    shuttleObj.SetActive(false);
+    //    return shuttleObj;
+    //}
 
 
     #endregion
@@ -165,8 +176,8 @@ public class GameManager : MonoBehaviour
         if (PlayerDeadEvent != null)
             PlayerDeadEvent();
 
-        if(cameraManager != null)
-            cameraManager.StopCameraFollow();
+        cameraManager.StopCameraFollow();
+
     }
 
     //플레이어가 위치 이동을 했을 때(맵 경계, 혹은 텔레포트 기계)
@@ -189,7 +200,8 @@ public class GameManager : MonoBehaviour
     int maxStage = 5;
     //상황에 따른 로비 진입 이벤트
     [SerializeField] private string lobbyName = "LobbyUI";
-
+    delegate void AfterSceneLoadEvent();
+    AfterSceneLoadEvent sceneDel;
     
 
     //씬 로드
@@ -198,12 +210,18 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(LoadSceneRoutine(sceneName));
     }
+
+    public void StageStart(string sceneName)
+    {
+        StartCoroutine(LoadSceneRoutine(sceneName));
+        playerManager.InitializeLife();
+        sceneDel = ShowStartUI;
+    }
     
     //플레이어 사망  > 로비 진입 시 
     public void ReturnToLobby()
     {
         StartCoroutine(LoadSceneRoutine(lobbyName));
-        poolManager.ResetPools();
     }
 
     public void MoveToNextStage()
@@ -212,12 +230,12 @@ public class GameManager : MonoBehaviour
         //다음 스테이지로 이동
         string sceneStr = "Stage_" + chapterIndex.ToString() + "_" + stageIndex.ToString();
         StartCoroutine(LoadSceneRoutine(sceneStr));
-        poolManager.ResetPools();
+
     }
     public void ChapterClear()
     {
         StartCoroutine(LoadSceneRoutine(lobbyName));
-        poolManager.ResetPools();
+        //poolManager.ResetPools();
         //챕터를 클리어 했으면 ChapterIndex ++
         chapterIndex++;
         stageIndex = 1;
@@ -253,17 +271,24 @@ public class GameManager : MonoBehaviour
         Debug.Log("씬 불러오기 완료");
 
         TransitionFadeOut(false);
+        if (sceneDel != null) sceneDel();
     }
 
 
-
-    public IEnumerator ShowStageStartUI(float startDelay, float endDelay)
+    void ShowStartUI()
+    {
+        StartCoroutine(ShowStageStartUIRoutine(1f, 1f));
+    }
+    IEnumerator ShowStageStartUIRoutine(float startDelay, float endDelay)
     {
         yield return new WaitForSeconds(startDelay);
         stageStartUi.gameObject.SetActive(true);
         yield return new WaitForSeconds(endDelay);
         stageStartUi.gameObject.SetActive(false);
+        sceneDel = null;
+
     }
+
 
     public IEnumerator ShowStageEndUI(float startDelay, float endDelay )
     {

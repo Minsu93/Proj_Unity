@@ -7,7 +7,7 @@ using UnityEngine;
 public class Bubble_Weapon : SelfCollectable
 {
     [SerializeField] private WeaponData weaponData;
-    public Action WeaponConsumeEvent;
+    public event System.Action WeaponConsumeEvent;
     SpriteRenderer spr;
     protected override void Awake()
     {
@@ -25,8 +25,6 @@ public class Bubble_Weapon : SelfCollectable
         //무기 교체
         if(WeaponConsumeEvent != null) WeaponConsumeEvent();
         
-        Debug.Log(weaponData.name);
-        
         return GameManager.Instance.playerManager.ChangeWeapon(weaponData);
     }
     public void SetBubble(WeaponData w_Data)
@@ -35,12 +33,6 @@ public class Bubble_Weapon : SelfCollectable
         spr.sprite = w_Data.BubbleIcon;
     }
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        UnityEditor.Handles.color = Color.white;
-        UnityEditor.Handles.Label(transform.position + (Vector3.right * 1.1f), weaponData.name);
-    }
-#endif
+
 
 }
