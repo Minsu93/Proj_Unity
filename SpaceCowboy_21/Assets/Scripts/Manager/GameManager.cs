@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject stageUI;
     Transform stageStartUi;
     Transform stageEndUi;
+    
 
     [Space]
     public bool playBGM;
@@ -93,8 +94,11 @@ public class GameManager : MonoBehaviour
 
 
         weaponDictionary.LoadWeaponDictionary();
-        weaponDictionary.LoadEquippedWeapons();
+        //weaponDictionary.LoadEquippedWeapons();
         skillDictionary.LoadSkillDictionary();
+
+        //무기 정보 업데이트
+        popperManager.PopperReady();
 
         fadeCanvas = fadeoutAnimator.transform.parent.gameObject;
 
@@ -117,6 +121,22 @@ public class GameManager : MonoBehaviour
 
     }
 
+    Vector2 mapSize;
+    public Vector2 MapSize
+    {
+        get
+        {
+            if(mapSize == default)
+            {
+                MapBorder border = GameObject.FindGameObjectWithTag("SpaceBorder").GetComponent<MapBorder>();
+                mapSize = new Vector2(border.width / 2, border.height / 2);
+                Debug.Log("mapSize is : " + mapSize.ToString());
+            }
+
+            return mapSize;
+        }
+    }
+
     #region 캐릭터, 셔틀 스폰
     public GameObject SpawnPlayer(Vector2 pos, Quaternion rot)
     {
@@ -129,8 +149,6 @@ public class GameManager : MonoBehaviour
         //플레이어생명 변수 업데이트
         playerIsAlive = true;
 
-        //무기 정보 업데이트
-        popperManager.PopperReady();
 
         //카메라 정보 업데이트
         cameraManager.SetVirtualCam();

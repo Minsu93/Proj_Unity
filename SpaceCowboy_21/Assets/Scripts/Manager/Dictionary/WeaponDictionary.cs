@@ -6,36 +6,74 @@ using System;
 
 public class WeaponDictionary : MonoBehaviour
 {
+    [Header("Guns")]
     [SerializeField]
     List<WeaponData> weaponDataList = new List<WeaponData>();   //리스트에는 모든 weaponData들을 넣어두면 된다.
-    Dictionary<string, WeaponState> weaponNameDictionary = new Dictionary<string, WeaponState>();
-    public WeaponStates myWeaponStates;
+    public List<WeaponData> unlockedDataList = new List<WeaponData>();  //해금된 weapon리스트
 
-    public void SetWeaponState(string name,bool unlocked, bool bought)
+    Dictionary<string, UnlockedState> weaponNameDictionary = new Dictionary<string, UnlockedState>();
+    UnlockedStates myWeaponStates;    //모든 아이템 해금 정보 + weaponData
+
+    [Header("Drones")]
+    [SerializeField] List<GameObject> dronPrefabList = new List<GameObject> ();//리스트에는 모든 dronePrefab들을 넣어두면 된다.
+    public List<GameObject> unlockedDroneList = new List<GameObject> ();
+
+    Dictionary<string, UnlockedState> droneNameDictionary = new Dictionary<string, UnlockedState>();
+    UnlockedStates myDroneStates;    //모든 아이템 해금 정보 + weaponData
+
+    public void SetWeaponState(string name,bool unlocked)
     {
-        WeaponState newState = new WeaponState();
-        newState.name = name;
-        newState.unlocked = unlocked;
-        newState.bought = bought;
+        weaponNameDictionary.TryGetValue(name, out UnlockedState state);
+        state.unlocked = unlocked;
 
-        for(int i  = 0; i < myWeaponStates.states.Count; i++)
-        {
-            if(myWeaponStates.states[i].name == name)
-            {
-                newState.price = myWeaponStates.states[i].price;
-                newState.weaponData = myWeaponStates.states[i].weaponData;
-                myWeaponStates.states[i] = newState;
-            }
-        }
+        SaveWeaponDictionary();
     }
 
-    public WeaponState GetWeaponState(string name)
+    //public UnlockedState GetWeaponState(string name)
+    //{
+    //    if(!weaponNameDictionary.TryGetValue(name, out UnlockedState state))
+    //    {
+    //        Debug.Log("해당 weapon이이 Dictionary에 없습니다");
+    //    }
+    //    return state;
+    //}
+    //public T GetItemData<T>(string name)
+    //{
+    //    if(typeof(T) == typeof(WeaponData))
+    //    {
+    //        return (T)(object)unlockedDataList.Find(item => item.name.Equals(name));
+    //    }
+    //    else 
+    //    {
+    //        return (T)(object)unlockedDroneList.Find(item => item.name.Equals(name));
+    //    }
+
+    //}
+
+    void UpdateUnlockedDataList()
     {
-        if(!weaponNameDictionary.TryGetValue(name, out WeaponState state))
+        for(int i  = 0;  i < myWeaponStates.states.Count; i++)
         {
-            Debug.Log("해당 weapon이이 Dictionary에 없습니다");
+            if (myWeaponStates.states[i].unlocked)
+            {
+                WeaponData data = weaponDataList.Find(item => item.name.Equals(myWeaponStates.states[i].name));
+                if (data != null)
+                {
+                    unlockedDataList.Add(data);
+                }
+            }
         }
-        return state;
+        for (int j = 0; j < myDroneStates.states.Count; j++)
+        {
+            if (myDroneStates.states[j].unlocked)
+            {
+                GameObject prefab = dronPrefabList.Find(item => item.name.Equals(myDroneStates.states[j].name)); ;
+                if (prefab != null)
+                {
+                    unlockedDroneList.Add(prefab);
+                }
+            }
+        }
     }
 
     #region 저장&불러오기
@@ -45,9 +83,10 @@ public class WeaponDictionary : MonoBehaviour
     /// </summary>
     public void SaveWeaponDictionary()
     {
-        string path = Path.Combine(Application.dataPath, "Data/ItemData", "weaponData.json");
-        string str = JsonUtility.ToJson(myWeaponStates, true);
-        File.WriteAllText(path, str);
+        LoadManager.Save<UnlockedStates>(myWeaponStates, "ItemData/weaponData.json");
+        LoadManager.Save<UnlockedStates>(myDroneStates, "ItemData/droneData.json");
+        
+        UpdateUnlockedDataList();
     }
 
     /// <summary>
@@ -55,71 +94,72 @@ public class WeaponDictionary : MonoBehaviour
     /// </summary>
     public void LoadWeaponDictionary()
     {
-        string path = Path.Combine(Application.dataPath, "Data/ItemData", "weaponData.json");
-        string loadJson = File.ReadAllText(path);
-        myWeaponStates = JsonUtility.FromJson<WeaponStates>(loadJson);
+        myWeaponStates = LoadManager.Load<UnlockedStates>("ItemData/weaponData.json");
+        myDroneStates =  LoadManager.Load<UnlockedStates>("ItemData/droneData.json");
+
 
         for (int i = 0; i < myWeaponStates.states.Count; i++)
         {
-            string weaponName = myWeaponStates.states[i].name;
-            WeaponData data = weaponDataList.Find(item => item.name.Equals(weaponName));
-            myWeaponStates.states[i].weaponData = data;
-            weaponNameDictionary.Add(weaponName, myWeaponStates.states[i]);
+            weaponNameDictionary.Add(myWeaponStates.states[i].name, myWeaponStates.states[i]);
         }
+
+        for(int j = 0; j < myDroneStates.states.Count; j++)
+        {
+            droneNameDictionary.Add(myDroneStates.states[j].name, myDroneStates.states[j]);
+        }
+
+        UpdateUnlockedDataList();
 
         Debug.Log("Weapon정보 불러오기 완료");
     }
-
+    
     #endregion
 
 
-    #region EquippedWeapon 장착된 무기 저장 & 불러오기
+    //#region EquippedWeapon 장착된 무기 저장 & 불러오기
 
-    public List<string> equippedNamesList { get; private set; }
-    public void SaveEquippedWeapons(List<string> names)
-    {
-        equippedNamesList = names;
+    //public List<string> equippedNamesList { get; private set; }
+    //public void SaveEquippedWeapons(List<string> names)
+    //{
+    //    equippedNamesList = names;
 
-        EquippedWeaponData data = new EquippedWeaponData();
-        data.equippedWeaponNames = equippedNamesList;
+    //    EquippedWeaponData data = new EquippedWeaponData();
+    //    data.equippedWeaponNames = equippedNamesList;
 
-        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
-        string str = JsonUtility.ToJson(data, true);
-        File.WriteAllText(path, str);
-    }
+    //    string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+    //    string str = JsonUtility.ToJson(data, true);
+    //    File.WriteAllText(path, str);
+    //}
 
-    public void LoadEquippedWeapons()
-    {
+    //public void LoadEquippedWeapons()
+    //{
 
-        string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
-        string loadJson = File.ReadAllText(path);
-        EquippedWeaponData data = JsonUtility.FromJson<EquippedWeaponData>(loadJson);
+    //    string path = Path.Combine(Application.dataPath + "/Data/PlayerData/equippedWeapon.json");
+    //    string loadJson = File.ReadAllText(path);
+    //    EquippedWeaponData data = JsonUtility.FromJson<EquippedWeaponData>(loadJson);
 
-        equippedNamesList = data.equippedWeaponNames;
-
-
-
-    }
+    //    equippedNamesList = data.equippedWeaponNames;
 
 
-    #endregion
+
+    //}
+
+
+    //#endregion
 
 }
 
 [Serializable]
-public class WeaponState
+public class UnlockedState
 {
     public string name;
     public bool unlocked;
-    public bool bought;
-    public int price;
-    public WeaponData weaponData { get; set; }
 }
 
 [Serializable]
-public class WeaponStates
+public class UnlockedStates
 {
-    public List<WeaponState> states = new List<WeaponState>();
+    public List<UnlockedState> states = new List<UnlockedState>();
 }
 
 [Serializable]

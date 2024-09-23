@@ -328,7 +328,7 @@ public class WaveManager : MonoBehaviour
         if (GameManager.Instance.IsNextStageAvailable())
         {
             //다음 스테이지로 이동
-            GameManager.Instance.MoveToNextStage();
+            StartCoroutine(NextStageRoutine());
         }
         else
         {
@@ -336,6 +336,12 @@ public class WaveManager : MonoBehaviour
             StartCoroutine(ClearRoutine());
         }
         
+    }
+
+    IEnumerator NextStageRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        GameManager.Instance.MoveToNextStage();
     }
 
     IEnumerator ClearRoutine()

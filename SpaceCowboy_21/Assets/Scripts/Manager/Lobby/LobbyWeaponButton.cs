@@ -6,101 +6,101 @@ using UnityEngine.UI;
 
 public class LobbyWeaponButton : MonoBehaviour
 {
-    [SerializeField] private Button button;
-    [SerializeField] private Image image;
-    [SerializeField] private TextMeshProUGUI text;
+    //[SerializeField] private Button button;
+    //[SerializeField] private Image image;
+    //[SerializeField] private TextMeshProUGUI text;
 
 
-    //버튼 생성 시 초기화
-    public void SetEquipButton(WeaponState state, LobbyWeapon lobby)
-    {
-        image.sprite = state.weaponData.Icon;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => EquipEvent(state,lobby));
-    }
+    ////버튼 생성 시 초기화
+    //public void SetEquipButton(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    image.sprite = state.weaponData.Icon;
+    //    button.onClick.RemoveAllListeners();
+    //    button.onClick.AddListener(() => EquipEvent(state,lobby));
+    //}
 
     
-    public void SetShopButton(WeaponState state, LobbyWeapon lobby)
-    {
-        image.sprite = state.weaponData.Icon;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => PurchaseEvent(state, lobby));
-        if (text != null) text.text = "Cost : " + state.price.ToString();
-    }
+    //public void SetShopButton(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    image.sprite = state.weaponData.Icon;
+    //    button.onClick.RemoveAllListeners();
+    //    button.onClick.AddListener(() => PurchaseEvent(state, lobby));
+    //    if (text != null) text.text = "Cost : " + state.price.ToString();
+    //}
 
-    public void SetDisarmButton(WeaponState state, LobbyWeapon lobby)
-    {
-        image.sprite = state.weaponData.Icon;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => EquipmentDisarmEvent(state, lobby));
-    }
+    //public void SetDisarmButton(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    image.sprite = state.weaponData.Icon;
+    //    button.onClick.RemoveAllListeners();
+    //    button.onClick.AddListener(() => EquipmentDisarmEvent(state, lobby));
+    //}
 
-    public void SetSkillEquipButton(Sprite icon, string name, LobbySkill lobby)
-    {
-        image.sprite = icon;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => SkillEquipEvent(name, lobby));
+    //public void SetSkillEquipButton(Sprite icon, string name, LobbySkill lobby)
+    //{
+    //    image.sprite = icon;
+    //    button.onClick.RemoveAllListeners();
+    //    button.onClick.AddListener(() => SkillEquipEvent(name, lobby));
 
-    }
-    public void SetSkillDisarmButton(Sprite icon, string name, LobbySkill lobby)
-    {
-        image.sprite = icon;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => SkillDisarmEvent(name, lobby));
+    //}
+    //public void SetSkillDisarmButton(Sprite icon, string name, LobbySkill lobby)
+    //{
+    //    image.sprite = icon;
+    //    button.onClick.RemoveAllListeners();
+    //    button.onClick.AddListener(() => SkillDisarmEvent(name, lobby));
 
-    }
+    //}
 
-    //버튼 클릭 시 장착을 시도
-    void EquipEvent(WeaponState state, LobbyWeapon lobby)
-    {
-        if (lobby.EquipItem(state))
-        {
-            //장착 성공 시 
-            SetInteractableButton(false);
-        }
-        else
-        {
-            //장착 실패 시 아무일도 일어나지 않음.
-        }
-    }
+    ////버튼 클릭 시 장착을 시도
+    //void EquipEvent(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    if (lobby.EquipItem(state))
+    //    {
+    //        //장착 성공 시 
+    //        SetInteractableButton(false);
+    //    }
+    //    else
+    //    {
+    //        //장착 실패 시 아무일도 일어나지 않음.
+    //    }
+    //}
 
-    //버튼 클릭 시 구매를 시도 
-    void PurchaseEvent(WeaponState state, LobbyWeapon lobby)
-    {
-        //돈 있는지 검사 
+    ////버튼 클릭 시 구매를 시도 
+    //void PurchaseEvent(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    //돈 있는지 검사 
 
-        //돈이 있는 경우에만 다음으로 작동 
+    //    //돈이 있는 경우에만 다음으로 작동 
 
-        lobby.BuyItem(state);
-    }
+    //    lobby.BuyItem(state);
+    //}
 
-    void EquipmentDisarmEvent(WeaponState state, LobbyWeapon lobby)
-    {
-        //해당하는 버튼의 아이템을 장착 해제헌다. 
-        lobby.DisarmItem(state);
-    }
-    void SkillEquipEvent(string name, LobbySkill lobby)
-    {
-        lobby.EquipSkill(name);
-    }
+    //void EquipmentDisarmEvent(UnlockedState state, LobbyWeapon lobby)
+    //{
+    //    //해당하는 버튼의 아이템을 장착 해제헌다. 
+    //    lobby.DisarmItem(state);
+    //}
+    //void SkillEquipEvent(string name, LobbySkill lobby)
+    //{
+    //    lobby.EquipSkill(name);
+    //}
 
-    void SkillDisarmEvent(string name, LobbySkill lobby)
-    {
-        lobby.DisarmSkill(name);
-    }
+    //void SkillDisarmEvent(string name, LobbySkill lobby)
+    //{
+    //    lobby.DisarmSkill(name);
+    //}
 
-    public void SetInteractableButton(bool enable)
-    {
-        button.interactable = enable;
-    }
+    //public void SetInteractableButton(bool enable)
+    //{
+    //    button.interactable = enable;
+    //}
 
-    public void ClearButton()
-    {
-        image.sprite = Resources.Load<Sprite>("UI/Empty");
-        if(text!= null) text.text = "";
-        button.onClick.RemoveAllListeners();
-        SetInteractableButton(false);
+    //public void ClearButton()
+    //{
+    //    image.sprite = Resources.Load<Sprite>("UI/Empty");
+    //    if(text!= null) text.text = "";
+    //    button.onClick.RemoveAllListeners();
+    //    SetInteractableButton(false);
 
-    }
+    //}
 
 }

@@ -583,8 +583,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 84677081ce46e7f4db93a7cdeca13f03, type: 2}
   - {fileID: 11400000, guid: 0e5bd9d7cca47e441b14b99dfde2ae3a, type: 2}
   - {fileID: 11400000, guid: 4439c385956f89b4280993193843ffee, type: 2}
-  myWeaponStates:
-    states: []
+  unlockedDataList: []
+  dronPrefabList:
+  - {fileID: 7829265998662957305, guid: 057b3c1263b67e343b4daf584a272ccc, type: 3}
+  - {fileID: 2611145516192744299, guid: 9d0502a6073f5d843935f91b0152fdd5, type: 3}
+  unlockedDroneList: []
 --- !u!1 &2172668778671552628
 GameObject:
   m_ObjectHideFlags: 0
