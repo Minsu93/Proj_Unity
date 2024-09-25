@@ -15,9 +15,9 @@ public class StartPoint : MonoBehaviour
     {
         ReadyPlayer();
 
-        GameManager.Instance.TransitionFadeOut(false);
-        GameManager.Instance.cameraManager.SetStartCamera(CamDist.Back);
-        GameManager.Instance.cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
+        //GameManager.Instance.TransitionFadeOut(false);
+        //GameManager.Instance.cameraManager.SetStartCamera(CamDist.Back);
+        //GameManager.Instance.cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
         //애니메이션 시작 
         animator.SetTrigger("spawn");
     }

@@ -10,10 +10,9 @@ public class PopperManager : MonoBehaviour
     //발사 사이 간격
     [SerializeField] GameObject popperPrefab;
     [SerializeField] private float gapBetweenOrbs = 3.0f;
-    [SerializeField] private float launchHeight = 5.0f;
-    [SerializeField] private float launchRadius = 5.0f;
+    //[SerializeField] private float launchHeight = 5.0f;
+    //[SerializeField] private float launchRadius = 5.0f;
     [SerializeField] private float launchInterval = 0.3f;   //발사 사이 간격 
-
 
     //드롭 확률 조절 관련
     List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
@@ -60,7 +59,7 @@ public class PopperManager : MonoBehaviour
         ResizeDropChance(equippedWeapons);
         ResizeDropChance(equippedDrones);
 
-
+        currentDropChance = totalDropChance;
     }
 
     #endregion
@@ -71,15 +70,13 @@ public class PopperManager : MonoBehaviour
         if (!dropReady) return;
         //createPopper 요청이 오면 totalDropChance 확률로 아이템을 스폰한다. 
         float random = UnityEngine.Random.Range(0, 1.0f);
-        if (random < totalDropChance)
+        if (random < currentDropChance)
         {
             // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
             GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
             firework.transform.position = targetTr.position;
             firework.transform.rotation = targetTr.rotation;
             
-
-
             //Weapon 대 Dronem 의 비는 6:4 이다.
             float WeaponRatio = 0.6f;
             float randomF = UnityEngine.Random.Range(0, 1.0f);
@@ -105,7 +102,13 @@ public class PopperManager : MonoBehaviour
                 else Debug.LogWarning("DroneObject cast failed. The item is not of type DroneObject.");
             }
 
+            currentDropChance = totalDropChance;
             dropReady = false;
+        }
+        else
+        {
+            //드랍이 안될 경우 1.1배씩 계속 증가.
+            currentDropChance *= 1.1f;
         }
     }
     
@@ -119,7 +122,7 @@ public class PopperManager : MonoBehaviour
         for (int i = 0; i < maxAttempts; i++)
         {
             float angle = UnityEngine.Random.Range(0, Mathf.PI * 2); 
-            float distance = UnityEngine.Random.Range(0, launchRadius); 
+            float distance = UnityEngine.Random.Range(3f, 5f); 
             Vector2 randomPoint = new Vector2(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle)); // 이 각도와 거리를 사용하여 원 내부의 랜덤한 포인트를 계산합니다.
             randomPoint += (Vector2)targetTr.position;
 
@@ -137,10 +140,11 @@ public class PopperManager : MonoBehaviour
             constraint.constrainWalkability = true;
             constraint.walkable = true;
 
-            GraphNode node = AstarPath.active.GetNearest(transform.position, constraint).node;
+            GraphNode node = AstarPath.active.GetNearest((Vector3)randomPoint, constraint).node;
             if(node != null)
             {
                 emptyPos = (Vector3)node.position;
+                Debug.Log("Try count : " + i.ToString() + "/ Pos is : " + emptyPos.ToString());
                 break;
             }
         }

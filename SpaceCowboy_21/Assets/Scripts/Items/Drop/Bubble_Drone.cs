@@ -15,6 +15,7 @@ public class Bubble_Drone : SelfCollectable
 
     protected override void OnEnable()
     {
+        base.OnEnable();
         ConsumeAction = null;
     }
 

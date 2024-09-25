@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8852527290070134896}
   - component: {fileID: 1543918964822904492}
+  - component: {fileID: 9018959910948654109}
   m_Layer: 12
   m_Name: View
   m_TagString: Untagged
@@ -84,6 +85,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &9018959910948654109
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6566855366646075317}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bd00dc31eac856e46b3652f21957d162, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7158106260931719753
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,4 +168,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   consumeEffect: {fileID: 6499634569363800450, guid: f67be9e5c8e4a3143bf98a6378c2aac4, type: 3}
-  weaponData: {fileID: 11400000, guid: e7e084a76e9aae644a83072ca9990bfb, type: 2}
+  lifeTime: 10
+  weaponData: {fileID: 0}

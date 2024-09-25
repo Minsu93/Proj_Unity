@@ -17,6 +17,7 @@ public class Bubble_Weapon : SelfCollectable
 
     protected override void OnEnable()
     {
+        base.OnEnable();
         //action √ ±‚»≠.
         WeaponConsumeEvent = null;
     }

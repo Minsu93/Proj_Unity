@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -220,10 +221,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string lobbyName = "LobbyUI";
     delegate void AfterSceneLoadEvent();
     AfterSceneLoadEvent sceneDel;
-    
 
+    public event System.Action StageStartEvent;
+    public event System.Action StageEndEvent;   
     //¾À ·Îµå
     //GameStart -> LobbyUI
+
     public void LoadsceneByName(string sceneName)
     {
         StartCoroutine(LoadSceneRoutine(sceneName));
@@ -250,6 +253,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneRoutine(sceneStr));
 
     }
+    public void StageClear()
+    {
+        if (StageEndEvent != null) StageEndEvent();
+
+    }
     public void ChapterClear()
     {
         StartCoroutine(LoadSceneRoutine(lobbyName));
@@ -271,7 +279,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator LoadSceneRoutine(string sceneName)
     {
-        TransitionFadeOut(true);
+        //TransitionFadeOut(true);
 
         yield return new WaitForSeconds(0.6f);
 
@@ -288,8 +296,9 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("¾À ºÒ·¯¿À±â ¿Ï·á");
 
-        TransitionFadeOut(false);
+        //TransitionFadeOut(false);
         if (sceneDel != null) sceneDel();
+        if(StageStartEvent != null) StageStartEvent();
     }
 
 
