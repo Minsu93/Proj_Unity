@@ -706,6 +706,23 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             StartCoroutine(DieRoutine());
         }
     }
+    public void DeactivatePlayer()
+    {
+        activate = false;
+        PlayerIgnoreProjectile(true);
+
+        //플레이어 조작 정지
+        GameManager.Instance.playerManager.DisablePlayerInput();
+        StopAllCoroutines();
+        unHitRoutine = null;
+        unControlRoutine = null;
+
+        //UI제거
+        playerJump.RemoveJumpArrow(false);
+        playerWeapon.ShowWeaponSight(false);
+
+        this.gameObject.SetActive(false);   
+    }
 
     IEnumerator ResapwnRoutine()
     {

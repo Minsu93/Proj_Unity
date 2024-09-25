@@ -253,10 +253,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneRoutine(sceneStr));
 
     }
+
+    //스테이지 클리어 시 실행하는 전역 이벤트. 
+    // StartPortal 에서 OpenPortal 이벤트가 실행된다. 
     public void StageClear()
     {
         if (StageEndEvent != null) StageEndEvent();
-
+        
+        StageEndEvent = null;
     }
     public void ChapterClear()
     {
@@ -299,6 +303,8 @@ public class GameManager : MonoBehaviour
         //TransitionFadeOut(false);
         if (sceneDel != null) sceneDel();
         if(StageStartEvent != null) StageStartEvent();
+
+        StageStartEvent = null;
     }
 
 

@@ -294,6 +294,7 @@ MonoBehaviour:
     - {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
     - {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
     - {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+    - {fileID: 7158106260931719753, guid: f60e3b59c7238354bb1cc13b9d7ff22b, type: 3}
   - name: Enemies
     prefabArray:
     - {fileID: 6372191864451837951, guid: 4bfb52de4bfc36e498d7147df058f283, type: 3}
@@ -322,8 +323,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popperPrefab: {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
   gapBetweenOrbs: 4
-  launchHeight: 7
-  launchRadius: 7
   launchInterval: 0.6
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05

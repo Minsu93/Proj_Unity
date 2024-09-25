@@ -5008,10 +5008,9 @@ MonoBehaviour:
   knockbackAmount: 8
   hitEffect: {fileID: 0}
   deadEffect: {fileID: 0}
-  iconUI: {fileID: 0}
+  dmgNum: {fileID: 2921101516471853322, guid: cc66ca5c9531a6f418088ca096000d14, type: 3}
   projHitColl: {fileID: 1192162311863621927}
   pauseTimer: 0.1
-  boosterParticle: {fileID: 8810903381058341265}
   knockBackCurve:
     serializedVersion: 2
     m_Curve:
@@ -5037,6 +5036,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   knockbackTime: 1
+  stopDuration: 1
+  boosterParticle: {fileID: 8810903381058341265}
 --- !u!114 &652078404442559525
 MonoBehaviour:
   m_ObjectHideFlags: 0

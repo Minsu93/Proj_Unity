@@ -340,8 +340,9 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator NextStageRoutine()
     {
-        yield return new WaitForSeconds(5f);
-        GameManager.Instance.MoveToNextStage();
+        yield return new WaitForSeconds(2f);
+        GameManager.Instance.StageClear();
+        //GameManager.Instance.MoveToNextStage();
     }
 
     IEnumerator ClearRoutine()

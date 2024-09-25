@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.SocialPlatforms;
-
+using DamageNumbersPro;
 
 public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 {
@@ -44,6 +44,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     [Header("VFX")]
     [SerializeField] protected ParticleSystem hitEffect;    //맞았을 때 효과
     [SerializeField] ParticleSystem deadEffect;   //죽었을 때 효과
+    [SerializeField] DamageNumber dmgNum;
 
     //로컬 변수
     protected bool onAttack;  //공격중일 때 
@@ -67,7 +68,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected CharacterGravity gravity;
     protected Rigidbody2D rb;
     protected Collider2D enemyColl;
-    public GameObject iconUI;
+    //public GameObject iconUI;
     protected Planet prePlanet;
     protected Health health;
     protected DropItem dropItem;
@@ -336,7 +337,9 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
         if (health.AnyDamage(damage))
         {
-           
+            //데미지 num 생성.
+            dmgNum.Spawn(hitVec, damage);
+
             if (health.IsDead())
             {
                 WhenDieEvent();
