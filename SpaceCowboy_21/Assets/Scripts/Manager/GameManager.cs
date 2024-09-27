@@ -236,7 +236,7 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(LoadSceneRoutine(sceneName));
         playerManager.InitializeLife();
-        sceneDel = ShowStartUI;
+        //sceneDel = ShowStartUI;
     }
     
     //플레이어 사망  > 로비 진입 시 
