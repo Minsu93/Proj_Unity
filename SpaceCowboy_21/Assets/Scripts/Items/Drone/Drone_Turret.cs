@@ -19,32 +19,25 @@ public class Drone_Turret : DroneItem_Projectile
 
     protected override void FixedUpdate()
     {
-        if (useDrone) return;
-
-        //스킬 버튼 클릭시 
-        if (stopFollow)
+        base.FixedUpdate();
+     
+        if (!activate) return;
+                
+        if (stopFollow && !useDrone)
         {
-            if (!useDrone)
+            //거리 계산
+            float dist = Vector2.Distance(transform.position, moveTargetPos);
+            if (dist < 0.1f)
             {
-                //거리 계산
-                float dist = Vector2.Distance(transform.position, moveTargetPos);
-                if (dist < 0.1f)
-                {
-                    //스킬 진짜 시작
-                    physicsColl.enabled = false;
-                    ActivateFunction();
-                }
-                else
-                {
-                    //스킬 위치까지 이동
-                    RigidBodyMoveToPosition(moveTargetPos, out _);
-                }
-               
+                //스킬 진짜 시작
+                physicsColl.enabled = false;
+                ActivateFunction();
             }
-        }
-        else
-        {
-            RigidBodyFollowPlayer();
+            else
+            {
+                //스킬 위치까지 이동
+                RigidBodyMoveToPosition(moveTargetPos, out _);
+            }
         }
     }
 
@@ -56,12 +49,14 @@ public class Drone_Turret : DroneItem_Projectile
 
     protected override void Update()
     {
+        if (!activate) return;
+        
         base.Update();
 
         if (useDrone)
         {
             ShootMethod();
-        }
+        } 
     }
 
 

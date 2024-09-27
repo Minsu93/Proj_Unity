@@ -7,20 +7,22 @@ namespace AllIn1SpriteShader
 {
     public class AllIn1ShaderWindow : EditorWindow
     {
-        private const string versionString = "3.7";
-        [MenuItem("Window/AllIn1ShaderWindow")]
+        private const string versionString = "3.8";
+        [MenuItem("Tools/AllIn1/SpriteShaderWindow")]
         public static void ShowAllIn1ShaderWindowWindow()
         {
             GetWindow<AllIn1ShaderWindow>("All In 1 Shader Window");
         }
         
-        public static readonly string materialsSavesPath = "Assets/AllIn1SpriteShader/Materials";
-        public static readonly string renderImagesSavesPath = "Assets/AllIn1SpriteShader/Textures";
-        public static readonly string normalMapSavesPath = "Assets/AllIn1SpriteShader/Textures/NormalMaps";
-        public static readonly string gradientSavesPath = "Assets/AllIn1SpriteShader/Textures/GradientTextures";
+        public static readonly string CUSTOM_EDITOR_HEADER = "AllIn1SpriteShaderEditorImage";
+        private static string basePath = "Assets/Plugins/AllIn1SpriteShader";
+        public static readonly string materialsSavesRelativePath = "/Materials";
+        public static readonly string renderImagesSavesRelativePath = "/Textures";
+        public static readonly string normalMapSavesRelativePath = "/Textures/NormalMaps";
+        public static readonly string gradientSavesRelativePath = "/Textures/GradientTextures";
 
         public Vector2 scrollPosition = Vector2.zero;
-
+        private Texture2D imageInspector;
         private DefaultAsset materialTargetFolder = null;
         private GUIStyle style, bigLabel = new GUIStyle(), titleStyle = new GUIStyle();
         private const int bigFontSize = 16;
@@ -89,7 +91,7 @@ namespace AllIn1SpriteShader
                 GUILayout.Label("Material Save Path", bigLabel);
                 GUILayout.Space(20);
                 GUILayout.Label("Select the folder where new Materials will be saved when the Save Material To Folder button of the asset component is pressed", EditorStyles.boldLabel);
-                HandleSaveFolderEditorPref("All1ShaderMaterials", materialsSavesPath, "Material");
+                HandleSaveFolderEditorPref("All1ShaderMaterials", basePath + materialsSavesRelativePath, "Material");
 
                 DrawLine(Color.grey, 1, 3);
                 GUILayout.Label("Render Material to Image Save Path", bigLabel);
@@ -105,7 +107,7 @@ namespace AllIn1SpriteShader
                 }
                 EditorGUILayout.EndVertical();
                 GUILayout.Label("Select the folder where new Images will be saved when the Render Material To Image button of the asset component is pressed", EditorStyles.boldLabel);
-                HandleSaveFolderEditorPref("All1ShaderRenderImages", renderImagesSavesPath, "Images");
+                HandleSaveFolderEditorPref("All1ShaderRenderImages", basePath + renderImagesSavesRelativePath, "Images");
 
                 DrawLine(Color.grey, 1, 3);
                 NormalMapCreator();
@@ -132,34 +134,25 @@ namespace AllIn1SpriteShader
 
             imageType = (ImageType) EditorPrefs.GetInt("allIn1ImageConfig");
             if(imageType == ImageType.HideEverywhere) return;
-            Texture2D imageInspector = null;
             switch(imageType)
             {
                 case ImageType.ShowImage:
-                {
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
-                    break;
-                }
                 case ImageType.HideInComponent:
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
+                    GetImageInspectorIfNeeded();
                     break;
             }
 
             if(imageInspector)
             {
-                //Label title image to the right
-                Rect rect = EditorGUILayout.GetControlRect(false, 5, titleStyle);
-                GUILayout.Label(imageInspector, titleStyle, GUILayout.Height(50));
-            
-                //Centered title image
-                //Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(50));
-                //GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
+                Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(50));
+                GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
             }
             DrawLine(Color.grey, 1, 3);
+        }
+        
+        private void GetImageInspectorIfNeeded()
+        {
+            if(imageInspector == null) imageInspector = Resources.Load<Texture2D>(CUSTOM_EDITOR_HEADER);
         }
 
         private void ShowAssetImageOptionsToggle()
@@ -224,7 +217,7 @@ namespace AllIn1SpriteShader
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Normal Maps will be saved when the Create Normal Map button of the asset component is pressed (URP only)", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1ShaderNormals", normalMapSavesPath, "Normal Maps");
+            HandleSaveFolderEditorPref("All1ShaderNormals", basePath + normalMapSavesRelativePath, "Normal Maps");
 
             GUILayout.Space(20);
             GUILayout.Label("Assign a sprite you want to create a normal map from. Choose the normal map settings and press the 'Create And Save Normal Map' button", EditorStyles.boldLabel);
@@ -324,19 +317,32 @@ namespace AllIn1SpriteShader
                 if (materialTargetFolder == null)
                 {
                     materialTargetFolder = (DefaultAsset)AssetDatabase.LoadAssetAtPath("Assets/", typeof(DefaultAsset));
-                    if (materialTargetFolder == null) Debug.LogError("The desired save folder doesn't exist. Go to Window -> AllIn1ShaderWindow and set a valid folder");
+                    if(materialTargetFolder == null)
+                    {
+                        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                        EditorGUILayout.HelpBox("Folder is invalid, please select a valid one", MessageType.Error, true);
+                        EditorGUILayout.EndHorizontal();
+                    }
                     else PlayerPrefs.SetString("Assets/", defaultPath);
                 }
             }
-            materialTargetFolder = (DefaultAsset)EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", materialTargetFolder, typeof(DefaultAsset), false);
+            materialTargetFolder = (DefaultAsset)EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", 
+                materialTargetFolder, typeof(DefaultAsset), false, GUILayout.MaxWidth(500));
 
             if (materialTargetFolder != null && IsAssetAFolder(materialTargetFolder))
             {
                 string path = AssetDatabase.GetAssetPath(materialTargetFolder);
                 PlayerPrefs.SetString(keyName, path);
-                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info, true);
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info);
+                EditorGUILayout.EndHorizontal();
             }
-            else EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+            else
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         private void GradientCreator()
@@ -345,7 +351,7 @@ namespace AllIn1SpriteShader
             GUILayout.Space(20);
             GUILayout.Label("This feature can be used to create textures for the Color Ramp Effect", EditorStyles.boldLabel);
 
-            EditorGUILayout.GradientField("Gradient", gradient, GUILayout.Height(25));
+            EditorGUILayout.GradientField("Gradient", gradient, GUILayout.Height(25), GUILayout.MaxWidth(500));
 
             EditorGUILayout.BeginHorizontal();
             {
@@ -361,7 +367,7 @@ namespace AllIn1SpriteShader
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Gradient Textures will be saved", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1ShaderGradients", gradientSavesPath, "Gradient");
+            HandleSaveFolderEditorPref("All1ShaderGradients", basePath + gradientSavesRelativePath, "Gradient");
 
             string prefSavedPath = PlayerPrefs.GetString("All1ShaderGradients") + "/";
             if (Directory.Exists(prefSavedPath))
@@ -373,7 +379,7 @@ namespace AllIn1SpriteShader
                 }
                 EditorGUILayout.EndHorizontal();
 
-                if (GUILayout.Button("Save Gradient Texture"))
+                if (GUILayout.Button("Save Gradient Texture", GUILayout.MaxWidth(500)))
                 {
                     string path = prefSavedPath + "ColorGradient.png";
                     if(System.IO.File.Exists(path)) path = GetNewValidPath(path);
@@ -447,30 +453,26 @@ namespace AllIn1SpriteShader
 
         private Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
         {
-            Color[] pixels = new Color[t.width * t.height];
-            Texture2D texNormal = new Texture2D(t.width, t.height, TextureFormat.RGB24, false, false);
+            int width = t.width;
+            int height = t.height;
+            Color[] sourcePixels = t.GetPixels();
+            Color[] resultPixels = new Color[width * height];
             Vector3 vScale = new Vector3(0.3333f, 0.3333f, 0.3333f);
 
-            for (int y = 0; y < t.height; y++)
+            for(int y = 0; y < height; y++)
             {
-                for (int x = 0; x < t.width; x++)
+                for(int x = 0; x < width; x++)
                 {
-                    Color tc = t.GetPixel(x - 1, y - 1);
-                    Vector3 cSampleNegXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y - 1);
-                    Vector3 cSampleZerXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y - 1);
-                    Vector3 cSamplePosXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y);
-                    Vector3 cSampleNegXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y);
-                    Vector3 cSamplePosXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y + 1);
-                    Vector3 cSampleNegXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y + 1);
-                    Vector3 cSampleZerXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y + 1);
-                    Vector3 cSamplePosXPosY = new Vector3(tc.r, tc.g, tc.g);
+                    int index = x + y * width;
+                    Vector3 cSampleNegXNegY = GetPixelClamped(sourcePixels, x - 1, y - 1, width, height);
+                    Vector3 cSampleZerXNegY = GetPixelClamped(sourcePixels, x, y - 1, width, height);
+                    Vector3 cSamplePosXNegY = GetPixelClamped(sourcePixels, x + 1, y - 1, width, height);
+                    Vector3 cSampleNegXZerY = GetPixelClamped(sourcePixels, x - 1, y, width, height);
+                    Vector3 cSamplePosXZerY = GetPixelClamped(sourcePixels, x + 1, y, width, height);
+                    Vector3 cSampleNegXPosY = GetPixelClamped(sourcePixels, x - 1, y + 1, width, height);
+                    Vector3 cSampleZerXPosY = GetPixelClamped(sourcePixels, x, y + 1, width, height);
+                    Vector3 cSamplePosXPosY = GetPixelClamped(sourcePixels, x + 1, y + 1, width, height);
+
                     float fSampleNegXNegY = Vector3.Dot(cSampleNegXNegY, vScale);
                     float fSampleZerXNegY = Vector3.Dot(cSampleZerXNegY, vScale);
                     float fSamplePosXNegY = Vector3.Dot(cSamplePosXNegY, vScale);
@@ -479,73 +481,67 @@ namespace AllIn1SpriteShader
                     float fSampleNegXPosY = Vector3.Dot(cSampleNegXPosY, vScale);
                     float fSampleZerXPosY = Vector3.Dot(cSampleZerXPosY, vScale);
                     float fSamplePosXPosY = Vector3.Dot(cSamplePosXPosY, vScale);
+
                     float edgeX = (fSampleNegXNegY - fSamplePosXNegY) * 0.25f + (fSampleNegXZerY - fSamplePosXZerY) * 0.5f + (fSampleNegXPosY - fSamplePosXPosY) * 0.25f;
                     float edgeY = (fSampleNegXNegY - fSampleNegXPosY) * 0.25f + (fSampleZerXNegY - fSampleZerXPosY) * 0.5f + (fSamplePosXNegY - fSamplePosXPosY) * 0.25f;
+
                     Vector2 vEdge = new Vector2(edgeX, edgeY) * normalMult;
                     Vector3 norm = new Vector3(vEdge.x, vEdge.y, 1.0f).normalized;
-                    Color c = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
-                    pixels[x + y * t.width] = c;
+                    resultPixels[index] = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
                 }
             }
 
-            if (normalSmooth > 0f)
+            if(normalSmooth > 0)
             {
-                float step = 0.00390625f * normalSmooth;
-                for (int y = 0; y < t.height; y++)
-                {
-                    for (int x = 0; x < t.width; x++)
-                    {
-                        float pixelsToAverage = 0.0f;
-                        Color c = pixels[(x + 0) + ((y + 0) * t.width)];
-                        pixelsToAverage++;
-                        if (x - normalSmooth > 0)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x - normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        if (y - normalSmooth > 0)
-                        {
-                            c += pixels[(x + 0) + ((y - normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (y + normalSmooth < t.height)
-                        {
-                            c += pixels[(x + 0) + ((y + normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (x + normalSmooth < t.width)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x + normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        pixels[x + y * t.width] = c / pixelsToAverage;
-                    }
-                }
+                resultPixels = SmoothNormals(resultPixels, width, height, normalSmooth);
             }
 
-            texNormal.SetPixels(pixels);
+            Texture2D texNormal = new Texture2D(width, height, TextureFormat.RGB24, false, false);
+            texNormal.SetPixels(resultPixels);
             texNormal.Apply();
             return texNormal;
+        }
+
+        private Vector3 GetPixelClamped(Color[] pixels, int x, int y, int width, int height)
+        {
+            x = Mathf.Clamp(x, 0, width - 1);
+            y = Mathf.Clamp(y, 0, height - 1);
+            Color c = pixels[x + y * width];
+            return new Vector3(c.r, c.g, c.b);
+        }
+
+        private Color[] SmoothNormals(Color[] pixels, int width, int height, int normalSmooth)
+        {
+            Color[] smoothedPixels = new Color[pixels.Length];
+            float step = 0.00390625f * normalSmooth;
+
+            for(int y = 0; y < height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    float pixelsToAverage = 0.0f;
+                    Color c = pixels[x + y * width];
+                    pixelsToAverage++;
+
+                    for(int offsetY = -normalSmooth; offsetY <= normalSmooth; offsetY++)
+                    {
+                        for(int offsetX = -normalSmooth; offsetX <= normalSmooth; offsetX++)
+                        {
+                            if(offsetX == 0 && offsetY == 0) continue;
+
+                            int sampleX = Mathf.Clamp(x + offsetX, 0, width - 1);
+                            int sampleY = Mathf.Clamp(y + offsetY, 0, height - 1);
+
+                            c += pixels[sampleX + sampleY * width];
+                            pixelsToAverage++;
+                        }
+                    }
+
+                    smoothedPixels[x + y * width] = c / pixelsToAverage;
+                }
+            }
+
+            return smoothedPixels;
         }
         
         [MenuItem("Assets/Create/AllIn1Shader Materials/CreateDefaultMaterial")]
@@ -584,6 +580,40 @@ namespace AllIn1SpriteShader
             }
         }
         
+        private void OnEnable() => GetBasePath();
+
+        private void GetBasePath()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:folder AllIn1SpriteShader");
+            if(guids.Length > 0)
+            {
+                basePath = AssetDatabase.GUIDToAssetPath(guids[0]);
+            }
+            else
+            {
+                Debug.LogError("AllIn1SpriteShader folder not found in the project.");
+                basePath = "Assets/Plugins/AllIn1SpriteShader";
+            }
+        }
+        
+        public static string GetMaterialSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderMaterials")) return basePath + materialsSavesRelativePath;
+            return PlayerPrefs.GetString("All1ShaderMaterials");
+        }
+        
+        public static string GetRenderImageSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderRenderImages")) return basePath + renderImagesSavesRelativePath;
+            return PlayerPrefs.GetString("All1ShaderRenderImages");
+        }
+        
+        public static string GetNormalMapSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderNormals")) return basePath + normalMapSavesRelativePath;
+            return PlayerPrefs.GetString("All1ShaderNormals");
+        }
+
         private void SceneNotificationsToggle()
         {
             float previousLabelWidth = EditorGUIUtility.labelWidth;

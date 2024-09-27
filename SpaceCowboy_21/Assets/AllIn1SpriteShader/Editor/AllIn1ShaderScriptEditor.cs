@@ -11,6 +11,7 @@ namespace AllIn1SpriteShader
         private bool showUrpWarning = false;
         private double warningTime = 0f;
         private SerializedProperty m_NormalStrength, m_NormalSmoothing;
+        private Texture2D imageInspector;
     
         private enum ImageType
         {
@@ -39,7 +40,6 @@ namespace AllIn1SpriteShader
                 for (int i = 0; i < targets.Length; i++) ((AllIn1Shader)targets[i]).ClearAllKeywords();
                 AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Deactivated All Effects");
             }
-
 
             if (GUILayout.Button("New Clean Material"))
             {
@@ -239,20 +239,11 @@ namespace AllIn1SpriteShader
             }
 
             imageType = (ImageType) EditorPrefs.GetInt("allIn1ImageConfig");
-            Texture2D imageInspector = null;
             switch(imageType)
             {
                 case ImageType.ShowImage:
-                {
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
-                    break;
-                }
                 case ImageType.HideInComponent:
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
+                    GetImageInspectorIfNeeded();
                     break;
             }
 
@@ -261,6 +252,11 @@ namespace AllIn1SpriteShader
                 Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(40));
                 GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
             }
+        }
+
+        private void GetImageInspectorIfNeeded()
+        {
+            if(imageInspector == null) imageInspector = Resources.Load<Texture2D>(AllIn1ShaderWindow.CUSTOM_EDITOR_HEADER);
         }
 
         private void SetCurrentShaderType(AllIn1Shader myScript)

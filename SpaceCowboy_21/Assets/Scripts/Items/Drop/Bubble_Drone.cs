@@ -11,6 +11,8 @@ public class Bubble_Drone : SelfCollectable
     {
         base.Awake();
         spr = GetComponentInChildren<SpriteRenderer>();
+        //д©╫╨ер
+        if (dronePrefab != null) SetDrone(dronePrefab);
     }
 
     protected override void OnEnable()

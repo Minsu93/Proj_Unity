@@ -20,6 +20,7 @@ public class WaveManager : MonoBehaviour
     float gameTime; //게임 시간
 
     Stage stage;
+    int waveIndex;
     int stageIndex;
     bool activatedWave;  //웨이브 활성화 여부
     bool FinalWave = false;  //보스 웨이브 시작했나요?
@@ -50,30 +51,27 @@ public class WaveManager : MonoBehaviour
 
     //행성 관련
     [SerializeField] List<Planet> planetList = new List<Planet>();
-     
+
 
     [Header("UI")]
     //스크립트.
     Dictionary<string, GameObject> monsterDict;
     WaveObjectRespawner objectRespawner;
+    [SerializeField] GameObject arrowCanvas;
 
     [Header("Wave UI")]
     //Wave UI관련
+    [SerializeField] GameObject waveCanvas;
+    WaveProgress waveProgress;
+    WavePanelUI wavePanelUI;
+    [SerializeField] int totalStageCount = 5;
     [SerializeField] Image waveProgressImg;
     [SerializeField] TextMeshProUGUI currentWaveText;
     [SerializeField] TextMeshProUGUI totalWaveText;
     [SerializeField] ArrowIndicatorManager minimapManager;
-    [SerializeField] GameObject MonsterIcon;
-    [SerializeField] GameObject BossIcon;
 
-    //WaveUI관련 변수
-    [SerializeField] RectTransform iconParent;
-    [SerializeField] float iconSpawnTime;
-    [SerializeField] float maxSpawnLimit = 60f;
-    [SerializeField] float spawnPosMultiplier = 10f;
-    int spawnIndex = 0;
-    Dictionary<RectTransform, float> IconPairs = new Dictionary<RectTransform, float>();
-    List<RectTransform> keyToRemove = new List<RectTransform>();
+
+
 
     public event System.Action MonsterDisappearEvent;
     public event System.Action WaveClear;
@@ -82,6 +80,20 @@ public class WaveManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+
+        //웨이브 UI 생성
+        GameObject waveUIObj =  Instantiate(waveCanvas);
+        wavePanelUI = waveUIObj.transform.GetComponentInChildren<WavePanelUI>();
+        wavePanelUI.SetStageIcons(totalStageCount);
+        wavePanelUI.gameObject.SetActive(false);
+
+        waveProgress = waveUIObj.GetComponentInChildren<WaveProgress>();
+
+        
+        //waveUIObj.SetActive(false);
+
+        Instantiate(arrowCanvas);
+        minimapManager = Instantiate(arrowCanvas).GetComponent<ArrowIndicatorManager>();
     }
 
     private void Start()
@@ -92,6 +104,16 @@ public class WaveManager : MonoBehaviour
 
         //스테이지 시작
         LoadWaveFromJson();
+        //UI초기화
+        waveProgress.InitializeWaveProgress(stage);
+        Invoke("MovePlayerIcon", 0.01f);
+        StartCoroutine(ShowWaveUIRoutine(stageIndex));
+    }
+
+    void MovePlayerIcon()
+    {
+        wavePanelUI.MovePlayericon(stageIndex);
+
     }
 
     void LoadWaveFromJson()
@@ -101,22 +123,25 @@ public class WaveManager : MonoBehaviour
 
         string address = "Stage/" + words[0] + words[1] + "/" + words[2] + ".json";
         stage = LoadManager.Load<Stage>(address);
+        stageIndex = int.Parse(words[2]) - 1;
+       
+    }
 
-        //string path = Path.Combine(Application.dataPath + "/Data/Stage/", filename + ".json");
-        //Debug.Log(path);
-        //string loadJson = File.ReadAllText(path);
-        //stage = JsonUtility.FromJson<Stage>(loadJson);
+    IEnumerator ShowWaveUIRoutine(int stageIndex)
+    {
+        wavePanelUI.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        wavePanelUI.gameObject.SetActive(false);
     }
 
     void ResetWaveManager()
     {
         gameTime = 0;
         nextWaveTime = stage.startTime;
-        iconSpawnTime = stage.startTime;
-        stageIndex = 0;
+        waveIndex = 0;
         spawnRoutine = null;
 
-        StopAllCoroutines();
+        //StopAllCoroutines();
     }
 
     public void WaveStart()
@@ -132,8 +157,8 @@ public class WaveManager : MonoBehaviour
             }
         }
         ////UI에 적용
-        currentWaveText.text = "0";
-        totalWaveText.text = stage.waves.Count.ToString();
+        //currentWaveText.text = "0";
+        //totalWaveText.text = stage.waves.Count.ToString();
 
         activatedWave = true;
         GetStagePlanets();
@@ -146,8 +171,7 @@ public class WaveManager : MonoBehaviour
         gameTime += Time.deltaTime;
 
         //UI아이콘 관련 
-        IconSpawner();
-        IconMover();
+        waveProgress.IconSpawner(gameTime);
 
         //다음 웨이브로
         if (nextWaveTime <= gameTime)
@@ -161,53 +185,6 @@ public class WaveManager : MonoBehaviour
         objectRespawner.UpdateSpawner();
     }
 
-    #region 웨이브 아이콘 관련 
-    void IconSpawner()
-    {
-        //icon스폰
-        if (iconSpawnTime - gameTime < maxSpawnLimit)
-        {
-            if (spawnIndex < stage.waves.Count)
-            {
-                //현재 시간에 아이콘 생성
-                GameObject obj = Instantiate(MonsterIcon, iconParent.transform);
-                RectTransform rect = obj.GetComponent<RectTransform>();
-                IconPairs.Add(rect, iconSpawnTime);
-                //다음 시간 측정
-                iconSpawnTime += stage.waves[spawnIndex].totalTime;
-                spawnIndex++;
-            }
-            else
-            {
-                //보스 아이콘 추가
-                GameObject bossobj = Instantiate(BossIcon, iconParent.transform);
-                RectTransform bossRect = bossobj.GetComponent<RectTransform>();
-                IconPairs.Add(bossRect, iconSpawnTime);
-                iconSpawnTime = float.MaxValue; //더이상 스폰하지 못하도록
-            }
-        }
-
-    }
-    void IconMover()
-    {
-        foreach (KeyValuePair<RectTransform, float> icon in IconPairs)
-        {
-            if (icon.Value - gameTime < 0)
-            {
-                keyToRemove.Add(icon.Key);
-            }
-
-            icon.Key.anchoredPosition = new Vector2((icon.Value - gameTime) * spawnPosMultiplier, 0);
-        }
-        foreach (RectTransform rect in keyToRemove)
-        {
-            IconPairs.Remove(rect);
-            rect.gameObject.SetActive(false);
-        }
-
-    }
-
-    #endregion
 
     //캐릭터 행성 업데이트? (몬스터 스폰 장소)
     void PlayerPlanetUpdate()
@@ -242,7 +219,7 @@ public class WaveManager : MonoBehaviour
             //}
 
             //카운트
-            int index = stageIndex - 1;
+            int index = waveIndex - 1;
             float clearTime = gameTime - pastWaveTime;
             float timeLeft = nextWaveTime - gameTime;
             if(enemyLeftInWave <= 0)
@@ -271,15 +248,15 @@ public class WaveManager : MonoBehaviour
     //웨이브(일반, 보스)를 무사히 스폰하면 true 반환, 스폰할 웨이브가 없음면 false 반환.
     private void MoveToNextWave()
     {
-        if(stageIndex < stage.waves.Count)
+        if(waveIndex < stage.waves.Count)
         {
             //기본 웨이브
-            Wave wave = stage.waves[stageIndex];
+            Wave wave = stage.waves[waveIndex];
             SpawnWave(wave);
             pastWaveTime = nextWaveTime;
             gameTime = nextWaveTime;
             //Debug.Log("웨이브 " + stageIndex  + "시작시간 : "  + gameTime);
-            stageIndex++;
+            waveIndex++;
             nextWaveTime += wave.totalTime;
         }
         else
@@ -295,7 +272,7 @@ public class WaveManager : MonoBehaviour
 
 
         //다음 웨이브 체크
-        if (stageIndex >= stage.waves.Count)
+        if (waveIndex >= stage.waves.Count)
         {
             if(stage.hasBossWave)
             {
@@ -310,7 +287,7 @@ public class WaveManager : MonoBehaviour
 
 
         //UI변경
-        currentWaveText.text = stageIndex.ToString();
+        //currentWaveText.text = waveIndex.ToString();
     }
 
     //웨이브 클리어 시 실행

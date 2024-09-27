@@ -39,6 +39,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     [Header("KnockBack")]
     public float knockBackForce = 5f;
     public float stunTime = 1f;
+    public float unHitabltTime = 3f;
 
 
     //참조 변수
@@ -57,6 +58,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     //이펙트들
     public ParticleSystem shieldhitEffect;  //실드가 맞았을 때 출력할 이펙트
     public ParticleSystem slidingEffect;    //슬라이딩할때 출력할 이펙트
+    [SerializeField] ParticleSystem boosterEffect; 
 
     //애니메이션 이벤트
     public event System.Action PlayerIdleEvent;
@@ -113,7 +115,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         onSpace = CheckOnSpace();
 
         //공중에 있는지 체크
-        if (!playerJump.doingDash) CheckOnAir();
+        if (!playerJump.doingDash && !boostOn) CheckOnAir();
 
         //JumpArrowViewer 업데이트
         playerJump.UpdateJumpVector();
@@ -144,10 +146,13 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
                 if (!playerJump.Boost())
                 {
                     //부스트가 중간에 꺼졌을 때 
-                    boostOn = false;
-                    playerJump.UsingBoost = false;
-                    characterGravity.activate = true;
+                    //boostOn = false;
+                    //playerJump.UsingBoost = false;
+                    //characterGravity.activate = true;
+                    TryStopBoost();
                 }
+                //부스트 중 회전
+                RotateToVector(aimDirection, turnSpeedOnLand);
             }
             else if (airTimer > onAirTime)
             {
@@ -264,11 +269,14 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         if (OnAir)
         {
             //부스트가 활성화 가능할 때 > 활성화
-            if (playerJump.Boost())
+            if (playerJump.Boost() && !boostOn)
             {
                 boostOn = true;
                 playerJump.UsingBoost = true;
                 characterGravity.activate = false;
+
+                boosterEffect.Play();
+                Debug.Log("Booster Play");
             }
         }
         else if (playerState != PlayerState.Jumping)
@@ -299,6 +307,10 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             boostOn = false;
             playerJump.UsingBoost = false;
             characterGravity.activate = true;
+
+            boosterEffect.Stop();
+            Debug.Log("Booster Stop");
+
         }
 
     }
@@ -539,7 +551,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     {
         if (!activate) return;
         PlayerUncontrollable(stunTime);
-        PlayerUnhittable(stunTime);
+        PlayerUnhittable(unHitabltTime);
 
         if (OnAir)
         {
@@ -558,6 +570,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             LauchPlayer(dir, forceAmount);
         }
     }
+
 
     //IEnumerator KnockBackRoutine(Vector2 hitPoint, float time, float speed)
     //{
@@ -627,27 +640,45 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     {
         if (!activate) return;
         if (playerJump.doingDash) return;
+        
         //데미지를 적용
-        if (health.AnyDamage(damage))
+        if (GameManager.Instance.playerManager.RemoveDrone())
         {
-            //PlayerKnockBack(hitPoint);
+            //드론이 대신 맞아줬을 때
             lastHitPos = transform.position;
 
             KnockBackEvent(hitPoint, knockBackForce);
-            if (health.currShield > 0)
+
+            //피격 애니메이션 
+            if (PlayerHitEvent != null)
             {
-                //실드가 닳은 경우
-                shieldhitEffect.Play();
+                PlayerHitEvent();
             }
-            else
+        }
+        else
+        {
+            //대신 맞아줄 드론이 없을 때 
+            if (health.AnyDamage(damage))
             {
-                //체력이 닳은 경우
-                if (PlayerHitEvent != null)
+                lastHitPos = transform.position;
+
+                KnockBackEvent(hitPoint, knockBackForce);
+
+                if (health.currShield > 0)
                 {
-                    PlayerHitEvent();
+                    //실드가 닳은 경우
+                    shieldhitEffect.Play();
                 }
+                else
+                {
+                    //체력이 닳은 경우
+                    if (PlayerHitEvent != null)
+                    {
+                        PlayerHitEvent();
+                    }
+                }
+                //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
             }
-            //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
         }
 
         //죽었나요?
@@ -657,6 +688,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
 
             return;
         }
+
 
     }
 

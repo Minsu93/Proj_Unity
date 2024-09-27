@@ -15,7 +15,7 @@ public class Drone_AssistShoot : DroneItem_Projectile
         GameManager.Instance.playerManager.playerWeapon.weaponShootAction += GunAttack;
     }
 
-    protected override void EndUseDrone()
+    public override void EndUseDrone()
     {
         GameManager.Instance.playerManager.playerWeapon.weaponShootAction -= GunAttack;
         //같이 쏘는 이벤트 리스너를 제거한다. 

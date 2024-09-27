@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerDrone : MonoBehaviour
 {
     public int droneSlots { get; set; }
     public List<DroneItem> drones = new List<DroneItem>();
+    [SerializeField] private Vector2[] droneSlotPos = new Vector2[3];
 
     //드론 아이템을 먹으면 생성 가능한지 물어본다. 슬롯 이하의 개수면 먹을 수 있다. bool 리턴
     public bool AddDrone(GameObject droneObj)
@@ -21,7 +24,7 @@ public class PlayerDrone : MonoBehaviour
 
             //UI업데이트
             GameManager.Instance.playerManager.UpdateDroneUI();
-
+            RepositionDrones();
             return true;
 
         }
@@ -38,13 +41,33 @@ public class PlayerDrone : MonoBehaviour
 
             //UI업데이트
             GameManager.Instance.playerManager.UpdateDroneUI();
+            RepositionDrones();
         }
     }
 
-    //void RemoveDrone(int index)
-    //{
-    //    drones.RemoveAt(index);
-    //    //UI업데이트
-    //    GameManager.Instance.playerManager.UpdateDroneUI();
-    //}
+
+    //가장 최근에 먹은 드론을 제거한다. 
+    public bool RemoveDrone()
+    {
+        if (drones.Count > 0)
+        {
+            int index = drones.Count - 1;
+            drones[index].EndUseDrone();
+            drones.RemoveAt(index);
+            //UI업데이트
+            GameManager.Instance.playerManager.UpdateDroneUI();
+            RepositionDrones();
+            return true;
+        }
+        else return false;
+        
+    }
+
+    void RepositionDrones()
+    {
+        for(int i = 0; i < drones.Count; i++)
+        {
+            drones[i].dronePos = droneSlotPos[i];
+        }
+    }
 }

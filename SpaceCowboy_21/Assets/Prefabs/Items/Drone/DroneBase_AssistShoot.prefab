@@ -79,13 +79,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68fd8ebb28f85c4492baad9f4ee1b84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: 98b87ce0e20843345bf86780113fadc7, type: 3}
-  dronePos: {x: -1, y: 1}
+  icon: {fileID: 21300000, guid: f048c44d6b54b4f4da99685e0133d0fb, type: 3}
+  autoUse: 0
   distFromPlayer: 2
   minSmoothTime: 0.1
   maxSmoothTime: 0.5
   useDuration: 5
   viewTr: {fileID: 7829265998263657969}
+  launchForce: 15
   enemyCheckRange: 10
   checkInterval: 0.2
   attackProperty:

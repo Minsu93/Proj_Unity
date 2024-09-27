@@ -171,6 +171,10 @@ public class PlayerManager : MonoBehaviour
         playerDrone.UseDrone(index);
     }
 
+    public bool RemoveDrone()
+    {
+        return playerDrone.RemoveDrone();
+    }
 
     #endregion
 

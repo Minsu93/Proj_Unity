@@ -332,9 +332,7 @@ namespace AllIn1SpriteShader
         public bool SaveMaterial()
         {
 #if UNITY_EDITOR
-            string sameMaterialPath = AllIn1ShaderWindow.materialsSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderMaterials")) sameMaterialPath = PlayerPrefs.GetString("All1ShaderMaterials");
-            else PlayerPrefs.SetString("All1ShaderMaterials", AllIn1ShaderWindow.materialsSavesPath);
+            string sameMaterialPath = AllIn1ShaderWindow.GetMaterialSavePath();
             sameMaterialPath += "/";
             if (!System.IO.Directory.Exists(sameMaterialPath))
             {
@@ -537,7 +535,11 @@ namespace AllIn1SpriteShader
                 }
             }
             Texture tex = currMaterial.GetTexture("_MainTex");
-            if (tex != null) RenderAndSaveTexture(currMaterial, tex);
+            if(tex != null)
+            {
+                bool success = RenderAndSaveTexture(currMaterial, tex);
+                if(!success) return false;
+            }
             else
             {
                 SpriteRenderer sr = GetComponent<SpriteRenderer>();
@@ -545,7 +547,11 @@ namespace AllIn1SpriteShader
                 if (sr != null && sr.sprite != null && sr.sprite.texture != null) tex = sr.sprite.texture;
                 else if (i != null && i.mainTexture != null) tex = i.mainTexture;
 
-                if (tex != null) RenderAndSaveTexture(currMaterial, tex);
+                if(tex != null)
+                {
+                    bool success = RenderAndSaveTexture(currMaterial, tex);
+                    if(!success) return false;
+                }
                 else{
                     EditorUtility.DisplayDialog("No valid target texture found", "All In 1 Shader component couldn't find a valid Main Texture in this GameObject (" +
                                                                                   gameObject.name + "). This means that the material you are using has no Main Texture or that the texture couldn't be reached through the Renderer component you are using." +
@@ -559,7 +565,7 @@ namespace AllIn1SpriteShader
 #endif
         }
 
-        private void RenderAndSaveTexture(Material targetMaterial, Texture targetTexture)
+        private bool RenderAndSaveTexture(Material targetMaterial, Texture targetTexture)
         {
 #if UNITY_EDITOR
             float scaleSlider = 1;
@@ -570,15 +576,13 @@ namespace AllIn1SpriteShader
             reaultTex.ReadPixels(new Rect(0, 0, renderTarget.width, renderTarget.height), 0, 0);
             reaultTex.Apply();
 
-            string path = AllIn1ShaderWindow.renderImagesSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderRenderImages")) path = PlayerPrefs.GetString("All1ShaderRenderImages");
-            else PlayerPrefs.SetString("All1ShaderRenderImages", AllIn1ShaderWindow.renderImagesSavesPath);
+            string path = AllIn1ShaderWindow.GetRenderImageSavePath();
             path += "/";
             if (!System.IO.Directory.Exists(path))
             {
                 EditorUtility.DisplayDialog("The desired Material to Image Save Path doesn't exist",
                     "Go to Window -> AllIn1ShaderWindow and set a valid folder", "Ok");
-                return;
+                return false;
             }
             string fullPath = path + gameObject.name + ".png";
             if (System.IO.File.Exists(fullPath)) fullPath = GetNewValidPath(path + gameObject.name);
@@ -587,6 +591,11 @@ namespace AllIn1SpriteShader
             string fileName = fullPath.Replace(path, "");
             fileName = fileName.Replace(".png", "");
             fullPath = EditorUtility.SaveFilePanel("Save Render Image", path, fileName, "png");
+            if(string.IsNullOrEmpty(fullPath))
+            {
+                Debug.Log("Save operation was cancelled or no valid path was selected.");
+                return false;
+            }
 
             byte[] bytes = reaultTex.EncodeToPNG();
             File.WriteAllBytes(fullPath, bytes);
@@ -595,7 +604,9 @@ namespace AllIn1SpriteShader
             DestroyImmediate(reaultTex);
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(pingPath, typeof(Texture)));
             Debug.Log("Render Image saved to: " + fullPath + " with scale: " + scaleSlider + " (it can be changed in Window -> AllIn1ShaderWindow)");
+            return true;
 #endif
+            return false;
         }
 
         private string GetNewValidPath(string path, int i = 1)
@@ -697,9 +708,7 @@ namespace AllIn1SpriteShader
         private void SetNewNormalTexture()
         {
 #if UNITY_EDITOR
-            path = AllIn1ShaderWindow.normalMapSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderNormals")) path = PlayerPrefs.GetString("All1ShaderNormals");
-            else PlayerPrefs.SetString("All1ShaderNormals", AllIn1ShaderWindow.normalMapSavesPath);
+            path = AllIn1ShaderWindow.GetNormalMapSavePath();
             path += "/";
             if (!System.IO.Directory.Exists(path))
             {

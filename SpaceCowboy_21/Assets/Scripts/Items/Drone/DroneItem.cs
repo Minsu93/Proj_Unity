@@ -8,7 +8,7 @@ public abstract class DroneItem : MonoBehaviour
     public Sprite icon;
     public bool autoUse = false;    //자동 사용
 
-    [SerializeField] Vector2 dronePos = new Vector2(-1, 1);
+    public Vector2 dronePos { get; set; }
     [SerializeField] float distFromPlayer = 2f;
     [SerializeField] float minSmoothTime = 0.1f; // 최소 감속 시간
     [SerializeField] float maxSmoothTime = 0.5f; // 최대 감속 시간
@@ -18,7 +18,9 @@ public abstract class DroneItem : MonoBehaviour
 
     protected Rigidbody2D rb;
     protected Collider2D physicsColl;
+    protected CharacterGravity gravity;
 
+    protected bool activate;
     bool isRight = true;
     protected bool stopFollow;
     protected bool useDrone;
@@ -26,23 +28,28 @@ public abstract class DroneItem : MonoBehaviour
     Vector2 velocity = Vector2.zero;
     Vector3 viewScale;
 
-
+    [SerializeField] float launchForce = 15.0f;
 
 
 
     // 셔틀 처음 스테이지에 생성 시 
     public void InitializeDrone()
     {
-        rb = GetComponent<Rigidbody2D>();
+        if(rb == null)
+            rb = GetComponent<Rigidbody2D>();
+        if(gravity == null)
+            gravity = GetComponent<CharacterGravity>();
+        if(physicsColl == null)
+            physicsColl = GetComponentInChildren<Collider2D>();
 
-        physicsColl = GetComponentInChildren<Collider2D>();
         physicsColl.enabled = true;
-
+        gravity.activate = false;
         viewScale = viewTr.localScale;
 
 
         stopFollow = false;
         useDrone = false;
+        activate = true;
 
         timer = 0;
     }
@@ -65,6 +72,7 @@ public abstract class DroneItem : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (!activate) return;
         if (stopFollow) return;
         if (useDrone) return;
             
@@ -127,16 +135,29 @@ public abstract class DroneItem : MonoBehaviour
     /// <summary>
     /// 드론 사용을 중지한다.
     /// </summary>
-    protected virtual void EndUseDrone()
-    {
-        DeActivateDrone();
-        Debug.Log("End Use Drone");
-    }
-
-    void DeActivateDrone()
+    public virtual void EndUseDrone()
     {
         stopFollow = true;
         useDrone = false;
+        activate = false;
+        gravity.activate = true;
+        StartCoroutine(DeActivateDrone());
+    }
+
+    IEnumerator DeActivateDrone()
+    {
+        yield return null;
+        //보고 있는 반대편으로 날아간다
+        Vector2 launchDir = isRight? new Vector2(-1,0) : new Vector2(1,0);
+        float angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
+        Vector2 randomPoint = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        launchDir += randomPoint;
+        Vector2 force = launchDir.normalized * launchForce;
+        rb.AddForce(force, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(3.0f);
+        //터진다
+
         this.gameObject.SetActive(false);
     }
 }

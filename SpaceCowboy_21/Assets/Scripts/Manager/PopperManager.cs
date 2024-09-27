@@ -21,7 +21,8 @@ public class PopperManager : MonoBehaviour
     [SerializeField] float dropChanceIncrement = 0.1f; // 드롭 실패 시 확률 증가량
     [SerializeField] float dropChanceDecrement = 0.05f; // 드롭 성공 시 확률 감소량
     [SerializeField] float totalDropChance = 0.1f;  // Bubble 드롭 확률 
-    float currentDropChance;
+    float currWeaponDropChance;
+    float currDroneDropChance;
     [SerializeField] float dropCoolTime = 5f;   //드롭 된 이후 다음 드롭까지 제한 최소 시간
     bool dropReady = true;
     float timer = 0f;
@@ -59,7 +60,8 @@ public class PopperManager : MonoBehaviour
         ResizeDropChance(equippedWeapons);
         ResizeDropChance(equippedDrones);
 
-        currentDropChance = totalDropChance;
+        currWeaponDropChance = totalDropChance;
+        currDroneDropChance = totalDropChance;
     }
 
     #endregion
@@ -67,48 +69,58 @@ public class PopperManager : MonoBehaviour
     #region popper 방식
     public void CreatePopper(Transform targetTr)
     {
-        if (!dropReady) return;
-        //createPopper 요청이 오면 totalDropChance 확률로 아이템을 스폰한다. 
+        //if (!dropReady) return;
+
         float random = UnityEngine.Random.Range(0, 1.0f);
-        if (random < currentDropChance)
+        
+        //Weapon 스폰
+        if (random < currWeaponDropChance)
         {
             // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
             GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
             firework.transform.position = targetTr.position;
             firework.transform.rotation = targetTr.rotation;
-            
-            //Weapon 대 Dronem 의 비는 6:4 이다.
-            float WeaponRatio = 0.6f;
-            float randomF = UnityEngine.Random.Range(0, 1.0f);
-            if(randomF < WeaponRatio)
-            {
-                WeaponData data = TryDropItem(equippedWeapons).item as WeaponData;
-                if(data != null)
-                {
-                    Vector2 targetPoint = GetEmptySpace(targetTr);
-                    StartCoroutine(firework.GetComponent<Popper>().CreateWeaponBubble(targetTr.position, targetPoint, data));
-                }
-                else Debug.LogWarning("WeaponData cast failed. The item is not of type WeaponData.");
 
-            }
-            else
+            WeaponData data = TryDropItem(equippedWeapons).item as WeaponData;
+            if (data != null)
             {
-                GameObject prefab = TryDropItem(equippedDrones).item as GameObject;
-                if(prefab != null)
-                {
-                    Vector2 targetPoint = GetEmptySpace(targetTr);
-                    StartCoroutine(firework.GetComponent<Popper>().CreateDroneBubble(targetTr.position, targetPoint, prefab));
-                }
-                else Debug.LogWarning("DroneObject cast failed. The item is not of type DroneObject.");
+                Vector2 targetPoint = GetEmptySpace(targetTr);
+                StartCoroutine(firework.GetComponent<Popper>().CreateWeaponBubble(targetTr.position, targetPoint, data));
             }
+            else Debug.LogWarning("WeaponData cast failed. The item is not of type WeaponData.");
 
-            currentDropChance = totalDropChance;
-            dropReady = false;
+            currWeaponDropChance = totalDropChance;
+            //dropReady = false;
         }
         else
         {
             //드랍이 안될 경우 1.1배씩 계속 증가.
-            currentDropChance *= 1.1f;
+            currWeaponDropChance *= 1.1f;
+        }
+
+
+        //Drone 스폰
+        if (random < currDroneDropChance)
+        {
+            // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
+            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
+            firework.transform.position = targetTr.position;
+            firework.transform.rotation = targetTr.rotation;
+
+            GameObject prefab = TryDropItem(equippedDrones).item as GameObject;
+            if (prefab != null)
+            {
+                Vector2 targetPoint = GetEmptySpace(targetTr);
+                StartCoroutine(firework.GetComponent<Popper>().CreateDroneBubble(targetTr.position, targetPoint, prefab));
+            }
+            else Debug.LogWarning("DroneObject cast failed. The item is not of type DroneObject.");
+
+            currDroneDropChance = totalDropChance;
+            //dropReady = false;
+        }
+        else
+        {
+            currDroneDropChance *= 1.1f;
         }
     }
     
