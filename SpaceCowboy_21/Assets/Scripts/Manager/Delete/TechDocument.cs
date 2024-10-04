@@ -22,7 +22,7 @@ public class TechDocument : MonoBehaviour
         techDictionary = GetComponent<TechDictionary>();
         techLevel = GetComponent<TechLevel>();
 
-        LoadDocument();
+        //LoadDocument();
     }
 
     //모든 상태 초기화

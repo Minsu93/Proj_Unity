@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Drone_Turret : DroneItem_Projectile
 {
-    float checkTimer;
     Vector2 moveTargetPos;
 
 
@@ -60,31 +59,6 @@ public class Drone_Turret : DroneItem_Projectile
     }
 
 
-    void ShootMethod()
-    {
-        //시간 체크
-        checkTimer += Time.deltaTime;
-        if (checkTimer >= checkInterval)
-        {
-            //적 체크
-            checkTimer = 0;
-            targetTr = CheckEnemyIsNear();
-        }
-
-        
-        //발사 
-        if (targetTr != null)
-        {
-            if (Time.time - lastShootTime > attackProperty.shootCoolTime)
-            {
-                //쏜 시간 체크
-                lastShootTime = Time.time;
-
-                //사격
-                StartCoroutine(burstShootRoutine(targetTr));
-            }
-        }
-    }
 
 
 }

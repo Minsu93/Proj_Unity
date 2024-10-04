@@ -18,25 +18,29 @@ public class MapBorder : MonoBehaviour
             Vector2 playerPos = collision.transform.position;
             float x = playerPos.x;
             float y = playerPos.y;
+            float xMax = transform.position.x + width * 0.5f;
+            float xMin = transform.position.x - width * 0.5f;
+            float yMax = transform.position.y + height * 0.5f;
+            float yMin = transform.position.y - height * 0.5f;
 
-            
 
-            if (x > transform.position.x + width * 0.5f)
+
+            if (x > xMax)
             {
-                x = transform.position.x - width * 0.5f;
+                x = xMin;
             }
-            else if (x < transform.position.x - width * 0.5f)
+            else if (x < xMin)
             {
-                x = transform.position.x + width * 0.5f;
+                x = xMax;
             }
 
-            if (y > transform.position.y + height * 0.5f)
+            if (y > yMax)
             {
-                y = transform.position.y - height * 0.5f;
+                y = yMin;
             }
-            else if (y < transform.position.y - height * 0.5f)
+            else if (y < yMin)
             {
-                y = transform.position.y + height * 0.5f;
+                y = yMax;
             }
 
             Vector2 movePos = new Vector2(x, y);
@@ -52,6 +56,8 @@ public class MapBorder : MonoBehaviour
 
     IEnumerator NextFrameRoutine(Vector2 movePos)
     {
+        yield return new WaitForFixedUpdate();
+
         //TeleportStart 이벤트
         GameManager.Instance.PlayerIsTeleport(true);
         //카메라 off
@@ -61,7 +67,7 @@ public class MapBorder : MonoBehaviour
 
         GameManager.Instance.player.position = movePos;
         Vector2 halfSize = new Vector2(width * 0.5f, height * 0.5f);
-        GameManager.Instance.cameraManager.MoveCamera(movePos, halfSize, transform.position);
+        GameManager.Instance.cameraManager.teleportCamera(movePos, halfSize, transform.position);
 
         yield return new WaitForFixedUpdate();
 

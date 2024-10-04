@@ -1,29 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class Gravity : MonoBehaviour
 {
     public bool activate = true;
+    [SerializeField] protected float gravityMultiplier = 1.0f;
 
     protected float currentGravityForce;    //월드 중력
 
     //참조
-    public Vector2 nearestPoint;
+    public Vector2 nearestPoint { get; set; }
+
 
     //Meteor용 고정 방향 중력
-    public bool fixedGravity = false;
-    Planet fixedPlanet;
-    Vector2 fixedPoint;
-    Vector2 fixedGravityVector;
-    float fixedGravitySpeed;
+    //public bool fixedGravity = false;
+    //Planet fixedPlanet;
+    //Vector2 fixedPoint;
+    //Vector2 fixedGravityVector;
+    //float fixedGravitySpeed;
 
     public List<Planet> gravityPlanets = new List<Planet>();
 
     //스크립트들
     public Planet nearestPlanet;
-    protected Planet preNearestPlanet;
     public PolygonCollider2D nearestCollider;
     protected Rigidbody2D rb;
 
@@ -40,23 +42,16 @@ public class Gravity : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (fixedGravity)
-        {
-            rb.AddForce(fixedGravitySpeed * currentGravityForce * Time.deltaTime * fixedGravityVector, ForceMode2D.Force);
-            return;
-        }
-
         //가장 가까이 있는 행성 체크
-        if (GetNearestPlanet(out Planet planet))
+        if (GetNearestPlanet(out Planet planet, out Vector2 point))
         {
-            nearestPoint = GetNearestPoint(planet);
+            nearestPoint = point;
+            nearestCollider = planet.polyCollider;
         }
 
-        nearestPlanet = planet;
-
-        if (nearestPlanet != preNearestPlanet)       //Planet이 바뀌면 한번만 발동한다.
+        if (nearestPlanet != planet)       //Planet이 바뀌면 한번만 발동한다.
         {
-            ChangePlanet();
+            ChangePlanet(planet);
         }
 
         if (nearestPlanet == null) return;
@@ -65,51 +60,24 @@ public class Gravity : MonoBehaviour
         GravityFunction();
     }
 
-    protected virtual void ChangePlanet()
-    {
-        preNearestPlanet = nearestPlanet;
-
-    }
-
+    [SerializeField] float k = 0.1f; //상수
+    protected float lerpF;
     protected virtual void GravityFunction()
     {
         Vector2 gravVec = nearestPoint - (Vector2)transform.position;
+        //거리가 멀어질수록 0에 가깝고, 거리가 가까워질수록 1에 가까움.
+        
+        float sqrDistance = gravVec.sqrMagnitude;  //거리의 제곱
+        lerpF = 1f / (1f + k * sqrDistance);  //거리가 클수록 0에 가깝고, 거리가 가까울수록 1에 가까운 수.
+        float GForce = Mathf.Lerp(0, currentGravityForce, lerpF);
 
-        rb.AddForce(currentGravityForce * nearestPlanet.gravityMultiplier * Time.deltaTime * gravVec.normalized, ForceMode2D.Force);
+        rb.AddForce(GForce * nearestPlanet.gravityMultiplier * gravityMultiplier * Time.fixedDeltaTime * gravVec.normalized, ForceMode2D.Force);
     }
 
-    public void FixedGravityFunction(Planet planet, float speed)
+    public bool GetNearestPlanet(out Planet planet, out Vector2 point)       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
     {
-        Debug.Log("fixedGravityOn");
-
-        fixedGravity = true;
-        fixedPlanet = planet;
-        //fixedPoint = GetNearestPoint(fixedPlanet);
-        fixedPoint = GameManager.Instance.player.position;
-        fixedGravitySpeed = speed;
-       
-        Vector2 gravVec;
-        if (fixedPlanet != null)
-            gravVec = fixedPlanet.transform.position - transform.position;
-        else gravVec = fixedPoint - (Vector2)transform.position;
-
-        fixedGravityVector = gravVec.normalized;
-
-    }
-    public void CancelFixedGravity()
-    {
-        fixedGravity = false;
-    }
-
-    Vector2 GetNearestPoint(Planet _planet)
-    {
-        nearestCollider = _planet.polyCollider;        
-        return nearestCollider.ClosestPoint(transform.position);
-    }
-
-    public bool GetNearestPlanet(out Planet planet)       //가장 가까운 Planet 스크립트와 해당 스크립트의 GravityForce를 가져온다.
-    {
-        Planet targetPlanet = null;
+        planet = null;
+        point = Vector2.zero;
         float minDist = 1000f;
 
         for (int i = 0; i < gravityPlanets.Count; i++)
@@ -117,20 +85,29 @@ public class Gravity : MonoBehaviour
             if (gravityPlanets[i] == null)
                 continue;
 
-            Vector2 distVec = gravityPlanets[i].polyCollider.ClosestPoint(transform.position) - (Vector2)transform.position;
-            float dist = distVec.magnitude;
+            Vector2 closestPoint = gravityPlanets[i].polyCollider.ClosestPoint(transform.position);
+            float dist = (closestPoint - (Vector2)transform.position).magnitude;
 
             if (dist < minDist)
             {
                 minDist = dist;
-                targetPlanet = gravityPlanets[i];
+                planet = gravityPlanets[i];
+                point = closestPoint;
             }
         }
-        planet = targetPlanet;
+        
 
-        return planet == null ? false : true;
+        return planet != null ? true : false;
+    }
+    
+
+    protected virtual void ChangePlanet(Planet planet)
+    {
+        nearestPlanet = planet;
     }
 
+
+    #region 중력 행성 리스트에 행성 추가
     public void AddToGravityList(Planet planet)
     {
         foreach(var gravity in gravityPlanets)
@@ -146,5 +123,6 @@ public class Gravity : MonoBehaviour
     {
         gravityPlanets.Remove(planet);
     }
+    #endregion
 
 }

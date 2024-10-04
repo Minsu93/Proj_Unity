@@ -15340,7 +15340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc30e03681eec468497a14da45f0c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 14
+  jumpForce: 12
   maxAngleOnLand: 30
   dashForce: 18
   dashRadius: 0.8
@@ -15348,8 +15348,8 @@ MonoBehaviour:
   dashTime: 0.4
   unHittableTime: 1
   dashGaugeCost: 100
-  boostForce: 15
-  speedLimit: 15
+  boostForce: 18
+  speedLimit: 13
   rechargeSpeed: 100
   boostGaugeRate: 50
   boostMaxGauge: 100
@@ -15391,12 +15391,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 1
-  nearestPoint: {x: 0, y: 0}
-  fixedGravity: 0
+  gravityMultiplier: 1
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
-  characterGravityMultiplier: 1
+  k: 0.1
 --- !u!114 &9007588099006207589
 MonoBehaviour:
   m_ObjectHideFlags: 0

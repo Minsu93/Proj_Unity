@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: ClickGun
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
-  bubbleIcon: {fileID: 0}
+  bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
   damage: 5
   shootInterval: 0.01
@@ -26,10 +26,11 @@ MonoBehaviour:
   speed: 30
   speedVariation: 0
   lifeTime: 0
-  range: 15
+  range: 18
   showRange: 1
   maxAmmo: 60
   projectileSpread: 0
   randomSpreadAngle: 5
+  duration: 10
   shootSFX: {fileID: 0}
   weaponPrefab: {fileID: 5061795885844492922, guid: 154542a7ba2b2a749be2a5b062a7195c, type: 3}

@@ -55,6 +55,7 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         UpdateWeaponSight();
+        CheckWeaponDurtation();
     }
 
     #region WeaponSight
@@ -189,7 +190,7 @@ public class PlayerWeapon : MonoBehaviour
     void AfterShootProcess()
     {
         //쏠 때마다 총알 한발씩 제거
-        if (!infiniteBullets) currAmmo -= 1;
+        //if (!infiniteBullets) currAmmo -= 1;
         GameManager.Instance.playerManager.UpdateGaugeUIShootTime(currAmmo);  //UI 에 전달
 
         //PlayerView 의 애니메이션 실행 
@@ -251,6 +252,19 @@ public class PlayerWeapon : MonoBehaviour
 
     }
 
+    //총기 지속시간 체크
+    void CheckWeaponDurtation()
+    {
+        if(weaponDuration > 0)
+        {
+            weaponDuration -= Time.deltaTime;
+            if(weaponDuration <= 0)
+            {
+                DequeueData();
+            }
+        }
+    }
+
     //기본 총기 소환
     public void BackToBaseWeapon(bool instant)
     {
@@ -297,7 +311,7 @@ public class PlayerWeapon : MonoBehaviour
 
         return wtype;
     }
-
+    float weaponDuration;
     public void ChangeWeapon(WeaponType weaponType, float curAmmo, bool instant)
     {
         isChanging = !instant;
@@ -318,6 +332,7 @@ public class PlayerWeapon : MonoBehaviour
         currAmmo = curAmmo;
         maxAmmo = currWeaponType.maxAmmo;
         range = currWeaponType.range;
+        weaponDuration = currWeaponType.weaponDuration;
         ShowWeaponSight(currWeaponType.showRange);
 
         if (maxAmmo == 0) infiniteBullets = true;
@@ -325,8 +340,10 @@ public class PlayerWeapon : MonoBehaviour
 
         ResetBuff();
 
+        GameManager.Instance.playerManager.UpdatePlayerGaugeUI(currWeaponType.weaponData);
+
         //무기 교체 쿨타임
-        if(!instant)
+        if (!instant)
             StartCoroutine(ChangePauseRoutine());
     }
 

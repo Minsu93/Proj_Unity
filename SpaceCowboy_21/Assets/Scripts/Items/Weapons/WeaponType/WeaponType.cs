@@ -36,6 +36,8 @@ public abstract class WeaponType : MonoBehaviour
     public bool showRange { get; set; }
     public float range { get; set; }
     public int maxAmmo { get; set; }
+    public float weaponDuration { get; private set; }
+
 
     protected Transform gunTipTr;
     [SerializeField] ParticleSystem muzzleFlashVFX;
@@ -64,6 +66,7 @@ public abstract class WeaponType : MonoBehaviour
         lifeTime = weaponData.LifeTime;
         range = weaponData.Range;
         maxAmmo = weaponData.MaxAmmo;
+        weaponDuration = weaponData.Duration;
         
         //기타 설정
         projectilePrefab = weaponData.ProjectilePrefab;

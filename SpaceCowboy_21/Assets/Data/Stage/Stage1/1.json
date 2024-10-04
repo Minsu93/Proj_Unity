@@ -1,21 +1,20 @@
 {
-    "startTime": 5.0,
-    "hasBossWave": false,
+    "isBossWave": false,
     "waves": [
         {
             "waveIndex": 0,
             "spawns": [
+
                 {
                     "enemy": {
                         "name": "ground_shooter",
                         "delay": 0.2
                     },
-                    "spawnCount": 6,
+                    "spawnCount": 4,
                     "delayToNextWave": 0.0
                 }
             ],
-            "totalTime": 15.0
+            "totalTime": 30.0
         }
-    ],
-    "bossWave": null
+    ]
 }

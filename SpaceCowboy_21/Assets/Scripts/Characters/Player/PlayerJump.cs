@@ -97,22 +97,25 @@ public class PlayerJump : MonoBehaviour
                 if (boostCurGauge < boostMaxGauge)
                 {
                     boostCurGauge += rechargeSpeed * Time.deltaTime;
+                    GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
                 }
                 else if( boostCurGauge > boostMaxGauge)
                 {
                     boostCurGauge = boostMaxGauge;
+                    GameManager.Instance.playerManager.HideBoosterUI();
                 }
             }
         }
         else
         {
+            //부스터 사용 시 게이지 감소
             if(boostCurGauge > 0)
             {
                 boostCurGauge -= boostGaugeRate * Time.deltaTime;
+                GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
             }
         }
         //UI
-        GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
         
     }
 

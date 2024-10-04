@@ -276,7 +276,6 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
                 characterGravity.activate = false;
 
                 boosterEffect.Play();
-                Debug.Log("Booster Play");
             }
         }
         else if (playerState != PlayerState.Jumping)
@@ -309,7 +308,6 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             characterGravity.activate = true;
 
             boosterEffect.Stop();
-            Debug.Log("Booster Stop");
 
         }
 
@@ -359,6 +357,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     public void TrySlide()
     {
         if (!activate) return;
+        if (OnAir) return;
 
         //슬라이딩 관련
         playerState = PlayerState.Sliding;
@@ -371,11 +370,11 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
 
     public void StopSlide()
     {
+        if (playerState == PlayerState.Sliding)
+        {
+            playerState = PlayerState.Running;
+        }
 
-        //이외에는 슬라이딩 관련 
-        if (playerState != PlayerState.Sliding) { return; }
-
-        playerState = PlayerState.Running;
         targetSpeed = 0;
 
         speedMultiplier = 1;
@@ -738,22 +737,29 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             StartCoroutine(DieRoutine());
         }
     }
-    public void DeactivatePlayer()
+    public void DeactivatePlayer(bool isActive)
     {
-        activate = false;
-        PlayerIgnoreProjectile(true);
+        activate = isActive;
+        PlayerIgnoreProjectile(!isActive);
 
         //플레이어 조작 정지
-        GameManager.Instance.playerManager.DisablePlayerInput();
+        if (!isActive)
+        {
+            GameManager.Instance.playerManager.DisablePlayerInput();
+        }
+        else
+        {
+            GameManager.Instance.playerManager.EnablePlayerInput();
+        }
         StopAllCoroutines();
         unHitRoutine = null;
         unControlRoutine = null;
 
         //UI제거
-        playerJump.RemoveJumpArrow(false);
-        playerWeapon.ShowWeaponSight(false);
+        playerJump.RemoveJumpArrow(isActive);
+        playerWeapon.ShowWeaponSight(isActive);
 
-        this.gameObject.SetActive(false);   
+        //this.gameObject.SetActive(false);   
     }
 
     IEnumerator ResapwnRoutine()

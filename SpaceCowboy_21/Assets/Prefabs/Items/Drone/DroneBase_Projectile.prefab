@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3655842897986272984
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 9189689044929776396, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_Name
+      value: DroneBase_Projectile
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9189689044929776400, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+--- !u!4 &5563208604835145948 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9189689044530058756, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+  m_PrefabInstance: {fileID: 3655842897986272984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5563208604964468180 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9189689044929776396, guid: 01df2db1988d5f449aff90ae4e15eb88, type: 3}
+  m_PrefabInstance: {fileID: 3655842897986272984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5920250027759561131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563208604964468180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e6c0f605d101dd40a3ebc327da40100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 4f1138d52d5823a4b8c5e110c831d3db, type: 3}
+  autoUse: 0
+  distFromPlayer: 2
+  minSmoothTime: 0.1
+  maxSmoothTime: 0.5
+  useDuration: 5
+  viewTr: {fileID: 5563208604835145948}
+  launchForce: 15
+  enemyCheckRange: 10
+  checkInterval: 0.2
+  attackProperty:
+    numberOfBurst: 2
+    burstInterval: 1
+    numberOfProjectile: 1
+    projectileSpread: 0
+    randomSpreadAngle: 10
+    projectilePrefab: {fileID: 2413583796227472870, guid: a313332dfd4909446b869ca7c44e9c58, type: 3}
+    damage: 5
+    speed: 30
+    lifeTime: 0
+    range: 20
+    shootCoolTime: 2

@@ -7,91 +7,51 @@ public class StartPoint : MonoBehaviour
 {
     [SerializeField] float launchPower = 5.0f;
     [SerializeField] Vector2 launchDir;
-    GameObject playerObj;
-    GameObject shuttleObj;
     [SerializeField] Animator animator;
-    CircleCollider2D circleColl;
-    bool portalActivate;
 
-    private void Awake()
+
+
+    public void SpawnPlayer()
     {
-        circleColl = GetComponent<CircleCollider2D>();
-        circleColl.enabled = false;
-        portalActivate = false;
-    }
-
-    private void OnEnable()
-    {
-        GameManager.Instance.StageEndEvent += OpenPortal;
-    }
-
-    private void Start()
-    {
-        ReadyPlayer();
-
-        //GameManager.Instance.TransitionFadeOut(false);
-        //GameManager.Instance.cameraManager.SetStartCamera(CamDist.Back);
-        //GameManager.Instance.cameraManager.ZoomCamera(CamDist.Middle, ZoomSpeed.Fast);
-
         //애니메이션 시작 
         animator.SetTrigger("spawn");
-    }
-
-    void ReadyPlayer()
-    {
-        Vector2 pos = transform.position;
-        Quaternion rot = transform.rotation;
-        playerObj = GameManager.Instance.SpawnPlayer(pos,rot);
-        //shuttleObj = GameManager.Instance.SpawnShuttle(pos, rot);
     }
 
     //포탈 생성 > 뱉어내기 애니메이션 실행 시 자동으로 실행(trigger)할 메소드
     void StartLauchPlayer()
     {
         launchDir = transform.right;
-        playerObj.SetActive(true);
-        //shuttleObj.SetActive(true);
+        GameManager.Instance.player.position = transform.position;
+        GameManager.Instance.player.gameObject.SetActive(true);
         GameManager.Instance.playerManager.playerBehavior.LauchPlayer(launchDir, launchPower);
+        GameManager.Instance.playerManager.MoveAndActivateDrone(transform.position);
+        GameManager.Instance.playerManager.playerBehavior.DeactivatePlayer(true);
 
-
-        StartCoroutine(AfterLaunchPlayer());
     }
 
-    //플레이어 활성화 후에 이벤트
-    IEnumerator AfterLaunchPlayer()
+    public delegate void MoveStageDel();
+    public MoveStageDel MoveStage;
+    //다시 포탈을 연다. 
+    public void OpenPortal(MoveStageDel del)
     {
-        yield return null;
-        //4초 후 웨이브 시작
-        WaveManager.instance.WaveStart();
-    }
-
-
-    //다시 포탈을 연다. 플레이어가 들어오면 다음 스테이지로 이동한다. 
-    void OpenPortal()
-    {
+        transform.position = GameManager.Instance.player.position;
         animator.SetTrigger("portalOpen");
+        MoveStage = del;
+
     }
 
-    void PortalTriggerOn()
+    //portalOpen -> portalClose 애니메이션. close 될 때 자동으로 제거된다. 
+    void RemovePlayer()
     {
-        circleColl.enabled = true;
-        portalActivate= true;
+        GameManager.Instance.player.gameObject.SetActive(false);
+        GameManager.Instance.playerManager.DeactivateDrone();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!portalActivate) return;
-
-        if (collision.CompareTag("Player"))
-        {
-            GameManager.Instance.playerManager.playerBehavior.DeactivatePlayer();
-            animator.SetTrigger("portalClose");
-        }
-    }
-
+    //portal Close 애니메이션에서 실행. 다음 스테이지로 이동하는 이벤트를 실행한다. 
     void MoveToNextStage()
     {
-        GameManager.Instance.MoveToNextStage();
-
+        if (MoveStage != null) MoveStage();
+        Debug.Log("NextStage");
     }
+
 }

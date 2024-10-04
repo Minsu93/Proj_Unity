@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class DroneItem_Projectile : DroneItem
+public class DroneItem_Projectile : DroneItem
 {
     [Header("Enemy Check Range")]
     [SerializeField] protected float enemyCheckRange = 10f;
@@ -13,8 +13,46 @@ public abstract class DroneItem_Projectile : DroneItem
     [SerializeField] protected ProjectileAttackProperty attackProperty;
     protected float lastShootTime;
     protected Transform targetTr;
+    float shootTimer;
 
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!activate) return;
+        if (stopFollow) return;
+        if (useDrone) return;
+        //기본 사격
+        ShootMethod();
+    }
+
+
+    protected void ShootMethod()
+    {
+        //시간 체크
+        shootTimer += Time.deltaTime;
+        if (shootTimer >= checkInterval)
+        {
+            //적 체크
+            shootTimer = 0;
+            targetTr = CheckEnemyIsNear();
+        }
+
+
+        //발사 
+        if (targetTr != null)
+        {
+            if (Time.time - lastShootTime > attackProperty.shootCoolTime)
+            {
+                //쏜 시간 체크
+                lastShootTime = Time.time;
+
+                //사격
+                StartCoroutine(burstShootRoutine(targetTr));
+            }
+        }
+    }
 
     protected Transform CheckEnemyIsNear()
     {

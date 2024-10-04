@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerGravity : CharacterGravity
@@ -13,37 +14,15 @@ public class PlayerGravity : CharacterGravity
     }
 
 
-    protected override void GravityFunction()
+    protected override void ChangePlanet(Planet planet)
     {
-        Vector2 gravVec = nearestPoint - (Vector2)transform.position;
-
-        rb.AddForce(gravVec.normalized * currentGravityForce * nearestPlanet.gravityMultiplier * characterGravityMultiplier * Time.deltaTime, ForceMode2D.Force);
-
-    }
-
-    protected override void ChangePlanet()
-    {
-        //GameManager.Instance.playerManager.playerNearestPlanet = nearestPlanet;
-
-        ////중력 범위 표시
-        //if (preNearestPlanet != null)
-        //{
-        //    preNearestPlanet.graviteyViewOff();
-        //}
-
-        //if(nearestPlanet != null)
-        //{
-        //    nearestPlanet.graviteyViewOn();
-
-        //    GameManager.Instance.cameraManager.ChangeCamera(nearestPlanet.planetFOV);
-        //}
-
-        preNearestPlanet = nearestPlanet;
+        nearestPlanet = planet;
         playerBehavior.ChangePlanet();
-
-
     }
 
-
+    private void OnDrawGizmos()
+    {
+        Handles.Label(transform.position, lerpF.ToString());
+    }
 
 }

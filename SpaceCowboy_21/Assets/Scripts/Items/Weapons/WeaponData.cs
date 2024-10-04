@@ -100,6 +100,10 @@ public class WeaponData : ScriptableObject
     public float RandomSpreadAngle { get { return randomSpreadAngle; } }
 
     [SerializeField]
+    float duration;    //ÃÑ±¸ Èçµé¸²¶§¹®¿¡ »ý±â´Â ·£´ý°ª
+    public float Duration { get { return duration; } }
+
+    [SerializeField]
     AudioClip shootSFX;   //ÃÑ±â »ç¿îµå
     public AudioClip ShootSFX { get { return shootSFX; } }
 

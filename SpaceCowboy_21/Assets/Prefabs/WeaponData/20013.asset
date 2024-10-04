@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: SplitGun
   gunStyle: 1
   icon: {fileID: 0}
-  bubbleIcon: {fileID: 0}
+  bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 8449678307122149294, guid: 7e8d082e79407744498fc762237ba051, type: 3}
   damage: 5
   shootInterval: 0.2
@@ -26,10 +26,11 @@ MonoBehaviour:
   speed: 20
   speedVariation: 0
   lifeTime: 0
-  range: 5
+  range: 18
   showRange: 1
   maxAmmo: 60
   projectileSpread: 0
   randomSpreadAngle: 0
+  duration: 10
   shootSFX: {fileID: 0}
   weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

@@ -53,7 +53,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -112508593885672785, guid: 69e0ec4d526c5cf4e9fa2c42eed49173, type: 2}
+  - {fileID: 8623078618439313755, guid: 21a5fd57c8c888d44ab11a871c740c02, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -141,7 +141,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -112508593885672785, guid: 69e0ec4d526c5cf4e9fa2c42eed49173, type: 2}
+  - {fileID: 8623078618439313755, guid: 21a5fd57c8c888d44ab11a871c740c02, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -185,15 +185,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69e0ec4d526c5cf4e9fa2c42eed49173, type: 2}
-  m_sharedMaterial: {fileID: -112508593885672785, guid: 69e0ec4d526c5cf4e9fa2c42eed49173, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 21a5fd57c8c888d44ab11a871c740c02, type: 2}
+  m_sharedMaterial: {fileID: 8623078618439313755, guid: 21a5fd57c8c888d44ab11a871c740c02, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282137855
-  m_fontColor: {r: 1, g: 0.23529412, b: 0.23529412, a: 1}
+    rgba: 4281198519
+  m_fontColor: {r: 0.71832603, g: 0.9056604, b: 0.17657521, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   permanent: 0
-  lifetime: 1
+  lifetime: 0.8
   unscaledTime: 0
   enable3DGame: 0
   faceCameraView: 1
@@ -725,7 +725,7 @@ MonoBehaviour:
   enablePooling: 1
   poolSize: 50
   disableOnSceneLoad: 1
-  editorLastFont: Basic-Glow
+  editorLastFont: Basic-Outline
   position: {x: 0, y: 0, z: 0}
 --- !u!210 &8909661270553346379
 SortingGroup:
@@ -791,7 +791,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -112508593885672785, guid: 69e0ec4d526c5cf4e9fa2c42eed49173, type: 2}
+  - {fileID: 8623078618439313755, guid: 21a5fd57c8c888d44ab11a871c740c02, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

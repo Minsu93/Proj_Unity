@@ -20,9 +20,9 @@ public class WaveProgress : MonoBehaviour
     int stageCount;
     float[] waveTimes;
 
-    public void InitializeWaveProgress(Stage stage)
+    public void InitializeWaveProgress(Stage stage, float startTime)
     {
-        iconSpawnTime = stage.startTime;
+        iconSpawnTime = startTime;
         stageCount = stage.waves.Count;
         
         waveTimes = new float[stage.waves.Count];

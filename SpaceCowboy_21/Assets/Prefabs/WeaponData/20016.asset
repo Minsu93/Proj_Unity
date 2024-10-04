@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: AutoGuideGun
   gunStyle: 1
   icon: {fileID: 0}
-  bubbleIcon: {fileID: 0}
+  bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 6292677011125795810, guid: 246c3e7346a163a4dbc076a90b703273, type: 3}
   damage: 5
   shootInterval: 0.2
@@ -26,10 +26,11 @@ MonoBehaviour:
   speed: 20
   speedVariation: 0
   lifeTime: 5
-  range: 0
+  range: 18
   showRange: 1
   maxAmmo: 100
   projectileSpread: 0
   randomSpreadAngle: 10
+  duration: 10
   shootSFX: {fileID: 0}
   weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

@@ -30,7 +30,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4733179845072973872}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -887,7 +887,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4733179845072973872}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1000,8 +1000,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4733179843561658057}
   - {fileID: 4733179844897165775}
+  - {fileID: 4733179843561658057}
   - {fileID: 4733179845415595036}
   m_Father: {fileID: 4733179844592117395}
   m_RootOrder: 1
@@ -1063,6 +1063,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerIconYUp: 100
   stageicon: {fileID: 6259717097152417339, guid: 62c5410a84b7904459d7e0d261fff420, type: 3}
+  bossicon: {fileID: 6398375502880193550, guid: 976b7124d8a304144898b9c8c258f39c, type: 3}
   iconStorage: {fileID: 4733179843561658057}
   playerIconTr: {fileID: 4733179845415595036}
   lineRect: {fileID: 4733179844897165775}

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: FastRevolver
   gunStyle: 0
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
-  bubbleIcon: {fileID: 21300000, guid: e3030030244662f47a20adb838d9a635, type: 3}
+  bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
   damage: 5
   shootInterval: 0.1
@@ -26,10 +26,11 @@ MonoBehaviour:
   speed: 45
   speedVariation: 0
   lifeTime: 0
-  range: 15
+  range: 18
   showRange: 1
   maxAmmo: 40
   projectileSpread: 0
   randomSpreadAngle: 0
+  duration: 10
   shootSFX: {fileID: 0}
   weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

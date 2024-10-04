@@ -116,7 +116,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0.08
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -285,7 +285,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1042,21 +1042,21 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.2451613
-          inSlope: -0.043069895
-          outSlope: -0.043069895
+          value: 0.50086594
+          inSlope: 5.672779
+          outSlope: 5.672779
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.4374976
+          outWeight: 0.05121699
         - serializedVersion: 3
-          time: 0.3423887
-          value: 0.9225807
-          inSlope: 0.66550195
-          outSlope: 0.66550195
-          tangentMode: 34
+          time: 0.22339556
+          value: 1
+          inSlope: -0.017000262
+          outSlope: -0.017000262
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.27150655
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
@@ -1104,39 +1104,39 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.23225805
-          inSlope: 0.25785232
-          outSlope: 0.25785232
+          value: 0.49803564
+          inSlope: 4.373103
+          outSlope: 4.373103
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.60181564
+          outWeight: 0.119181074
         - serializedVersion: 3
-          time: 0.20293951
-          value: 0.28799415
-          inSlope: 0.88016886
-          outSlope: 0.88016886
+          time: 0.23269415
+          value: 0.98791844
+          inSlope: -0.07848943
+          outSlope: -0.07848943
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.20261855
-          outWeight: 0.33333334
+          inWeight: 0.46368518
+          outWeight: 0.5096137
         - serializedVersion: 3
-          time: 0.5591172
-          value: 0.88283205
-          inSlope: 1.1161821
-          outSlope: 1.1161821
+          time: 0.62794304
+          value: 0.46407324
+          inSlope: -0.58220965
+          outSlope: -0.58220965
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.33333334
+          outWeight: 0.30784172
         - serializedVersion: 3
           time: 1
           value: 0.4709688
-          inSlope: -0.52898425
-          outSlope: -0.52898425
+          inSlope: 0.40749022
+          outSlope: 0.40749022
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.18002477
+          inWeight: 0.26944223
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -1175,22 +1175,22 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0
+          value: 1
           inSlope: 0
-          outSlope: 1
-          tangentMode: 0
+          outSlope: 0
+          tangentMode: 34
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 1
+          inSlope: 0
           outSlope: 0
-          tangentMode: 0
+          tangentMode: 34
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -4879,7 +4879,7 @@ ParticleSystemRenderer:
   m_NormalDirection: 1
   m_ShadowBias: 0
   m_RenderAlignment: 2
-  m_Pivot: {x: 0.3, y: 0, z: 0}
+  m_Pivot: {x: 0.2, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
   m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 1

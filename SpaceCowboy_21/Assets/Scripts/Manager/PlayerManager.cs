@@ -59,7 +59,6 @@ public class PlayerManager : MonoBehaviour
     public bool ChangeWeapon(WeaponData weaponData)
     {
         bool canPush = playerWeapon.EnqueueData(weaponData);
-        UpdatePlayerGaugeUI(weaponData);
         return canPush;
 
     }
@@ -176,6 +175,14 @@ public class PlayerManager : MonoBehaviour
         return playerDrone.RemoveDrone();
     }
 
+    public void DeactivateDrone()
+    {
+        playerDrone.DeactivateDrones();
+    }
+    public void MoveAndActivateDrone(Vector2 pos)
+    {
+        playerDrone.MoveAndActivateDrones(pos);
+    }
     #endregion
 
     #region  UI관련
@@ -198,6 +205,7 @@ public class PlayerManager : MonoBehaviour
     GameObject DroneSlotObj_C;
     //마우스 포인트를 따라다니는 게이지 UI관련
     Gauge_Weapon gauge_Weapon;
+    GameObject boosterObj;
     //UISkillPanel skillPanel;
     //player UI 스폰
     void SpawnPlayerUI()
@@ -207,7 +215,11 @@ public class PlayerManager : MonoBehaviour
 
         healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
         shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
-        boosterImg = pUI.transform.Find("StatusPanel/Booster/BoosterFill").GetComponent<Image>();
+
+        boosterObj = pUI.transform.Find("Booster").gameObject;
+        boosterImg = pUI.transform.Find("Booster/BoosterFill").GetComponent<Image>();
+        boosterObj.GetComponentInChildren<FollowOBJ>().followingObj = GameManager.Instance.player.gameObject;
+        HideBoosterUI();
 
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
 
@@ -255,7 +267,18 @@ public class PlayerManager : MonoBehaviour
     //부스터 게이지 관련
     public void UpdateBoosterUI(float fillAmount)
     {
+        if(!boosterObj.activeSelf)
+        {
+            boosterObj.SetActive(true);
+        }
         boosterImg.fillAmount = fillAmount;
+    }
+    public void HideBoosterUI()
+    {
+        if (boosterObj.activeSelf)
+        {
+            boosterObj.SetActive(false);
+        }
     }
 
 

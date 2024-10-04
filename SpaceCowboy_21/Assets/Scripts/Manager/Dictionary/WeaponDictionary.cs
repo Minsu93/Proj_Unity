@@ -79,7 +79,7 @@ public class WeaponDictionary : MonoBehaviour
     #region 저장&불러오기
 
     /// <summary>
-    /// 무기 해금, 무기 구매 시 실행.
+    /// 무기 해금 시 실행.
     /// </summary>
     public void SaveWeaponDictionary()
     {
@@ -90,7 +90,7 @@ public class WeaponDictionary : MonoBehaviour
     }
 
     /// <summary>
-    /// Lobby 상점에 진입시 실행. 
+    /// 게임 Awake시 실행 
     /// </summary>
     public void LoadWeaponDictionary()
     {

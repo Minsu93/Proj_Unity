@@ -99,7 +99,7 @@ MonoBehaviour:
   weaponSlots: 2
   droneSlots: 3
   emptySprite: {fileID: 0}
-  lifeMax: 3
+  lifeMax: 1
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
 --- !u!1 &529613330383855574
 GameObject:
@@ -148,6 +148,7 @@ MonoBehaviour:
   effects:
   - {fileID: 7196136449052729651, guid: 3f655838ea7ec704085293a56ffb7fe0, type: 3}
   - {fileID: 7196136449052729651, guid: c188cdde3cd5373479be3030fd55d78e, type: 3}
+  - {fileID: 7196136449052729651, guid: 393f22e98fec02a4099721100a81b8f1, type: 3}
   - {fileID: 7196136449052729651, guid: 123ea11c39d1fb04c996651624506b01, type: 3}
   - {fileID: 7196136449052729651, guid: 6df6c92d894b04149ada091485ba5bd3, type: 3}
   - {fileID: 7196136449052729651, guid: e15a4baac458ae7409bdf82f4995befb, type: 3}
@@ -219,11 +220,10 @@ MonoBehaviour:
   shuttlePrefab: {fileID: 9189689044929776396, guid: 8cd04a682b60a034abed6accc0972826, type: 3}
   lobbyPlayerPrefab: {fileID: 4669144034032980127, guid: a8e304ecf28e6dc4ea56e6fc622b0f44, type: 3}
   lobbyShuttlePrefab: {fileID: 6609823914641357495, guid: 4e1add9db60028e478b050e6b578c4a2, type: 3}
-  worldGravity: 700
+  worldGravity: 1000
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
   chapterIndex: 1
-  stageIndex: 1
   lobbyName: LobbyUI
   fadeoutAnimator: {fileID: 2814280024513161853}
 --- !u!1 &529613330943597974
@@ -486,7 +486,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3844769580556792900}
   - component: {fileID: 7388029682735944180}
-  - component: {fileID: 3716002422430267783}
   - component: {fileID: 4185339236932033795}
   m_Layer: 0
   m_Name: Dictionaries
@@ -533,24 +532,6 @@ MonoBehaviour:
     monsterPrefab: {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
   - name: air_driller
     monsterPrefab: {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
---- !u!114 &3716002422430267783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1938671263256324434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8e1df7694ce93f44ac44302eb124627, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillList:
-  - {fileID: 1657642907275852195, guid: 2c50456502715cb41a7afdf3fa626aca, type: 3}
-  - {fileID: 5110877519637717832, guid: 5e3f4e923b41cab46bc5efa3d9f6cefa, type: 3}
-  - {fileID: 5110877519637717832, guid: 0280c3ede2f6cca4a8c991c60fdfeffe, type: 3}
-  skillTotal:
-    skillDataList: []
 --- !u!114 &4185339236932033795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,7 +586,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &105173996593381382
 Transform:
   m_ObjectHideFlags: 0

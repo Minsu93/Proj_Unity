@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     
     //Dictionary들
     public MonsterDictionary monsterDictonary { get; private set; }
-    public SkillDictionary skillDictionary { get; private set; }
+    //public SkillDictionary skillDictionary { get; private set; }
     public WeaponDictionary weaponDictionary { get; private set; }
 
     //UI
@@ -84,19 +84,19 @@ public class GameManager : MonoBehaviour
         cameraManager = GetComponentInChildren<CameraManager>();
 
         monsterDictonary = GetComponentInChildren<MonsterDictionary>();
-        skillDictionary = GetComponentInChildren<SkillDictionary>();
+        //skillDictionary = GetComponentInChildren<SkillDictionary>();
         weaponDictionary = GetComponentInChildren<WeaponDictionary>();
 
         GameObject ui = Instantiate(stageUI, this.transform);
-        stageStartUi = ui.transform.Find("StageStartUI");
+        //stageStartUi = ui.transform.Find("StageStartUI");
         stageEndUi = ui.transform.Find("StageEndUI");
-        stageStartUi.gameObject.SetActive(false);
+        //stageStartUi.gameObject.SetActive(false);
         stageEndUi.gameObject.SetActive(false);
 
 
         weaponDictionary.LoadWeaponDictionary();
         //weaponDictionary.LoadEquippedWeapons();
-        skillDictionary.LoadSkillDictionary();
+        //skillDictionary.LoadSkillDictionary();
 
         //무기 정보 업데이트
         popperManager.PopperReady();
@@ -127,16 +127,23 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            if(mapSize == default)
-            {
-                MapBorder border = GameObject.FindGameObjectWithTag("SpaceBorder").GetComponent<MapBorder>();
-                mapSize = new Vector2(border.width / 2, border.height / 2);
-                Debug.Log("mapSize is : " + mapSize.ToString());
-            }
+            //if(mapSize == default)
+            //{
+            //    MapBorder border = GameObject.FindGameObjectWithTag("SpaceBorder").GetComponent<MapBorder>();
+            //    mapSize = new Vector2(border.width / 2, border.height / 2);
+            //    Debug.Log("mapSize is : " + mapSize.ToString());
+            //}
 
             return mapSize;
         }
+        set
+        {
+            mapSize = value;
+        }
     }
+    Vector2 mapCenter;
+    public Vector2 MapCenter { get; set; }
+
 
     #region 캐릭터, 셔틀 스폰
     public GameObject SpawnPlayer(Vector2 pos, Quaternion rot)
@@ -152,8 +159,8 @@ public class GameManager : MonoBehaviour
 
 
         //카메라 정보 업데이트
-        cameraManager.SetVirtualCam();
-        cameraManager.InitCam();
+        //cameraManager.SetVirtualCam();
+        //cameraManager.InitCam();
 
         
         playerObj.SetActive(false);
@@ -215,15 +222,13 @@ public class GameManager : MonoBehaviour
 
     #region 씬 불러오기 관련 
     public int chapterIndex = 1;
-    public int stageIndex = 1;
-    int maxStage = 5;
     //상황에 따른 로비 진입 이벤트
     [SerializeField] private string lobbyName = "LobbyUI";
-    delegate void AfterSceneLoadEvent();
-    AfterSceneLoadEvent sceneDel;
+    //delegate void AfterSceneLoadEvent();
+    //AfterSceneLoadEvent sceneDel;
 
-    public event System.Action StageStartEvent;
-    public event System.Action StageEndEvent;   
+    public event System.Action<bool> StageStartEvent;
+    //public event System.Action StageEndEvent;   
     //씬 로드
     //GameStart -> LobbyUI
 
@@ -236,7 +241,6 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(LoadSceneRoutine(sceneName));
         playerManager.InitializeLife();
-        //sceneDel = ShowStartUI;
     }
     
     //플레이어 사망  > 로비 진입 시 
@@ -245,50 +249,23 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneRoutine(lobbyName));
     }
 
-    public void MoveToNextStage()
-    {
-        stageIndex++;
-        //다음 스테이지로 이동
-        string sceneStr = "Stage_" + chapterIndex.ToString() + "_" + stageIndex.ToString();
-        StartCoroutine(LoadSceneRoutine(sceneStr));
 
-    }
-
-    //스테이지 클리어 시 실행하는 전역 이벤트. 
-    // StartPortal 에서 OpenPortal 이벤트가 실행된다. 
-    public void StageClear()
-    {
-        if (StageEndEvent != null) StageEndEvent();
-        
-        StageEndEvent = null;
-    }
     public void ChapterClear()
     {
+        //StageStartEvent = TransitionFadeOut;
         StartCoroutine(LoadSceneRoutine(lobbyName));
-        //poolManager.ResetPools();
         //챕터를 클리어 했으면 ChapterIndex ++
         chapterIndex++;
-        stageIndex = 1;
-    }
-
-    public bool IsNextStageAvailable()
-    {
-        if (stageIndex + 1 <= maxStage)
-        {
-            return true;
-        }
-        else return false;
     }
 
 
     IEnumerator LoadSceneRoutine(string sceneName)
     {
-        //TransitionFadeOut(true);
 
         yield return new WaitForSeconds(0.6f);
 
         //카메라 초기화..(다른것도 초기화 필요한게 있으면 여기서)
-        cameraManager.ResetCam();
+        //cameraManager.ResetCam();
 
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
@@ -300,27 +277,30 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("씬 불러오기 완료");
 
-        //TransitionFadeOut(false);
-        if (sceneDel != null) sceneDel();
-        if(StageStartEvent != null) StageStartEvent();
+        //if (sceneDel != null) sceneDel();
+        //if(StageStartEvent != null) StageStartEvent();
+        if (fadeoutAnimator.GetBool("fade"))
+        {
+            TransitionFadeOut(false);
+        }
 
         StageStartEvent = null;
     }
 
 
-    void ShowStartUI()
-    {
-        StartCoroutine(ShowStageStartUIRoutine(1f, 1f));
-    }
-    IEnumerator ShowStageStartUIRoutine(float startDelay, float endDelay)
-    {
-        yield return new WaitForSeconds(startDelay);
-        stageStartUi.gameObject.SetActive(true);
-        yield return new WaitForSeconds(endDelay);
-        stageStartUi.gameObject.SetActive(false);
-        sceneDel = null;
+    //void ShowStartUI()
+    //{
+    //    StartCoroutine(ShowStageStartUIRoutine(1f, 1f));
+    //}
+    //IEnumerator ShowStageStartUIRoutine(float startDelay, float endDelay)
+    //{
+    //    yield return new WaitForSeconds(startDelay);
+    //    stageStartUi.gameObject.SetActive(true);
+    //    yield return new WaitForSeconds(endDelay);
+    //    stageStartUi.gameObject.SetActive(false);
+    //    sceneDel = null;
 
-    }
+    //}
 
 
     public IEnumerator ShowStageEndUI(float startDelay, float endDelay )
@@ -338,8 +318,18 @@ public class GameManager : MonoBehaviour
     GameObject fadeCanvas;
     public void TransitionFadeOut(bool fadeOut)
     {
-        if (!fadeCanvas.activeSelf) fadeCanvas.SetActive(true);
-        fadeoutAnimator.SetBool("fade", fadeOut);
+        if (fadeOut)
+        {
+            //FadeOut 시작 
+            if (!fadeCanvas.activeSelf) fadeCanvas.SetActive(true);
+            fadeoutAnimator.SetBool("fade", fadeOut);
+        }
+        else
+        {
+            //FadeOut 종료
+            fadeoutAnimator.SetBool("fade", fadeOut);
+        }
+
     }
 
     #endregion

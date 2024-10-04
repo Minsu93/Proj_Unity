@@ -12,19 +12,9 @@ public class Gauge_Weapon : MonoBehaviour
     [SerializeField] Color ammoColor;
     [SerializeField] Color emptyColor;
 
-    //[SerializeField] float currAmmo;
-    //[SerializeField] float maxAmmo;
-
-    float maxTime;
-    float curTime;
-    float lastShootTime;
-
     float maxAmmo;
     float curAmmo;
 
-    bool activate;
-
-    PlayerWeapon weapon;
     FollowOBJ followObj;
 
 
@@ -55,36 +45,22 @@ public class Gauge_Weapon : MonoBehaviour
 
     void UpdateGauge()
     {
-        DecideShowing();
-        if(maxAmmo > 0)
+        //DecideShowing();
+        if (maxAmmo == 0)
+        {
+            ammoGauge.gameObject.SetActive(false);
+        }
+        else
+        {
+            ammoGauge.gameObject.SetActive(true);
+        }
+
+
+        if (maxAmmo > 0)
         {
             ammoGauge.fillAmount = curAmmo / maxAmmo;
         }
     }
 
 
-
-    //게이지는 curTime 이 MaxTime 보다 작을 때 보여진다. 
-    //(수정) maxAmmo가 0이 아니면 보여진다. 그렇지 않으면 보이지 않는다. 
-    void DecideShowing()
-    {
-        if(maxAmmo == 0)
-        {
-            HideGauge();
-        }
-        else
-        {
-            ShowGauge();
-        }
-    }
-    
-    void ShowGauge()
-    {
-        ammoGauge.gameObject.SetActive(true);
-    }
-
-    void HideGauge()
-    {
-        ammoGauge.gameObject.SetActive(false);
-    }
 }

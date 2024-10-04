@@ -18,16 +18,11 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
-
         curLensSize = middleGroundDist;
+
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
         
-        //test. 해당 씬에서 그냥 시작할때.
-        //if(virtualCameraMain == null)
-        //{
-        //    SetVirtualCam();
-        //}
     }
 
     private void FixedUpdate()
@@ -35,51 +30,77 @@ public class CameraManager : MonoBehaviour
         UpdateCamLens();
     }
 
+
+
+
     #region Initialize Camera
+
     public void InitCam()
     {
         cameraPos = CreateCamPos();
         cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
         
-        virtualCameraMain.Follow = cameraPos.transform;
+        //virtualCameraMain.Follow = cameraPos.transform;
 
     }
-    public void InitLobbyCam(Transform tr)
-    {
-        cameraPos = CreateCamPos();
-        cameraPos.CamPosInitLobby(tr);
-        
-        virtualCameraMain.Follow = cameraPos.transform;
-    }
 
-    public void SetVirtualCam()
-    {
-        GameObject camObj = GameObject.FindGameObjectWithTag("Vcam");
-        if (camObj == null) return;
+    //public void InitLobbyCam(Transform tr)
+    //{
+    //    cameraPos = CreateCamPos();
+    //    cameraPos.CamPosInitLobby(tr);
         
-        virtualCameraMain = camObj.GetComponent<CinemachineVirtualCamera>();
-        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
-        
-        curLensSize = middleGroundDist;
-        targetLensSize = curLensSize;
-        defaultLensSize = curLensSize;
+    //    virtualCameraMain.Follow = cameraPos.transform;
+    //}
 
-        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
-    }
+    //public void SetVirtualCam()
+    //{
+    //    GameObject camObj = GameObject.FindGameObjectWithTag("Vcam");
+    //    if (camObj == null) return;
+        
+    //    virtualCameraMain = camObj.GetComponent<CinemachineVirtualCamera>();
+    //    confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
+        
+    //    curLensSize = middleGroundDist;
+    //    targetLensSize = curLensSize;
+    //    defaultLensSize = curLensSize;
+
+    //    virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
+    //}
 
     CameraPos CreateCamPos()
     {
-        GameObject camPosObj = new GameObject();
+        GameObject camPosObj = new GameObject("CamPos");
         CameraPos camPos = camPosObj.AddComponent<CameraPos>();
         return camPos;
     }
 
-    public void ResetCam()
+    public void ResetCam(CinemachineVirtualCamera vcam)
     {
-        virtualCameraMain = null;
+        if(vcam == null) return;
+        //기존 제한은 취소. 
+        if(confiner != null)
+            confiner.enabled = false;
+
+
+        virtualCameraMain = vcam;
+        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
+        if(!confiner.enabled) confiner.enabled = true;
+
+
+        curLensSize = middleGroundDist;
+        targetLensSize = curLensSize;
+        defaultLensSize = curLensSize;
+
+        virtualCameraMain.m_Lens.OrthographicSize = curLensSize; 
+
+        virtualCameraMain.Follow = cameraPos.transform;
     }
 
     #endregion
+
+
+
+
 
     #region Map Border Events
     //카메라 이벤트
@@ -93,13 +114,18 @@ public class CameraManager : MonoBehaviour
         cameraPos.StartCameraFollow();
     }
 
+    public void MoveCameraPos(Vector2 pos)
+    {
+        cameraPos.transform.position = pos;
+    }
+
     public void SetActiveVirtualCam(bool active)
     {
         virtualCameraMain.gameObject.SetActive(active);
     }
 
     //카메라 이동.
-    public void MoveCamera(Vector2 pos, Vector2 borderHalfSize, Vector2 borderPos)
+    public void teleportCamera(Vector2 pos, Vector2 borderHalfSize, Vector2 borderPos)
     {
         //화면 절반의 넓이를 구한다. 
         Camera cam = Camera.main;
@@ -119,6 +145,9 @@ public class CameraManager : MonoBehaviour
         cameraPos.MoveCamPos(newPos);
     }
     #endregion
+
+
+
 
     #region Camera Zoom
     [Header("CameraZoom")]
@@ -143,7 +172,6 @@ public class CameraManager : MonoBehaviour
             virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
 
             //confiner 를 0.2초마다 업데이트
-            
             timer += Time.deltaTime;
             if (timer > 0.2f)
             {

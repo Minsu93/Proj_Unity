@@ -23,13 +23,14 @@ MonoBehaviour:
   burstInterval: 0
   numberOfProjectile: 1
   numberOfBurst: 1
-  speed: 45
+  speed: 30
   speedVariation: 0
   lifeTime: 0
-  range: 10
+  range: 18
   showRange: 1
   maxAmmo: 0
   projectileSpread: 30
   randomSpreadAngle: 10
+  duration: 0
   shootSFX: {fileID: 8300000, guid: 564770136c959c245bad71772c07a6a9, type: 3}
   weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

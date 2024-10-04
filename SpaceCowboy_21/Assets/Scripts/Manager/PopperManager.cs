@@ -138,9 +138,10 @@ public class PopperManager : MonoBehaviour
             Vector2 randomPoint = new Vector2(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle)); // 이 각도와 거리를 사용하여 원 내부의 랜덤한 포인트를 계산합니다.
             randomPoint += (Vector2)targetTr.position;
 
+            //맵 밖이 아닌지 검사한다
             Vector2 mapSize = GameManager.Instance.MapSize;
-            //화면 밖이 아닌지 검사한다
-            if(randomPoint.x < -mapSize.x || randomPoint.x > mapSize.x || randomPoint.y < -mapSize.y || randomPoint.y > mapSize.y)
+            Vector2 center = GameManager.Instance.MapCenter;
+            if(randomPoint.x < center.x - mapSize.x || randomPoint.x > center.x + mapSize.x || randomPoint.y < center.y - mapSize.y || randomPoint.y > center.y + mapSize.y)
             {
                 continue;
             }
@@ -156,7 +157,6 @@ public class PopperManager : MonoBehaviour
             if(node != null)
             {
                 emptyPos = (Vector3)node.position;
-                Debug.Log("Try count : " + i.ToString() + "/ Pos is : " + emptyPos.ToString());
                 break;
             }
         }

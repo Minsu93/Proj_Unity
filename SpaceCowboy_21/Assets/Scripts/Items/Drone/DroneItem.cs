@@ -82,7 +82,12 @@ public abstract class DroneItem : MonoBehaviour
     /// <summary>
     /// 드론을 사용한다 
     /// </summary>
-    public abstract void UseDrone(Vector2 mousePos, Quaternion quat);
+    public virtual void UseDrone(Vector2 mousePos, Quaternion quat)
+    {
+        //스킬이 있으면 스킬을 발동한다. 
+        return;
+    }
+
 
     protected void RigidBodyFollowPlayer()
     {

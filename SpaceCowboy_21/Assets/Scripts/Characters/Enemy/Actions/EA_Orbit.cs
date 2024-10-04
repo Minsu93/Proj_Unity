@@ -68,7 +68,7 @@ public class EA_Orbit : EnemyAction
             }
         }
     }
- protected override bool BeforeUpdate()
+    protected override bool BeforeUpdate()
     {
         if (!activate) return true;
 
@@ -256,7 +256,7 @@ public class EA_Orbit : EnemyAction
         base.WhenDieEvent();
 
         //죽으면 궤도 물체 지상으로 떨어짐.
-        gravity.activate = true;
+        //gravity.activate = true;
 
         //파티클 추가
         if (boosterParticle != null) boosterParticle.Stop();

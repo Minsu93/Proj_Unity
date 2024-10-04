@@ -70,4 +70,23 @@ public class PlayerDrone : MonoBehaviour
             drones[i].dronePos = droneSlotPos[i];
         }
     }
+
+
+    //드론 이동 
+    public void DeactivateDrones()
+    {
+        for(int i = 0; i < drones.Count;i++)
+        {
+            drones[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void MoveAndActivateDrones(Vector2 pos)
+    {
+        for (int i = 0; i < drones.Count; i++)
+        {
+            drones[i].transform.position = pos;
+            drones[i].gameObject.SetActive(true);
+        }
+    }
 }
