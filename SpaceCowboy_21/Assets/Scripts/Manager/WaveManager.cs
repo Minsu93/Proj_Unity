@@ -1,7 +1,10 @@
+using Pathfinding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -42,7 +45,7 @@ public class WaveManager : MonoBehaviour
 
     float timer;
     float updateCycle = 0.5f;
-    public Planet playerNearestPlanet { get; set; } //플레이어와 가장 가까운 행성을 추적한다. null이 나오지 않는 항시 가장 가까운 행성을 표시한다. 적들의 추적 용도로 사용한다. 
+    
 
 
     //행성 관련
@@ -53,7 +56,7 @@ public class WaveManager : MonoBehaviour
     //스크립트.
     Dictionary<string, GameObject> monsterDict;
     WaveObjectRespawner objectRespawner;
-    [SerializeField] GameObject arrowCanvas;
+    //[SerializeField] GameObject arrowCanvas;
 
     [Header("Wave UI")]
     //Wave UI관련
@@ -61,7 +64,7 @@ public class WaveManager : MonoBehaviour
     WaveProgress waveProgress;
     WavePanelUI wavePanelUI;
     [SerializeField] int totalStageCount = 5;
-    ArrowIndicatorManager minimapManager;
+    //ArrowIndicatorManager minimapManager;
 
 
 
@@ -82,8 +85,8 @@ public class WaveManager : MonoBehaviour
 
         waveProgress = waveUIObj.GetComponentInChildren<WaveProgress>();
 
-        Instantiate(arrowCanvas);
-        minimapManager = Instantiate(arrowCanvas).GetComponent<ArrowIndicatorManager>();
+        //Instantiate(arrowCanvas);
+        //minimapManager = Instantiate(arrowCanvas).GetComponent<ArrowIndicatorManager>();
     }
 
     private void Start()
@@ -184,7 +187,7 @@ public class WaveManager : MonoBehaviour
         else
         {
             timer = 0;
-            playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
+            GameManager.Instance.playerManager.playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
         }
     }
 
@@ -198,7 +201,7 @@ public class WaveManager : MonoBehaviour
             enemyTotalKilled++;
 
             //UI 조절
-            minimapManager.RemoveMonster(obj);
+            GameManager.Instance.arrowManager.RemoveArrow(obj, 0);
 
             ////적들이 비율밑으로 감소하면 웨이브 조기 클리어
             //if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
@@ -306,6 +309,10 @@ public class WaveManager : MonoBehaviour
         GameManager.Instance.ChapterClear();
     }
 
+
+
+
+
     #region Spawns
 
     //소환된 몬스터들을 돌려보낸다. 
@@ -341,6 +348,10 @@ public class WaveManager : MonoBehaviour
 
     #endregion
 
+
+
+
+
     #region Spawn Logics 
 
     //Spawns에 들어있는 Spawn들을 순서대로 소환한다. 
@@ -360,48 +371,50 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            Vector2 safePoint;
-            if (GetSafePointFromOutsideScreen(out safePoint))
+            //안전한 스폰 포인트 반환
+            GetSafePointFromOutsideScreen(out Vector2 safePoint);
+
+            GameObject monster = GameManager.Instance.poolManager.GetPoolObj(enemyPrefab, 3);
+            monster.transform.position = safePoint;
+            monster.transform.rotation = Quaternion.identity;
+            EnemyAction act = monster.GetComponent<EnemyAction>();
+
+            Vector2 strikePos = Vector2.zero;
+
+            switch (act.enemyType)
             {
-                GameObject prefab = GameManager.Instance.poolManager.GetPoolObj(enemyPrefab,3);
-                prefab.transform.position = safePoint;
-                prefab.transform.rotation = Quaternion.identity;
-                EnemyAction act = prefab.GetComponent<EnemyAction>();
+                case EnemyType.Ground:
+                case EnemyType.Orbit:
+                    //적들을 생성지역 가장 가까이에 있는 행성으로 이동시킨다. 
+                    Planet planet = SelectClosesetPlanetFromScreen(safePoint);
+                    int strikePointIndex = planet.GetClosestIndex(transform.position);
+                    strikePos = planet.worldPoints[strikePointIndex];
+                    break;
 
-                Vector2 strikePos = Vector2.zero;
-
-                switch (act.enemyType)
-                {
-                    case EnemyType.Ground:
-                    case EnemyType.Orbit:
-                        //적들을 생성지역 가장 가까이에 있는 행성으로 이동시킨다. 
-                        Planet planet = SelectClosesetPlanetFromScreen(safePoint);
-                        int strikePointIndex = planet.GetClosestIndex(transform.position);
-                        strikePos = planet.worldPoints[strikePointIndex];
-                        break;
-
-                    case EnemyType.Air:
-                        //적들을 캐릭터 주변 공중으로 이동시킨다. 
-                        strikePos = GetRandomPointNearPlayer();
-                        break;
-                }
-                //Strike시작
-                prefab.GetComponent<EnemyAction>().EnemyStartStrike(strikePos);
-
-
-                //소환된 적 리스트에 추가.
-                spawnedEnemyList.Add(prefab);
-
-                //소환된 적 UI에 추가
-                minimapManager.AddMonster(prefab);
+                case EnemyType.Air:
+                    //적들을 캐릭터 주변 공중으로 이동시킨다. 
+                    strikePos = GetRandomPointNearPlayer();
+                    break;
             }
+            //Strike시작
+            monster.GetComponent<EnemyAction>().EnemyStartStrike(strikePos);
+
+
+            //소환된 적 리스트에 추가.
+            spawnedEnemyList.Add(monster);
+
+            //소환된 적 UI에 추가
+            //minimapManager.AddMonster(prefab);
+            GameManager.Instance.arrowManager.CreateArrow(monster, 0);
+
+
             yield return new WaitForSeconds(enemy.delay);
         }
 
     }
 
 
-    public bool GetSafePointFromOutsideScreen(out Vector2 safePoint)
+    public void GetSafePointFromOutsideScreen(out Vector2 safePoint)
     {
         //스크린 > 월드 좌표 측정. z = 10 은 카메라와의 거리.
         Vector3 screenSizeMin = new Vector3(0, 0, 10);
@@ -409,54 +422,39 @@ public class WaveManager : MonoBehaviour
         screenSizeMin = Camera.main.ScreenToWorldPoint(screenSizeMin);
         screenSizeMax = Camera.main.ScreenToWorldPoint(screenSizeMax);
 
-        bool findSafePoint = false;
-
-        int saftyCounter = 0;
-        int maxSaftyCounter = 10;
-
         safePoint = Vector2.zero;
         Vector2 vec;
 
-        while(!findSafePoint && saftyCounter < maxSaftyCounter)
+        switch (UnityEngine.Random.Range(0, 2))
         {
-            switch (UnityEngine.Random.Range(0, 2))
-            {
-                case 0:
-                    vec.x = UnityEngine.Random.Range(-spawnRange, spawnRange);
-                    vec.y = UnityEngine.Random.Range(screenSizeMin.y - distanceUnitFromScreen - spawnRange, screenSizeMax.y + distanceUnitFromScreen + spawnRange);
-                    if (vec.x > 0)
-                    {
-                        vec.x = vec.x + screenSizeMax.x + distanceUnitFromScreen;
-                    }
-                    else
-                    {
-                        vec.x = vec.x + screenSizeMin.x - distanceUnitFromScreen;
-                    }
-                    break;
-                
-                default:
-                    vec.x = UnityEngine.Random.Range(screenSizeMin.x - distanceUnitFromScreen - spawnRange, screenSizeMax.x + distanceUnitFromScreen + spawnRange);
-                    vec.y = UnityEngine.Random.Range(-spawnRange, spawnRange);
-                    if (vec.y > 0)
-                    {
-                        vec.y = vec.y + screenSizeMax.y + distanceUnitFromScreen;
-                    }
-                    else
-                    {
-                        vec.y = vec.y + screenSizeMin.y - distanceUnitFromScreen;
-                    }
-                    break;
-            }
-            
-            if (IsLocationSafe(vec))
-            {
-                safePoint = vec;
-                findSafePoint = true;
-            }
-            saftyCounter++;
+            case 0:
+                vec.x = UnityEngine.Random.Range(-spawnRange, spawnRange);
+                vec.y = UnityEngine.Random.Range(screenSizeMin.y - distanceUnitFromScreen - spawnRange, screenSizeMax.y + distanceUnitFromScreen + spawnRange);
+                if (vec.x > 0)
+                {
+                    vec.x = vec.x + screenSizeMax.x + distanceUnitFromScreen;
+                }
+                else
+                {
+                    vec.x = vec.x + screenSizeMin.x - distanceUnitFromScreen;
+                }
+                break;
+
+            default:
+                vec.x = UnityEngine.Random.Range(screenSizeMin.x - distanceUnitFromScreen - spawnRange, screenSizeMax.x + distanceUnitFromScreen + spawnRange);
+                vec.y = UnityEngine.Random.Range(-spawnRange, spawnRange);
+                if (vec.y > 0)
+                {
+                    vec.y = vec.y + screenSizeMax.y + distanceUnitFromScreen;
+                }
+                else
+                {
+                    vec.y = vec.y + screenSizeMin.y - distanceUnitFromScreen;
+                }
+                break;
         }
 
-        return findSafePoint;
+        safePoint =  FindNearestNode(vec);
     }
 
     private bool IsLocationSafe(Vector2 position)
@@ -464,19 +462,180 @@ public class WaveManager : MonoBehaviour
         return Physics2D.OverlapCircle(position, 2f, LayerMask.GetMask("Planet")) == null;
     }
 
+    Vector2 FindNearestNode(Vector2 point)
+    {
+        //가장 가까운 (걸을 수 있는)노드를 가져온다
+        var constraint = NNConstraint.None;
+
+        // Constrain the search to walkable nodes only
+        constraint.constrainWalkability = true;
+        constraint.walkable = true;
+
+        GraphNode node = AstarPath.active.GetNearest((Vector3)point, constraint).node;
+        if (node != null)
+        {
+            return (Vector3)node.position;
+        }
+        else return Vector2.zero;
+    }
     #endregion
 
+
+
+
+
     #region Planet
+    int[,] planetEachDists;
+    List<int[]> wayListFromXToY = new List<int[]>();
+
     //게임 시작 시 맵 전체의 행성들을 불러온다
-    public void GetStagePlanets(Transform parentTr)
+    public void AddStagePlanets(Transform parentTr)
     {
         Planet[] planets = parentTr.GetComponentsInChildren<Planet>();
         planetList.Clear();
-        
+        wayListFromXToY.Clear();
+
+
         foreach (Planet planet in planets)
         {
             planetList.Add(planet);
         }
+
+        //행성 별 거리 집합을 생성한다. 
+        planetEachDists = new int[planetList.Count, planetList.Count];
+        for(int i = 0; i < planetList.Count; i++)
+        {
+
+            for(int j = 0; j<planetList.Count; j++)
+            {
+                planetEachDists[i, j] = Int32.MaxValue;
+
+                if (i == j)
+                    planetEachDists[i, j] = 0;
+            }
+
+            List<PlanetBridge> bridges = planetList[i].linkedPlanetList;
+            foreach(PlanetBridge pb in bridges)
+            {
+                int index = planetList.FindIndex(planet => planet == pb.planet);
+                planetEachDists[i, index] = pb.planetDistance;
+            }
+        }
+
+        //모든 Planet에서의 way 계산을 미리 해둔다.
+        for( int i = 0; i < planetList.Count; i++)
+        {
+            wayListFromXToY.Add(Dijikstra(i));
+        }
+    }
+
+    //from 출발지에서부터 다른 행성으로 움직이는 이동 방향 계산을 미리 해둔다.
+    int[] Dijikstra(int from)
+    {
+        int[] minDist = new int[planetList.Count];
+        bool[] visited = new bool[planetList.Count];
+        int[] parents = new int[planetList.Count];
+        Array.Fill(parents, -1);
+
+        //시작 위치 세팅
+        int startIndex = from;
+        for(int i = 0; i < planetList.Count; i++)
+        {
+            minDist[i] = planetEachDists[startIndex, i];
+        }
+        visited[startIndex] = true;
+        parents[startIndex] = startIndex;
+
+        //1. visited도 아니고 0이 아닌 최소값을 구합니다
+        int min= Int32.MaxValue;
+        int now = -1;
+        for(int j = 0; j < planetList.Count; j++)
+        {
+            if (visited[j]) continue;
+            if (minDist[j] < min)
+            {
+                min = minDist[j];
+                now = j;
+            }
+        }
+
+        //now가 -1이면 모두 실패.
+        if(now == -1)
+        {
+            Debug.LogWarning("No way to Jump");
+            return parents;
+        }
+        else
+        {
+            parents[now] = startIndex;
+        }
+
+        //2. 다음 now로 이동합니다. 
+        while (true)
+        {
+            int currIndex = now;
+            now = -1;
+            visited[currIndex] = true;
+            int preDist = minDist[currIndex];
+
+            for (int i = 0; i < planetList.Count; i++)
+            {
+                //이미 지나온 장소면 취소한다. 
+                if (visited[i]) continue;
+                //해당 장소에서 갈 수 없는 index는 제외한다.
+                if (planetEachDists[currIndex, i] == Int32.MaxValue) continue;
+
+                //currIndex를 경유하는 최소거리가 기존 거리보다 낮다면 갱신한다. 
+                if (minDist[i] > planetEachDists[currIndex, i] + preDist)
+                {
+                    minDist[i] = planetEachDists[currIndex, i] + preDist;
+                    //최소 거리가 갱신이 된다면, 현재슬롯(i)의 갱신위치는 방문한 장소(currIndex)이다.
+                    parents[i] = currIndex;
+                }
+            }
+
+            //값 중 최소값 구하기.
+            min = Int32.MaxValue;
+            for (int i = 0; i<planetList.Count; i++)
+            {
+                if (visited[i]) continue;
+                if (minDist[i] < min)
+                {
+                    min = minDist[i];
+                    now = i;
+                }
+            }
+
+            //모두 방문했으면 종료.
+            if (now == -1) break;
+        }
+
+        return parents;
+    }
+
+    //만들어둔 wayList를 기반으로 목적지 Planet까지 최단 거리의 Planet Stack을 만든다. 
+    public bool GetWays(Planet from, Planet to, out Stack<Planet> wayStack)
+    {
+        //변수 준비
+        wayStack = new Stack<Planet>();
+        string debugStr = "";
+        int fromInt = planetList.IndexOf(from);
+        int toInt = planetList.IndexOf(to);
+
+        //리스트에 없는 행성이라면 false를 리턴한다.
+        if (fromInt < 0 || toInt < 0) return false;
+
+        //wayStack에 Planet을 목표행성부터 거꾸로 집어넣는다. (후입 선출로 pop으로 뺄때 거꾸로 빼질 것.)
+        int[] parents = wayListFromXToY[fromInt];
+        while (toInt != fromInt)
+        {
+            wayStack.Push(planetList[toInt]);
+            toInt = parents[toInt];
+            debugStr += toInt.ToString() + ",";
+        }
+
+        Debug.Log("get ways : " + debugStr);
+        return true;
     }
 
     //스크린에 보이는 행성 중 하나를 고른다. 
@@ -537,29 +696,16 @@ public class WaveManager : MonoBehaviour
     #endregion
 
 
+
+
     //플레이어 주변의 랜덤한 공중 포인트를 불러온다. 
     Vector2 GetRandomPointNearPlayer()
     {
-        Vector2 randomPoint = Vector2.zero;
-        int maxAttempts = 20;
-
-        for (int i = 0; i < maxAttempts; i++)
-        {
-            //플레이어 위치에서 2~10 사이의 랜덤 포인트를 가져온다. 
-            float radius = UnityEngine.Random.Range(minAirDistance, maxAirDistance);
-            Vector2 dir = UnityEngine.Random.insideUnitCircle;
-            Vector2 pos = (Vector2)transform.position + (dir * radius);
-
-            //해당 위치가 행성과 겹치지 않는지 확인한다. 
-            Collider2D coll = Physics2D.OverlapCircle(pos, 1f, LayerMask.GetMask("Planet"));
-            if (coll == null)
-            {
-                randomPoint = pos;
-                break;
-            }
-        }
-
-        return randomPoint;
+        //플레이어 위치에서 2~10 사이의 랜덤 포인트를 가져온다. 
+        float radius = UnityEngine.Random.Range(minAirDistance, maxAirDistance);
+        Vector2 dir = UnityEngine.Random.insideUnitCircle;
+        Vector2 pos = (Vector2)transform.position + (dir.normalized * radius);
+        return FindNearestNode(pos); 
     }
 
     private void OnDrawGizmosSelected()
@@ -589,6 +735,17 @@ public class WaveManager : MonoBehaviour
         Gizmos.DrawLine(new Vector2(min.x, max.y), new Vector2(max.x, max.y));
         Gizmos.DrawLine(new Vector2(min.x, min.y), new Vector2(max.x, min.y));
         Gizmos.DrawLine(new Vector2(max.x, min.y), new Vector2(max.x, max.y));
+    }
+    private void OnDrawGizmos()
+    {
+        if (planetList.Count > 0)
+        {
+            for(int i =0; i< planetList.Count; i++)
+            {
+                Gizmos.color = Color.green;
+                Handles.Label(planetList[i].transform.position, i.ToString());
+            }
+        }
     }
 }
 

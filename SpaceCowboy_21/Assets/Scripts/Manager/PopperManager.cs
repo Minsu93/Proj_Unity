@@ -99,6 +99,11 @@ public class PopperManager : MonoBehaviour
         }
 
 
+        if (!GameManager.Instance.playerManager.IsDroneDropPossible())
+        {
+            return;
+        }
+
         //Drone ½ºÆù
         if (random < currDroneDropChance)
         {

@@ -8,7 +8,6 @@ public class EnemyBrain : MonoBehaviour
     [SerializeField] bool doAttackRangeCheck = true; //공격 거리를 체크합니까?
     [SerializeField] bool doVisionCheck = true;      //시야를 체크합니까? 
     [SerializeField] bool doPlanetCheck = true;      //행성을 체크합니까? 
-
     [SerializeField] float timeBetweenChecks = 0.5f;  //플레이어 감지 시간 간격(고정)
     [SerializeField] float attackRange = 10f;       //공격 거리
 
@@ -86,7 +85,7 @@ public class EnemyBrain : MonoBehaviour
     {
         bool inOtherP = false;
 
-        if (WaveManager.instance.playerNearestPlanet != gravity.nearestPlanet) inOtherP = true;
+        if (GameManager.Instance.playerManager.playerNearestPlanet != gravity.nearestPlanet) inOtherP = true;
         inOtherPlanet = inOtherP;
 
         return inOtherP;
@@ -97,11 +96,11 @@ public class EnemyBrain : MonoBehaviour
 
 
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
+    //private void OnDrawGizmosSelected()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, attackRange);
+    //}
 
 }
 

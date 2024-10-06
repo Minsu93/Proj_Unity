@@ -76,8 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3a2c58aad92f304488d8a38decf4107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunTipObj: {fileID: 1741944829277129780}
-  muzzleFlashVFX: {fileID: 0}
-  barrelCount: 3
-  concentrateDist: 5
-  concentrateAngle: 15
+  muzzleFlashVFX: {fileID: 8417428132932555912, guid: 7ee1ea38dbefffb4e9bb5d1207d3c67e, type: 3}
+  concentrateDist: 0.5
+  concentrateAngle: 0

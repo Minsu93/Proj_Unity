@@ -9,9 +9,38 @@ public class EA_Ground : EnemyAction
     //공중
     public float maxAirTime = 1.0f;
     public float airTime {get; set;}
-    public float lastJumpTime { get; set;} 
+    public float lastJumpTime { get; set;}
 
     //override 되는 부분
+    protected override void Update()
+    {
+        //Enemy가 죽거나 Strike가 끝나기 전에는 Update하지 않는다. 
+        if (BeforeUpdate()) return;
+
+        //브레인에서 플레이어 관련 변수 업데이트
+        brain.TotalCheck();
+
+        //업데이트에 따라 enemyState 변경. 
+        BrainStateChange();
+
+        //enemyState에 따른 Action 실행 
+        DoAction();
+
+        //pause 상태.
+        if (onWait) return;
+
+        if (onAttack)
+        {
+            if (attack != null && !onAir)   //공중이 아닐 때
+                attack.OnAttackAction();
+        }
+
+        if (onChase)
+        {
+            if (chase != null && !onAir)    //공중이 아닐 때 
+                chase.OnChaseAction();
+        }
+    }
 
     protected override bool BeforeUpdate()
     {

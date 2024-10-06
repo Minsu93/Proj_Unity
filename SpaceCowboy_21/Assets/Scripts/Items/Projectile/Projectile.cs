@@ -74,10 +74,6 @@ public class Projectile : MonoBehaviour
 
     #region Hit Event
 
-
-
-
-
     protected virtual void NonHitEvent(ITarget target)
     {
         ShowHitEffect(nonHitEffect);

@@ -7,6 +7,7 @@ public class Projectile_Split : Projectile_Player
     [SerializeField] GameObject splitPrefab;
     [SerializeField] int numberOfSplit = 3;
     [SerializeField] float projectileSpread = 15.0f;
+    [SerializeField] float splitDamage, splitSpeed, splitProjDistance;
     protected override void LifeOver()
     {
         float totalSpread = projectileSpread * (numberOfSplit - 1);       //우선 전체 총알이 퍼질 각도를 구한다
@@ -31,7 +32,7 @@ public class Projectile_Split : Projectile_Player
             projectile.transform.position = transform.position;
             projectile.transform.rotation = tempRot;
             Projectile proj = projectile.GetComponent<Projectile>();
-            proj.Init(damage, speed, lifeTime, distance);
+            proj.Init(damage, speed, lifeTime, splitProjDistance);
             
             //총알에 Impact이벤트 등록
             if (weaponImpactDel != null)

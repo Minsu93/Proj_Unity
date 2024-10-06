@@ -37,16 +37,15 @@ public class WaveObjectRespawner : MonoBehaviour
     void SpawnObjectOutsideScreen(GameObject spawnObj)
     {
         //오브젝트를 화면 밖에서 생성한다. 
-        if(WaveManager.instance.GetSafePointFromOutsideScreen(out Vector2 safePoint))
+        WaveManager.instance.GetSafePointFromOutsideScreen(out Vector2 safePoint);
+
+        GameObject prefab = GameManager.Instance.poolManager.GetPoolObj(spawnObj, 4);
+        prefab.transform.position = safePoint;
+        if (prefab.TryGetComponent<ExplodeAsteroid>(out ExplodeAsteroid asteroid))
         {
-            GameObject prefab = GameManager.Instance.poolManager.GetPoolObj(spawnObj, 4);
-            prefab.transform.position = safePoint;
-            if (prefab.TryGetComponent<ExplodeAsteroid>(out ExplodeAsteroid asteroid))
-            {
-                asteroid.InitializeObject();
-                //생성한 오브젝트는 화면 내부(중앙 지역)로 움직이게 만든다. 
-                asteroid.MoveToTargetPoint(GetRandomPointNearPlayer());
-            }
+            asteroid.InitializeObject();
+            //생성한 오브젝트는 화면 내부(중앙 지역)로 움직이게 만든다. 
+            asteroid.MoveToTargetPoint(GetRandomPointNearPlayer());
         }
         
         //경계를 벗어나면 사라진다. 

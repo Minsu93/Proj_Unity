@@ -9,8 +9,8 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth = 10;
     public float currHealth {  get; private set; }
 
-    public float maxShield = 10;
-    public float currShield { get; private set; }
+    //public float maxShield = 10;
+    //public float currShield { get; private set; }
     //public float delayToRegeneration = 1.0f;
     //public float dTimer { get; private set; }
     //public float regenerateTime = 2.0f;
@@ -27,7 +27,7 @@ public class PlayerHealth : MonoBehaviour
     public void ResetHealth()
     {
         currHealth = maxHealth;
-        currShield = maxShield;
+        //currShield = maxShield;
         //healthState = HealthState.Default;
         GameManager.Instance.playerManager.UpdatePlayerStatusUI();
 
@@ -52,12 +52,17 @@ public class PlayerHealth : MonoBehaviour
         _invincibleTimer = InvincibleTime;
 
         //피해를 입는다
-        if(currShield > 0)
-        {
-            currShield -= dmg;
-            if (currShield < 0) currShield = 0;
-        }
-        else if (currHealth > 0) 
+        //if(currShield > 0)
+        //{
+        //    currShield -= dmg;
+        //    if (currShield < 0) currShield = 0;
+        //}
+        //else if (currHealth > 0) 
+        //{
+        //    currHealth -= dmg;
+        //    if (currHealth < 0) currHealth = 0;
+        //}
+        if (currHealth > 0)
         {
             currHealth -= dmg;
             if (currHealth < 0) currHealth = 0;
@@ -71,21 +76,21 @@ public class PlayerHealth : MonoBehaviour
         return isHit;
     }
 
-    public void ShieldUp(float amount)
-    {
-        if (currHealth == 0)
-        {
-            return;
-        }
+    //public void ShieldUp(float amount)
+    //{
+    //    if (currHealth == 0)
+    //    {
+    //        return;
+    //    }
 
-        if (currShield < maxShield)
-        {
-            //실드를 회복한다
-            currShield += amount;
+    //    if (currShield < maxShield)
+    //    {
+    //        //실드를 회복한다
+    //        currShield += amount;
 
-            if (currShield >= maxShield) currShield = maxShield;
-        }
-    }
+    //        if (currShield >= maxShield) currShield = maxShield;
+    //    }
+    //}
     public bool HealthUp(float amount)
     {
         if (currHealth == 0)

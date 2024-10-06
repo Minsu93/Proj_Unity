@@ -212,25 +212,29 @@ public class PlayerWeapon : MonoBehaviour
 
     public bool EnqueueData(WeaponData data)
     {
-        if(currWeaponType.weaponData == baseWeaponData)
-        {
-            WeaponType wtype = GetWeaponType(data);
-            ChangeWeapon(wtype, wtype.maxAmmo, false);
-            GameManager.Instance.playerManager.UpdateWeaponQueue();
-            return true;
-        }
+        //if(currWeaponType.weaponData == baseWeaponData)
+        //{
+        //    WeaponType wtype = GetWeaponType(data);
+        //    ChangeWeapon(wtype, wtype.maxAmmo, false);
+        //    GameManager.Instance.playerManager.UpdateWeaponQueue();
+        //    return true;
+        //}
 
-        if (wDataQueue.Count < weaponSlots)
-        {
-            wDataQueue.Enqueue(data);
-            Debug.Log("Queue Count is : " + wDataQueue.Count);
-           
-            //UI를 업데이트 한다 
-            GameManager.Instance.playerManager.UpdateWeaponQueue();
-            return true;
-        }
+        //if (wDataQueue.Count < weaponSlots)
+        //{
+        //    wDataQueue.Enqueue(data);
+        //    Debug.Log("Queue Count is : " + wDataQueue.Count);
 
-        return false;
+        //    //UI를 업데이트 한다 
+        //    GameManager.Instance.playerManager.UpdateWeaponQueue();
+        //    return true;
+        //}
+
+        //바로 장착해버리기.
+        WeaponType wtype = GetWeaponType(data);
+        ChangeWeapon(wtype, data.MaxAmmo, false);
+        return true;
+        //return false;
     }
 
     public void DequeueData()

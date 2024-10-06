@@ -38,6 +38,7 @@ public class EnemyChase_Ground : EnemyChase
         {
             passedPlanet = curPlanet;
             curPlanet = charGravity.nearestPlanet;
+
             if (curPlanet != null)
             {
                 ppoints = curPlanet.GetPoints(action_Ground.enemyHeight);
@@ -47,7 +48,7 @@ public class EnemyChase_Ground : EnemyChase
 
         //우주에 떠 있거나, 플레이어가 nearestPlanet이 없을 때는 추적하지 않는다. 
         if (curPlanet == null) return;
-        if (WaveManager.instance.playerNearestPlanet == null) return; 
+        if (GameManager.Instance.playerManager.playerNearestPlanet == null) return; 
 
         //0.5초마다 타겟 업데이트
         if (mTimer > 0) mTimer -= Time.deltaTime;
@@ -114,7 +115,7 @@ public class EnemyChase_Ground : EnemyChase
     //targetIndex에 가까워 졌나요? T/F
     bool MoveToTarget()
     {
-        if (action_Ground.onAir) return false;
+        //if (action_Ground.onAir) return false;
 
         int pointCounts = ppoints.Length - 1;
         float moveDist;
@@ -148,7 +149,7 @@ public class EnemyChase_Ground : EnemyChase
     bool PrepareJump()
     {
         int pointCounts = ppoints.Length - 1;
-        Planet playerPlanet = WaveManager.instance.playerNearestPlanet;
+        Planet playerPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
 
         //점프할 행성을 구한다 
         Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
@@ -251,6 +252,8 @@ public class EnemyChase_Ground : EnemyChase
         return targetPlanet;
         
     }
+
+
 
 }
 

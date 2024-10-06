@@ -5,7 +5,7 @@ using UnityEngine;
 public class Bubble_Drone : SelfCollectable
 {
     [SerializeField] GameObject dronePrefab;
-    public event System.Action ConsumeAction;
+    //public event System.Action ConsumeAction;
     SpriteRenderer spr;
     protected override void Awake()
     {
@@ -18,13 +18,21 @@ public class Bubble_Drone : SelfCollectable
     protected override void OnEnable()
     {
         base.OnEnable();
-        ConsumeAction = null;
+        //action √ ±‚»≠.
+        GameManager.Instance.arrowManager.CreateArrow(this.gameObject, 1);
+
     }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+
+        GameManager.Instance.arrowManager.RemoveArrow(this.gameObject, 1);
+    }
+
 
     protected override bool ConsumeEvent()
     {
-        if (ConsumeAction != null) ConsumeAction();
-
         return GameManager.Instance.playerManager.AddDrone(dronePrefab);
     }
 

@@ -29,6 +29,7 @@ public abstract class WeaponType : MonoBehaviour
     protected int numberOfBurst;
 
     protected GameObject projectilePrefab;
+    protected GameObject secondProjectilePrefab;
     protected AudioClip shootSFX;  
 
     //PlayerWeapon에서 필요한 변수
@@ -70,6 +71,7 @@ public abstract class WeaponType : MonoBehaviour
         
         //기타 설정
         projectilePrefab = weaponData.ProjectilePrefab;
+        secondProjectilePrefab = weaponData.SecondProjectilePrefab;
         showRange = weaponData.ShowRange;
         shootSFX = weaponData.ShootSFX;
 
@@ -151,7 +153,50 @@ public abstract class WeaponType : MonoBehaviour
 
     }
 
-    protected IEnumerator burstShootRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
+
+    protected virtual void Shoot(Vector2 pos, Vector3 dir, GameObject projectilePrefab)
+    {
+        float totalSpread = projectileSpread * (numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
+
+        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90 - (totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
+        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
+
+        //랜덤 각도 추가
+        float randomAngle = UnityEngine.Random.Range(-randomSpreadAngle * 0.5f, randomSpreadAngle * 0.5f);
+        Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
+
+        //멀티샷
+        for (int i = 0; i < numberOfProjectile; i++)
+        {
+            Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
+
+            //총알 생성
+            GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
+            projectile.transform.position = pos;
+            projectile.transform.rotation = tempRot * randomRotation;
+            Projectile proj = projectile.GetComponent<Projectile>();
+            float ranSpd = UnityEngine.Random.Range(weaponStats.speed - speedVariation, weaponStats.speed + speedVariation);
+            proj.Init(weaponStats.damage, ranSpd, lifeTime, range);
+            //총알에 Impact이벤트 등록
+            if (weaponStats.weaponImpact != null)
+            {
+                proj.weaponImpactDel = weaponStats.weaponImpact;
+            }
+
+        }
+
+        //발사 시 이벤트 실행
+        WeaponShootEvent();
+        //MuzzleFlash 발사
+        MuzzleFlashEvent(pos, targetRotation);
+        //쏜 시간 체크
+        lastShootTime = Time.time;
+        //사운드 생성
+        GameManager.Instance.audioManager.PlaySfx(shootSFX);
+
+    }
+
+    protected virtual IEnumerator burstShootRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
     {
         for (int i = 0; i < repeatNumber; i++)
         {

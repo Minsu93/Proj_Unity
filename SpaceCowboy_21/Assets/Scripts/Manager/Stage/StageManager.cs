@@ -6,6 +6,9 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     [SerializeField]
+    bool startWave;
+
+    [SerializeField]
     StartPoint[] startPoints;
 
     [SerializeField]
@@ -64,8 +67,9 @@ public class StageManager : MonoBehaviour
         //기본 카메라 이동 
         ChangeCameraPriority(0);
         //웨이브 활성화
-        waveManager.GetStagePlanets(mapBorders[0].transform);
-        waveManager.WaveStart(0);
+        waveManager.AddStagePlanets(mapBorders[0].transform);
+        if(startWave)
+            waveManager.WaveStart(0);
     }
 
     public void FinishStage()
@@ -104,7 +108,7 @@ public class StageManager : MonoBehaviour
         startPoints[currStageIndex].SpawnPlayer();
 
         //웨이브 활성화
-        waveManager.GetStagePlanets(mapBorders[currStageIndex].transform);
+        waveManager.AddStagePlanets(mapBorders[currStageIndex].transform);
         waveManager.WaveStart(currStageIndex);
 
         //지난 맵 제거

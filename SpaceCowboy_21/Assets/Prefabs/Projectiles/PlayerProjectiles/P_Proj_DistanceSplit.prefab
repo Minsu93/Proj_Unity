@@ -192,6 +192,9 @@ MonoBehaviour:
   splitPrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
   numberOfSplit: 3
   projectileSpread: 15
+  splitDamage: 3
+  splitSpeed: 20
+  splitProjDistance: 14
 --- !u!1 &8693915765048879007
 GameObject:
   m_ObjectHideFlags: 0

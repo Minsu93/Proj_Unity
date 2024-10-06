@@ -35,6 +35,10 @@ public class WeaponData : ScriptableObject
     public GameObject ProjectilePrefab { get { return projectilePrefab; } }
 
     [SerializeField]
+    GameObject secondProjectilePrefab;    //총알의 종류
+    public GameObject SecondProjectilePrefab { get { return secondProjectilePrefab; } }
+
+    [SerializeField]
     float damage;  // 데미지
     public float Damage { get { return damage; } }
 

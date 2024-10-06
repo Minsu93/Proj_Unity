@@ -20,7 +20,8 @@ public class PlayerManager : MonoBehaviour
     public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
     PlayerDrone playerDrone;
-
+    public Planet playerNearestPlanet { get; set; } //플레이어와 가장 가까운 행성을 추적한다. null이 나오지 않는 항시 가장 가까운 행성을 표시한다. 적들의 추적 용도로 사용한다. 
+    
     [SerializeField] int weaponSlots = 2;
     [SerializeField] int droneSlots = 3;
     [SerializeField] Sprite emptySprite;
@@ -62,7 +63,6 @@ public class PlayerManager : MonoBehaviour
         return canPush;
 
     }
-
 
     #region Player Life 관련
 
@@ -183,13 +183,22 @@ public class PlayerManager : MonoBehaviour
     {
         playerDrone.MoveAndActivateDrones(pos);
     }
+
+    public bool IsDroneDropPossible()
+    {
+        return droneSlots > GetDroneCount();
+    }
+    int GetDroneCount()
+    {
+        return playerDrone.drones.Count;
+    }
     #endregion
 
     #region  UI관련
     //플레이어 UI관련
     [SerializeField] private GameObject playerUIPrefab;
     Image healthImg;
-    Image shieldImg;
+    //Image shieldImg;
     Image boosterImg;
     Image WeaponSlotImage_A;
     Image WeaponSlotImage_B;
@@ -213,8 +222,8 @@ public class PlayerManager : MonoBehaviour
         GameObject pUI = Instantiate(playerUIPrefab);
         //skillPanel = pUI.GetComponentInChildren<UISkillPanel>();
 
-        healthImg = pUI.transform.Find("StatusPanel/HealthGauge").GetComponent<Image>();
-        shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
+        healthImg = pUI.transform.Find("DronePanel/HealthGauge").GetComponent<Image>();
+        //shieldImg = pUI.transform.Find("StatusPanel/ShieldGauge").GetComponent<Image>();
 
         boosterObj = pUI.transform.Find("Booster").gameObject;
         boosterImg = pUI.transform.Find("Booster/BoosterFill").GetComponent<Image>();
@@ -261,7 +270,7 @@ public class PlayerManager : MonoBehaviour
     public void UpdatePlayerStatusUI()
     {
         healthImg.fillAmount = playerHealth.currHealth / playerHealth.maxHealth;
-        shieldImg.fillAmount = playerHealth.currShield / playerHealth.maxShield;
+        //shieldImg.fillAmount = playerHealth.currShield / playerHealth.maxShield;
     }
 
     //부스터 게이지 관련

@@ -663,19 +663,26 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
 
                 KnockBackEvent(hitPoint, knockBackForce);
 
-                if (health.currShield > 0)
+                //체력이 닳은 경우
+                if (PlayerHitEvent != null)
                 {
-                    //실드가 닳은 경우
-                    shieldhitEffect.Play();
+                    PlayerHitEvent();
                 }
-                else
-                {
-                    //체력이 닳은 경우
-                    if (PlayerHitEvent != null)
-                    {
-                        PlayerHitEvent();
-                    }
-                }
+
+                //if (health.currShield > 0)
+                //{
+                //    //실드가 닳은 경우
+                //    shieldhitEffect.Play();
+                //}
+                //else
+                //{
+                //    //체력이 닳은 경우
+                //    if (PlayerHitEvent != null)
+                //    {
+                //        PlayerHitEvent();
+                //    }
+                //}
+
                 //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
             }
         }

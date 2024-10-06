@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     public CameraManager cameraManager { get; set; }
     public MaterialManager materialManager { get; set; }
     public TechDocument techDocument { get; private set; }
+    public ArrowManager arrowManager { get; private set; }  
     
     //Dictionaryµé
     public MonsterDictionary monsterDictonary { get; private set; }
@@ -82,6 +84,7 @@ public class GameManager : MonoBehaviour
         techDocument = GetComponentInChildren<TechDocument>();
         materialManager= GetComponentInChildren<MaterialManager>();
         cameraManager = GetComponentInChildren<CameraManager>();
+        arrowManager = GetComponentInChildren<ArrowManager>();
 
         monsterDictonary = GetComponentInChildren<MonsterDictionary>();
         //skillDictionary = GetComponentInChildren<SkillDictionary>();

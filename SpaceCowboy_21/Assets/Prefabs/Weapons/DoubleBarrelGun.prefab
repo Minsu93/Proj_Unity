@@ -45,11 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0c426ad863686c408e5730f343cd566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunTipObj: {fileID: 6517878924537092006}
-  muzzleFlashVFX: {fileID: 0}
+  muzzleFlashVFX: {fileID: 8417428132932555912, guid: 7ee1ea38dbefffb4e9bb5d1207d3c67e, type: 3}
   type: 0
-  barrelCount: 5
-  PointDist: 0.5
+  barrelCount: 3
+  PointDist: 0.15
 --- !u!1 &6517878924537092006
 GameObject:
   m_ObjectHideFlags: 0

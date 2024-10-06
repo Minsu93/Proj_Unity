@@ -403,13 +403,15 @@ public struct PlanetBridge
     public int bridgeIndex;
     public Vector2 targetVector;
     public float bridgeDistance;
+    public int planetDistance;
 
-    public PlanetBridge(Planet planet, int bridgeIndex, Vector2 targetVector, float bridgeDistance)
+    public PlanetBridge(Planet planet, int bridgeIndex, Vector2 targetVector, float bridgeDistance, int planetDistance)
     {
         this.planet = planet;
         this.bridgeIndex = bridgeIndex;
         this.targetVector = targetVector;
         this.bridgeDistance = bridgeDistance;
+        this.planetDistance = planetDistance;
     }
 }
 

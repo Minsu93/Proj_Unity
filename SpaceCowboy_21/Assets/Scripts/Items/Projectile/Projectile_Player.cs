@@ -38,7 +38,7 @@ public class Projectile_Player : Projectile
     }
 
     //충돌 체크
-    void OverlapCheck()
+    protected void OverlapCheck()
     {
         Collider2D col = Physics2D.OverlapCircle(transform.position, overlapRadius, overlapTarget);
         if (col != null)
@@ -70,32 +70,7 @@ public class Projectile_Player : Projectile
         }
     }
 
-    //protected virtual void OnTriggerEnter2D(Collider2D collision)
-    //{
-    //    if (!activate) return;
-
-    //    Transform tr = collision.transform;
-    //    if (collision.CompareTag("ProjHitCollider"))
-    //    {
-    //        tr = collision.transform.parent;
-    //    }
-
-    //    if (tr.TryGetComponent<ITarget>(out ITarget target))
-    //    {
-    //        if (tr.TryGetComponent<IHitable>(out IHitable hitable))
-    //        {
-    //            HitEvent(target, hitable);
-    //        }
-    //        else
-    //        {
-    //            NonHitEvent(target);
-    //        }
-
-    //        WeaponImpactEvent();
-    //    }
-    //}
-
-
+    
     protected virtual void HitEvent(ITarget target, IHitable hitable)
     {
 

@@ -7,13 +7,14 @@ public class PlanetLinker : MonoBehaviour
 {
     bool activeLinker = false;
     public Planet planet;
-    public float maxLinkedDistance = 5f;
+    PolygonCollider2D polyColl;
+    public float maxLinkedDistance = 12f;
 
 
-    private void Start()
+    private void OnEnable()
     {
-        if (planet == null) GetComponent<Planet>();
-
+        if (planet == null) planet = GetComponent<Planet>();
+        if (polyColl== null) polyColl = GetComponent<PolygonCollider2D>();
         GetLinkedPlanets();
         activeLinker = true;
     }
@@ -26,21 +27,21 @@ public class PlanetLinker : MonoBehaviour
         planet.linkedPlanetList.Clear();
 
         //어느정도 가까이 있는 행성을 구한다 
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 30f, Vector2.right, 0f, LayerMask.GetMask("Planet"));
-
-        if (hits.Length > 0)
+        Collider2D[] colls = Physics2D.OverlapCircleAll(transform.position, 30f, LayerMask.GetMask("Planet"));
+        if (colls.Length > 0)
         {
-            foreach (RaycastHit2D hit in hits)
+            foreach (Collider2D overlapColl in colls)
             {
                 //자기 자신은 제외한다
-                if (hit.transform == this.transform) continue;
+                if (overlapColl.transform == this.transform) continue;
 
                 PlanetBridge bridge = new PlanetBridge();
 
                 //행성에 가장 가까운 Index를 고른다. 
-                Transform target = hit.collider.transform;
+                Transform target = overlapColl.transform;
                 Planet targetP = target.GetComponent<Planet>();
-                PolygonCollider2D coll = target.GetComponent<PolygonCollider2D>();
+                PolygonCollider2D coll = overlapColl as PolygonCollider2D;
+
                 float dist = float.MaxValue;
                 int bridgeIndex = 0;
                 Vector2 targetVector = Vector2.zero;
@@ -66,10 +67,54 @@ public class PlanetLinker : MonoBehaviour
                 bridge.bridgeIndex = bridgeIndex;
                 bridge.targetVector = targetVector;
                 bridge.bridgeDistance = dist;
+                bridge.planetDistance = Mathf.FloorToInt( Vector2.Distance(this.planet.transform.position, targetP.transform.position));
 
                 planet.linkedPlanetList.Add(bridge);
             }
         }
+        //RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 30f, Vector2.right, 0f, LayerMask.GetMask("Planet"));
+        //if (hits.Length > 0)
+        //{
+        //    foreach (RaycastHit2D hit in hits)
+        //    {
+        //        //자기 자신은 제외한다
+        //        if (hit.transform == this.transform) continue;
+
+        //        PlanetBridge bridge = new PlanetBridge();
+
+        //        //행성에 가장 가까운 Index를 고른다. 
+        //        Transform target = hit.collider.transform;
+        //        Planet targetP = target.GetComponent<Planet>();
+        //        PolygonCollider2D coll = target.GetComponent<PolygonCollider2D>();
+        //        float dist = float.MaxValue;
+        //        int bridgeIndex = 0;
+        //        Vector2 targetVector = Vector2.zero;
+        //        int Counts = planet.polyCollider.points.Length - 1;
+
+        //        for (int i = 0; i < Counts; i++)
+        //        {
+        //            if (i % 2 != 0) continue;
+        //            Vector2 from = GetPointPos(i);
+        //            Vector2 to = coll.ClosestPoint(from);
+        //            float distan = Vector2.Distance(from, to);
+        //            if (distan < dist)
+        //            {
+        //                dist = distan;
+        //                targetVector = to;
+        //                bridgeIndex = i;
+        //            }
+        //        }
+
+        //        if (dist >= maxLinkedDistance) continue;
+
+        //        bridge.planet = targetP;
+        //        bridge.bridgeIndex = bridgeIndex;
+        //        bridge.targetVector = targetVector;
+        //        bridge.bridgeDistance = dist;
+
+        //        planet.linkedPlanetList.Add(bridge);
+        //    }
+        //}
     }
     private void OnDrawGizmos()
     {
@@ -92,6 +137,7 @@ public class PlanetLinker : MonoBehaviour
         }
     }
 
+    //collider상의 한 점(point)의 월드 위치를 반환한다
     Vector2 GetPointPos(int pointIndex)
     {
         Vector3 localPoint = planet.polyCollider.points[pointIndex];
