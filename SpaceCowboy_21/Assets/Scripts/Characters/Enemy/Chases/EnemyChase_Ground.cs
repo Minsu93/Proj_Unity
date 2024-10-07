@@ -17,7 +17,7 @@ public class EnemyChase_Ground : EnemyChase
     Vector2 closestTargetPoint;
     protected Vector2[] ppoints;
     Planet prePlayerPlanet;
-    Planet passedPlanet;//지나온 행성, 내 행성이 바뀌었을 때 수정된다. 
+    //Planet passedPlanet;//지나온 행성, 내 행성이 바뀌었을 때 수정된다. 
 
     EA_Ground action_Ground;
     EnemyBrain brain;
@@ -36,7 +36,7 @@ public class EnemyChase_Ground : EnemyChase
         //행성이 바뀌면 ppoint 업데이트
         if (curPlanet != charGravity.nearestPlanet)
         {
-            passedPlanet = curPlanet;
+            //passedPlanet = curPlanet;
             curPlanet = charGravity.nearestPlanet;
 
             if (curPlanet != null)
@@ -152,7 +152,8 @@ public class EnemyChase_Ground : EnemyChase
         Planet playerPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
 
         //점프할 행성을 구한다 
-        Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
+        Planet targetPlanet = GetNextPlanet();
+        //Planet targetPlanet = ChoosePlanet(playerPlanet, curPlanet);
         if (targetPlanet == null) return false;
 
         //점프 포인트를 구한다. 
@@ -187,72 +188,101 @@ public class EnemyChase_Ground : EnemyChase
     }
 
 
-    Planet ChoosePlanet(Planet playerPlanet, Planet curPlanet)
+    //Planet ChoosePlanet(Planet playerPlanet, Planet curPlanet)
+    //{
+    //    List<Planet> playerLinkedPlanets = new List<Planet>();
+    //    List<Planet> curLinkedPlanets = new List<Planet>();
+    //    List<Planet> commonPlanets = new List<Planet> ();
+    //    Planet targetPlanet = null;
+
+    //    //플레이어의 행성이 바뀌었을 때 
+    //    if (prePlayerPlanet != playerPlanet)
+    //    {
+    //        passedPlanet = null;
+    //        prePlayerPlanet = playerPlanet;
+    //    }
+
+    //    foreach (PlanetBridge bridge in playerPlanet.linkedPlanetList)
+    //    {
+    //        playerLinkedPlanets.Add(bridge.planet);
+    //    }
+    //    foreach (PlanetBridge bridge in curPlanet.linkedPlanetList)
+    //    {
+    //        curLinkedPlanets.Add(bridge.planet);
+    //    }
+
+    //    //두개의 List에 겹치는 것만 골라낸다. 
+    //    foreach (Planet planet in playerLinkedPlanets)
+    //    {
+    //        if (curLinkedPlanets.Contains(planet))
+    //        {
+    //            commonPlanets.Add(planet);
+    //        }
+    //    }
+
+    //    //플레이어 행성을 추가한다. 
+    //    //commonPlanets.Add(playerPlanet);
+
+    //    //지나온 행성을 제거한다.
+    //    if (passedPlanet!= null && commonPlanets.Contains(passedPlanet))
+    //    {
+    //        commonPlanets.Remove(passedPlanet);
+    //    }
+
+    //    //리스트에서 랜덤하게 선택해서 진행한다. 
+
+    //    if (commonPlanets.Count > 0)
+    //    {
+    //        switch(Random.Range(0, 2))
+    //        {
+    //            //플레이어 행성으로 직행
+    //            case 0:
+    //                targetPlanet = playerPlanet;
+    //                break;
+    //            //예측 행성으로 이동
+    //            default:
+    //                targetPlanet = commonPlanets[Random.Range(0, commonPlanets.Count - 1)];
+    //                break;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        targetPlanet = playerPlanet;
+    //    }
+        
+    //    return targetPlanet;
+        
+    //}
+
+    List<Planet> wayList = new List<Planet>();
+    Planet GetNextPlanet()
     {
-        List<Planet> playerLinkedPlanets = new List<Planet>();
-        List<Planet> curLinkedPlanets = new List<Planet>();
-        List<Planet> commonPlanets = new List<Planet> ();
-        Planet targetPlanet = null;
-
-        //플레이어의 행성이 바뀌었을 때 
-        if (prePlayerPlanet != playerPlanet)
+        //플레이어 이전 위치와 현재 위치가 같지 않거나, 리스트에 지금 행성이 없으면, 루트를 새로 탐색한다. 
+        Planet playerPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
+        if(prePlayerPlanet != playerPlanet)
         {
-            passedPlanet = null;
             prePlayerPlanet = playerPlanet;
+            wayList = WaveManager.instance.GetWays(curPlanet, playerPlanet);
+        }
+        if (!wayList.Contains(curPlanet))
+        {
+            wayList = WaveManager.instance.GetWays(curPlanet, playerPlanet);
         }
 
-        foreach (PlanetBridge bridge in playerPlanet.linkedPlanetList)
-        {
-            playerLinkedPlanets.Add(bridge.planet);
-        }
-        foreach (PlanetBridge bridge in curPlanet.linkedPlanetList)
-        {
-            curLinkedPlanets.Add(bridge.planet);
-        }
+        //wayList 에서 현재 행성을 찾은 뒤, 그 행성 다음 Index의 행성을 내보낸다. 
+        Planet targetP = null;
 
-        //두개의 List에 겹치는 것만 골라낸다. 
-        foreach (Planet planet in playerLinkedPlanets)
+        if (wayList.Count > 0)
         {
-            if (curLinkedPlanets.Contains(planet))
+            int index = wayList.IndexOf(curPlanet);
+
+            if (index >= 0 && index + 1 < wayList.Count)
             {
-                commonPlanets.Add(planet);
+                targetP = wayList[index + 1];
             }
         }
-
-        //플레이어 행성을 추가한다. 
-        //commonPlanets.Add(playerPlanet);
-
-        //지나온 행성을 제거한다.
-        if (passedPlanet!= null && commonPlanets.Contains(passedPlanet))
-        {
-            commonPlanets.Remove(passedPlanet);
-        }
-
-        //리스트에서 랜덤하게 선택해서 진행한다. 
-
-        if (commonPlanets.Count > 0)
-        {
-            switch(Random.Range(0, 2))
-            {
-                //플레이어 행성으로 직행
-                case 0:
-                    targetPlanet = playerPlanet;
-                    break;
-                //예측 행성으로 이동
-                default:
-                    targetPlanet = commonPlanets[Random.Range(0, commonPlanets.Count - 1)];
-                    break;
-            }
-        }
-        else
-        {
-            targetPlanet = playerPlanet;
-        }
-        
-        return targetPlanet;
-        
+        return targetP;
     }
-
 
 
 }

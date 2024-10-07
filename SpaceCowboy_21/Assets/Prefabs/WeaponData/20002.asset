@@ -17,7 +17,8 @@ MonoBehaviour:
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
-  projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+  projectilePrefab: {fileID: 6292677011125795810, guid: d5cd6a30e5dd36e4b809bab789b26af1, type: 3}
+  secondProjectilePrefab: {fileID: 0}
   damage: 3
   shootInterval: 0.18
   burstInterval: 1

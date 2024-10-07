@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: 20010
   m_EditorClassIdentifier: 
   itemID: 20003
-  itemName: ClickGun
+  itemName: 
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
+  secondProjectilePrefab: {fileID: 0}
   damage: 5
   shootInterval: 0.01
   burstInterval: 1

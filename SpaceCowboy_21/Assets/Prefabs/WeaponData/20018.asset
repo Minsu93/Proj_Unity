@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: 20018
   m_EditorClassIdentifier: 
   itemID: 20001
-  itemName: TripleBarrelMG
+  itemName: 
   gunStyle: 1
   icon: {fileID: 0}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
+  secondProjectilePrefab: {fileID: 0}
   damage: 3
   shootInterval: 0.1
   burstInterval: 1

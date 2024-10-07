@@ -542,6 +542,10 @@ public class WaveManager : MonoBehaviour
         for(int i = 0; i < planetList.Count; i++)
         {
             minDist[i] = planetEachDists[startIndex, i];
+            if (minDist[i] != 0 || minDist[i] != Int32.MaxValue)
+            {
+                parents[i] = startIndex;
+            }
         }
         visited[startIndex] = true;
         parents[startIndex] = startIndex;
@@ -565,10 +569,10 @@ public class WaveManager : MonoBehaviour
             Debug.LogWarning("No way to Jump");
             return parents;
         }
-        else
-        {
-            parents[now] = startIndex;
-        }
+        //else
+        //{
+        //    parents[now] = startIndex;
+        //}
 
         //2. 다음 now로 이동합니다. 
         while (true)
@@ -614,28 +618,46 @@ public class WaveManager : MonoBehaviour
     }
 
     //만들어둔 wayList를 기반으로 목적지 Planet까지 최단 거리의 Planet Stack을 만든다. 
-    public bool GetWays(Planet from, Planet to, out Stack<Planet> wayStack)
+    public List<Planet> GetWays(Planet from, Planet to)
     {
         //변수 준비
-        wayStack = new Stack<Planet>();
-        string debugStr = "";
+        List<Planet> wayList = new List<Planet>();
+        Stack<Planet> wayStack = new Stack<Planet>();
+        //string debugStr = "";
         int fromInt = planetList.IndexOf(from);
         int toInt = planetList.IndexOf(to);
+        //int fromInt = planetList.FindIndex(planet => planet.gameObject == from.gameObject);
+        //int toInt = planetList.FindIndex(planet => planet.gameObject == to.gameObject);
 
         //리스트에 없는 행성이라면 false를 리턴한다.
-        if (fromInt < 0 || toInt < 0) return false;
-
-        //wayStack에 Planet을 목표행성부터 거꾸로 집어넣는다. (후입 선출로 pop으로 뺄때 거꾸로 빼질 것.)
-        int[] parents = wayListFromXToY[fromInt];
-        while (toInt != fromInt)
+        if (fromInt < 0 || toInt < 0)
         {
-            wayStack.Push(planetList[toInt]);
-            toInt = parents[toInt];
-            debugStr += toInt.ToString() + ",";
+            return wayList;
         }
 
-        Debug.Log("get ways : " + debugStr);
-        return true;
+        //wayStack에 Planet을 목표행성부터 거꾸로 집어넣는다. (목표행성 > 이전 행성 > 이전2 행성...)
+        int[] parents = wayListFromXToY[fromInt];
+        //이어져 있지 않은 행성인 경우 
+        if (parents[toInt] == -1) return wayList;
+
+        while (toInt != fromInt)
+        {
+            Debug.Log(toInt);
+            wayStack.Push(planetList[toInt]);
+            toInt = parents[toInt];
+        }
+        //출발 행성 추가
+        if(toInt == fromInt)
+            wayStack.Push(planetList[fromInt]);
+
+        //waystack의 내용을 pop해서 wayList에 넣는다. (...이전2 행성 > 이전 행성 > 목표 행성 (반대 순서))
+        int count = wayStack.Count;
+        for (int i = 0; i < count; i++)
+        {
+            wayList.Add(wayStack.Pop());
+        }
+
+        return wayList;
     }
 
     //스크린에 보이는 행성 중 하나를 고른다. 
@@ -704,7 +726,7 @@ public class WaveManager : MonoBehaviour
         //플레이어 위치에서 2~10 사이의 랜덤 포인트를 가져온다. 
         float radius = UnityEngine.Random.Range(minAirDistance, maxAirDistance);
         Vector2 dir = UnityEngine.Random.insideUnitCircle;
-        Vector2 pos = (Vector2)transform.position + (dir.normalized * radius);
+        Vector2 pos = (Vector2)GameManager.Instance.player.position + (dir.normalized * radius);
         return FindNearestNode(pos); 
     }
 
