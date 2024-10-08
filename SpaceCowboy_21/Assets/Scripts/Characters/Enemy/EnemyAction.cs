@@ -59,6 +59,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected EnemyState preState = EnemyState.Strike;
     public bool faceRight { get; set; }  //캐릭터가 오른쪽을 보고 있습니까? 
     public bool onAir { get; set; } //공중에 있는가
+    bool isKillCount;
 
 
     //스크립트
@@ -198,10 +199,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     #region Strike Mode 몬스터 생성
     //지상 및 궤도 타입의 Strike 방식
-    public void EnemyStartStrike(Vector2 strikePos)
+    public void EnemyStartStrike(Vector2 strikePos, bool killCount)
     {
         //초기화
         ResetAction();
+
+        isKillCount = killCount;
 
         //Strike 상태로 변경
         enemyState = EnemyState.Strike;
@@ -371,7 +374,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         StartCoroutine(DieRoutine(3.0f));
 
         //WaveManager에 전달.
-        if (WaveManager.instance != null)
+        if (WaveManager.instance != null && isKillCount)
             WaveManager.instance.CountEnemyLeft(this.gameObject);
         
 

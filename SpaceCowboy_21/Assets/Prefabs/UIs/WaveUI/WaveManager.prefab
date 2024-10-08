@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3676013875119938989}
   - component: {fileID: 3676013875119938987}
   - component: {fileID: 3676013875119938986}
+  - component: {fileID: 2308639677852137905}
   m_Layer: 0
   m_Name: WaveManager
   m_TagString: Untagged
@@ -45,23 +46,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba507099e7a4a8a4e810f9a6d28d9ca2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveClearBonusSubtractTime: 5
+  stageManager: {fileID: 0}
+  startTime: 5
   spawnRange: 2
   distanceUnitFromScreen: 0
   planetList: []
-  arrowCanvas: {fileID: 7992751749807872002, guid: 4f7e409d7732b754fa3a80dce3546954, type: 3}
   waveCanvas: {fileID: 4733179844592117394, guid: e18fb9a408a2368438f0ba018761776e, type: 3}
   totalStageCount: 5
-  waveProgressImg: {fileID: 0}
-  currentWaveText: {fileID: 0}
-  totalWaveText: {fileID: 0}
-  minimapManager: {fileID: 0}
-  MonsterIcon: {fileID: 23226514373420900, guid: bf7716ff5e57dfc47bdb1f953e188ab9, type: 3}
-  BossIcon: {fileID: 6398375502880193550, guid: 976b7124d8a304144898b9c8c258f39c, type: 3}
-  iconParent: {fileID: 0}
-  iconSpawnTime: 0
-  maxSpawnLimit: 30
-  spawnPosMultiplier: 20
 --- !u!114 &3676013875119938986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,3 +66,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageObjects: []
+--- !u!114 &2308639677852137905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3676013875119938990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cac9ff06be6ddc74c93e4a80f5bc86ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BossCanvas: {fileID: 52625742384387454, guid: d27213363d09f544b999b88913fa2d54, type: 3}

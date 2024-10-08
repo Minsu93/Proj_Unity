@@ -309,6 +309,7 @@ MonoBehaviour:
     - {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
     - {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
     - {fileID: 2967013171502460237, guid: 0bd08494fadc2da46aaea41f6095b8f8, type: 3}
+    - {fileID: 6918920287179870552, guid: b33dd2920caf53c448be30831ac941b6, type: 3}
   - name: StageObjects
     prefabArray:
     - {fileID: 1023907566023020907, guid: e7700e4c4582d8f4c8208de2ddbe9b62, type: 3}
@@ -539,6 +540,9 @@ MonoBehaviour:
     monsterPrefab: {fileID: 4366261071164999793, guid: 00f97085bf679324ba90152a75c9dbd4, type: 3}
   - name: air_driller
     monsterPrefab: {fileID: 4366261071164999793, guid: ee2f025fde308b64cbc778c412f06c49, type: 3}
+  bossList:
+  - name: ufo_pirate
+    monsterPrefab: {fileID: 6918920287179870552, guid: b33dd2920caf53c448be30831ac941b6, type: 3}
 --- !u!114 &4185339236932033795
 MonoBehaviour:
   m_ObjectHideFlags: 0

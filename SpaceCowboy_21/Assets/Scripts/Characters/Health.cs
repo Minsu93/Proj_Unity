@@ -11,7 +11,11 @@ public class Health : MonoBehaviour
 
     public float InvincibleTime;
     float _invincibleTimer;
-   
+
+    public float HealthPercent
+    {
+        get { return currHealth / maxHealth;}
+    }
 
     //데미지 공식이 복잡해질 수 있다. 
     //방어력 관련, 속성 관련
