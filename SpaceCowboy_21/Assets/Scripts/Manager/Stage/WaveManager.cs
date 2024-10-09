@@ -55,7 +55,7 @@ public class WaveManager : MonoBehaviour
     [Header("Wave UI")]
     //Wave UI관련
     [SerializeField] GameObject waveCanvas;
-    WaveProgress waveProgress;
+    //WaveProgress waveProgress;
     WavePanelUI stageOrderUI;
     [SerializeField] int totalStageCount = 5;
 
@@ -77,9 +77,9 @@ public class WaveManager : MonoBehaviour
         GameObject waveUIObj =  Instantiate(waveCanvas);
         stageOrderUI = waveUIObj.transform.GetComponentInChildren<WavePanelUI>();
         stageOrderUI.SetStageIcons(stageManager.MaxStage);
-        stageOrderUI.gameObject.SetActive(false);
+        //stageOrderUI.gameObject.SetActive(false);
 
-        waveProgress = waveUIObj.GetComponentInChildren<WaveProgress>();
+        //waveProgress = waveUIObj.GetComponentInChildren<WaveProgress>();
     }
 
 
@@ -100,7 +100,7 @@ public class WaveManager : MonoBehaviour
         if (FinalWave || stage.isBossWave) return;
 
         //웨이브 UI 아이콘 (추후 제거예정)
-        waveProgress.IconSpawner(gameTime);
+        //waveProgress.IconSpawner(gameTime);
 
         //다음 웨이브 시간이 되면 웨이브 소환.
         if (nextWaveTime <= gameTime)
@@ -117,14 +117,15 @@ public class WaveManager : MonoBehaviour
         LoadWaveFromJson(index);
 
         //UI초기화
-        waveProgress.InitializeWaveProgress(stage, startTime);
+        //waveProgress.InitializeWaveProgress(stage, startTime);
         //변수 리셋
         ResetWaveManager();
 
         //스테이지 순서 UI 실행. BossWave 시 보스 스폰.
-        Invoke("StageOrderUIMovePlayerIcon", 0.01f);
-        StartCoroutine(ShowWaveUIRoutine());
-
+        //Invoke("StageOrderUIMovePlayerIcon", 0.01f);
+        //StartCoroutine(ShowWaveUIRoutine());
+        UpdateOrderUI();
+        GameManager.Instance.playerManager.UpdateEscapeUI(0);
 
         if (stage.isBossWave) return;
 
@@ -147,27 +148,44 @@ public class WaveManager : MonoBehaviour
         stage = LoadManager.Load<Stage>(address);       
     }
 
-    IEnumerator ShowWaveUIRoutine()
+    void UpdateOrderUI()
     {
-        stageOrderUI.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3f);
-        stageOrderUI.gameObject.SetActive(false);
+        //stageOrderUI.gameObject.SetActive(true);
+        //yield return new WaitForSeconds(3f);
+        //stageOrderUI.gameObject.SetActive(false);
+
+        stageOrderUI.MovePlayericon(stageManager.CurrStageIndex);
 
         //보스 웨이브인 경우
         if (stage.isBossWave)
         {
-            yield return new WaitForSeconds(1f);
+           // yield return new WaitForSeconds(1f);
 
             //보스 생성 
             string bossName = stage.waves[0].spawns[0].enemy.name;
-            bossSpawner.SpawnBoss(bossName);
+            StartCoroutine(bossSpawner.SpawnBoss(bossName));
         }
     }
+    //IEnumerator ShowWaveUIRoutine()
+    //{
+    //    stageOrderUI.gameObject.SetActive(true);
+    //    yield return new WaitForSeconds(3f);
+    //    stageOrderUI.gameObject.SetActive(false);
 
-    void StageOrderUIMovePlayerIcon()
-    {
-        stageOrderUI.MovePlayericon(stageManager.CurrStageIndex);
-    }
+    //    //보스 웨이브인 경우
+    //    if (stage.isBossWave)
+    //    {
+    //        yield return new WaitForSeconds(1f);
+
+    //        //보스 생성 
+    //        string bossName = stage.waves[0].spawns[0].enemy.name;
+    //        bossSpawner.SpawnBoss(bossName);
+    //    }
+    //}
+    //void StageOrderUIMovePlayerIcon()
+    //{
+    //    stageOrderUI.MovePlayericon(stageManager.CurrStageIndex);
+    //}
 
     void ResetWaveManager()
     {
@@ -190,6 +208,8 @@ public class WaveManager : MonoBehaviour
 
             //UI 조절
             GameManager.Instance.arrowManager.RemoveArrow(obj, 0);
+            //EscapeUI 업데이트
+            GameManager.Instance.playerManager.UpdateEscapeUI(enemyTotalKilled/enemyTotalSpawned);
 
             ////적들이 비율밑으로 감소하면 웨이브 조기 클리어
             //if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
@@ -219,36 +239,32 @@ public class WaveManager : MonoBehaviour
     float pastWaveTime = 0f;    //디버그용
     private void MoveToNextWave()
     {
-        if(waveIndex < stage.waves.Count - 1)
+
+        if(waveIndex <= stage.waves.Count - 1)
         {
             //기본 웨이브
             Wave wave = stage.waves[waveIndex];
             SpawnWave(wave);
 
-            pastWaveTime = nextWaveTime;
-            waveIndex++;
-            nextWaveTime += wave.totalTime;
-
-        }
-        else if(waveIndex == stage.waves.Count - 1)
-        {
-            //마지막 웨이브
-            Wave wave = stage.waves[waveIndex];
-            SpawnWave(wave);
 
             pastWaveTime = nextWaveTime;
             waveIndex++;
             nextWaveTime += wave.totalTime;
 
-            FinalWave = true;
+            if (waveIndex == stage.waves.Count - 1)
+                FinalWave = true;
+
+
         }
         else
         {
             //웨이브 종료
             StageClear();
+
             return;
         }
 
+        
     }
 
     void StageClear()

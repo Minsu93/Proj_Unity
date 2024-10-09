@@ -39,6 +39,6 @@ public class Bubble_Drone : SelfCollectable
     public void SetDrone(GameObject dronePrefab)
     {
         this.dronePrefab = dronePrefab;
-        spr.sprite = dronePrefab.GetComponent<DroneItem>().icon;
+        spr.sprite = dronePrefab.GetComponent<DroneItem>().sprite;
     }
 }

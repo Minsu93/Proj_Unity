@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class DroneItem : MonoBehaviour
 {
-
+    public Sprite sprite;
     public Sprite icon;
     public bool autoUse = false;    //자동 사용
 

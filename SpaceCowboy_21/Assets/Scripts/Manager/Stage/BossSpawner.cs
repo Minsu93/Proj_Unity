@@ -11,8 +11,10 @@ public class BossSpawner : MonoBehaviour
     Image HpImage;
     TextMeshProUGUI text;
 
-    public void SpawnBoss(string bossName)
+    public IEnumerator SpawnBoss(string bossName)
     {
+        yield return new WaitForSeconds(5.0f);
+
         SpawnBossUI(bossName);
 
         GameObject bossPrefab = GameManager.Instance.monsterDictonary.monsDictionary[bossName];
@@ -24,6 +26,9 @@ public class BossSpawner : MonoBehaviour
         BossAction bossAction = monster.GetComponent<BossAction>();
         bossAction.BossUIUpdateEvent += BossUiUpdate;
         bossAction.BossDieEvent += BossClear;
+
+        //보스 활성화
+        yield return new WaitForSeconds(2.0f);
         bossAction.BossAwake();
     }
 

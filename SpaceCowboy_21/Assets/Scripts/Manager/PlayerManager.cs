@@ -215,8 +215,10 @@ public class PlayerManager : MonoBehaviour
     //마우스 포인트를 따라다니는 게이지 UI관련
     Gauge_Weapon gauge_Weapon;
     GameObject boosterObj;
+    EscapePanelUI escapeUI;
     //UISkillPanel skillPanel;
     //player UI 스폰
+
     void SpawnPlayerUI()
     {
         GameObject pUI = Instantiate(playerUIPrefab);
@@ -231,6 +233,7 @@ public class PlayerManager : MonoBehaviour
         HideBoosterUI();
 
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
+        escapeUI = pUI.GetComponentInChildren<EscapePanelUI>();
 
         WeaponSlotImage_A = pUI.transform.Find("WeaponPanel/SlotA/Back/WeaponImage").GetComponent<Image>();
         WeaponSlotImage_B = pUI.transform.Find("WeaponPanel/SlotB/Back/WeaponImage").GetComponent<Image>();
@@ -282,6 +285,7 @@ public class PlayerManager : MonoBehaviour
         }
         boosterImg.fillAmount = fillAmount;
     }
+
     public void HideBoosterUI()
     {
         if (boosterObj.activeSelf)
@@ -351,6 +355,11 @@ public class PlayerManager : MonoBehaviour
         {
             droneSlotImages[j].sprite = droneList[j].icon;
         }
+    }
+
+    public void UpdateEscapeUI(float amount)
+    {
+        escapeUI.UpdateGauge(amount);
     }
     #endregion
 }
