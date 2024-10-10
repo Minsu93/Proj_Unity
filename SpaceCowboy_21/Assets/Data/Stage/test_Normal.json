@@ -1,0 +1,19 @@
+{
+    "isBossWave": true,
+    "waves": [
+        {
+            "waveIndex": 0,
+            "spawns": [
+                {
+                    "enemy": {
+                        "name": "ufo_pirate",
+                        "delay": 0.0
+                    },
+                    "spawnCount": 1,
+                    "delayToNextWave": 0.0
+                }
+            ],
+            "totalTime": 0.0
+        }
+    ]
+}

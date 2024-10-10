@@ -125,7 +125,7 @@ public class WaveManager : MonoBehaviour
         //Invoke("StageOrderUIMovePlayerIcon", 0.01f);
         //StartCoroutine(ShowWaveUIRoutine());
         UpdateOrderUI();
-        GameManager.Instance.playerManager.UpdateEscapeUI(0);
+        //GameManager.Instance.playerManager.UpdateEscapeUI(0);
 
         if (stage.isBossWave) return;
 
@@ -197,7 +197,7 @@ public class WaveManager : MonoBehaviour
         FinalWave = false;
     }
 
-
+    [SerializeField] float fasterWaveDelay;
     public void CountEnemyLeft(GameObject obj)
     {
         if(spawnedEnemyList.Contains(obj))
@@ -209,7 +209,7 @@ public class WaveManager : MonoBehaviour
             //UI 조절
             GameManager.Instance.arrowManager.RemoveArrow(obj, 0);
             //EscapeUI 업데이트
-            GameManager.Instance.playerManager.UpdateEscapeUI(enemyTotalKilled/enemyTotalSpawned);
+            //GameManager.Instance.playerManager.UpdateEscapeUI(enemyTotalKilled/enemyTotalSpawned);
 
             ////적들이 비율밑으로 감소하면 웨이브 조기 클리어
             //if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
@@ -228,9 +228,9 @@ public class WaveManager : MonoBehaviour
                 {
                     MoveToNextWave();
                 }
-                else if (nextWaveTime - gameTime > 4.0f)
+                else if (nextWaveTime - gameTime > fasterWaveDelay)
                 {
-                    gameTime = nextWaveTime - 4.0f;
+                    gameTime = nextWaveTime - fasterWaveDelay;
                 }
             }
         }
@@ -473,6 +473,25 @@ public class WaveManager : MonoBehaviour
         safePoint =  FindNearestNode(vec);
     }
 
+    public Vector2 GetPointFromOutsideScreen(Vector2 dir)
+    {
+        dir = dir.normalized;
+
+        Vector2 center = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, Camera.main.nearClipPlane));
+        Vector2 topRight = Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.0f, Camera.main.nearClipPlane));
+        Vector2 downLeft = Camera.main.ViewportToWorldPoint(new Vector3(0.0f, 0.0f, Camera.main.nearClipPlane));
+
+        float sizeX = topRight.x - downLeft.x;
+        float sizeY = topRight.y - downLeft.y;
+
+        float maxDistX = sizeX * 0.5f / MathF.Abs(dir.x);
+        float maxDistY = sizeY * 0.5f / Mathf.Abs(dir.y);
+        float dist = Mathf.Min(maxDistX, maxDistY);
+
+        Vector2 point = center + (dir * dist);
+        return point;
+    }
+
     //private bool IsLocationSafe(Vector2 position)
     //{
     //    return Physics2D.OverlapCircle(position, 2f, LayerMask.GetMask("Planet")) == null;
@@ -667,7 +686,6 @@ public class WaveManager : MonoBehaviour
 
         while (toInt != fromInt)
         {
-            Debug.Log(toInt);
             wayStack.Push(planetList[toInt]);
             toInt = parents[toInt];
         }

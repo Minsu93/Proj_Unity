@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -67,6 +68,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     public event System.Action PlayerDieEvent;
     public event System.Action PlayerJumpStartEvent;
     public event System.Action PlayerJumpEvent;
+    public event Action<bool> PlayerAimEvent;
 
 
     [Header("Scripts")]
@@ -94,13 +96,16 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
 
     public void InitPlayer()
     {
-        activate = true;
+        activate = false;
         health.ResetHealth();
 
         GameManager.Instance.playerManager.EnablePlayerInput();
         PlayerIgnoreProjectile(false);
         playerJump.RemoveJumpArrow(true);
         playerWeapon.ShowWeaponSight(true);
+
+        //조준 애니메이션 시작
+        if (PlayerAimEvent != null) PlayerAimEvent(true);
 
         //문제 생길 것 같기도.. 공중이면?
         playerState = PlayerState.Jumping;
@@ -326,7 +331,17 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         }
     }
 
-
+    public void ShowBoostEffect(bool show)
+    {
+        if (show)
+        {
+            boosterEffect.Play();
+        }
+        else
+        {
+            boosterEffect.Stop();
+        }
+    }
 
     public void LauchPlayer(Vector2 Vec, float force)
     {
@@ -709,10 +724,10 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         playerState = PlayerState.Die;
 
         //죽는 모션 실행
-        if (PlayerDieEvent != null)
-        {
-            PlayerDieEvent();
-        }
+        if (PlayerDieEvent != null) PlayerDieEvent();
+
+        //조준 애니메이션 취소
+        if (PlayerAimEvent != null) PlayerAimEvent(false);
 
         currSpeed = 0;
         targetSpeed = 0;
@@ -747,6 +762,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     public void DeactivatePlayer(bool isActive)
     {
         activate = isActive;
+        playerColl.enabled = isActive;
         PlayerIgnoreProjectile(!isActive);
 
         //플레이어 조작 정지
@@ -765,6 +781,9 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         //UI제거
         playerJump.RemoveJumpArrow(isActive);
         playerWeapon.ShowWeaponSight(isActive);
+
+        //조준 애니메이션 취소
+        if (PlayerAimEvent != null) PlayerAimEvent(isActive);
 
         //this.gameObject.SetActive(false);   
     }

@@ -130,13 +130,6 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            //if(mapSize == default)
-            //{
-            //    MapBorder border = GameObject.FindGameObjectWithTag("SpaceBorder").GetComponent<MapBorder>();
-            //    mapSize = new Vector2(border.width / 2, border.height / 2);
-            //    Debug.Log("mapSize is : " + mapSize.ToString());
-            //}
-
             return mapSize;
         }
         set
@@ -159,14 +152,7 @@ public class GameManager : MonoBehaviour
         
         //플레이어생명 변수 업데이트
         playerIsAlive = true;
-
-
-        //카메라 정보 업데이트
-        //cameraManager.SetVirtualCam();
-        //cameraManager.InitCam();
-
         
-        playerObj.SetActive(false);
         return playerObj;
     }
 
@@ -179,18 +165,6 @@ public class GameManager : MonoBehaviour
 
 
     }
-
-    //public GameObject SpawnShuttle(Vector2 pos, Quaternion rot)
-    //{
-    //    GameObject shuttleObj = Instantiate(shuttlePrefab, pos, rot);
-    //    if(shuttleObj.TryGetComponent<FollowingShuttle>(out FollowingShuttle shuttle))
-    //    {
-    //        shuttle.InitializeShuttle();
-    //    }
-
-    //    shuttleObj.SetActive(false);
-    //    return shuttleObj;
-    //}
 
 
     #endregion
@@ -266,10 +240,6 @@ public class GameManager : MonoBehaviour
     {
 
         yield return new WaitForSeconds(0.6f);
-
-        //카메라 초기화..(다른것도 초기화 필요한게 있으면 여기서)
-        //cameraManager.ResetCam();
-
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 

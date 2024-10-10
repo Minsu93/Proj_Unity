@@ -11,7 +11,7 @@ public class AimMousePosition : MonoBehaviour
     [SpineBone(dataField: "skeletonAnimation")]
     public string boneName;
 
-    //public float maxDist = 1.0f;
+    public bool activate;
     Vector3 mousePos;
 
     Bone bone;
@@ -31,6 +31,7 @@ public class AimMousePosition : MonoBehaviour
     {
         bone = skeletonAnimation.skeleton.FindBone(boneName);
 
+        skeletonAnimation.UpdateLocal -= AimUpdate;
         skeletonAnimation.UpdateLocal += AimUpdate; //Spine 애니메이션에서 실행 순서 참고. 본 위치 업데이트를 어디쯤에서 할지 정하는 곳.
 
     }
@@ -38,6 +39,8 @@ public class AimMousePosition : MonoBehaviour
     // Update is called once per frame
     void AimUpdate(ISkeletonAnimation anim)
     {
+        if (!activate) return; 
+
         Vector3 inputPos = Input.mousePosition;
         inputPos.z = 10;    //z는 카메라에서부터의 거리
         mousePos = Camera.main.ScreenToWorldPoint(inputPos);    //마우스 월드 위치

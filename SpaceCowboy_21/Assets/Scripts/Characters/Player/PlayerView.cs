@@ -33,6 +33,7 @@ public class PlayerView : MonoBehaviour
     Vector2 pointVec;
 
     PlayerGunAttacher playerGunAttacher;
+    AimMousePosition aimMousePos;
 
     private void Awake()
     {
@@ -41,10 +42,10 @@ public class PlayerView : MonoBehaviour
         _renderer.SetPropertyBlock(block);
 
         playerGunAttacher = GetComponent<PlayerGunAttacher>();
+        aimMousePos = GetComponent<AimMousePosition>();
 
         skeleton = skeletonAnimation.skeleton;
         skeletonData = skeleton.Data;
-
     }
 
     // Start is called before the first frame update
@@ -57,6 +58,7 @@ public class PlayerView : MonoBehaviour
         playerBehavior.PlayerHitEvent += DamageHit;
         playerBehavior.PlayerJumpStartEvent += PlayJumpStart;
         playerBehavior.PlayerJumpEvent += PlayJump;
+        playerBehavior.PlayerAimEvent += AimOnOFF;
 
 
         //SetSkin(gunType);
@@ -288,7 +290,17 @@ public class PlayerView : MonoBehaviour
         bone = skeleton.FindBone(boneName);
     }
 
-
+    void AimOnOFF(bool aimOn)
+    {
+        if(aimOn)
+        {
+            aimMousePos.activate = true;
+        }
+        else
+        {
+            aimMousePos.activate = false;
+        }
+    }
 
 }
 

@@ -42,7 +42,6 @@ public class PM_CurveMove : ProjectileMovement
 
         int up = upsideDown ? -1 : 1;
         float y = Mathf.Sin(sinTimer) * height * up;
-        Debug.Log(y);
         Vector2 pos = startPos + ( speed * timer * direction) + (upVec * y);
         rb.MovePosition(pos);
     }

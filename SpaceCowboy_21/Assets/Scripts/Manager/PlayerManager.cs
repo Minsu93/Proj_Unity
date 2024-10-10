@@ -20,6 +20,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
     PlayerDrone playerDrone;
+    HyperBoost playerHyperBoost;
     public Planet playerNearestPlanet { get; set; } //플레이어와 가장 가까운 행성을 추적한다. null이 나오지 않는 항시 가장 가까운 행성을 표시한다. 적들의 추적 용도로 사용한다. 
     
     [SerializeField] int weaponSlots = 2;
@@ -36,6 +37,7 @@ public class PlayerManager : MonoBehaviour
         playerWeapon = playerObj.GetComponent<PlayerWeapon>();
         playerBuffs = playerObj.GetComponent<PlayerBuffs>();
         playerDrone = playerObj.GetComponent<PlayerDrone>();
+        playerHyperBoost = playerObj.GetComponent<HyperBoost>();
 
         playerWeapon.weaponSlots = this.weaponSlots;
         playerDrone.droneSlots = this.droneSlots;
@@ -53,6 +55,7 @@ public class PlayerManager : MonoBehaviour
         UpdateDroneUI();
 
         playerBehavior.InitPlayer();
+        //playerObj.SetActive(false);
 
     }
 
@@ -64,14 +67,40 @@ public class PlayerManager : MonoBehaviour
 
     }
 
+    #region HyperBoost 스테이지 이동, 챕터 이동
+    public delegate void ChangeSceneDel();
+    public void SuperBoost(Vector2 targetPosition, Transform flagTr, bool boostIn, ChangeSceneDel changeSceneDel)
+    {
+        if (boostIn)
+        {
+            StartCoroutine(playerHyperBoost.SuperBoostIn(targetPosition, flagTr, changeSceneDel));
+        }
+        else
+        {
+            StartCoroutine(playerHyperBoost.SuperBoostOut(flagTr, targetPosition, changeSceneDel));
+        }
+    }
+    public void ReadyHyperBoost()
+    {
+        //기 모으는듯한 애니메이션 출력 
+    }
+    public void LaunchhHyperBoost()
+    {
+        //부스터를 타고 날아가버린다. 챕터 이동.
+    }
+
+    
+
+    #endregion
+
     #region Player Life 관련
 
-    public int lifeMax = 3;
+    public int bonusLife = 3;
     public int curLife { get; set; }
 
     public void InitializeLife()
     {
-        curLife = lifeMax;
+        curLife = bonusLife;
         Debug.Log("curLife is : " + curLife);
     }
 
@@ -96,7 +125,7 @@ public class PlayerManager : MonoBehaviour
 
     #endregion
 
-    #region Player Input 관련
+    #region Player 관련
 
     //플레이어 입력 관련 
     public void DisablePlayerInput()
@@ -114,6 +143,14 @@ public class PlayerManager : MonoBehaviour
     public void EnablePlayerShoot()
     {
         playerInput.shootDisabled = false;
+    }
+
+    public void DeactivatePlayerBehavior(bool isActivate)
+    {
+        playerBehavior.DeactivatePlayer(isActivate);
+        //playerWeapon.ShowWeaponSight(isActivate);
+
+
     }
     #endregion
 
@@ -215,7 +252,7 @@ public class PlayerManager : MonoBehaviour
     //마우스 포인트를 따라다니는 게이지 UI관련
     Gauge_Weapon gauge_Weapon;
     GameObject boosterObj;
-    EscapePanelUI escapeUI;
+    //EscapePanelUI escapeUI;
     //UISkillPanel skillPanel;
     //player UI 스폰
 
@@ -233,7 +270,7 @@ public class PlayerManager : MonoBehaviour
         HideBoosterUI();
 
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
-        escapeUI = pUI.GetComponentInChildren<EscapePanelUI>();
+        SetReticleFollower();
 
         WeaponSlotImage_A = pUI.transform.Find("WeaponPanel/SlotA/Back/WeaponImage").GetComponent<Image>();
         WeaponSlotImage_B = pUI.transform.Find("WeaponPanel/SlotB/Back/WeaponImage").GetComponent<Image>();
@@ -308,9 +345,9 @@ public class PlayerManager : MonoBehaviour
     }
 
     //게이지가 reticle 따라다니게 만들기
-    public void SetReticleFollower(GameObject reticleObj)
+    public void SetReticleFollower()
     {
-        gauge_Weapon.setFollowTarget(reticleObj);
+        gauge_Weapon.setFollowTarget(GameManager.Instance.cameraManager.reticle);
     }
 
 
@@ -357,10 +394,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void UpdateEscapeUI(float amount)
-    {
-        escapeUI.UpdateGauge(amount);
-    }
+    //public void UpdateEscapeUI(float amount)
+    //{
+    //    escapeUI.UpdateGauge(amount);
+    //}
     #endregion
 }
 

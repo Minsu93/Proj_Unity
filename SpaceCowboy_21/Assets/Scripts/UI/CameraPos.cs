@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class CameraPos : MonoBehaviour
 {
@@ -12,7 +11,6 @@ public class CameraPos : MonoBehaviour
     Vector2 prePlayerPos;
     Vector2 currCamPos;
 
-    Transform player;
     GameObject reticle;
 
     bool activate = false;
@@ -27,39 +25,29 @@ public class CameraPos : MonoBehaviour
         GameManager.Instance.PlayerDeadEvent -= StopCameraFollow;
         GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
 
-        GameObject reticle =  CreateRecticle();
-        GameManager.Instance.playerManager.SetReticleFollower(reticle);
+
 
         activate = true;
     }
 
-
-    public void CamPosInitLobby(Transform playerTr)
+    public GameObject CreateReticle()
     {
-        player = playerTr;
-        CreateRecticle();
-
-        activate = true;
-
+        reticle = CreateRecticle();
+        return reticle;
     }
+
 
     [SerializeField] Vector2 ret;
     private void Update()
     {
-        if (!activate)
-        {
-            return;
-        }
+        if (!activate) return;
 
-        if(player == null)
-        {
-            player = GameManager.Instance.player;
-            return;
-        }
+        if (GameManager.Instance.player == null) return;
+        if (reticle == null) return;
 
         //플레이어 움직임수치 카메라 추가
-        Vector2 movementVec = (Vector2)player.position - prePlayerPos;
-        prePlayerPos = player.position;
+        //Vector2 movementVec = (Vector2)player.position - prePlayerPos;
+        //prePlayerPos = player.position;
             
         //Reticle 위치 보정
         Vector3 inputPos = Input.mousePosition;
@@ -78,7 +66,9 @@ public class CameraPos : MonoBehaviour
         {
             ret = ret.normalized;
         }
-        Vector2 camPos= ret * threshold + movementVec * movementInfluence + (Vector2)player.position;
+        Vector2 camPos= ret * threshold + (Vector2)GameManager.Instance.player.position;
+        //Vector2 camPos = ret * threshold + movementVec * movementInfluence + (Vector2)player.position;
+
         currCamPos = Vector2.Lerp(currCamPos, camPos, Time.deltaTime * camSpeed);
 
         transform.position = currCamPos;

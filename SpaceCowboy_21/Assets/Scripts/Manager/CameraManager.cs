@@ -15,6 +15,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] float camSpeed = 3f;
     [SerializeField] float threshold = 2f;
     CameraPos cameraPos;
+    public GameObject reticle { get; private set; }
 
     private void Awake()
     {
@@ -37,41 +38,10 @@ public class CameraManager : MonoBehaviour
 
     public void InitCam()
     {
-        cameraPos = CreateCamPos();
-        cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
-        
-        //virtualCameraMain.Follow = cameraPos.transform;
-
-    }
-
-    //public void InitLobbyCam(Transform tr)
-    //{
-    //    cameraPos = CreateCamPos();
-    //    cameraPos.CamPosInitLobby(tr);
-        
-    //    virtualCameraMain.Follow = cameraPos.transform;
-    //}
-
-    //public void SetVirtualCam()
-    //{
-    //    GameObject camObj = GameObject.FindGameObjectWithTag("Vcam");
-    //    if (camObj == null) return;
-        
-    //    virtualCameraMain = camObj.GetComponent<CinemachineVirtualCamera>();
-    //    confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
-        
-    //    curLensSize = middleGroundDist;
-    //    targetLensSize = curLensSize;
-    //    defaultLensSize = curLensSize;
-
-    //    virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
-    //}
-
-    CameraPos CreateCamPos()
-    {
         GameObject camPosObj = new GameObject("CamPos");
-        CameraPos camPos = camPosObj.AddComponent<CameraPos>();
-        return camPos;
+        cameraPos = camPosObj.AddComponent<CameraPos>();
+        cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
+        reticle = cameraPos.CreateReticle();
     }
 
     public void ResetCam(CinemachineVirtualCamera vcam)
@@ -81,10 +51,9 @@ public class CameraManager : MonoBehaviour
         if(confiner != null)
             confiner.enabled = false;
 
-
         virtualCameraMain = vcam;
         confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
-        if(!confiner.enabled) confiner.enabled = true;
+        if(!confiner.enabled) confiner.enabled = false;
 
 
         curLensSize = middleGroundDist;
@@ -95,6 +64,7 @@ public class CameraManager : MonoBehaviour
 
         virtualCameraMain.Follow = cameraPos.transform;
     }
+
 
     #endregion
 
@@ -107,16 +77,18 @@ public class CameraManager : MonoBehaviour
     public void StopCameraFollow()
     {
         cameraPos.StopCameraFollow();
+        confiner.enabled = false;
     }
 
     public void StartCameraFollow()
     {
         cameraPos.StartCameraFollow();
+        confiner.enabled = true;
     }
 
     public void MoveCameraPos(Vector2 pos)
     {
-        cameraPos.transform.position = pos;
+        cameraPos.MoveCamPos(pos);
     }
 
     public void SetActiveVirtualCam(bool active)

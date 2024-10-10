@@ -4,14 +4,32 @@ using UnityEngine;
 
 public class MapBorder : MonoBehaviour
 {
+    bool activateBorder;
+    public bool ActivateBorder
+    {
+        get { return activateBorder; }
+        set 
+        {
+            polyColl.enabled = value;
+            activateBorder = value; 
+        }
+    }
+
     public float width;
     public float height;
     PolygonCollider2D polyColl;
 
 
+    private void Awake()
+    {
+        SetBorder();
+        ActivateBorder = false;
+    }
     //플레이어가 오브젝트를 빠져나가면
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (activateBorder) return;
+
         if (collision.CompareTag("Player"))
         {
             //이동 위치 계산
@@ -52,6 +70,7 @@ public class MapBorder : MonoBehaviour
     void TeleportPlayer(Vector2 movePos)
     {
         StartCoroutine(NextFrameRoutine(movePos));
+        Debug.Log("PlayerTeleport");
     }
 
     IEnumerator NextFrameRoutine(Vector2 movePos)
