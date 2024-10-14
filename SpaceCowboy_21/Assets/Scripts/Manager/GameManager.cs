@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     //Áß·Â°ü·Ã
     public float worldGravity = 900f;
+    public float worldGravityRadius = 10.0f;
 
     //½Ì±ÛÅæ
     private static GameManager _instance = null;
@@ -159,7 +160,7 @@ public class GameManager : MonoBehaviour
     public void RespawnPlayer(Vector2 pos, Quaternion rot)
     {
         playerIsAlive = true;
-        cameraManager.StartCameraFollow();
+        //cameraManager.StartCameraFollow();
 
         playerManager.playerBehavior.InitPlayer();
 

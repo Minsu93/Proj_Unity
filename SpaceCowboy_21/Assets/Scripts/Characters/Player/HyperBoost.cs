@@ -23,13 +23,17 @@ public class HyperBoost : MonoBehaviour
         GameManager.Instance.playerManager.playerBehavior.ShowBoostEffect(true);
 
         //중간 도착지점 설정
-        Vector2 middlePoint = endTr.position + (endTr.up * middleHeight);
-        PlayerBoostView(BoostPower.Middle);
-        yield return StartCoroutine(MoveAtoBRoutine(startPoint, middlePoint, highSpeed));
+        //Vector2 middlePoint = endTr.position + (endTr.up * middleHeight);
+        //PlayerBoostView(BoostPower.Middle);
+        //yield return StartCoroutine(MoveAtoBRoutine(startPoint, middlePoint, highSpeed));
 
+        //GameManager.Instance.playerManager.playerBehavior.ShowBoostEffect(false);
+        //PlayerBoostView(BoostPower.Low);
+        //yield return StartCoroutine(MoveAtoBRoutine(middlePoint, endTr.position, lowSpeed));
+
+        PlayerBoostView(BoostPower.Middle);
+        yield return StartCoroutine(MoveAtoBRoutine(startPoint, endTr.position, highSpeed));
         GameManager.Instance.playerManager.playerBehavior.ShowBoostEffect(false);
-        PlayerBoostView(BoostPower.Low);
-        yield return StartCoroutine(MoveAtoBRoutine(middlePoint, endTr.position, lowSpeed));
 
         PlayerBoostView(BoostPower.Zero);
 
@@ -43,13 +47,17 @@ public class HyperBoost : MonoBehaviour
         //캐릭터 비활성화
         DeactivatePlayer();
 
-        Vector2 middlePoint = startTr.position + (startTr.up * middleHeight);
-        PlayerBoostView(BoostPower.Low);
-        yield return StartCoroutine(MoveAtoBRoutine(startTr.position, middlePoint, lowSpeed));
+        //Vector2 middlePoint = startTr.position + (startTr.up * middleHeight);
+        //PlayerBoostView(BoostPower.Low);
+        //yield return StartCoroutine(MoveAtoBRoutine(startTr.position, middlePoint, lowSpeed));
 
+        //PlayerBoostView(BoostPower.Middle);
+        //GameManager.Instance.playerManager.playerBehavior.ShowBoostEffect(true);
+        //yield return StartCoroutine(MoveAtoBRoutine(middlePoint, endPoint, highSpeed));
+        
         PlayerBoostView(BoostPower.Middle);
         GameManager.Instance.playerManager.playerBehavior.ShowBoostEffect(true);
-        yield return StartCoroutine(MoveAtoBRoutine(middlePoint, endPoint, highSpeed));
+        yield return StartCoroutine(MoveAtoBRoutine(startTr.position, endPoint, highSpeed));
 
         //드론 비활성화
         GameManager.Instance.playerManager.DeactivateDrone();
@@ -95,7 +103,7 @@ public class HyperBoost : MonoBehaviour
 
     void ActivatePlayer()
     {
-        GameManager.Instance.cameraManager.StartCameraFollow();
+        //GameManager.Instance.cameraManager.StartCameraFollow();
         GameManager.Instance.playerManager.playerBehavior.DeactivatePlayer(true);
     }
 

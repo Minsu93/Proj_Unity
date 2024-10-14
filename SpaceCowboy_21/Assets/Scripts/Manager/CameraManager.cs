@@ -1,7 +1,6 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -20,15 +19,13 @@ public class CameraManager : MonoBehaviour
     private void Awake()
     {
         curLensSize = middleGroundDist;
-
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
-        
     }
 
     private void FixedUpdate()
     {
-        UpdateCamLens();
+        //UpdateCamLens();
     }
 
 
@@ -42,26 +39,35 @@ public class CameraManager : MonoBehaviour
         cameraPos = camPosObj.AddComponent<CameraPos>();
         cameraPos.CameraPosInitInStage(movementInfluence, camSpeed, threshold);
         reticle = cameraPos.CreateReticle();
-    }
-
-    public void ResetCam(CinemachineVirtualCamera vcam)
-    {
-        if(vcam == null) return;
-        //기존 제한은 취소. 
-        if(confiner != null)
-            confiner.enabled = false;
-
-        virtualCameraMain = vcam;
-        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
-        if(!confiner.enabled) confiner.enabled = false;
-
 
         curLensSize = middleGroundDist;
         targetLensSize = curLensSize;
         defaultLensSize = curLensSize;
+    }
 
-        virtualCameraMain.m_Lens.OrthographicSize = curLensSize; 
+    public void ChangeCamera(CinemachineVirtualCamera preVCam, CinemachineVirtualCamera currVCam)
+    {
+        if (preVCam != null) 
+        { 
+            preVCam.Priority = 0;
+            preVCam.gameObject.SetActive(false);
+        } 
+        
+        if(currVCam != null)
+        {
+            currVCam.gameObject.SetActive(true);
+            currVCam.Priority = 1;
+        }
 
+        virtualCameraMain = currVCam;
+        confiner = virtualCameraMain.GetComponent<CinemachineConfiner2D>();
+
+        virtualCameraMain.m_Lens.OrthographicSize = curLensSize;
+    }
+
+    public void FollowCamera()
+    {
+        virtualCameraMain.PreviousStateIsValid = false;
         virtualCameraMain.Follow = cameraPos.transform;
     }
 
@@ -76,29 +82,20 @@ public class CameraManager : MonoBehaviour
     //카메라 이벤트
     public void StopCameraFollow()
     {
-        cameraPos.StopCameraFollow();
-        confiner.enabled = false;
-    }
-
-    public void StartCameraFollow()
-    {
-        cameraPos.StartCameraFollow();
-        confiner.enabled = true;
-    }
-
-    public void MoveCameraPos(Vector2 pos)
-    {
-        cameraPos.MoveCamPos(pos);
+        virtualCameraMain.Follow = null;
+        //cameraPos.StopCameraFollow();
     }
 
     public void SetActiveVirtualCam(bool active)
     {
+        virtualCameraMain.PreviousStateIsValid = false;
         virtualCameraMain.gameObject.SetActive(active);
     }
 
     //카메라 이동.
     public void teleportCamera(Vector2 pos, Vector2 borderHalfSize, Vector2 borderPos)
     {
+        Debug.Log("Teleport Cam");
         //화면 절반의 넓이를 구한다. 
         Camera cam = Camera.main;
         float cameraHeightHalf = cam.orthographicSize;
@@ -114,7 +111,7 @@ public class CameraManager : MonoBehaviour
         Vector2 newPos = new Vector2(x, y);
 
         //이동 시 pos가 화면 가장자리라면, 화면 절반 내부로 이동시킨다. 
-        cameraPos.MoveCamPos(newPos);
+        //cameraPos.MoveCamPos(newPos);
     }
     #endregion
 

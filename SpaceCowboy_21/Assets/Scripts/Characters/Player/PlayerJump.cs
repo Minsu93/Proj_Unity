@@ -83,41 +83,41 @@ public class PlayerJump : MonoBehaviour
     /// 슬라이딩으로 부스트 사용시 게이지 감소도 여기서. 
     /// 마지막으로 UI를 업데이트한다.
     /// </summary>
-    private void Update()
-    {
-        if(!usingBoost)
-        {
-            if(rechargeTimer < waitSecondToRecharge)
-            {
-                rechargeTimer += Time.deltaTime;
-            }
-            //충전 시작
-            else 
-            {
-                if (boostCurGauge < boostMaxGauge)
-                {
-                    boostCurGauge += rechargeSpeed * Time.deltaTime;
-                    GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
-                }
-                else if( boostCurGauge > boostMaxGauge)
-                {
-                    boostCurGauge = boostMaxGauge;
-                    GameManager.Instance.playerManager.HideBoosterUI();
-                }
-            }
-        }
-        else
-        {
-            //부스터 사용 시 게이지 감소
-            if(boostCurGauge > 0)
-            {
-                boostCurGauge -= boostGaugeRate * Time.deltaTime;
-                GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
-            }
-        }
-        //UI
-        
-    }
+    /// 
+
+    //private void Update()
+    //{
+    //    if(!usingBoost)
+    //    {
+    //        if(rechargeTimer < waitSecondToRecharge)
+    //        {
+    //            rechargeTimer += Time.deltaTime;
+    //        }
+    //        //충전 시작
+    //        else 
+    //        {
+    //            if (boostCurGauge < boostMaxGauge)
+    //            {
+    //                boostCurGauge += rechargeSpeed * Time.deltaTime;
+    //                GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
+    //            }
+    //            else if( boostCurGauge > boostMaxGauge)
+    //            {
+    //                boostCurGauge = boostMaxGauge;
+    //                GameManager.Instance.playerManager.HideBoosterUI();
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //부스터 사용 시 게이지 감소
+    //        if(boostCurGauge > 0)
+    //        {
+    //            boostCurGauge -= boostGaugeRate * Time.deltaTime;
+    //            GameManager.Instance.playerManager.UpdateBoosterUI(boostCurGauge / boostMaxGauge);
+    //        }
+    //    }        
+    //}
 
 
     public void ClearTrail()

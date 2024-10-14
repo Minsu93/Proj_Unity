@@ -10,7 +10,7 @@ public class MapBorder : MonoBehaviour
         get { return activateBorder; }
         set 
         {
-            polyColl.enabled = value;
+            //polyColl.enabled = value;
             activateBorder = value; 
         }
     }
@@ -23,7 +23,6 @@ public class MapBorder : MonoBehaviour
     private void Awake()
     {
         SetBorder();
-        ActivateBorder = false;
     }
     //플레이어가 오브젝트를 빠져나가면
     private void OnTriggerExit2D(Collider2D collision)
@@ -40,8 +39,6 @@ public class MapBorder : MonoBehaviour
             float xMin = transform.position.x - width * 0.5f;
             float yMax = transform.position.y + height * 0.5f;
             float yMin = transform.position.y - height * 0.5f;
-
-
 
             if (x > xMax)
             {
@@ -70,7 +67,6 @@ public class MapBorder : MonoBehaviour
     void TeleportPlayer(Vector2 movePos)
     {
         StartCoroutine(NextFrameRoutine(movePos));
-        Debug.Log("PlayerTeleport");
     }
 
     IEnumerator NextFrameRoutine(Vector2 movePos)
@@ -85,8 +81,8 @@ public class MapBorder : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         GameManager.Instance.player.position = movePos;
-        Vector2 halfSize = new Vector2(width * 0.5f, height * 0.5f);
-        GameManager.Instance.cameraManager.teleportCamera(movePos, halfSize, transform.position);
+        //Vector2 halfSize = new Vector2(width * 0.5f, height * 0.5f);
+        //GameManager.Instance.cameraManager.teleportCamera(movePos, halfSize, transform.position);
 
         yield return new WaitForFixedUpdate();
 

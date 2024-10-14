@@ -400,7 +400,33 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     #endregion
 
     #region Movement
+    public void TryMove(bool isRight)
+    {
+        ChangeMovement(isRight);
+    }
 
+    void ChangeMovement(bool isRight)
+    {
+        if (!activate) return;
+        if (playerState == PlayerState.Jumping) return;
+
+        //input 방향이 바뀌면 방향 계산을 새로 한다.
+        if (playerState == PlayerState.Idle || faceRight != isRight)
+        {
+            this.faceRight = isRight;
+            GetClosestPlanetPoint(transform.position);
+        }
+
+        //목표 속도 설정
+        targetSpeed = moveSpeed;
+
+        //상태를 달리기로 변경(Idle인 경우에만)
+        if (playerState == PlayerState.Idle)
+        {
+            //달리기 수정되면서 한번 실행.
+            playerState = PlayerState.Running;
+        }
+    }
     public void TryMove(Vector2 inputAxisRaw)
     {
         if (!activate) return;

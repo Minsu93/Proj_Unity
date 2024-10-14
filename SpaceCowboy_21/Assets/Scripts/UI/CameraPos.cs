@@ -22,11 +22,6 @@ public class CameraPos : MonoBehaviour
         this.camSpeed = camSpeed;
         this.threshold = threshold;
 
-        GameManager.Instance.PlayerDeadEvent -= StopCameraFollow;
-        GameManager.Instance.PlayerDeadEvent += StopCameraFollow;
-
-
-
         activate = true;
     }
 
@@ -45,20 +40,15 @@ public class CameraPos : MonoBehaviour
         if (GameManager.Instance.player == null) return;
         if (reticle == null) return;
 
-        //플레이어 움직임수치 카메라 추가
-        //Vector2 movementVec = (Vector2)player.position - prePlayerPos;
-        //prePlayerPos = player.position;
             
         //Reticle 위치 보정
         Vector3 inputPos = Input.mousePosition;
-        Vector3 mousePos;
-        inputPos.z = 10;    //z는 카메라에서부터의 거리
-        mousePos = Camera.main.ScreenToWorldPoint(inputPos);    //마우스 월드 위치
-        mousePos.z = 0;
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(inputPos.x, inputPos.y, Camera.main.nearClipPlane));    //마우스 월드 위치
         reticle.transform.position = mousePos;
 
+
         //카메라 위치 보정(ViewportPoint 는 왼쪽 아래가 (0,0) 오른쪽 위가 (1,1))
-        ret = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        ret = Camera.main.ScreenToViewportPoint(inputPos);
         ret *= 2;
         ret -= Vector2.one; //카메라 위치는 이제 (-1,-1) ~ (1,1) 이 된다. 
         float max = 0.9f;
@@ -66,12 +56,9 @@ public class CameraPos : MonoBehaviour
         {
             ret = ret.normalized;
         }
-        Vector2 camPos= ret * threshold + (Vector2)GameManager.Instance.player.position;
-        //Vector2 camPos = ret * threshold + movementVec * movementInfluence + (Vector2)player.position;
+        Vector2 camPos = ret * threshold + (Vector2)GameManager.Instance.player.position;
 
-        currCamPos = Vector2.Lerp(currCamPos, camPos, Time.deltaTime * camSpeed);
-
-        transform.position = currCamPos;
+        transform.position = camPos;
     }
 
     GameObject CreateRecticle()
@@ -83,22 +70,4 @@ public class CameraPos : MonoBehaviour
         return reticle;
     }
 
-
-    public void StopCameraFollow()
-    {
-        activate = false;
-    }
-
-    public void StartCameraFollow()
-    {
-        activate = true;
-    }
-
-    public void MoveCamPos(Vector2 pos)
-    {
-        transform.position = pos;
-        reticle.transform.position = pos;
-        prePlayerPos = pos;
-        currCamPos = pos;
-    }
 }

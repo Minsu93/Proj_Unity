@@ -9,43 +9,7 @@
                         "name": "ground_shooter",
                         "delay": 0.2
                     },
-                    "spawnCount": 4,
-                    "delayToNextWave": 4.0
-                },
-                {
-                    "enemy": {
-                        "name": "ground_shooter",
-                        "delay": 0.2
-                    },
-                    "spawnCount": 4,
-                    "delayToNextWave": 4.0
-                }
-            ],
-            "totalTime": 15.0
-        },
-        {
-            "waveIndex": 1,
-            "spawns": [
-                {
-                    "enemy": {
-                        "name": "ground_shooter",
-                        "delay": 0.2
-                    },
-                    "spawnCount":3,
-                    "delayToNextWave": 4.0
-                }
-            ],
-            "totalTime": 15.0
-        },
-        {
-            "waveIndex": 2,
-            "spawns": [
-                {
-                    "enemy": {
-                        "name": "ground_shooter",
-                        "delay": 0.2
-                    },
-                    "spawnCount": 6,
+                    "spawnCount": 1,
                     "delayToNextWave": 4.0
                 }
             ],

@@ -120,22 +120,41 @@ public class PlayerInput : MonoBehaviour
 
     private void MoveUpdate()
     {
-        moveDir.x = Input.GetAxisRaw(HorizontalAxis);
-        moveDir.y = Input.GetAxisRaw(VerticalAxis);
-        
-        if (moveDir.x != 0 || moveDir.y != 0)
+        //moveDir.x = Input.GetAxisRaw(HorizontalAxis);
+        //moveDir.y = Input.GetAxisRaw(VerticalAxis);
+        float move = Input.GetAxisRaw(HorizontalAxis);
+        if (move > 0)
         {
-            playerBehavior.TryMove(moveDir);
-            if(!moveON) moveON = true;
+            playerBehavior.TryMove(true);
+            if (!moveON) moveON = true;
+        }
+        else if (move < 0)
+        {
+            playerBehavior.TryMove(false);
+            if (!moveON) moveON = true;
         }
         else
         {
-            if(moveON)
+            if (moveON)
             {
                 moveON = false;
                 playerBehavior.TryStop();
             }
         }
+
+        //if (moveDir.x != 0 || moveDir.y != 0)
+        //{
+        //    playerBehavior.TryMove(moveDir);
+        //    if(!moveON) moveON = true;
+        //}
+        //else
+        //{
+        //    if (moveON)
+        //    {
+        //        moveON = false;
+        //        playerBehavior.TryStop();
+        //    }
+        //}
 
     }
 }

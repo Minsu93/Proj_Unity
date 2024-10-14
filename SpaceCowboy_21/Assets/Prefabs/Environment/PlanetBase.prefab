@@ -451,7 +451,7 @@ MonoBehaviour:
   planetID: 0
   activate: 0
   planetRadius: 8
-  gravityRadius: 14
+  gravityRadius: 18
   gravityMultiplier: 1
   planetFOV: 100
   linkedPlanetList:
@@ -459,6 +459,7 @@ MonoBehaviour:
     bridgeIndex: 47
     targetVector: {x: -2.2554107, y: -8.095149}
     bridgeDistance: 0
+    planetDistance: 0
   worldPoints: []
   pointsNormal: []
   polyCollider: {fileID: 5905974645841349009}

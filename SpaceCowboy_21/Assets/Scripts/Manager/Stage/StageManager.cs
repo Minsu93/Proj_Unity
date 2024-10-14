@@ -9,11 +9,6 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     bool startWave;
 
-    //[SerializeField]
-    //StartPoint[] startPoints;
-
-    //[SerializeField]
-    //GameObject[] startFlags;
     [SerializeField]
     FlagPoints[] flagPoints;
 
@@ -25,13 +20,6 @@ public class StageManager : MonoBehaviour
 
     [SerializeField]
     WaveManager waveManager;
-
-
-    //[ContextMenu("Get All StartPoints")]
-    //void GetAllStartPoints()
-    //{
-    //    startPoints = transform.GetComponentsInChildren<StartPoint>();
-    //}
 
     [ContextMenu("Get All Vcams")]
     void GetAllVirtualCameras()
@@ -46,12 +34,13 @@ public class StageManager : MonoBehaviour
     }
 
 
+    int currCamIndex = 0;
+    int preStageIndex = 0;
     int currStageIndex = 0;
     public int CurrStageIndex {  get { return currStageIndex; } }
     [SerializeField] int maxStage = 5;
     public int MaxStage { get { return maxStage; } }
 
-    int currCamIndex = 0;
 
     private void Start()
     {
@@ -62,17 +51,12 @@ public class StageManager : MonoBehaviour
     {
         //1. 카메라를 먼저 위치시킨다.
         GameManager.Instance.cameraManager.InitCam();
-        GameManager.Instance.cameraManager.ResetCam(virtualCams[0]);
-        ChangeCameraPriority(0);
-        GameManager.Instance.cameraManager.StopCameraFollow();
-        GameManager.Instance.cameraManager.MoveCameraPos(flagPoints[0].flagPoint.position);
+        GameManager.Instance.cameraManager.ChangeCamera(null, virtualCams[0]);
 
         yield return new WaitForSeconds(0.5f);
-
         //2. 화면 밖의 지점에서 캐릭터를 생성 
         Vector2 point = waveManager.GetPointFromOutsideScreen(flagPoints[0].startPoint.position - flagPoints[0].flagPoint.position);
         GameManager.Instance.SpawnPlayer(point, Quaternion.identity);
-
 
         //3. 캐릭터가 날아서 도착하게 한다. 
         GameManager.Instance.playerManager.SuperBoost(point, flagPoints[0].flagPoint, true, StartWave);
@@ -81,6 +65,9 @@ public class StageManager : MonoBehaviour
         GameManager.Instance.MapSize = new Vector2(mapBorders[0].width / 2, mapBorders[0].height / 2);
         GameManager.Instance.MapCenter = mapBorders[0].transform.position;
         waveManager.AddStagePlanets(mapBorders[0].transform);
+
+        //MapBorder 활성화
+        mapBorders[0].ActivateBorder = true;
 
     }
 
@@ -96,13 +83,12 @@ public class StageManager : MonoBehaviour
         GameManager.Instance.cameraManager.StopCameraFollow();
 
         //3. 현재 스테이지 MapBorder 비활성화
-        mapBorders[currStageIndex].ActivateBorder = false;
+        mapBorders[0].ActivateBorder = false;
 
         //다음 스테이지 생성
         if (currStageIndex +1 < maxStage)
         {
             mapBorders[currStageIndex + 1].gameObject.SetActive(true);
-            mapBorders[currStageIndex + 1].ActivateBorder = false;
             MoveAStarNavMesh(mapBorders[currStageIndex+1].transform.position);
         }
 
@@ -118,6 +104,9 @@ public class StageManager : MonoBehaviour
     /// </summary>
     void StartWave()
     {
+        // StartCoroutine();
+        GameManager.Instance.cameraManager.FollowCamera();
+        //MapBorder 활성화
         mapBorders[currStageIndex].ActivateBorder = true;
 
         if (startWave) waveManager.WaveStart(CurrStageIndex);
@@ -128,21 +117,20 @@ public class StageManager : MonoBehaviour
     /// </summary>
     void MoveStartToNextStage()
     {
+        preStageIndex = currStageIndex;
+
         //1. 스테이지 인덱스 상승
         currStageIndex++;
 
         //2. 카메라 초기화.
-        ChangeCameraPriority(currStageIndex);
-        GameManager.Instance.cameraManager.ResetCam(virtualCams[currStageIndex]);
-        GameManager.Instance.cameraManager.StopCameraFollow();
-        GameManager.Instance.cameraManager.MoveCameraPos(flagPoints[currStageIndex].flagPoint.position);
+        GameManager.Instance.cameraManager.ChangeCamera(virtualCams[preStageIndex], virtualCams[currStageIndex]);
 
         //3.맵 크기 업데이트
         GameManager.Instance.MapSize = new Vector2(mapBorders[currStageIndex].width / 2, mapBorders[currStageIndex].height / 2);
         GameManager.Instance.MapCenter = mapBorders[currStageIndex].transform.position;
-       
-        //4. 2초 후 지난 맵 제거
-        Invoke("HidePriorMap", 2.0f);
+
+        //4. 지난 맵 제거
+        mapBorders[preStageIndex].gameObject.SetActive(true);
 
         StartCoroutine(MoveComplete());
     }
@@ -169,17 +157,6 @@ public class StageManager : MonoBehaviour
         else return false;
     }
 
-    void ChangeCameraPriority(int index)
-    {
-        virtualCams[currCamIndex].Priority = 10;
-        currCamIndex = index;
-        virtualCams[currCamIndex].Priority = 20;
-    }
-
-    void HidePriorMap()
-    {
-        mapBorders[currStageIndex -1].gameObject.SetActive(false);
-    }
 
     void MoveAStarNavMesh(Vector3 newPos)
     {

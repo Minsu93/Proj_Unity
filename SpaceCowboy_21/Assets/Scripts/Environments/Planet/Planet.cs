@@ -16,7 +16,7 @@ public class Planet : MonoBehaviour, ITarget
 
 
     public float planetRadius = 2f;
-    public float gravityRadius = 4f;
+    //public float gravityRadius = 4f;
     public float gravityMultiplier = 1f;    // 중력배수
     public float planetFOV = 90f;
 
@@ -38,9 +38,6 @@ public class Planet : MonoBehaviour, ITarget
 
     private void Awake()
     {
-        gravityColl = GetComponentInChildren<CircleCollider2D>();
-        gravityColl.radius = gravityRadius;
-
         if (polyCollider == null)
             polyCollider = GetComponent<PolygonCollider2D>();
 
@@ -51,6 +48,12 @@ public class Planet : MonoBehaviour, ITarget
         pointsNormal = new Vector2[polyCollider.points.Length];
         worldPoints = GetPointsWorldPositions(polyCollider.points);
         pointsNormal = GetPointsNormals(worldPoints);
+    }
+    void Start()
+    {
+        gravityColl = GetComponentInChildren<CircleCollider2D>();
+        gravityColl.radius = planetRadius + GameManager.Instance.worldGravityRadius;
+
     }
 
     void SetViewerMaterial()
@@ -382,13 +385,13 @@ public class Planet : MonoBehaviour, ITarget
     }
 
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, planetRadius);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, gravityRadius);
-    }
+    //private void OnDrawGizmosSelected()
+    //{
+    //    Gizmos.color = Color.green;
+    //    Gizmos.DrawWireSphere(transform.position, planetRadius);
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawWireSphere(transform.position, planetRadius + GameManager.Instance.worldGravityRadius);
+    //}
 
     public Collider2D GetCollider()
     {

@@ -44,11 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e6985e7e195b04d8ad5bac9149dddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementInfluence: 40
+  movementInfluence: 0
   camSpeed: 3
-  threshold: 2
+  threshold: 1
   foreGroundDist: 5
-  middleGroundDist: 10
+  middleGroundDist: 8
   backGroundDist: 14
   fastZoomSeed: 1.5
   slowZoomSeed: 2
@@ -99,7 +99,7 @@ MonoBehaviour:
   weaponSlots: 2
   droneSlots: 3
   emptySprite: {fileID: 0}
-  lifeMax: 0
+  bonusLife: 0
   playerUIPrefab: {fileID: 7130484671311303244, guid: 860dbb43fc672924696e6f327f81df04, type: 3}
 --- !u!1 &529613330383855574
 GameObject:
@@ -221,7 +221,8 @@ MonoBehaviour:
   shuttlePrefab: {fileID: 9189689044929776396, guid: 8cd04a682b60a034abed6accc0972826, type: 3}
   lobbyPlayerPrefab: {fileID: 4669144034032980127, guid: a8e304ecf28e6dc4ea56e6fc622b0f44, type: 3}
   lobbyShuttlePrefab: {fileID: 6609823914641357495, guid: 4e1add9db60028e478b050e6b578c4a2, type: 3}
-  worldGravity: 1000
+  worldGravity: 300
+  worldGravityRadius: 10
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
   chapterIndex: 1
@@ -576,6 +577,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4439c385956f89b4280993193843ffee, type: 2}
   unlockedDataList: []
   dronPrefabList:
+  - {fileID: 5563208604964468180, guid: c9297ac9804d0d94f9fb22cc0d232aae, type: 3}
   - {fileID: 7829265998662957305, guid: 057b3c1263b67e343b4daf584a272ccc, type: 3}
   - {fileID: 2611145516192744299, guid: 9d0502a6073f5d843935f91b0152fdd5, type: 3}
   unlockedDroneList: []

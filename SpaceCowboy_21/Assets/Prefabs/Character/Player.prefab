@@ -15315,13 +15315,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: 0
-  moveSpeed: 8
+  moveSpeed: 6
   acceleration: 2
   inputResetTime: 0.5
   slideSpeed: 1.8
   boostOn: 0
   turnSpeedOnLand: 100
-  onAirTime: 1
+  onAirTime: 3
   onAirVelocityRotateSpeed: 1
   knockBackForce: 6
   stunTime: 0.5
@@ -15341,15 +15341,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc30e03681eec468497a14da45f0c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 12
-  maxAngleOnLand: 30
+  jumpForce: 7
+  maxAngleOnLand: 60
   dashForce: 18
   dashRadius: 0.8
   dashMaxCount: 1
   dashTime: 0.4
   unHittableTime: 1
   dashGaugeCost: 100
-  boostForce: 18
+  boostForce: 12
   speedLimit: 13
   rechargeSpeed: 100
   boostGaugeRate: 50
