@@ -64,7 +64,12 @@ public class DroneItem_Projectile : DroneItem
         {
             for (int i = 0; i < num; i++)
             {
+                Vector2 dir = (enemyColls[i].transform.position - transform.position).normalized;
                 float dist = Vector2.Distance(transform.position, enemyColls[i].transform.position);
+
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, dist, LayerMask.GetMask("Planet"));
+                if (hit.collider != null) continue;
+
                 if (dist < minDist)
                 {
                     minDist = dist;

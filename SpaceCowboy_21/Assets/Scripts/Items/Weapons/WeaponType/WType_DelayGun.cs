@@ -10,7 +10,7 @@ public class WType_DelayGun : WeaponType
     public override void ShootButtonDown(Vector2 pos, Vector3 dir)
     {
         //총 발사 주기
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         DelayShoot(pos, dir);
 
@@ -50,14 +50,14 @@ public class WType_DelayGun : WeaponType
             projectile.transform.rotation = tempRot * randomRotation;
             if(projectile.TryGetComponent(out Projectile_Delay p_delay))
             {
-                float ranSpd = UnityEngine.Random.Range(weaponStats.speed - speedVariation, weaponStats.speed + speedVariation);
-                p_delay.Init(weaponStats.damage, ranSpd, lifeTime, range);
+                float ranSpd = UnityEngine.Random.Range(speed - speedVariation, speed + speedVariation);
+                p_delay.Init(damage, ranSpd, lifeTime, range);
                 //발사 이벤트에 등록
                 ShootButtonUpEvent += p_delay.DelayMovement;
                 //총알에 Impact이벤트 등록
-                if (weaponStats.weaponImpact != null)
+                if (weaponImpact != null)
                 {
-                    p_delay.weaponImpactDel = weaponStats.weaponImpact;
+                    p_delay.weaponImpactDel = weaponImpact;
                 }
 
             }

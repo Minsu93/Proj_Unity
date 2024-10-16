@@ -18,7 +18,7 @@ public class BossAction : MonoBehaviour, ITarget, IHitable, IKickable
     /// 각각의 패턴은 쿨타임이 있다. 
     //4. Die시 웨이브가 클리어된다. 
 
-    bool bossActivate = false;
+    //bool bossActivate = false;
     Health bossHealth;
     Collider2D coll;
     [SerializeField] GameObject projHitObj;
@@ -129,7 +129,7 @@ public class BossAction : MonoBehaviour, ITarget, IHitable, IKickable
     {
         //충돌 처리 비활성화
         projHitObj.SetActive(false);
-        bossActivate = false;
+        //bossActivate = false;
         StopAllCoroutines();
 
         if (BossDieEvent != null) BossDieEvent();

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEditor.Progress;
 
 public class ArrowManager : MonoBehaviour
@@ -16,6 +17,16 @@ public class ArrowManager : MonoBehaviour
     Vector2 rectSizeDelta;  //awake에서 화면 sizeDelta넣기.
     Vector2 centerScreenPos;    //rectTr 화면중앙 위치
     GameObject canvas;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += ResetArrows;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= ResetArrows;
+    }
 
 
     private void Awake()
@@ -117,7 +128,7 @@ public class ArrowManager : MonoBehaviour
         }
     }
 
-    public void ResetArrows()
+    public void ResetArrows(Scene scene, LoadSceneMode mode)
     {
         for(int i = 0; i < arrowPrefab.Length; i++)
         {

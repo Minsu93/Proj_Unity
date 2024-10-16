@@ -7,7 +7,7 @@ public class WType_Auto : WeaponType
     public override void ShootButtonDown(Vector2 pos, Vector3 dir)
     {
         //√— πﬂªÁ ¡÷±‚
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         Shoot(pos, dir);
 

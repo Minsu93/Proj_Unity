@@ -53,7 +53,7 @@ public class WType_DangerCircleGun : WeaponType
     public override void ShootButtonDown(Vector2 pos, Vector3 dir)
     {
         //총 발사 주기
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         //데미지 주기 
         Collider2D[] results = new Collider2D[15]; // 결과를 저장할 배열
@@ -63,7 +63,7 @@ public class WType_DangerCircleGun : WeaponType
             Collider2D targetColl = results[i];
             if (targetColl.transform.TryGetComponent<IHitable>(out IHitable hitable))
             {
-                hitable.DamageEvent(weaponStats.damage, targetColl.transform.position);
+                hitable.DamageEvent(damage, targetColl.transform.position);
 
                 ShowHitEffect(hitEffect, targetColl.transform.position);
             }

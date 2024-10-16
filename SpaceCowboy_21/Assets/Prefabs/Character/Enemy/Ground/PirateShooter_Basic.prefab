@@ -143,6 +143,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4366261071164999801, guid: 59b9363470f37ff46927cec0a05f8dc5, type: 3}
+      propertyPath: maxHealth
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 5402388286648553178, guid: 59b9363470f37ff46927cec0a05f8dc5, type: 3}
       propertyPath: skinName
       value: default

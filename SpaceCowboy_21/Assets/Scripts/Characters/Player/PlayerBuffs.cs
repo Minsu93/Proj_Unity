@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerBuffs : MonoBehaviour
 {
     //총기에 적용될 버프 스텟
-    public WeaponStats weaponBuffStats { get; private set; }
+    //public WeaponStats weaponBuffStats { get; private set; }
 
     //움직임에 적용될 버프 스텟
 
@@ -13,7 +13,7 @@ public class PlayerBuffs : MonoBehaviour
 
     private void Awake()
     {
-        weaponBuffStats = new WeaponStats();
+        //weaponBuffStats = new WeaponStats();
     }
 
 
@@ -29,7 +29,7 @@ public class PlayerBuffs : MonoBehaviour
     void ResetBuff()
     {
         //무기 버프 초기화
-        GameManager.Instance.playerManager.playerWeapon.ResetBuff();
+        //GameManager.Instance.playerManager.playerWeapon.ResetBuff();
         //움직임 버프 초기화
 
         //점프 버프 초기화

@@ -16,8 +16,11 @@ public class PlayerGravity : CharacterGravity
 
     protected override void ChangePlanet(Planet planet)
     {
+        if (nearestPlanet != null) nearestPlanet.ShowDirectionArrows(false);
         nearestPlanet = planet;
+        if (nearestPlanet != null) nearestPlanet.ShowDirectionArrows(true);
         playerBehavior.ChangePlanet();
+        //GameManager.Instance.cameraManager.ChangeCamFollow(planet.transform);
     }
 
     private void OnDrawGizmos()

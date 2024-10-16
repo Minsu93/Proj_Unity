@@ -16,7 +16,7 @@ public class WType_GatlingGun : WeaponType
     {
         base.Initialize(weaponData, gunTipLocalPos);
         
-        baseSpeed = weaponStats.shootInterval;
+        baseSpeed = shootInterval;
     }
     
 

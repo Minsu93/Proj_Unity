@@ -18,8 +18,13 @@ public abstract class WeaponType : MonoBehaviour
 
     [Header("Weapon Status")]
     //public int itemID;
-    protected WeaponStats baseStats = new WeaponStats();
-    protected WeaponStats weaponStats = new WeaponStats();
+    //protected WeaponStats baseStats = new WeaponStats();
+    //protected WeaponStats weaponStats = new WeaponStats();
+    public WeaponShootDelegate weaponShoot;
+    public WeaponImpactDelegate weaponImpact;
+    protected float damage;
+    protected float speed;
+    protected float shootInterval;
     protected float lifeTime;
     protected float projectileSpread;
     protected float randomSpreadAngle;
@@ -53,10 +58,10 @@ public abstract class WeaponType : MonoBehaviour
     public virtual void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
         this.weaponData = weaponData;
-        //초기 설정(변수에 스크립터블 오브젝트 들어감)
-        baseStats.damage = weaponData.Damage;
-        baseStats.speed = weaponData.Speed;
-        baseStats.shootInterval = weaponData.ShootInterval;
+        //초기 설정
+        damage = weaponData.Damage;
+        speed = weaponData.Speed;
+        shootInterval = weaponData.ShootInterval;
         
         burstInterval = weaponData.BurstInterval;
         projectileSpread = weaponData.ProjectileSpread;
@@ -78,26 +83,6 @@ public abstract class WeaponType : MonoBehaviour
         gunTipTr = transform.GetChild(0);
         gunTipTr.localPosition = gunTipLocalPos;
         
-    }
-
-    //이미 생성된 무기를 다시 꺼낼 때 , 버프 물약을 먹었을 때, 버프 물약을 해제했을 때.
-    public virtual void ResetWeapon(WeaponStats bonusStats)
-    {
-        //베이스 Stat + 보너스 Stat
-        WeaponStats totalStats = baseStats;
-
-        if(bonusStats != null)
-        {
-            totalStats.damage *= (100 + bonusStats.damage) / 100;
-            totalStats.speed *= (100 + bonusStats.speed) / 100;
-            totalStats.shootInterval *= 100 / (100 + bonusStats.shootInterval);
-
-            totalStats.weaponShoot = bonusStats.weaponShoot;
-            totalStats.weaponImpact = bonusStats.weaponImpact;
-        }
-
-        //최종 적용한다.
-        weaponStats = totalStats;
     }
 
     public abstract void ShootButtonDown(Vector2 pos, Vector3 dir);
@@ -132,12 +117,12 @@ public abstract class WeaponType : MonoBehaviour
             projectile.transform.position = pos;
             projectile.transform.rotation = tempRot * randomRotation;
             Projectile proj = projectile.GetComponent<Projectile>();
-            float ranSpd = UnityEngine.Random.Range(weaponStats.speed - speedVariation, weaponStats.speed + speedVariation);
-            proj.Init(weaponStats.damage, ranSpd, lifeTime, range);
+            float ranSpd = UnityEngine.Random.Range(speed - speedVariation, speed + speedVariation);
+            proj.Init(damage, ranSpd, lifeTime, range);
             //총알에 Impact이벤트 등록
-            if(weaponStats.weaponImpact != null)
+            if(weaponImpact != null)
             {
-                proj.weaponImpactDel = weaponStats.weaponImpact;
+                proj.weaponImpactDel = weaponImpact;
             }
 
         }
@@ -175,12 +160,12 @@ public abstract class WeaponType : MonoBehaviour
             projectile.transform.position = pos;
             projectile.transform.rotation = tempRot * randomRotation;
             Projectile proj = projectile.GetComponent<Projectile>();
-            float ranSpd = UnityEngine.Random.Range(weaponStats.speed - speedVariation, weaponStats.speed + speedVariation);
-            proj.Init(weaponStats.damage, ranSpd, lifeTime, range);
+            float ranSpd = UnityEngine.Random.Range(speed - speedVariation, speed + speedVariation);
+            proj.Init(damage, ranSpd, lifeTime, range);
             //총알에 Impact이벤트 등록
-            if (weaponStats.weaponImpact != null)
+            if (weaponImpact != null)
             {
-                proj.weaponImpactDel = weaponStats.weaponImpact;
+                proj.weaponImpactDel = weaponImpact;
             }
 
         }
@@ -207,9 +192,9 @@ public abstract class WeaponType : MonoBehaviour
 
     protected void WeaponShootEvent()
     {
-        if(weaponStats.weaponShoot != null)
+        if(weaponShoot != null)
         {
-            weaponStats.weaponShoot();
+            weaponShoot();
         }
     }
 
@@ -229,15 +214,15 @@ public abstract class WeaponType : MonoBehaviour
 }
 
 //자손에 전달하여 기술큐브로 변화시킬 무기의 스텟들
-[System.Serializable]
-public class WeaponStats
-{
-    public float damage;
-    public float speed;
-    public float shootInterval;
+//[System.Serializable]
+//public class WeaponStats
+//{
+//    public float damage;
+//    public float speed;
+//    public float shootInterval;
 
-    public WeaponShootDelegate weaponShoot;
-    public WeaponImpactDelegate weaponImpact;
-}
+//    public WeaponShootDelegate weaponShoot;
+//    public WeaponImpactDelegate weaponImpact;
+//}
 
 public enum BarrelType { PingPong, InOrder }

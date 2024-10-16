@@ -9,10 +9,6 @@ public class PopperManager : MonoBehaviour
 
     //발사 사이 간격
     [SerializeField] GameObject popperPrefab;
-    [SerializeField] private float gapBetweenOrbs = 3.0f;
-    //[SerializeField] private float launchHeight = 5.0f;
-    //[SerializeField] private float launchRadius = 5.0f;
-    [SerializeField] private float launchInterval = 0.3f;   //발사 사이 간격 
 
     //드롭 확률 조절 관련
     List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
@@ -69,10 +65,15 @@ public class PopperManager : MonoBehaviour
     #region popper 방식
     public void CreatePopper(Transform targetTr)
     {
-        //if (!dropReady) return;
+        WeaponDrop(targetTr);
 
+        DroneDrop(targetTr);
+    }
+    
+    void WeaponDrop(Transform targetTr)
+    {
         float random = UnityEngine.Random.Range(0, 1.0f);
-        
+
         //Weapon 스폰
         if (random < currWeaponDropChance)
         {
@@ -97,12 +98,16 @@ public class PopperManager : MonoBehaviour
             //드랍이 안될 경우 1.1배씩 계속 증가.
             currWeaponDropChance *= 1.1f;
         }
+    }
 
-
+    void DroneDrop(Transform targetTr)
+    {
         if (!GameManager.Instance.playerManager.IsDroneDropPossible())
         {
             return;
         }
+
+        float random = UnityEngine.Random.Range(0, 1.0f);
 
         //Drone 스폰
         if (random < currDroneDropChance)
@@ -128,7 +133,6 @@ public class PopperManager : MonoBehaviour
             currDroneDropChance *= 1.1f;
         }
     }
-    
 
     //타겟 윗부분 주변의 포인트 가져옴. 행성이 없는 장소. 
     Vector3 GetEmptySpace(Transform targetTr)
@@ -214,7 +218,6 @@ public class PopperManager : MonoBehaviour
     EquippedItem TryDropItem(List<EquippedItem> itemList)
     {
         //드랍 종류 선택 
-        Debug.Log("Item dropped");
         float roll = UnityEngine.Random.Range(0, 1.0f);
         float cumulativeChance = 0.0f;
 
@@ -230,7 +233,6 @@ public class PopperManager : MonoBehaviour
         }
 
         //드랍되지 못한 경우
-        Debug.Log("No item dropped");
         return null;
 
     }

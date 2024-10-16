@@ -9,7 +9,7 @@ public class parralaxMovement : MonoBehaviour
     Vector2 move;
 
     //test
-    [SerializeField] float neg = 0f;
+    //[SerializeField] float neg = 0f;
 
     private void OnEnable()
     {

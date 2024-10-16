@@ -33,7 +33,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     [Header("OnAir")]
     public float turnSpeedOnLand = 100f;
     public float onAirTime = 1f;   //공중 표류 시간 타임 리미트.
-    public float onAirVelocityRotateSpeed = 1f; //공중에 오래 있는 캐릭터의 진행 방향을 지면으로 회전시킬때의 속도 
+    public float pushToGroundSpeed = 1f; //공중에 오래 있는 캐릭터의 진행 방향을 지면으로 회전시킬때의 속도 
     public bool OnAir { get; set; }     //디버그 용으로 인스펙터에서 보이게
     float airTimer;
 
@@ -64,7 +64,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
     //애니메이션 이벤트
     public event System.Action PlayerIdleEvent;
     public event System.Action ShootEvent;
-    public event System.Action PlayerHitEvent;
+    public event System.Action<float> PlayerHitEvent;
     public event System.Action PlayerDieEvent;
     public event System.Action PlayerJumpStartEvent;
     public event System.Action PlayerJumpEvent;
@@ -100,7 +100,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         health.ResetHealth();
 
         GameManager.Instance.playerManager.EnablePlayerInput();
-        PlayerIgnoreProjectile(false);
+        //PlayerIgnoreProjectile(false);
         playerJump.RemoveJumpArrow(true);
         playerWeapon.ShowWeaponSight(true);
 
@@ -578,7 +578,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             Vector2 vec = (characterGravity.nearestPoint - (Vector2)transform.position).normalized;
             float vel = rb.velocity.magnitude;
 
-            rb.velocity = Vector2.Lerp(rb.velocity, vec * vel, onAirVelocityRotateSpeed * Time.fixedDeltaTime);
+            rb.velocity = Vector2.Lerp(rb.velocity, vec * vel, pushToGroundSpeed * Time.fixedDeltaTime);
         }
     }
 
@@ -681,7 +681,6 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         if (!activate) return;
         if (playerJump.doingDash) return;
         
-        //데미지를 적용
         if (GameManager.Instance.playerManager.RemoveDrone())
         {
             //드론이 대신 맞아줬을 때
@@ -690,43 +689,24 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             KnockBackEvent(hitPoint, knockBackForce);
 
             //피격 애니메이션 
-            if (PlayerHitEvent != null)
-            {
-                PlayerHitEvent();
-            }
+            if (PlayerHitEvent != null) PlayerHitEvent(unHitabltTime);
         }
         else
         {
-            //대신 맞아줄 드론이 없을 때 
             if (health.AnyDamage(damage))
             {
                 lastHitPos = transform.position;
 
                 KnockBackEvent(hitPoint, knockBackForce);
 
-                //체력이 닳은 경우
-                if (PlayerHitEvent != null)
-                {
-                    PlayerHitEvent();
-                }
-
-                //if (health.currShield > 0)
-                //{
-                //    //실드가 닳은 경우
-                //    shieldhitEffect.Play();
-                //}
-                //else
-                //{
-                //    //체력이 닳은 경우
-                //    if (PlayerHitEvent != null)
-                //    {
-                //        PlayerHitEvent();
-                //    }
-                //}
+                if (PlayerHitEvent != null) PlayerHitEvent(unHitabltTime);
 
                 //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
             }
         }
+
+        //피격 시 Exp Loss
+        GameManager.Instance.playerManager.LossExp();
 
         //죽었나요?
         if (health.IsDead())
@@ -785,6 +765,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             StartCoroutine(DieRoutine());
         }
     }
+
     public void DeactivatePlayer(bool isActive)
     {
         activate = isActive;
@@ -868,8 +849,6 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             GameManager.Instance.playerManager.EnablePlayerInput();
         else GameManager.Instance.playerManager.DisablePlayerInput();
     }
-
-
     #endregion
 
     #region Shoot & Throw

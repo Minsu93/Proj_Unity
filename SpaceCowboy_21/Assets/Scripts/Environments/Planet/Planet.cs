@@ -42,6 +42,7 @@ public class Planet : MonoBehaviour, ITarget
             polyCollider = GetComponent<PolygonCollider2D>();
 
         //SetViewerMaterial();
+        //ShowDirectionArrows(false);
 
         //시작 시 Points 계산 (회전하지 않는다는 가정 하에)
         worldPoints = new Vector2[polyCollider.points.Length];
@@ -163,8 +164,12 @@ public class Planet : MonoBehaviour, ITarget
 
     #endregion
 
-    #region Enemy Awake & Planet Events (Remove)
-
+    #region Planet Events
+    [SerializeField] GameObject directionArrowObj;
+    public void ShowDirectionArrows(bool active)
+    {
+        directionArrowObj.SetActive(active);
+    }
     //여유 크기
     //public bool PlanetBoundIsInScreen()
     //{
@@ -385,13 +390,13 @@ public class Planet : MonoBehaviour, ITarget
     }
 
 
-    //private void OnDrawGizmosSelected()
-    //{
-    //    Gizmos.color = Color.green;
-    //    Gizmos.DrawWireSphere(transform.position, planetRadius);
-    //    Gizmos.color = Color.blue;
-    //    Gizmos.DrawWireSphere(transform.position, planetRadius + GameManager.Instance.worldGravityRadius);
-    //}
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, planetRadius);
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawWireSphere(transform.position, planetRadius + GameManager.Instance.worldGravityRadius);
+    }
 
     public Collider2D GetCollider()
     {

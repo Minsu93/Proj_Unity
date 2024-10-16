@@ -20,12 +20,12 @@ public class PlayerJump : MonoBehaviour
     [Header("Boost")]
     [SerializeField] float boostForce = 10f;
     [SerializeField] float speedLimit = 15.0f;
-    [SerializeField] float rechargeSpeed = 10.0f;
+    //[SerializeField] float rechargeSpeed = 10.0f;
     [SerializeField] float boostGaugeRate = 30.0f;
     [SerializeField] float boostMaxGauge = 100.0f;
     float boostCurGauge;
-    [SerializeField] float waitSecondToRecharge = 2.0f;
-    float rechargeTimer;
+    //[SerializeField] float waitSecondToRecharge = 2.0f;
+    //float rechargeTimer;
 
     public bool doingDash;    //슈퍼점프
     int dashCount = 0;
@@ -44,7 +44,7 @@ public class PlayerJump : MonoBehaviour
             else
             {
                 //사용을 중단했을 때 
-                rechargeTimer = 0;
+                //rechargeTimer = 0;
             }
             usingBoost = value;
         }
@@ -75,7 +75,6 @@ public class PlayerJump : MonoBehaviour
     {
         GameManager.Instance.PlayerTeleportStart += ClearTrail;
         GameManager.Instance.PlayerTeleportEnd += ShowTrail;
-        playerBehavior.PlayerHitEvent += ResetDash;
     }
 
     /// <summary>
@@ -178,16 +177,10 @@ public class PlayerJump : MonoBehaviour
         //AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
     }
 
-    //점프 리셋
+    //착지 후 점프 리셋
     public void ResetJump()
     {
         dashCount = 0;
-
-        //대시중일때.
-        if (doingDash)
-        {
-            ResetDash();
-        }
     }
 
     #endregion
@@ -200,6 +193,7 @@ public class PlayerJump : MonoBehaviour
         //{
         //    return false;
         //}
+
         if (dashCount >= dashMaxCount)
         {
             return false;
@@ -235,7 +229,6 @@ public class PlayerJump : MonoBehaviour
     {
         //대시 시작
         float timer = 0;
-        bool attackActivate = true;
         playerBehavior.PlayerInputControl(false);
         playerBehavior.PlayerIgnoreProjectile(true);
         int targetLayer = 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Planet") | 1 << LayerMask.NameToLayer("StageObject");
@@ -250,7 +243,6 @@ public class PlayerJump : MonoBehaviour
             {
                 if(hit.TryGetComponent<ITarget>(out ITarget target))
                 {
-
                     float force;
                     ParticleSystem kickParticle;
 
@@ -263,7 +255,6 @@ public class PlayerJump : MonoBehaviour
                         force = playerBehavior.knockBackForce;
                         kickParticle = impactParticle;
 
-                        //dashCount = 0;
                     }
                     else
                     {
@@ -273,22 +264,15 @@ public class PlayerJump : MonoBehaviour
 
                     playerBehavior.KnockBackEvent(hit.transform.position, force);
                     GameManager.Instance.particleManager.GetParticle(kickParticle, transform.position, transform.rotation);
-
-                    //대시 초기화
                     ResetDash();
+                    break;
                 }
-                
-                
-                break;
             }
             yield return null;
-
-            if (!attackActivate) yield break;
         }
 
         //대시 종료
         ResetDash();
-
 
     }
     #endregion

@@ -63,7 +63,7 @@ public class WaveManager : MonoBehaviour
     BossSpawner bossSpawner;
 
     public event System.Action MonsterDisappearEvent;
-    public event System.Action WaveClear;
+    //public event System.Action WaveClear;
 
 
     private void Awake()
@@ -246,14 +246,14 @@ public class WaveManager : MonoBehaviour
             Wave wave = stage.waves[waveIndex];
             SpawnWave(wave);
 
-
+            if (waveIndex == stage.waves.Count - 1)
+            {
+                FinalWave = true;
+            }
+            
             pastWaveTime = nextWaveTime;
             waveIndex++;
             nextWaveTime += wave.totalTime;
-
-            if (waveIndex == stage.waves.Count - 1)
-                FinalWave = true;
-
 
         }
         else

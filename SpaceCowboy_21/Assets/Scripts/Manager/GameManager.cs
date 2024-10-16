@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 {
     //플레이어 관련 
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] GameObject shuttlePrefab;
     [SerializeField] GameObject lobbyPlayerPrefab;
     [SerializeField] GameObject lobbyShuttlePrefab;
 
@@ -36,17 +35,15 @@ public class GameManager : MonoBehaviour
     //매니저들
     public PoolManager poolManager { get; private set; }
     public PopperManager popperManager { get; private set; }
+    public DropManager dropManager { get; private set; }
     public AudioManager audioManager { get; private set; }
     public ParticleManager particleManager { get; private set; }
     public PlayerManager playerManager { get; private set; }
     public CameraManager cameraManager { get; set; }
-    public MaterialManager materialManager { get; set; }
-    public TechDocument techDocument { get; private set; }
     public ArrowManager arrowManager { get; private set; }  
     
     //Dictionary들
     public MonsterDictionary monsterDictonary { get; private set; }
-    //public SkillDictionary skillDictionary { get; private set; }
     public WeaponDictionary weaponDictionary { get; private set; }
 
     //UI
@@ -79,28 +76,21 @@ public class GameManager : MonoBehaviour
 
         poolManager = GetComponentInChildren<PoolManager>();
         popperManager = GetComponentInChildren<PopperManager>();
+        dropManager = GetComponentInChildren<DropManager>();
         audioManager = GetComponentInChildren<AudioManager>();
         particleManager = GetComponentInChildren<ParticleManager>();
         playerManager = GetComponentInChildren<PlayerManager>();
-        techDocument = GetComponentInChildren<TechDocument>();
-        materialManager= GetComponentInChildren<MaterialManager>();
         cameraManager = GetComponentInChildren<CameraManager>();
         arrowManager = GetComponentInChildren<ArrowManager>();
 
         monsterDictonary = GetComponentInChildren<MonsterDictionary>();
-        //skillDictionary = GetComponentInChildren<SkillDictionary>();
         weaponDictionary = GetComponentInChildren<WeaponDictionary>();
 
         GameObject ui = Instantiate(stageUI, this.transform);
-        //stageStartUi = ui.transform.Find("StageStartUI");
         stageEndUi = ui.transform.Find("StageEndUI");
-        //stageStartUi.gameObject.SetActive(false);
         stageEndUi.gameObject.SetActive(false);
 
-
         weaponDictionary.LoadWeaponDictionary();
-        //weaponDictionary.LoadEquippedWeapons();
-        //skillDictionary.LoadSkillDictionary();
 
         //무기 정보 업데이트
         popperManager.PopperReady();
@@ -202,11 +192,8 @@ public class GameManager : MonoBehaviour
     public int chapterIndex = 1;
     //상황에 따른 로비 진입 이벤트
     [SerializeField] private string lobbyName = "LobbyUI";
-    //delegate void AfterSceneLoadEvent();
-    //AfterSceneLoadEvent sceneDel;
 
     public event System.Action<bool> StageStartEvent;
-    //public event System.Action StageEndEvent;   
     //씬 로드
     //GameStart -> LobbyUI
 
@@ -230,7 +217,6 @@ public class GameManager : MonoBehaviour
 
     public void ChapterClear()
     {
-        //StageStartEvent = TransitionFadeOut;
         StartCoroutine(LoadSceneRoutine(lobbyName));
         //챕터를 클리어 했으면 ChapterIndex ++
         chapterIndex++;
@@ -251,8 +237,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("씬 불러오기 완료");
 
-        //if (sceneDel != null) sceneDel();
-        //if(StageStartEvent != null) StageStartEvent();
         if (fadeoutAnimator.GetBool("fade"))
         {
             TransitionFadeOut(false);
@@ -260,21 +244,6 @@ public class GameManager : MonoBehaviour
 
         StageStartEvent = null;
     }
-
-
-    //void ShowStartUI()
-    //{
-    //    StartCoroutine(ShowStageStartUIRoutine(1f, 1f));
-    //}
-    //IEnumerator ShowStageStartUIRoutine(float startDelay, float endDelay)
-    //{
-    //    yield return new WaitForSeconds(startDelay);
-    //    stageStartUi.gameObject.SetActive(true);
-    //    yield return new WaitForSeconds(endDelay);
-    //    stageStartUi.gameObject.SetActive(false);
-    //    sceneDel = null;
-
-    //}
 
 
     public IEnumerator ShowStageEndUI(float startDelay, float endDelay )
@@ -286,6 +255,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(endDelay);
         stageEndUi.gameObject.SetActive(false);
     }
+
 
     //씬 페이드 인,아웃
     [SerializeField] public Animator fadeoutAnimator;

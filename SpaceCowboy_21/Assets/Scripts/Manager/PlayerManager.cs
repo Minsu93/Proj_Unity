@@ -17,16 +17,21 @@ public class PlayerManager : MonoBehaviour
     PlayerInput playerInput;
     public PlayerBehavior playerBehavior { get; private set; }
     PlayerHealth playerHealth;
-    public PlayerBuffs playerBuffs { get; private set; }
+    //public PlayerBuffs playerBuffs { get; private set; }
     public PlayerWeapon playerWeapon { get; private set; }
     PlayerDrone playerDrone;
     HyperBoost playerHyperBoost;
+    PM_LuckLevel luckLevel;
     public Planet playerNearestPlanet { get; set; } //플레이어와 가장 가까운 행성을 추적한다. null이 나오지 않는 항시 가장 가까운 행성을 표시한다. 적들의 추적 용도로 사용한다. 
     
     [SerializeField] int weaponSlots = 2;
     [SerializeField] int droneSlots = 3;
     [SerializeField] Sprite emptySprite;
 
+    private void Awake()
+    {
+        luckLevel = GetComponent<PM_LuckLevel>();
+    }
 
     //플레이어 스크립트 업데이트
     public void UpdatePlayerScripts(GameObject playerObj)
@@ -35,13 +40,12 @@ public class PlayerManager : MonoBehaviour
         playerBehavior = playerObj.GetComponent<PlayerBehavior>();
         playerHealth = playerObj.GetComponent<PlayerHealth>();
         playerWeapon = playerObj.GetComponent<PlayerWeapon>();
-        playerBuffs = playerObj.GetComponent<PlayerBuffs>();
+        //playerBuffs = playerObj.GetComponent<PlayerBuffs>();
         playerDrone = playerObj.GetComponent<PlayerDrone>();
         playerHyperBoost = playerObj.GetComponent<HyperBoost>();
 
         playerWeapon.weaponSlots = this.weaponSlots;
         playerDrone.droneSlots = this.droneSlots;
-
 
         emptySprite = Resources.Load<Sprite>("UI/Empty");
 
@@ -57,6 +61,7 @@ public class PlayerManager : MonoBehaviour
         playerBehavior.InitPlayer();
         //playerObj.SetActive(false);
 
+        luckLevel.InitializeLevel();
     }
 
     //신규 WeaponData로 변경할 때 
@@ -64,6 +69,12 @@ public class PlayerManager : MonoBehaviour
     {
         bool canPush = playerWeapon.EnqueueData(weaponData);
         return canPush;
+
+    }
+
+    public void ChangeBaseWeapon(WeaponData newData)
+    {
+        playerWeapon.ChangeBaseWeapon(newData);
 
     }
 
@@ -148,10 +159,9 @@ public class PlayerManager : MonoBehaviour
     public void DeactivatePlayerBehavior(bool isActivate)
     {
         playerBehavior.DeactivatePlayer(isActivate);
-        //playerWeapon.ShowWeaponSight(isActivate);
-
-
     }
+
+
     #endregion
 
     #region Interaction
@@ -252,8 +262,7 @@ public class PlayerManager : MonoBehaviour
     //마우스 포인트를 따라다니는 게이지 UI관련
     Gauge_Weapon gauge_Weapon;
     GameObject boosterObj;
-    //EscapePanelUI escapeUI;
-    //UISkillPanel skillPanel;
+    UI_LevelPanel levelPanel;
     //player UI 스폰
 
     void SpawnPlayerUI()
@@ -269,6 +278,7 @@ public class PlayerManager : MonoBehaviour
         boosterObj.GetComponentInChildren<FollowOBJ>().followingObj = GameManager.Instance.player.gameObject;
         HideBoosterUI();
 
+        levelPanel = pUI.GetComponentInChildren<UI_LevelPanel>();
         gauge_Weapon = pUI.transform.Find("GaugeController").GetComponent<Gauge_Weapon>();
         SetReticleFollower();
 
@@ -398,6 +408,20 @@ public class PlayerManager : MonoBehaviour
     //{
     //    escapeUI.UpdateGauge(amount);
     //}
+    public void GainExp(int index, float amount)
+    {
+        luckLevel.GainExp(index, amount);
+    }
+
+    public void LossExp()
+    {
+        luckLevel.LossExp();
+    }
+
+    public void UpdateLuckyLevel(int index, int level, float curExp, float maxExp, bool isGain)
+    {
+        levelPanel.SetLevelPanel(index, level, curExp, maxExp, isGain);
+    }
     #endregion
 }
 

@@ -15,6 +15,7 @@ public class PlayerWeapon : MonoBehaviour
     bool infiniteBullets;    //총알이 무한
     bool isChanging;    //무기를 바꾸는 중인가요?
     float range;    //거리 표시 용 
+    float weaponDuration;
 
 
     [Header("Weapon Sight")]
@@ -55,7 +56,7 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         UpdateWeaponSight();
-        CheckWeaponDurtation();
+        CheckWeaponDuration();
     }
 
     #region WeaponSight
@@ -257,7 +258,7 @@ public class PlayerWeapon : MonoBehaviour
     }
 
     //총기 지속시간 체크
-    void CheckWeaponDurtation()
+    void CheckWeaponDuration()
     {
         if(weaponDuration > 0)
         {
@@ -274,7 +275,16 @@ public class PlayerWeapon : MonoBehaviour
     {
         WeaponType wtype = GetWeaponType(baseWeaponData);
         ChangeWeapon(wtype, wtype.maxAmmo, instant);
+    }
+    public void ChangeBaseWeapon(WeaponData data)
+    {
+        WeaponData preBaseData = baseWeaponData;
+        baseWeaponData = data;
 
+        if(currWeaponType.weaponData == preBaseData)
+        {
+            BackToBaseWeapon(false);
+        }
     }
 
     public WeaponType GetWeaponType(WeaponData data)
@@ -315,7 +325,6 @@ public class PlayerWeapon : MonoBehaviour
 
         return wtype;
     }
-    float weaponDuration;
     public void ChangeWeapon(WeaponType weaponType, float curAmmo, bool instant)
     {
         isChanging = !instant;
@@ -342,22 +351,11 @@ public class PlayerWeapon : MonoBehaviour
         if (maxAmmo == 0) infiniteBullets = true;
         else infiniteBullets = false;
 
-        ResetBuff();
-
         GameManager.Instance.playerManager.UpdatePlayerGaugeUI(currWeaponType.weaponData);
 
         //무기 교체 쿨타임
         if (!instant)
             StartCoroutine(ChangePauseRoutine());
-    }
-
-    //버프 초기화 시 현재 무기 스텟을 리셋한다. Player Stats Buff에서 콜, 총기 변경 시마다 콜.
-    public void ResetBuff()
-    {
-        //버프를 가져온다
-        WeaponStats buffStats = GameManager.Instance.playerManager.playerBuffs.weaponBuffStats;
-        //적용한다. 
-        currWeaponType.ResetWeapon(buffStats);
     }
 
     IEnumerator ChangePauseRoutine()

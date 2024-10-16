@@ -104,7 +104,6 @@ public class StageManager : MonoBehaviour
     /// </summary>
     void StartWave()
     {
-        // StartCoroutine();
         GameManager.Instance.cameraManager.FollowCamera();
         //MapBorder È°¼ºÈ­
         mapBorders[currStageIndex].ActivateBorder = true;

@@ -43,7 +43,7 @@ public class WType_AutoCharge : WeaponType
     {
         if (shootOnce) return;
         //√— πﬂªÁ ¡÷±‚
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         else
         {
@@ -89,7 +89,7 @@ public class WType_AutoCharge : WeaponType
             projectile.transform.rotation = tempRot * randomRotation;
 
             Proj_Charged projCharged = projectile.GetComponent<Proj_Charged>();
-            projCharged.Init(weaponStats.damage, weaponStats.speed, lifeTime, range);
+            projCharged.Init(damage, speed, lifeTime, range);
             projCharged.InitCharge(power);
 
         }

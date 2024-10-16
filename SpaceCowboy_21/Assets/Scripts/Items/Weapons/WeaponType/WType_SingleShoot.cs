@@ -10,7 +10,7 @@ public class WType_SingleShoot : WeaponType
     {
         if (shootOnce) return;
         //√— πﬂªÁ ¡÷±‚
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         else
         {
@@ -31,10 +31,5 @@ public class WType_SingleShoot : WeaponType
         shootOnce = false;
     }
 
-    public override void ResetWeapon(WeaponStats bonusStats)
-    {
-        base.ResetWeapon(bonusStats);
 
-        shootOnce = false;
-    }
 }

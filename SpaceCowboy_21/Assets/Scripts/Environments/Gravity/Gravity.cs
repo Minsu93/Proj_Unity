@@ -60,7 +60,7 @@ public class Gravity : MonoBehaviour
         GravityFunction();
     }
 
-    [SerializeField] float k = 0.1f; //상수
+    [SerializeField] const float k = 0.05f; //상수
     protected float lerpF;
     protected virtual void GravityFunction()
     {

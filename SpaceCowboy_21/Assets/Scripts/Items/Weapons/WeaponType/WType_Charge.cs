@@ -15,7 +15,7 @@ public class WType_Charge : WeaponType
     //Charging Ω√¿€
     public override void ShootButtonDown(Vector2 pos, Vector3 dir)
     {
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         if (curCharge <= maxCharge)
         {
@@ -36,7 +36,7 @@ public class WType_Charge : WeaponType
     public override void ShootButtonUp(Vector2 pos, Vector3 dir)
     {
         //√— πﬂªÁ ¡÷±‚
-        if (Time.time - lastShootTime < weaponStats.shootInterval) return;
+        if (Time.time - lastShootTime < shootInterval) return;
 
         //√≠¬° πﬂªÁ
         ChargeShoot(pos, dir, curCharge);
@@ -73,7 +73,7 @@ public class WType_Charge : WeaponType
             projectile.transform.position = pos;
             projectile.transform.rotation = tempRot * randomRotation;
             Proj_Charged projCharged = projectile.GetComponent<Proj_Charged>();
-            projCharged.Init(weaponStats.damage, weaponStats.speed, lifeTime, range);
+            projCharged.Init(damage, speed, lifeTime, range);
             projCharged.InitCharge(power);
 
         }

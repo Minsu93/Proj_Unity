@@ -99,7 +99,7 @@ public class WType_ChargeLaser : WType_Charge
     protected virtual void HitEvent(IHitable hitable, Vector2 pos, float power)
     {
 
-        hitable.DamageEvent(weaponStats.damage * power, transform.position);
+        hitable.DamageEvent(damage * power, transform.position);
 
         ShowHitEffect(hitEffect, pos);
     }

@@ -1,6 +1,8 @@
 using Spine;
 using Spine.Unity;
 using System.Collections;
+using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -152,15 +154,13 @@ public class PlayerView : MonoBehaviour
 
     }
 
-    public void DamageHit()
+    public void DamageHit(float duration)
     {
-        StartCoroutine(DamageRoutine());
+        StartCoroutine(DamageRoutine(duration));
     }
 
-    IEnumerator DamageRoutine()
+    IEnumerator DamageRoutine(float duration)
     {
-
-        //int cID = Shader.PropertyToID("_Color");
         int id = Shader.PropertyToID("_Color");
         Color tColor = Color.clear;
 
@@ -169,22 +169,29 @@ public class PlayerView : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        //block.SetColor(cID, Color.black);
         block.SetColor(id, Color.white);
         _renderer.SetPropertyBlock(block);
 
-        //ÇÇ°Ý ÈÄ ±ôºýÀÓ
-        for (int i = 0; i < 4; i++)
+        yield return StartCoroutine(FlickerRoutine(0.1f, duration ));
+    }
+
+    IEnumerator FlickerRoutine(float flikertime, float duration)
+    {
+        float startTime = Time.time;
+        int id = Shader.PropertyToID("_Color");
+
+        while (Time.time - startTime < duration)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(flikertime);
             block.SetColor(id, Color.clear);
             _renderer.SetPropertyBlock(block);
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(flikertime);
 
             block.SetColor(id, Color.white);
             _renderer.SetPropertyBlock(block);
         }
+        yield break;
     }
 
 
