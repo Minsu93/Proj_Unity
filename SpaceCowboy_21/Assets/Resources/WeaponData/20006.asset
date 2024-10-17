@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 20006
+  m_EditorClassIdentifier: 
+  itemID: 10001
+  itemName: 
+  gunStyle: 1
+  icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
+  bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
+  projectilePrefab: {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
+  secondProjectilePrefab: {fileID: 0}
+  damage: 5
+  shootInterval: 0.1
+  burstInterval: 1
+  numberOfProjectile: 1
+  numberOfBurst: 1
+  speed: 20
+  speedVariation: 0
+  lifeTime: 0
+  range: 18
+  showRange: 1
+  maxAmmo: 100
+  projectileSpread: 0
+  randomSpreadAngle: 0
+  duration: 10
+  shootSFX: {fileID: 0}
+  weaponPrefab: {fileID: 5608653004331721580, guid: 432e6052defa73f4494c62ba90949038, type: 3}

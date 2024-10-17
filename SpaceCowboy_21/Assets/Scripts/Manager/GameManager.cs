@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
         weaponDictionary.LoadWeaponDictionary();
 
         //무기 정보 업데이트
-        popperManager.PopperReady();
+        //popperManager.PopperReady();
 
         fadeCanvas = fadeoutAnimator.transform.parent.gameObject;
 

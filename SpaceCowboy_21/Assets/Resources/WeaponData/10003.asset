@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
+  m_Name: 10003
+  m_EditorClassIdentifier: 
+  itemID: 10001
+  itemName: Revolver3
+  gunStyle: 0
+  icon: {fileID: 21300000, guid: 98b87ce0e20843345bf86780113fadc7, type: 3}
+  bubbleIcon: {fileID: 0}
+  projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
+  secondProjectilePrefab: {fileID: 0}
+  damage: 2.5
+  shootInterval: 0.15
+  burstInterval: 0
+  numberOfProjectile: 5
+  numberOfBurst: 1
+  speed: 30
+  speedVariation: 0
+  lifeTime: 0
+  range: 18
+  showRange: 1
+  maxAmmo: 0
+  projectileSpread: 10
+  randomSpreadAngle: 0
+  duration: 0
+  shootSFX: {fileID: 8300000, guid: 564770136c959c245bad71772c07a6a9, type: 3}
+  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

@@ -11,8 +11,11 @@ public class PopperManager : MonoBehaviour
     [SerializeField] GameObject popperPrefab;
 
     //드롭 확률 조절 관련
-    List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
-    List<EquippedItem> equippedDrones = new List<EquippedItem>();
+    //List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
+    [SerializeField]
+    List<EquippedItem>[] equippedWeapons;
+    [SerializeField]
+    List<EquippedItem>[] equippedDrones;
 
     [SerializeField] float dropChanceIncrement = 0.1f; // 드롭 실패 시 확률 증가량
     [SerializeField] float dropChanceDecrement = 0.05f; // 드롭 성공 시 확률 감소량
@@ -39,26 +42,70 @@ public class PopperManager : MonoBehaviour
 
     #region 초기화
 
-    public void PopperReady()
+    public void ReadyWeaponPop(List<WeaponData>[] tierLists, List<GameObject>[] tierLists2)
     {
-        List<WeaponData> unlockedList = GameManager.Instance.weaponDictionary.unlockedDataList;
-        for (int i = 0; i < unlockedList.Count; i++)
+        //초기화
+        equippedWeapons = new List<EquippedItem>[tierLists.Length];
+        for(int i =0; i < equippedWeapons.Length; i++)
         {
-            equippedWeapons.Add(new EquippedItem(unlockedList[i].name, 0.1f, unlockedList[i]));
+            equippedWeapons[i] = new List<EquippedItem>();
+        }
+        equippedDrones = new List<EquippedItem>[tierLists2.Length];
+        for (int i = 0; i < equippedDrones.Length; i++)
+        {
+            equippedDrones[i] = new List<EquippedItem>();
         }
 
-        List<GameObject> unlockedDroneList = GameManager.Instance.weaponDictionary.unlockedDroneList;
-        for (int j = 0; j < unlockedDroneList.Count; j++)
+        //내용 집어넣기
+        for (int i = 0; i < tierLists.Length; i++)
         {
-            equippedDrones.Add(new EquippedItem(unlockedDroneList[j].name, 0.1f, unlockedDroneList[j]));
+            for(int j = 0; j < tierLists[i].Count; j++)
+            {
+                equippedWeapons[i].Add(new EquippedItem(0.1f, tierLists[i][j]));
+            }
+            //Debug.Log("equippedWeapons" + i.ToString() + " count : " + equippedWeapons[i].Count);
+            ResizeDropChance(equippedWeapons[i]);
+        }
+        for (int i = 0; i < tierLists2.Length; i++)
+        {
+            for (int j = 0; j < tierLists2[i].Count; j++)
+            {
+                equippedDrones[i].Add(new EquippedItem(0.1f, tierLists2[i][j]));
+            }
+            ResizeDropChance(equippedDrones[i]);
         }
 
-        ResizeDropChance(equippedWeapons);
-        ResizeDropChance(equippedDrones);
-
+        //드랍 확률 초기화
         currWeaponDropChance = totalDropChance;
         currDroneDropChance = totalDropChance;
     }
+
+    //public void PopperReady()
+    //{
+    //    equippedWeapons.Clear();
+    //    equippedDrones.Clear();
+
+    //    List<WeaponData> unlockedList = GameManager.Instance.weaponDictionary.unlockedDataList;
+    //    for (int i = 0; i < unlockedList.Count; i++)
+    //    {
+    //        equippedWeapons.Add(new EquippedItem(unlockedList[i].name, 0.1f, unlockedList[i]));
+    //    }
+
+    //    List<GameObject> unlockedDroneList = GameManager.Instance.weaponDictionary.unlockedDroneList;
+    //    for (int j = 0; j < unlockedDroneList.Count; j++)
+    //    {
+    //        equippedDrones.Add(new EquippedItem(unlockedDroneList[j].name, 0.1f, unlockedDroneList[j]));
+    //    }
+
+    //    ResizeDropChance(equippedWeapons);
+    //    ResizeDropChance(equippedDrones);
+
+    //    currWeaponDropChance = totalDropChance;
+    //    currDroneDropChance = totalDropChance;
+    //}
+
+
+
 
     #endregion
 
@@ -82,7 +129,8 @@ public class PopperManager : MonoBehaviour
             firework.transform.position = targetTr.position;
             firework.transform.rotation = targetTr.rotation;
 
-            WeaponData data = TryDropItem(equippedWeapons).item as WeaponData;
+            int tier = PM_LuckLevel.itemTier;
+            WeaponData data = TryDropItem(equippedWeapons[tier]).item as WeaponData;
             if (data != null)
             {
                 Vector2 targetPoint = GetEmptySpace(targetTr);
@@ -117,7 +165,8 @@ public class PopperManager : MonoBehaviour
             firework.transform.position = targetTr.position;
             firework.transform.rotation = targetTr.rotation;
 
-            GameObject prefab = TryDropItem(equippedDrones).item as GameObject;
+            int tier = PM_LuckLevel.itemTier;
+            GameObject prefab = TryDropItem(equippedDrones[tier]).item as GameObject;
             if (prefab != null)
             {
                 Vector2 targetPoint = GetEmptySpace(targetTr);
@@ -278,14 +327,14 @@ public class PopperManager : MonoBehaviour
 public class EquippedItem
 {
     //public WeaponData weaponData;
-    public string name;
+    //public string name;
     public float dropChance;
     public object item;
 
-    public EquippedItem(string name, float chance, object item)
+    public EquippedItem(float chance, object item)
     {
         //weaponData = bubble;
-        this.name = name;
+        //this.name = name;
         dropChance = chance;
         this.item = item;
     }

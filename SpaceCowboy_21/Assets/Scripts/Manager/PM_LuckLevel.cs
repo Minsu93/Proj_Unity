@@ -43,7 +43,7 @@ public class PM_LuckLevel : MonoBehaviour
 
     [SerializeField] BaseWeaponByLevel[] baseWeaponByLvs;
 
-
+    public static int itemTier = 0;
 
 
 
@@ -131,7 +131,7 @@ public class PM_LuckLevel : MonoBehaviour
         {
             case 0:
                 //1. weapon은 기본 무기 변화, 드롭 무기 세팅 변화
-                WeaponLevel(level);
+                BaseWeaponChangeByLevel(level);
                 break;
             case 1:
                 //2. drone은 드롭 드론 세팅 변화
@@ -142,7 +142,7 @@ public class PM_LuckLevel : MonoBehaviour
         }
     }
     
-    void WeaponLevel(int level)
+    void BaseWeaponChangeByLevel(int level)
     {
         foreach(var weaponByLevel in baseWeaponByLvs)
         {
@@ -151,6 +151,24 @@ public class PM_LuckLevel : MonoBehaviour
                 GameManager.Instance.playerManager.ChangeBaseWeapon(weaponByLevel.data);
                 break;
             }
+        }
+    }
+
+    void ChangeItemTierByLevel(int level)
+    {
+        switch (level)
+        {
+            case 0:
+            case 1:
+                itemTier = 0;
+                break;
+            case 2:
+            case 3:
+                itemTier = 1;
+                break;
+            case 4:
+                itemTier = 2;
+                break;
         }
     }
 }
