@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: 20004
   m_EditorClassIdentifier: 
   itemID: 10001
-  itemName: 
+  itemName: ImpactGun
   gunStyle: 0
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
   projectilePrefab: {fileID: 6292677011125795810, guid: 1e33d1fbd84c5414fb8fcf5f520198e5, type: 3}
-  secondProjectilePrefab: {fileID: 0}
+  secondProjectilePrefab: {fileID: 6292677011125795810, guid: 246c3e7346a163a4dbc076a90b703273, type: 3}
   damage: 5
-  shootInterval: 0.1
+  shootInterval: 0.4
   burstInterval: 1
   numberOfProjectile: 1
   numberOfBurst: 1
@@ -34,4 +34,4 @@ MonoBehaviour:
   randomSpreadAngle: 0
   duration: 10
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}
+  weaponPrefab: {fileID: 5608653004331721580, guid: 9e3622762fc84654fa8330cc55a0cbee, type: 3}

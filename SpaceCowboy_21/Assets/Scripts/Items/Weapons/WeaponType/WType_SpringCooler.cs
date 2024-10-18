@@ -29,7 +29,7 @@ public class WType_SpringCooler : WeaponType
         float baseAngle = -1 * angleDist * 0.5f;
         Vector2 rotatedDir = Quaternion.Euler(0, 0, baseAngle + (anglePerShot * index)) * dir;
 
-        Shoot(pos, rotatedDir);
+        Shoot(pos, rotatedDir, projectilePrefab);
 
 
         //PlayerWeapon에서 후처리

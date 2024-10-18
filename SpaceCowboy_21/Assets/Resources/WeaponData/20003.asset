@@ -20,14 +20,14 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6292677011125795810, guid: 809de39ecaa2f8f458ab16401f58e9c1, type: 3}
   secondProjectilePrefab: {fileID: 0}
   damage: 4
-  shootInterval: 0.3
+  shootInterval: 0.18
   burstInterval: 1
   numberOfProjectile: 1
   numberOfBurst: 1
-  speed: 10
+  speed: 20
   speedVariation: 0
   lifeTime: 0
-  range: 10
+  range: 8
   showRange: 1
   maxAmmo: 15
   projectileSpread: 30

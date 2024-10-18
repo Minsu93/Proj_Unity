@@ -7,7 +7,7 @@ using UnityEngine;
 
 
 public delegate void WeaponShootDelegate();
-public delegate void WeaponImpactDelegate();
+public delegate void WeaponImpactDelegate(Transform impactTr);
 
 
 public abstract class WeaponType : MonoBehaviour
@@ -17,9 +17,6 @@ public abstract class WeaponType : MonoBehaviour
     /// </summary>
 
     [Header("Weapon Status")]
-    //public int itemID;
-    //protected WeaponStats baseStats = new WeaponStats();
-    //protected WeaponStats weaponStats = new WeaponStats();
     public WeaponShootDelegate weaponShoot;
     public WeaponImpactDelegate weaponImpact;
     protected float damage;
@@ -96,47 +93,6 @@ public abstract class WeaponType : MonoBehaviour
 
 
     //실제 쏘는 행동
-    protected virtual void Shoot(Vector2 pos, Vector3 dir)
-    {
-        float totalSpread = projectileSpread * (numberOfProjectile - 1);       //우선 전체 총알이 퍼질 각도를 구한다
-
-        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90 - (totalSpread / 2)) * dir;       // 첫 발사 방향을 구한다. 
-        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
-
-        //랜덤 각도 추가
-        float randomAngle = UnityEngine.Random.Range(-randomSpreadAngle * 0.5f, randomSpreadAngle * 0.5f);
-        Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
-
-        //멀티샷
-        for (int i = 0; i < numberOfProjectile; i++)
-        {
-            Quaternion tempRot = targetRotation * Quaternion.Euler(0, 0, projectileSpread * (i));
-
-            //총알 생성
-            GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab,0);
-            projectile.transform.position = pos;
-            projectile.transform.rotation = tempRot * randomRotation;
-            Projectile proj = projectile.GetComponent<Projectile>();
-            float ranSpd = UnityEngine.Random.Range(speed - speedVariation, speed + speedVariation);
-            proj.Init(damage, ranSpd, lifeTime, range);
-            //총알에 Impact이벤트 등록
-            if(weaponImpact != null)
-            {
-                proj.weaponImpactDel = weaponImpact;
-            }
-
-        }
-
-        //발사 시 이벤트 실행
-        WeaponShootEvent();
-        //MuzzleFlash 발사
-        MuzzleFlashEvent(pos, targetRotation);
-        //쏜 시간 체크
-        lastShootTime = Time.time;
-        //사운드 생성
-        GameManager.Instance.audioManager.PlaySfx(shootSFX);
-
-    }
 
 
     protected virtual void Shoot(Vector2 pos, Vector3 dir, GameObject projectilePrefab)
@@ -185,7 +141,7 @@ public abstract class WeaponType : MonoBehaviour
     {
         for (int i = 0; i < repeatNumber; i++)
         {
-            Shoot(pos, dir);
+            Shoot(pos, dir, projectilePrefab);
             yield return new WaitForSeconds(interval);
         }
     }
@@ -213,16 +169,5 @@ public abstract class WeaponType : MonoBehaviour
 
 }
 
-//자손에 전달하여 기술큐브로 변화시킬 무기의 스텟들
-//[System.Serializable]
-//public class WeaponStats
-//{
-//    public float damage;
-//    public float speed;
-//    public float shootInterval;
-
-//    public WeaponShootDelegate weaponShoot;
-//    public WeaponImpactDelegate weaponImpact;
-//}
 
 public enum BarrelType { PingPong, InOrder }

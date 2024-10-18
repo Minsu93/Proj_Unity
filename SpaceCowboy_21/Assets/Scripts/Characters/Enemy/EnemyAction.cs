@@ -74,7 +74,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected Health health;
     protected DropItem dropItem;
 
-    [SerializeField] protected Collider2D projHitColl;
+    //[SerializeField] protected Collider2D projHitColl;
+    [SerializeField] protected GameObject projHitObj;
 
 
     //이벤트
@@ -121,7 +122,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         if (BeforeUpdate()) return;
 
         //브레인에서 플레이어 관련 변수 업데이트
-        brain.TotalCheck();
+        if(brain != null)
+            brain.TotalCheck();
 
         //업데이트에 따라 enemyState 변경. 
         BrainStateChange();
@@ -365,7 +367,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         onAttack = false;
 
         StopAllCoroutines();
-        attack.StopAttackAction();
+        if(attack!=null) attack.StopAttackAction();
         if (EnemyDieEvent != null) EnemyDieEvent();
 
         enemyColl.enabled = false;
@@ -401,7 +403,8 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     public void EnemyIgnoreProjectile(bool ignore)
     {
-        projHitColl.enabled = !ignore;
+        //projHitColl.enabled = !ignore;
+        projHitObj.SetActive(!ignore);
     }
 
     #endregion

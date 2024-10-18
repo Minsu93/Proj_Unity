@@ -19,7 +19,7 @@ public class WType_AutoParallel : WeaponType
 
         for (int i = 0; i < barrelCount;  i++)
         {
-            Shoot(upDist - (concentrateDist * i * upVec), dir);
+            Shoot(upDist - (concentrateDist * i * upVec), dir, projectilePrefab);
         }
         //Shoot(pos, dir);
 

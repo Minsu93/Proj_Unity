@@ -34,7 +34,7 @@ public class WType_GatlingGun : WeaponType
         //총 발사 주기
         if (Time.time - lastShootTime < interval) return;
 
-        Shoot(pos, dir);
+        Shoot(pos, dir, projectilePrefab);
 
         //PlayerWeapon에서 후처리
         AfterShootProcess();

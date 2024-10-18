@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
 {
     //플레이어 관련 
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] GameObject lobbyPlayerPrefab;
-    [SerializeField] GameObject lobbyShuttlePrefab;
+    //[SerializeField] GameObject lobbyPlayerPrefab;
+    //[SerializeField] GameObject lobbyShuttlePrefab;
 
     public Transform player { get; private set; }
     public bool playerIsAlive { get; private set; } //적들이 플레이어가 살았는지 죽었는지 참고

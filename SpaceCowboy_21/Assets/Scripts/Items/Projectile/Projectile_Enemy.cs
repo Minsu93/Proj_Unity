@@ -19,7 +19,7 @@ public class Projectile_Enemy : Projectile
                 NonHitEvent(target);
             }
 
-            WeaponImpactEvent();
+            //WeaponImpactEvent();
         }
     }
 

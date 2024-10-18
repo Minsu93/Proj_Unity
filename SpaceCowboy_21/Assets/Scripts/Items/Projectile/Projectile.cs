@@ -66,7 +66,8 @@ public class Projectile : MonoBehaviour
         ResetProjectile();
         projectileMovement.StartMovement(speed);
 
-        //시작 지점에서 충돌 감지 
+        //이벤트 초기화
+        weaponImpactDel = null;
     }
 
 
@@ -105,7 +106,7 @@ public class Projectile : MonoBehaviour
 
     protected void WeaponImpactEvent()
     {
-        if (weaponImpactDel != null) weaponImpactDel();
+        if (weaponImpactDel != null) weaponImpactDel(this.transform);
     }
     #endregion
 

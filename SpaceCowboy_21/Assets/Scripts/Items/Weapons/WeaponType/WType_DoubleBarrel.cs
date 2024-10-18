@@ -29,7 +29,7 @@ public class WType_DoubleBarrel : WeaponType
         }
         Vector2 bottomPoint = pos - (((barrelCount - 1) * PointDist / 2) * upVec);
         Vector2 point = bottomPoint + (PointDist * index * upVec );
-        Shoot(point, dir);
+        Shoot(point, dir, projectilePrefab);
 
         //PlayerWeapon에서 후처리
         AfterShootProcess();

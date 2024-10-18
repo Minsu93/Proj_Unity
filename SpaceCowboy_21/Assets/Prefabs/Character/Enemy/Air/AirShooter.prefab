@@ -272,12 +272,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate: 0
-  nearestPoint: {x: 0, y: 0}
-  fixedGravity: 0
+  gravityMultiplier: 1
   gravityPlanets: []
   nearestPlanet: {fileID: 0}
   nearestCollider: {fileID: 0}
-  characterGravityMultiplier: 1
 --- !u!114 &8459344501355062472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,7 +344,7 @@ MonoBehaviour:
   hitEffect: {fileID: 0}
   deadEffect: {fileID: 0}
   dmgNum: {fileID: 2921101516471853322, guid: cc66ca5c9531a6f418088ca096000d14, type: 3}
-  projHitColl: {fileID: 3580713946890467451}
+  projHitObj: {fileID: 8573023275985461616}
   knockBackCurve:
     serializedVersion: 2
     m_Curve:
@@ -467,15 +465,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66306a7911148034f9ed2b8decf01fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropTable:
-  - dropChance: 0.2
-    item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
-    dropMin: 4
-    dropMax: 5
-  itemTables: []
-  itemDropChance: 0
-  resourceLaunchPowerMin: 3
-  resourceLaunchPowerMax: 4
 --- !u!114 &4107349004659083497
 MonoBehaviour:
   m_ObjectHideFlags: 0

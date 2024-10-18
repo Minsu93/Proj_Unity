@@ -7,6 +7,7 @@ using static UnityEngine.Rendering.DebugUI;
 public class Projectile_Player : Projectile
 {
     [SerializeField] protected LayerMask overlapTarget;
+    float startDelay;
     float overlapRadius;
     //int overlapLayer;
     protected override void Awake()
@@ -22,8 +23,13 @@ public class Projectile_Player : Projectile
     {
         base.Update();
 
-        if(!activate) return;
-        
+        if (!activate) return;
+
+        if (startDelay > 0)
+        {
+            startDelay -= Time.deltaTime;
+            return;
+        }
         //충돌 체크
         OverlapCheck();
     }
@@ -32,9 +38,19 @@ public class Projectile_Player : Projectile
     public override void Init(float damage, float speed, float lifeTime, float distance)
     {
         base.Init(damage, speed, lifeTime, distance);
+        
         //총알 생성 시 충돌 체크(테스트)
         OverlapCheck();
         
+    }
+
+    public void Init(float damage, float speed, float lifeTime, float distance, float startDelay)
+    {
+        base.Init(damage, speed, lifeTime, distance);
+
+        //총알 생성 시 충돌 체크(테스트)
+        this.startDelay = startDelay;
+
     }
 
     //충돌 체크

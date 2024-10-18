@@ -9,7 +9,7 @@ public class WType_Auto : WeaponType
         //총 발사 주기
         if (Time.time - lastShootTime < shootInterval) return;
 
-        Shoot(pos, dir);
+        Shoot(pos, dir, projectilePrefab);
 
 
         //PlayerWeapon에서 후처리
