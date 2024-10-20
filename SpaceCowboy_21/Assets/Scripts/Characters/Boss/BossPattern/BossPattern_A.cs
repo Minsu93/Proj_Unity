@@ -90,7 +90,10 @@ public abstract class BossPattern_A : AttackPattern
     //원하는 Enemy를 x마리 소환한다.
     protected void SpawnEnemy(string name, int count)
     {
-        WaveManager.instance.SpawnObjects(name, count);
+        Enemy enemy = new Enemy();
+        enemy.name = name;
+        enemy.delay = 0.2f;
+        StartCoroutine(WaveManager.instance.SpawnObjects(enemy, count, true));
     }
 
     #endregion

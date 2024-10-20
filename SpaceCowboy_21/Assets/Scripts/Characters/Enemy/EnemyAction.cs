@@ -69,13 +69,13 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     protected CharacterGravity gravity;
     protected Rigidbody2D rb;
     protected Collider2D enemyColl;
-    //public GameObject iconUI;
     protected Planet prePlanet;
     protected Health health;
     protected DropItem dropItem;
 
     //[SerializeField] protected Collider2D projHitColl;
     [SerializeField] protected GameObject projHitObj;
+    [SerializeField] protected Collider2D physicsColl;
 
 
     //¿Ã∫•∆Æ
@@ -228,6 +228,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         enemyState = EnemyState.Idle;
         activate = true;
         gravity.activate = true;
+        physicsColl.enabled = true;
     }
 
     #endregion
@@ -282,6 +283,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
         enemyColl.enabled = true;
         EnemyIgnoreProjectile(false);
+        physicsColl.enabled = false;
 
         preState = EnemyState.Strike;
 

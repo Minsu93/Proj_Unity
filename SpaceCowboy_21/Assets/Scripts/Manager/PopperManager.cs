@@ -6,9 +6,12 @@ using UnityEngine;
 
 public class PopperManager : MonoBehaviour
 {
+    private enum PopperType { Weapon, Drone}
 
     //발사 사이 간격
-    [SerializeField] GameObject popperPrefab;
+    //[SerializeField] GameObject popperPrefab;
+    [SerializeField] GameObject weaponBubble;
+    [SerializeField] GameObject droneBubble;
 
     //드롭 확률 조절 관련
     //List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
@@ -112,76 +115,99 @@ public class PopperManager : MonoBehaviour
     #region popper 방식
     public void CreatePopper(Transform targetTr)
     {
-        WeaponDrop(targetTr);
-
-        DroneDrop(targetTr);
+        ItemDrop(targetTr,currWeaponDropChance, PopperType.Weapon);
+        ItemDrop(targetTr, currDroneDropChance, PopperType.Drone);
     }
-    
-    void WeaponDrop(Transform targetTr)
+
+    void ItemDrop(Transform targetTr, float dropChance, PopperType type)
     {
         float random = UnityEngine.Random.Range(0, 1.0f);
 
-        //Weapon 스폰
-        if (random < currWeaponDropChance)
+        bool isWeapon = type == PopperType.Weapon;
+
+        //스폰
+        if (random < dropChance)
         {
-            // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
-            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
-            firework.transform.position = targetTr.position;
-            firework.transform.rotation = targetTr.rotation;
+            Vector2 targetPoint = GetEmptySpace(targetTr);
 
-            int tier = PM_LuckLevel.itemTier;
-            WeaponData data = TryDropItem(equippedWeapons[tier]).item as WeaponData;
-            if (data != null)
+            GameObject bubbleObj = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
+            bubbleObj.transform.SetPositionAndRotation(targetTr.position, targetTr.rotation);
+            if (bubbleObj.TryGetComponent<SelfCollectable>(out SelfCollectable bubble))
             {
-                Vector2 targetPoint = GetEmptySpace(targetTr);
-                StartCoroutine(firework.GetComponent<Popper>().CreateWeaponBubble(targetTr.position, targetPoint, data));
-            }
-            else Debug.LogWarning("WeaponData cast failed. The item is not of type WeaponData.");
+                float randomForce = UnityEngine.Random.Range(3f, 5f);
+                Vector2 dir = targetPoint - (Vector2)targetTr.position;
 
-            currWeaponDropChance = totalDropChance;
-            //dropReady = false;
+                bubble.LaunchBubble(dir.normalized * randomForce);
+                if (isWeapon)
+                {
+                    Bubble_Weapon bub = bubble as Bubble_Weapon;
+                    if(bub != null)
+                    {
+                        WeaponData data = TryDropItem(equippedWeapons[0]).item as WeaponData;
+                        bub.SetBubble(data);
+                    }
+                    currWeaponDropChance = totalDropChance;
+
+                }
+                else
+                {
+                    Bubble_Drone bub = bubble as Bubble_Drone;
+                    if(bub != null)
+                    {
+                        GameObject prefab = TryDropItem(equippedDrones[0]).item as GameObject;
+                        bub.SetDrone(prefab);
+                    }
+                    currDroneDropChance = totalDropChance;
+
+                }
+            }
         }
         else
         {
-            //드랍이 안될 경우 1.1배씩 계속 증가.
-            currWeaponDropChance *= 1.1f;
-        }
-    }
-
-    void DroneDrop(Transform targetTr)
-    {
-        if (!GameManager.Instance.playerManager.IsDroneDropPossible())
-        {
-            return;
-        }
-
-        float random = UnityEngine.Random.Range(0, 1.0f);
-
-        //Drone 스폰
-        if (random < currDroneDropChance)
-        {
-            // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
-            GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
-            firework.transform.position = targetTr.position;
-            firework.transform.rotation = targetTr.rotation;
-
-            int tier = PM_LuckLevel.itemTier;
-            GameObject prefab = TryDropItem(equippedDrones[tier]).item as GameObject;
-            if (prefab != null)
+            if(isWeapon)
             {
-                Vector2 targetPoint = GetEmptySpace(targetTr);
-                StartCoroutine(firework.GetComponent<Popper>().CreateDroneBubble(targetTr.position, targetPoint, prefab));
+                currWeaponDropChance *= 1.1f;
+            }else
+            {
+                currDroneDropChance *= 1.1f;
             }
-            else Debug.LogWarning("DroneObject cast failed. The item is not of type DroneObject.");
-
-            currDroneDropChance = totalDropChance;
-            //dropReady = false;
-        }
-        else
-        {
-            currDroneDropChance *= 1.1f;
         }
     }
+
+    //void DroneDrop(Transform targetTr)
+    //{
+    //    if (!GameManager.Instance.playerManager.IsDroneDropPossible())
+    //    {
+    //        return;
+    //    }
+
+    //    float random = UnityEngine.Random.Range(0, 1.0f);
+
+    //    //Drone 스폰
+    //    if (random < currDroneDropChance)
+    //    {
+    //        // 폭죽 프리팹을 랜덤한 위치에 생성합니다.
+    //        //GameObject firework = GameManager.Instance.poolManager.GetPoolObj(popperPrefab, 2);
+    //        //firework.transform.position = targetTr.position;
+    //        //firework.transform.rotation = targetTr.rotation;
+
+    //        //int tier = PM_LuckLevel.itemTier;
+    //        GameObject prefab = TryDropItem(equippedDrones[0]).item as GameObject;
+    //        if (prefab != null)
+    //        {
+    //            Vector2 targetPoint = GetEmptySpace(targetTr);
+    //            StartCoroutine(firework.GetComponent<Popper>().CreateDroneBubble(targetTr.position, targetPoint, prefab));
+    //        }
+    //        else Debug.LogWarning("DroneObject cast failed. The item is not of type DroneObject.");
+
+    //        currDroneDropChance = totalDropChance;
+    //        //dropReady = false;
+    //    }
+    //    else
+    //    {
+    //        currDroneDropChance *= 1.1f;
+    //    }
+    //}
 
     //타겟 윗부분 주변의 포인트 가져옴. 행성이 없는 장소. 
     Vector3 GetEmptySpace(Transform targetTr)

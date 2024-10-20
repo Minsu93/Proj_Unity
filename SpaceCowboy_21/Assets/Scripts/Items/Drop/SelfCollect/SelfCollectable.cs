@@ -60,4 +60,11 @@ public abstract class SelfCollectable : Collectable
     {
         this.gameObject.SetActive(false);
     }
+
+    public void LaunchBubble(Vector2 force)
+    {
+        rb.AddForce(force, ForceMode2D.Impulse);
+
+        rb.AddTorque(UnityEngine.Random.Range(-5, 5f), ForceMode2D.Impulse);
+    }
 }

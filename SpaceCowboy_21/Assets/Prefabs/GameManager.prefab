@@ -116,17 +116,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   expSheet:
   - 10
-  - 15
-  - 20
-  - 25
-  - 30
+  - 35
+  - 60
   baseWeaponByLvs:
   - level: 0
-    data: {fileID: 11400000, guid: a75900420cab9ad4386fd7efa59dcd47, type: 2}
+    data: {fileID: 11400000, guid: dfdba5774fffedd48b093714fafdbe7f, type: 2}
+  - level: 1
+    data: {fileID: 11400000, guid: 7d93473aec0604543bbf6a6c56481193, type: 2}
   - level: 2
-    data: {fileID: 11400000, guid: 16093d902ee402d4bbe82111d120d81c, type: 2}
-  - level: 4
-    data: {fileID: 11400000, guid: 0d0c404faf11c2948be934b5b6e83516, type: 2}
+    data: {fileID: 11400000, guid: 103ce9b9f8363774daec76303f96df28, type: 2}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,8 +241,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 9007588099006207600, guid: d54a103f216825a40a94f2675f1a6ca3, type: 3}
-  lobbyPlayerPrefab: {fileID: 4669144034032980127, guid: a8e304ecf28e6dc4ea56e6fc622b0f44, type: 3}
-  lobbyShuttlePrefab: {fileID: 6609823914641357495, guid: 4e1add9db60028e478b050e6b578c4a2, type: 3}
   worldGravity: 400
   worldGravityRadius: 10
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
@@ -563,31 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d73b4d3fdf835ca4aa50fc0a85297cdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponDataList:
-  - {fileID: 11400000, guid: e7e084a76e9aae644a83072ca9990bfb, type: 2}
-  - {fileID: 11400000, guid: 5ad791c200cc6954c87c476f37601b71, type: 2}
-  - {fileID: 11400000, guid: 5ddc4624a28052a408963735b57cdc71, type: 2}
-  - {fileID: 11400000, guid: 028ba4b630c284b41a709106bcd16c0c, type: 2}
-  - {fileID: 11400000, guid: 206bf72000fa2ce4f91e27caed419655, type: 2}
-  - {fileID: 11400000, guid: 1263ba58e3fc89f47b274177cd5f9572, type: 2}
-  - {fileID: 11400000, guid: d1e39653aace7fd45b2394b84fb0ddf3, type: 2}
-  - {fileID: 11400000, guid: 8414b9e339bf25047982a71d95311738, type: 2}
-  - {fileID: 11400000, guid: bb84844a63c318948b0cf9be4ed3a80d, type: 2}
-  - {fileID: 11400000, guid: cf362e74c12f3884d8dc2119872e27d4, type: 2}
-  - {fileID: 11400000, guid: a1395c25ee2393743aa2f5f24fc51d85, type: 2}
-  - {fileID: 11400000, guid: 10f671e4721b80a4bb44dbd4ad23965a, type: 2}
-  - {fileID: 11400000, guid: 9737df5b37df197459289a56a42e8346, type: 2}
-  - {fileID: 11400000, guid: 9551ec246b1ebcb4f9abb682934386ba, type: 2}
-  - {fileID: 11400000, guid: cfc318027eb6a0848a6a53de02e8adc9, type: 2}
-  - {fileID: 11400000, guid: 84677081ce46e7f4db93a7cdeca13f03, type: 2}
-  - {fileID: 11400000, guid: 0e5bd9d7cca47e441b14b99dfde2ae3a, type: 2}
-  - {fileID: 11400000, guid: 4439c385956f89b4280993193843ffee, type: 2}
-  unlockedDataList: []
-  dronPrefabList:
-  - {fileID: 5563208604964468180, guid: c9297ac9804d0d94f9fb22cc0d232aae, type: 3}
-  - {fileID: 7829265998662957305, guid: 057b3c1263b67e343b4daf584a272ccc, type: 3}
-  - {fileID: 2611145516192744299, guid: 9d0502a6073f5d843935f91b0152fdd5, type: 3}
-  unlockedDroneList: []
+  tier1_WList: []
 --- !u!1 &2461457789644693355
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,6 +758,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popperPrefab: {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
+  weaponBubble: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
+  droneBubble: {fileID: 7158106260931719753, guid: f60e3b59c7238354bb1cc13b9d7ff22b, type: 3}
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05
   totalDropChance: 0.1

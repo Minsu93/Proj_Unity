@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public class WaveManager : MonoBehaviour
 {
     public static WaveManager instance;
-    [SerializeField] StageManager stageManager;
 
     [Header("Wave Property")]
     [SerializeField] float startTime = 5.0f;
@@ -45,21 +44,14 @@ public class WaveManager : MonoBehaviour
     
 
 
-    //행성 관련
-    [SerializeField] List<Planet> planetList = new List<Planet>();
-
-    [Header("UI")]
-    //스크립트.
-    WaveObjectRespawner objectRespawner;
 
     [Header("Wave UI")]
-    //Wave UI관련
     [SerializeField] GameObject waveCanvas;
-    //WaveProgress waveProgress;
     WavePanelUI stageOrderUI;
     [SerializeField] int totalStageCount = 5;
 
-
+    [SerializeField] StageManager stageManager;
+    WaveObjectRespawner objectRespawner;
     BossSpawner bossSpawner;
 
     public event System.Action MonsterDisappearEvent;
@@ -77,9 +69,7 @@ public class WaveManager : MonoBehaviour
         GameObject waveUIObj =  Instantiate(waveCanvas);
         stageOrderUI = waveUIObj.transform.GetComponentInChildren<WavePanelUI>();
         stageOrderUI.SetStageIcons(stageManager.MaxStage);
-        //stageOrderUI.gameObject.SetActive(false);
 
-        //waveProgress = waveUIObj.GetComponentInChildren<WaveProgress>();
     }
 
 
@@ -91,16 +81,13 @@ public class WaveManager : MonoBehaviour
         gameTime += Time.deltaTime;
 
         //플레이어 행성 업데이트 -> 추격 용도
-        PlayerPlanetUpdate();
+        PlanetUpdate();
 
         //Stage 오브젝트 리스폰
         objectRespawner.UpdateSpawner();
 
         //최종 웨이브인 경우 이후는 업데이트 하지 않는다. 
         if (FinalWave || stage.isBossWave) return;
-
-        //웨이브 UI 아이콘 (추후 제거예정)
-        //waveProgress.IconSpawner(gameTime);
 
         //다음 웨이브 시간이 되면 웨이브 소환.
         if (nextWaveTime <= gameTime)
@@ -116,16 +103,11 @@ public class WaveManager : MonoBehaviour
         //스테이지 시작
         LoadWaveFromJson(index);
 
-        //UI초기화
-        //waveProgress.InitializeWaveProgress(stage, startTime);
         //변수 리셋
         ResetWaveManager();
 
         //스테이지 순서 UI 실행. BossWave 시 보스 스폰.
-        //Invoke("StageOrderUIMovePlayerIcon", 0.01f);
-        //StartCoroutine(ShowWaveUIRoutine());
         UpdateOrderUI();
-        //GameManager.Instance.playerManager.UpdateEscapeUI(0);
 
         if (stage.isBossWave) return;
 
@@ -150,17 +132,11 @@ public class WaveManager : MonoBehaviour
 
     void UpdateOrderUI()
     {
-        //stageOrderUI.gameObject.SetActive(true);
-        //yield return new WaitForSeconds(3f);
-        //stageOrderUI.gameObject.SetActive(false);
-
         stageOrderUI.MovePlayericon(stageManager.CurrStageIndex);
 
         //보스 웨이브인 경우
         if (stage.isBossWave)
         {
-           // yield return new WaitForSeconds(1f);
-
             //보스 생성 
             string bossName = stage.waves[0].spawns[0].enemy.name;
             StartCoroutine(bossSpawner.SpawnBoss(bossName));
@@ -208,8 +184,6 @@ public class WaveManager : MonoBehaviour
 
             //UI 조절
             GameManager.Instance.arrowManager.RemoveArrow(obj, 0);
-            //EscapeUI 업데이트
-            //GameManager.Instance.playerManager.UpdateEscapeUI(enemyTotalKilled/enemyTotalSpawned);
 
             ////적들이 비율밑으로 감소하면 웨이브 조기 클리어
             //if ((float)enemyLeftInWave / enemySpawnedInWave < waveClearRatio)
@@ -281,8 +255,6 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-
-
     IEnumerator NextStageRoutine()
     {
         yield return new WaitForSeconds(2f);
@@ -336,13 +308,13 @@ public class WaveManager : MonoBehaviour
     {
         foreach(Spawn spawn in spawns)
         {
-            StartCoroutine(SpawnObjects(spawn.enemy, spawn.spawnCount));
+            StartCoroutine(SpawnObjects(spawn.enemy, spawn.spawnCount, false));
             yield return new WaitForSeconds(spawn.delayToNextWave);
         }
     }
 
     //enemies에 들어있는 스폰을 순서대로 실행한다. 
-    IEnumerator SpawnObjects(Enemy enemy, int count)
+    public IEnumerator SpawnObjects(Enemy enemy, int count, bool isSpawnedByBoss)
     {
         GameObject enemyPrefab = GameManager.Instance.monsterDictonary.monsDictionary[enemy.name];
 
@@ -363,7 +335,8 @@ public class WaveManager : MonoBehaviour
                 case EnemyType.Ground:
                 case EnemyType.Orbit:
                     //적들을 생성지역 가장 가까이에 있는 행성으로 이동시킨다. 
-                    Planet planet = SelectClosesetPlanetFromScreen(safePoint);
+                    //Planet planet = SelectClosesetPlanetFromScreen(safePoint);
+                    Planet planet = GetRandomVisiblePlanet();
                     int strikePointIndex = planet.GetClosestIndex(transform.position);
                     strikePos = planet.worldPoints[strikePointIndex];
                     break;
@@ -376,57 +349,16 @@ public class WaveManager : MonoBehaviour
             //Strike시작
             monster.GetComponent<EnemyAction>().EnemyStartStrike(strikePos, true);
 
-
-            //소환된 적 리스트에 추가.
-            spawnedEnemyList.Add(monster);
-
+            if (!isSpawnedByBoss)
+            {
+                //소환된 적 리스트에 추가.
+                spawnedEnemyList.Add(monster);
+            }
             //소환된 적 UI에 추가
             GameManager.Instance.arrowManager.CreateArrow(monster, 0);
 
 
             yield return new WaitForSeconds(enemy.delay);
-        }
-
-    }
-
-    //보스가 적 소환할 때 > 킬 카운트에 포함이 안되게 소환.
-    public void SpawnObjects(string enemyName, int count)
-    {
-        GameObject enemyPrefab = GameManager.Instance.monsterDictonary.monsDictionary[enemyName];
-
-        for (int i = 0; i < count; i++)
-        {
-            //안전한 스폰 포인트 반환
-            GetSafePointFromOutsideScreen(out Vector2 safePoint);
-
-            GameObject monster = GameManager.Instance.poolManager.GetPoolObj(enemyPrefab, 3);
-            monster.transform.position = safePoint;
-            monster.transform.rotation = Quaternion.identity;
-            EnemyAction act = monster.GetComponent<EnemyAction>();
-
-            Vector2 strikePos = Vector2.zero;
-
-            switch (act.enemyType)
-            {
-                case EnemyType.Ground:
-                case EnemyType.Orbit:
-                    //적들을 생성지역 가장 가까이에 있는 행성으로 이동시킨다. 
-                    Planet planet = SelectClosesetPlanetFromScreen(safePoint);
-                    int strikePointIndex = planet.GetClosestIndex(transform.position);
-                    strikePos = planet.worldPoints[strikePointIndex];
-                    break;
-
-                case EnemyType.Air:
-                    //적들을 캐릭터 주변 공중으로 이동시킨다. 
-                    strikePos = GetRandomPointNearPlayer(minAirDistance, maxAirDistance);
-                    break;
-            }
-            //Strike시작
-            monster.GetComponent<EnemyAction>().EnemyStartStrike(strikePos, false);
-
-            //소환된 적 UI에 추가
-            GameManager.Instance.arrowManager.CreateArrow(monster, 0);
-
         }
     }
 
@@ -531,6 +463,9 @@ public class WaveManager : MonoBehaviour
     #region Planet
     int[,] planetEachDists;
     List<int[]> wayListFromXToY = new List<int[]>();
+    //행성 관련
+    [SerializeField] List<Planet> planetList = new List<Planet>();
+    List<Planet> visiblePlanet = new List<Planet>();
 
     //게임 시작 시 맵 전체의 행성들을 불러온다
     public void AddStagePlanets(Transform parentTr)
@@ -703,19 +638,29 @@ public class WaveManager : MonoBehaviour
         return wayList;
     }
 
-    //스크린에 보이는 행성 중 하나를 고른다. 
-    public Planet SelectClosesetPlanetFromScreen(Vector2 point)
+
+    void UpdateVisiblePlanets()
     {
-        Planet planet = null;
-        List<Planet> visiblePlanet = new List<Planet>(); 
-        for(int i = 0; i < planetList.Count; i++)
+        visiblePlanet.Clear();
+        for (int i = 0; i < planetList.Count; i++)
         {
-            if (PlanetBoundIsInScreen(planetList[i].polyCollider)) 
+            if (PlanetBoundIsInScreen(planetList[i].polyCollider))
             {
                 visiblePlanet.Add(planetList[i]);
             }
         }
+    }
 
+    Planet GetRandomVisiblePlanet()
+    {
+        int count = visiblePlanet.Count;
+        return visiblePlanet[UnityEngine.Random.Range(0, count)];
+    }
+
+    //스크린에 보이는 행성 중 하나를 고른다. 
+    private Planet SelectClosesetPlanetFromScreen(Vector2 point)
+    {
+        Planet planet = null;
         float minDist = float.MaxValue;
         foreach(Planet vp in visiblePlanet)
         {
@@ -730,7 +675,7 @@ public class WaveManager : MonoBehaviour
     }
 
     //스크린에 보이는지 검사한다. 
-    public bool PlanetBoundIsInScreen(PolygonCollider2D polyCollider)
+    private bool PlanetBoundIsInScreen(PolygonCollider2D polyCollider)
     {
         Bounds bounds = polyCollider.bounds;
         float margin = 150f;     //행성 감지용 여유 스크린 넓이
@@ -758,9 +703,9 @@ public class WaveManager : MonoBehaviour
         return false; // All corners are inside the screen
     }
 
-
+    
     //캐릭터 행성 업데이트? (몬스터 스폰 장소)
-    void PlayerPlanetUpdate()
+    void PlanetUpdate()
     {
         if (timer < updateCycle)
         {
@@ -769,13 +714,13 @@ public class WaveManager : MonoBehaviour
         else
         {
             timer = 0;
+            //화면에 보이는 Planet 갱신
+            UpdateVisiblePlanets();
+            //플레이어 행성 위치 갱신
             GameManager.Instance.playerManager.playerNearestPlanet = SelectClosesetPlanetFromScreen(GameManager.Instance.player.position);
         }
     }
     #endregion
-
-
-
 
 
     private void OnDrawGizmosSelected()

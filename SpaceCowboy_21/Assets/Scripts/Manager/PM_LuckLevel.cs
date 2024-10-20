@@ -25,7 +25,7 @@ public class PM_LuckLevel : MonoBehaviour
     LuckyStat[] luckyStats = new LuckyStat[3];
 
     //경험치 리스트 
-    [SerializeField] float[] expSheet = new float[5];
+    [SerializeField] float[] expSheet = new float[3];
 
     //무기 리스트
     [Serializable]
@@ -126,8 +126,9 @@ public class PM_LuckLevel : MonoBehaviour
     void LevelChange(int index, int level)
     {
         Debug.Log(luckyStats[index].name + " is Level change to : " + level.ToString());
+        ChangeItemTierByLevel(level);
 
-        switch(index)
+        switch (index)
         {
             case 0:
                 //1. weapon은 기본 무기 변화, 드롭 무기 세팅 변화
@@ -159,14 +160,12 @@ public class PM_LuckLevel : MonoBehaviour
         switch (level)
         {
             case 0:
-            case 1:
                 itemTier = 0;
                 break;
-            case 2:
-            case 3:
+            case 1:
                 itemTier = 1;
                 break;
-            case 4:
+            case 2:
                 itemTier = 2;
                 break;
         }

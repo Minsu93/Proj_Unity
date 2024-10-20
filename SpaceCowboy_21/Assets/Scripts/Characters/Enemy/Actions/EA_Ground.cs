@@ -5,7 +5,6 @@ public class EA_Ground : EnemyAction
 {
     //점프 
     public float jumpForce = 10f;
-
     //공중
     public float maxAirTime = 1.0f;
     public float airTime {get; set;}

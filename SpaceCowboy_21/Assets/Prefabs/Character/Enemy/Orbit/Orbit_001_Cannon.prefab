@@ -5008,6 +5008,7 @@ MonoBehaviour:
   deadEffect: {fileID: 0}
   dmgNum: {fileID: 2921101516471853322, guid: cc66ca5c9531a6f418088ca096000d14, type: 3}
   projHitObj: {fileID: 6840315327229136832}
+  physicsColl: {fileID: 6632735361442200854}
   pauseTimer: 0.1
   knockBackCurve:
     serializedVersion: 2
@@ -5360,7 +5361,7 @@ GameObject:
   - component: {fileID: 6632735361442200854}
   - component: {fileID: 734733578332888012}
   m_Layer: 17
-  m_Name: HitCollider
+  m_Name: PhysicsColl
   m_TagString: PhysicsBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
