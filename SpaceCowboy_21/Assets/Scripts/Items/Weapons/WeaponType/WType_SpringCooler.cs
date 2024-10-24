@@ -5,13 +5,15 @@ using UnityEngine;
 public class WType_SpringCooler : WeaponType
 {
     [SerializeField] BarrelType type = BarrelType.InOrder;
-    [SerializeField, Range(2, 5)] int barrelCount = 2;
     [SerializeField] float angleDist = 30f;
+    [SerializeField] float pointDist = 0.3f;
     int index = 0;
     int pingpongIndex = 0;
 
+
     public override void ShootButtonDown(Vector2 pos, Vector3 dir)
     {
+        int barrelCount = numberOfProjectile;
         //총 발사 주기
         if (Time.time - lastShootTime < shootInterval) return;
 
@@ -25,11 +27,16 @@ public class WType_SpringCooler : WeaponType
                 index = GetPingPongIndex(pingpongIndex, barrelCount);
                 break;
         }
+
+        Vector2 upVec = Quaternion.Euler(0, 0, 90) * dir;
+        Vector2 bottomPoint = pos - (((barrelCount - 1) * pointDist / 2) * upVec);
+        Vector2 point = bottomPoint + (pointDist * index * upVec);
+
         float anglePerShot = angleDist / (barrelCount - 1);
         float baseAngle = -1 * angleDist * 0.5f;
         Vector2 rotatedDir = Quaternion.Euler(0, 0, baseAngle + (anglePerShot * index)) * dir;
 
-        Shoot(pos, rotatedDir, projectilePrefab);
+        Shoot(point, rotatedDir, projectilePrefab);
 
 
         //PlayerWeapon에서 후처리

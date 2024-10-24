@@ -16,7 +16,7 @@ public class WType_ChargeLaser : WType_Charge
     {
         base.Initialize(weaponData, gunTipLocalPos);
 
-        for(int i = 0; i < weaponData.NumberOfProjectile; i++)
+        for(int i = 0; i < numberOfProjectile; i++)
         {
             lasers.Add(CreateLasers(i));
         }

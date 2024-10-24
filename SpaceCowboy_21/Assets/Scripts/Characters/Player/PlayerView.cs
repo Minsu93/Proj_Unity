@@ -252,17 +252,14 @@ public class PlayerView : MonoBehaviour
         //스킨을 교체한다
         curSkin = skeletonData.FindSkin(skinName);
 
-        //총을 교체한다
-        // SlotData slotData = skeletonData.FindSlot(slotName);
-        //int slotIndex = slotData.Index;
-        //curSkin.SetAttachment(slotIndex, slotName, gunAttachment);
-
         skeleton.SetSkin(curSkin);
 
         skeletonAnimation.Skeleton.SetSlotsToSetupPose();
         skeletonAnimation.AnimationState.Apply(skeletonAnimation.Skeleton);
 
-        playerGunAttacher.ApplyWeapon(slotName, data.ItemID.ToString());
+        int tier = PM_LuckLevel.itemTier;
+        playerGunAttacher.ApplyWeapon(slotName, data.ProjectDatas[tier].shapeID.ToString());
+        Debug.Log("Change Skin to : " + data.ProjectDatas[tier].shapeID.ToString());
 
 
         //총구 위치를 가져온다.

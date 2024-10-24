@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectable : MonoBehaviour
+public abstract class Collectable : MonoBehaviour
 {
     public ParticleSystem consumeEffect;
     protected Gravity gravity;
@@ -21,6 +21,6 @@ public class Collectable : MonoBehaviour
     {
         return;
     }
+    protected abstract bool ConsumeEvent();
 
-   
 }

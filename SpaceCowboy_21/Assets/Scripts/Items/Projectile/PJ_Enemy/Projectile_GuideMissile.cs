@@ -86,8 +86,8 @@ public class Projectile_GuideMissile : Projectile_Enemy , ITarget, IHitable
         //ShowHitEffect(nonHitEffect);
         ShowHitEffect(explodeEffect);
         //트레일 emit 중지
-        if (trail != null)
-            trailParticle.Stop();
+        //if (trail != null)
+        //    trailParticle.Stop();
     }
 
     //적의 미사일이 플레이어의 총알에 맞았을 때, ProjMove_Guide에 전달하여 넉백을 한다.(현재는 제외함)

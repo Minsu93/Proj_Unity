@@ -24,7 +24,7 @@ public class Projectile : MonoBehaviour
     public ParticleSystem hitEffect;
     public ParticleSystem nonHitEffect;
     public GameObject ViewObj;
-    public TrailRenderer trail;
+    //public TrailRenderer trail;
 
     public WeaponImpactDelegate weaponImpactDel;
 
@@ -45,11 +45,11 @@ public class Projectile : MonoBehaviour
         delayTimer = disableDelayTime;
         startPos = transform.position;
 
-        if (trail != null)
-        {
-            trail.enabled = true;
-            trail.Clear();
-        }
+        //if (trail != null)
+        //{
+        //    trail.enabled = true;
+        //    trail.Clear();
+        //}
 
     }
 
@@ -161,8 +161,8 @@ public class Projectile : MonoBehaviour
 
     void DisableObject()
     {
-        if(trail != null)
-            trail.enabled = false;
+        //if(trail != null)
+        //    trail.enabled = false;
         gameObject.SetActive(false);
     }
 

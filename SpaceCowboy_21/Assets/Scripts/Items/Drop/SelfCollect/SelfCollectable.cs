@@ -45,9 +45,9 @@ public abstract class SelfCollectable : Collectable
         }
     }
 
-    protected abstract bool ConsumeEvent();
 
-    void LifeTimerOver()
+
+    protected void LifeTimerOver()
     {
         Debug.Log("Deactivate");
         //애니메이션 출력

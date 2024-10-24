@@ -687,7 +687,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
             lastHitPos = transform.position;
 
             KnockBackEvent(hitPoint, knockBackForce);
-
+            TryStopBoost();
             //피격 애니메이션 
             if (PlayerHitEvent != null) PlayerHitEvent(unHitabltTime);
         }
@@ -698,7 +698,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
                 lastHitPos = transform.position;
 
                 KnockBackEvent(hitPoint, knockBackForce);
-
+                TryStopBoost();
                 if (PlayerHitEvent != null) PlayerHitEvent(unHitabltTime);
 
                 //CinemachineShake.instance.ShakeCamera(2f, 0.1f);
@@ -746,6 +746,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         StopAllCoroutines();
         unHitRoutine = null;
         unControlRoutine = null;
+        TryStopBoost();
 
         //UI제거
         playerJump.RemoveJumpArrow(false);
@@ -784,6 +785,7 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
         StopAllCoroutines();
         unHitRoutine = null;
         unControlRoutine = null;
+        TryStopBoost();
 
         //UI제거
         playerJump.RemoveJumpArrow(isActive);
@@ -853,15 +855,15 @@ public class PlayerBehavior : MonoBehaviour, IEnemyHitable, ITarget, ITeleportab
 
     #region Shoot & Throw
 
-
     public void TryShoot()
     {
+        if (boostOn) return;
+
         playerWeapon.ShootProcess();
     }
 
     public void TryResetShoot()
     {
-        //playerWeapon.shootOnce = false;
         playerWeapon.ShootOffProcess();
     }
 

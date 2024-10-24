@@ -16,7 +16,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     /// </summary>
     public bool activate;
     public EnemyType enemyType = EnemyType.Ground;     //적의 타입.WaveManager에서 받아와 유닛 별 다른 스폰방식을 적용한다. 
-
     public EnemyState enemyState = EnemyState.Strike;
 
 
@@ -24,21 +23,22 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
     public float enemyHeight = 0.51f;
     public float turnSpeedOnLand = 100f;
 
-    [Header("BodyAttack")]
-    public float bodyDamage = 3.0f;
-
     [Header("Strike Property")]
     public float strikeSpeed = 10f;     //강습 속도
     public float distanceFromStrikePoint = 0f;      //정지 거리 
+    [SerializeField] protected float finishStrikeDelay = 0.5f;
 
     [Header("Clear Property")]
     [SerializeField] float clearMoveDistance = 3.0f;
     [SerializeField] float clearMoveTime = 3.0f;
     [SerializeField] AnimationCurve clearCurve;
 
-    [Header("Kicked Property")]
+    [Header("KnockBack Property")]
     [SerializeField] protected bool knockbackable = false;    //발차기 맞았을 때 넉백 되느냐 마느냐
+    [SerializeField] protected float impactResist = 5.0f;
     [SerializeField] protected float knockbackAmount = 5.0f;
+    [SerializeField] protected float kick_knockAmount = 8.0f;
+    [SerializeField] protected float pauseTime = 1.0f;
 
     //이펙트
     [Header("VFX")]
@@ -201,7 +201,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     #region Strike Mode 몬스터 생성
     //지상 및 궤도 타입의 Strike 방식
-    public void EnemyStartStrike(Vector2 strikePos, bool killCount)
+    public void EnemyStartStrike(Vector2 strikePos, Planet planet, bool killCount)
     {
         //초기화
         ResetAction();
@@ -217,10 +217,10 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         transform.rotation = Quaternion.LookRotation(Vector3.forward, rotateVec.normalized);
 
         //강습을 시작한다. 
-        StartCoroutine(StrikeRoutine(strikePos));
+        StartCoroutine(StrikeRoutine(strikePos, planet));
     }
 
-    protected abstract IEnumerator StrikeRoutine(Vector2 strikePos);
+    protected abstract IEnumerator StrikeRoutine(Vector2 strikePos, Planet planet);
 
     //Strike 끝나고 깨어나기. 
     public virtual void AfterStrikeEvent()
@@ -322,21 +322,6 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
     #endregion
 
-    #region Collide with Player
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (bodyDamage == 0) return;
-            if (other.TryGetComponent<PlayerBehavior>(out PlayerBehavior pb))
-            {
-                pb.DamageEvent(bodyDamage, transform.position);
-            }
-        }
-    }
-
-    #endregion
-
     #region Hit and Damage
     public virtual void DamageEvent(float damage, Vector2 hitVec)
     {
@@ -346,6 +331,11 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         {
             //데미지 num 생성.
             dmgNum.Spawn(hitVec, damage);
+            //약간의 넉백 
+            if(damage >= impactResist)
+            {
+                EnemyKnockBack(hitVec, knockbackAmount);
+            }
 
             if (health.IsDead())
             {
@@ -370,12 +360,12 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
 
         StopAllCoroutines();
         if(attack!=null) attack.StopAttackAction();
-        if (EnemyDieEvent != null) EnemyDieEvent();
+        //if (EnemyDieEvent != null) EnemyDieEvent();
 
         enemyColl.enabled = false;
         EnemyIgnoreProjectile(true);
 
-        StartCoroutine(DieRoutine(3.0f));
+        //StartCoroutine(DieRoutine(3.0f));
 
         //WaveManager에 전달.
         if (WaveManager.instance != null && isKillCount)
@@ -383,6 +373,7 @@ public abstract class EnemyAction : MonoBehaviour, IHitable , ITarget, IKickable
         
 
         if (deadEffect != null) GameManager.Instance.particleManager.GetParticle(deadEffect, transform.position, transform.rotation);
+        StartCoroutine(DieRoutine(0.02f));
     }
 
     protected IEnumerator DieRoutine(float sec)

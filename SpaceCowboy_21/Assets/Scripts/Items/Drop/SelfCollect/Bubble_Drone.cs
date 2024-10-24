@@ -23,7 +23,8 @@ public class Bubble_Drone : SelfCollectable
     protected override void OnDisable()
     {
         base.OnDisable();
-        GameManager.Instance.arrowManager.RemoveArrow(this.gameObject, 1);
+        if(GameManager.Instance != null)
+            GameManager.Instance.arrowManager.RemoveArrow(this.gameObject, 1);
     }
 
 
@@ -37,5 +38,8 @@ public class Bubble_Drone : SelfCollectable
         this.dronePrefab = dronePrefab;
         spr.sprite = dronePrefab.GetComponent<DroneItem>().sprite;
         GameManager.Instance.arrowManager.CreateArrow(this.gameObject, 1);
+
+        StageManager.Instance.StageClearEvent -= LifeTimerOver;
+        StageManager.Instance.StageClearEvent += LifeTimerOver;
     }
 }

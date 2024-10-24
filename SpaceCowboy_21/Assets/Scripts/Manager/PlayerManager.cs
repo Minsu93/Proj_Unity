@@ -28,6 +28,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] int droneSlots = 3;
     [SerializeField] Sprite emptySprite;
 
+    public event System.Action ChangeTierEvent;
+
     private void Awake()
     {
         luckLevel = GetComponent<PM_LuckLevel>();
@@ -72,10 +74,19 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    public void ChangeBaseWeapon(WeaponData newData)
-    {
-        playerWeapon.ChangeBaseWeapon(newData);
+    //public void ChangeBaseWeapon(WeaponData newData)
+    //{
+    //    playerWeapon.ChangeBaseWeapon(newData);
 
+    //}
+
+    
+    public void ChangeTier()
+    {
+        if(ChangeTierEvent!= null)
+        {
+            ChangeTierEvent();
+        }
     }
 
     #region HyperBoost 스테이지 이동, 챕터 이동

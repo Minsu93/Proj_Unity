@@ -27,21 +27,21 @@ public class PM_LuckLevel : MonoBehaviour
     //경험치 리스트 
     [SerializeField] float[] expSheet = new float[3];
 
-    //무기 리스트
-    [Serializable]
-    private struct BaseWeaponByLevel
-    {
-        public int level;
-        public WeaponData data;
+    ////무기 리스트
+    //[Serializable]
+    //private struct BaseWeaponByLevel
+    //{
+    //    public int level;
+    //    public WeaponData data;
 
-        public BaseWeaponByLevel(int level, WeaponData data)
-        {
-            this.level = level;
-            this.data = data;
-        }
-    }
+    //    public BaseWeaponByLevel(int level, WeaponData data)
+    //    {
+    //        this.level = level;
+    //        this.data = data;
+    //    }
+    //}
 
-    [SerializeField] BaseWeaponByLevel[] baseWeaponByLvs;
+    //[SerializeField] BaseWeaponByLevel[] baseWeaponByLvs;
 
     public static int itemTier = 0;
 
@@ -53,8 +53,8 @@ public class PM_LuckLevel : MonoBehaviour
     public void InitializeLevel()
     {
         luckyStats[0] = new LuckyStat("Weapon", 0, 0, expSheet[0]);
-        luckyStats[1] = new LuckyStat("Drone", 0, 0, expSheet[0]);
-        luckyStats[2] = new LuckyStat("Item", 0, 0, expSheet[0]);
+        //luckyStats[1] = new LuckyStat("Drone", 0, 0, expSheet[0]);
+        //luckyStats[2] = new LuckyStat("Item", 0, 0, expSheet[0]);
     }
 
     /// <summary>
@@ -120,6 +120,64 @@ public class PM_LuckLevel : MonoBehaviour
         GameManager.Instance.playerManager.UpdateLuckyLevel(index, luckyStats[index].level, luckyStats[index].curExp, luckyStats[index].maxExp, false);
     }
 
+    //ui 총기 실험용
+    public void GainExpUI(float exp)
+    {
+        if (luckyStats[0].level > expSheet.Length - 1) return;
+
+        luckyStats[0].curExp += exp;
+
+        if (luckyStats[0].curExp >= luckyStats[0].maxExp)
+        {
+            luckyStats[0].level++;
+            LevelChange(0, luckyStats[0].level);
+
+            //경험치 변화
+            if (luckyStats[0].level > expSheet.Length - 1)
+            {
+                luckyStats[0].curExp = 1;
+                luckyStats[0].maxExp = 1;
+            }
+            else
+            {
+                luckyStats[0].curExp = luckyStats[0].curExp - luckyStats[0].maxExp;
+                luckyStats[0].maxExp = expSheet[luckyStats[0].level];
+            }
+        }
+
+        //ui업데이트
+        GameManager.Instance.playerManager.UpdateLuckyLevel(0, luckyStats[0].level, luckyStats[0].curExp, luckyStats[0].maxExp, true);
+    }
+    public void LossExpUI(float exp)
+    {
+
+        if (luckyStats[0].level == 0)
+        {
+            luckyStats[0].curExp = 0;
+        }
+        else
+        {
+            luckyStats[0].curExp -= exp;
+            while (luckyStats[0].curExp < 0)
+            {
+                luckyStats[0].level--;
+                LevelChange(0, luckyStats[0].level);
+                luckyStats[0].curExp += expSheet[luckyStats[0].level];
+                luckyStats[0].maxExp = expSheet[luckyStats[0].level];
+
+                if (luckyStats[0].level == 0 && luckyStats[0].curExp < 0)
+                {
+                    luckyStats[0].curExp = 0;
+                    luckyStats[0].maxExp = expSheet[0];
+                    break;
+                }
+            }
+        }
+
+        //ui업데이트
+        GameManager.Instance.playerManager.UpdateLuckyLevel(0, luckyStats[0].level, luckyStats[0].curExp, luckyStats[0].maxExp, false);
+    }
+
     /// <summary>
     /// 레벨에 따른 변화
     /// </summary>
@@ -132,7 +190,7 @@ public class PM_LuckLevel : MonoBehaviour
         {
             case 0:
                 //1. weapon은 기본 무기 변화, 드롭 무기 세팅 변화
-                BaseWeaponChangeByLevel(level);
+                //BaseWeaponChangeByLevel(level);
                 break;
             case 1:
                 //2. drone은 드롭 드론 세팅 변화
@@ -143,17 +201,17 @@ public class PM_LuckLevel : MonoBehaviour
         }
     }
     
-    void BaseWeaponChangeByLevel(int level)
-    {
-        foreach(var weaponByLevel in baseWeaponByLvs)
-        {
-            if(weaponByLevel.level == level)
-            {
-                GameManager.Instance.playerManager.ChangeBaseWeapon(weaponByLevel.data);
-                break;
-            }
-        }
-    }
+    //void BaseWeaponChangeByLevel(int level)
+    //{
+    //    foreach(var weaponByLevel in baseWeaponByLvs)
+    //    {
+    //        if(weaponByLevel.level == level)
+    //        {
+    //            GameManager.Instance.playerManager.ChangeBaseWeapon(weaponByLevel.data);
+    //            break;
+    //        }
+    //    }
+    //}
 
     void ChangeItemTierByLevel(int level)
     {
@@ -169,6 +227,7 @@ public class PM_LuckLevel : MonoBehaviour
                 itemTier = 2;
                 break;
         }
+        GameManager.Instance.playerManager.ChangeTier();
     }
 }
 

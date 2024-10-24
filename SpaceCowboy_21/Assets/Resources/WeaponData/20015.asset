@@ -13,11 +13,52 @@ MonoBehaviour:
   m_Name: 20015
   m_EditorClassIdentifier: 
   itemID: 20001
-  itemName: DelayGun
+  itemName: DamageCircle
   gunStyle: 1
   icon: {fileID: 0}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
+  projDatas:
+  - projectilePrefab: {fileID: 0}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 0
+    shootInterval: 0
+    burstInterval: 0
+    numberOfProjectile: 0
+    numberOfBurst: 0
+    speed: 0
+    speedVariation: 0
+    lifeTime: 0
+    range: 0
+    projectileSpread: 0
+    randomSpreadAngle: 0
+  - projectilePrefab: {fileID: 0}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 0
+    shootInterval: 0
+    burstInterval: 0
+    numberOfProjectile: 0
+    numberOfBurst: 0
+    speed: 0
+    speedVariation: 0
+    lifeTime: 0
+    range: 0
+    projectileSpread: 0
+    randomSpreadAngle: 0
+  - projectilePrefab: {fileID: 0}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 0
+    shootInterval: 0
+    burstInterval: 0
+    numberOfProjectile: 0
+    numberOfBurst: 0
+    speed: 0
+    speedVariation: 0
+    lifeTime: 0
+    range: 0
+    projectileSpread: 0
+    randomSpreadAngle: 0
   projectilePrefab: {fileID: 6292677011125795810, guid: 2050542b951974b4d8fe6db941181a7f, type: 3}
+  secondProjectilePrefab: {fileID: 0}
   damage: 5
   shootInterval: 0.5
   burstInterval: 1
@@ -31,6 +72,5 @@ MonoBehaviour:
   maxAmmo: 30
   projectileSpread: 0
   randomSpreadAngle: 0
-  duration: 10
   shootSFX: {fileID: 0}
   weaponPrefab: {fileID: 7031208836157295159, guid: 5e30628f5595bdf478ee54ea9d468b61, type: 3}

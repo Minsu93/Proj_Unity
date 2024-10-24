@@ -12,26 +12,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5411d5eeabfca64295d84c6fd3abe95, type: 3}
   m_Name: 20010
   m_EditorClassIdentifier: 
-  itemID: 20003
-  itemName: 
+  itemName: SlowLauncGun
   gunStyle: 1
   icon: {fileID: 21300000, guid: 2130e5269a303bb479776dc8c4343606, type: 3}
   bubbleIcon: {fileID: 21300000, guid: c2301a8016d6d214f959a189a358cf1a, type: 3}
-  projectilePrefab: {fileID: 460741323685823073, guid: ce9df711d20a0ca4b8f2a2c22d618e9a, type: 3}
-  secondProjectilePrefab: {fileID: 0}
-  damage: 5
-  shootInterval: 0.01
-  burstInterval: 1
-  numberOfProjectile: 1
-  numberOfBurst: 1
-  speed: 30
-  speedVariation: 0
-  lifeTime: 0
-  range: 18
+  projDatas:
+  - shapeID: 20001
+    projectilePrefab: {fileID: 6292677011125795810, guid: c36f199a52d00ed4badd2bcb27fa27ce, type: 3}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 5
+    shootInterval: 0.2
+    burstInterval: 0
+    numberOfProjectile: 3
+    numberOfBurst: 1
+    speed: 15
+    speedVariation: 1
+    lifeTime: 0
+    range: 18
+    projectileSpread: 0
+    randomSpreadAngle: 0
+  - shapeID: 20001
+    projectilePrefab: {fileID: 6292677011125795810, guid: c36f199a52d00ed4badd2bcb27fa27ce, type: 3}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 5
+    shootInterval: 0.15
+    burstInterval: 0
+    numberOfProjectile: 3
+    numberOfBurst: 1
+    speed: 15
+    speedVariation: 1
+    lifeTime: 0
+    range: 18
+    projectileSpread: 0
+    randomSpreadAngle: 15
+  - shapeID: 20001
+    projectilePrefab: {fileID: 6292677011125795810, guid: c36f199a52d00ed4badd2bcb27fa27ce, type: 3}
+    secondProjectilePrefab: {fileID: 0}
+    damage: 5
+    shootInterval: 0.1
+    burstInterval: 0
+    numberOfProjectile: 3
+    numberOfBurst: 1
+    speed: 15
+    speedVariation: 1
+    lifeTime: 0
+    range: 18
+    projectileSpread: 0
+    randomSpreadAngle: 0
   showRange: 1
   maxAmmo: 60
-  projectileSpread: 0
-  randomSpreadAngle: 5
-  duration: 10
   shootSFX: {fileID: 0}
-  weaponPrefab: {fileID: 5061795885844492922, guid: 154542a7ba2b2a749be2a5b062a7195c, type: 3}
+  weaponPrefab: {fileID: 5608653004331721580, guid: 432e6052defa73f4494c62ba90949038, type: 3}

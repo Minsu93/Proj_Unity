@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class Projectile_LifeOverSplit : Projectile_Player
 {
-    [SerializeField] GameObject splitPrefab;
-    [SerializeField] int numberOfSplit = 3;
+    GameObject splitPrefab;
+    int numberOfSplit;
     [SerializeField] float projectileSpread = 15.0f;
     [SerializeField] float splitDamage, splitSpeed, splitProjDistance;
+
+    public void Init(float damage, float speed, float lifeTime, float distance, int splitCount, GameObject splitPrefab)
+    {
+        base.Init(damage, speed, lifeTime, distance);
+        numberOfSplit = splitCount;
+        this.splitPrefab = splitPrefab;
+    }
+
     protected override void LifeOver()
     {
         float totalSpread = projectileSpread * (numberOfSplit - 1);       //우선 전체 총알이 퍼질 각도를 구한다

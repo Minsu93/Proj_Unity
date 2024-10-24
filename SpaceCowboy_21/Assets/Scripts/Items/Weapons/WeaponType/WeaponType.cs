@@ -39,41 +39,35 @@ public abstract class WeaponType : MonoBehaviour
     public bool showRange { get; set; }
     public float range { get; set; }
     public int maxAmmo { get; set; }
-    public float weaponDuration { get; private set; }
-
 
     protected Transform gunTipTr;
     [SerializeField] ParticleSystem muzzleFlashVFX;
 
-
     protected float lastShootTime;   //지난 발사 시간
     
     public event System.Action afterShootEvent;     //총쏘기 후처리. ammo감소.
-    
+
+
+    private void OnEnable()
+    {
+        GameManager.Instance.playerManager.ChangeTierEvent += InitializeByTier;
+    }
+
+    private void OnDisable()
+    {
+        if(GameManager.Instance != null)
+            GameManager.Instance.playerManager.ChangeTierEvent -= InitializeByTier;
+    }
 
     //총 생성 시 실행
     public virtual void Initialize(WeaponData weaponData, Vector3 gunTipLocalPos)
     {
         this.weaponData = weaponData;
         //초기 설정
-        damage = weaponData.Damage;
-        speed = weaponData.Speed;
-        shootInterval = weaponData.ShootInterval;
-        
-        burstInterval = weaponData.BurstInterval;
-        projectileSpread = weaponData.ProjectileSpread;
-        randomSpreadAngle = weaponData.RandomSpreadAngle;
-        speedVariation = weaponData.SpeedVariation;
-        numberOfProjectile = weaponData.NumberOfProjectile;
-        numberOfBurst = weaponData.NumberOfBurst;
-        lifeTime = weaponData.LifeTime;
-        range = weaponData.Range;
+        //InitializeByTier();
+
+
         maxAmmo = weaponData.MaxAmmo;
-        weaponDuration = weaponData.Duration;
-        
-        //기타 설정
-        projectilePrefab = weaponData.ProjectilePrefab;
-        secondProjectilePrefab = weaponData.SecondProjectilePrefab;
         showRange = weaponData.ShowRange;
         shootSFX = weaponData.ShootSFX;
 
@@ -81,6 +75,30 @@ public abstract class WeaponType : MonoBehaviour
         gunTipTr.localPosition = gunTipLocalPos;
         
     }
+
+    public virtual void InitializeByTier()
+    {
+        int tier = PM_LuckLevel.itemTier;
+
+        damage = weaponData.ProjectDatas[tier].damage;
+        speed = weaponData.ProjectDatas[tier].speed;
+        shootInterval = weaponData.ProjectDatas[tier].shootInterval;
+        burstInterval = weaponData.ProjectDatas[tier].burstInterval;
+        projectileSpread = weaponData.ProjectDatas[tier].projectileSpread;
+        randomSpreadAngle = weaponData.ProjectDatas[tier].randomSpreadAngle;
+        speedVariation = weaponData.ProjectDatas[tier].speedVariation;
+        numberOfProjectile = weaponData.ProjectDatas[tier].numberOfProjectile;
+        numberOfBurst = weaponData.ProjectDatas[tier].numberOfBurst;
+        lifeTime = weaponData.ProjectDatas[tier].lifeTime;
+        range = weaponData.ProjectDatas[tier].range;
+        projectilePrefab = weaponData.ProjectDatas[tier].projectilePrefab;
+        secondProjectilePrefab = weaponData.ProjectDatas[tier].secondProjectilePrefab;
+
+        //스킨
+        GameManager.Instance.playerManager.playerBehavior.TryChangeWeaponSkin(weaponData);
+    }
+
+
 
     public abstract void ShootButtonDown(Vector2 pos, Vector3 dir);
     public abstract void ShootButtonUp(Vector2 pos, Vector3 dir);
@@ -136,15 +154,39 @@ public abstract class WeaponType : MonoBehaviour
         GameManager.Instance.audioManager.PlaySfx(shootSFX);
 
     }
-
-    protected virtual IEnumerator burstShootRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
+    protected void SingleShoot(Vector2 pos, Vector3 dir, GameObject projectilePrefab)
     {
-        for (int i = 0; i < repeatNumber; i++)
+        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * dir;       // 첫 발사 방향을 구한다. 
+        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);     //쿼터니언 값으로 변환        
+
+        //랜덤 각도 추가
+        float randomAngle = UnityEngine.Random.Range(-randomSpreadAngle * 0.5f, randomSpreadAngle * 0.5f);
+        Quaternion randomRotation = Quaternion.Euler(0, 0, randomAngle);
+
+        //총알 생성
+        GameObject projectile = GameManager.Instance.poolManager.GetPoolObj(projectilePrefab, 0);
+        projectile.transform.position = pos;
+        projectile.transform.rotation = targetRotation * randomRotation;
+        Projectile proj = projectile.GetComponent<Projectile>();
+        float ranSpd = UnityEngine.Random.Range(speed - speedVariation, speed + speedVariation);
+        proj.Init(damage, ranSpd, lifeTime, range);
+        //총알에 Impact이벤트 등록
+        if (weaponImpact != null)
         {
-            Shoot(pos, dir, projectilePrefab);
-            yield return new WaitForSeconds(interval);
+            proj.weaponImpactDel = weaponImpact;
         }
+
+        //발사 시 이벤트 실행
+        WeaponShootEvent();
+        //MuzzleFlash 발사
+        MuzzleFlashEvent(pos, targetRotation);
+        //쏜 시간 체크
+        lastShootTime = Time.time;
+        //사운드 생성
+        GameManager.Instance.audioManager.PlaySfx(shootSFX);
+
     }
+    
 
     protected void WeaponShootEvent()
     {

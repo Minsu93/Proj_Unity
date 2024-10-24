@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Threading;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class EA_Orbit : EnemyAction
@@ -15,8 +16,6 @@ public class EA_Orbit : EnemyAction
 
     [Header("KnockBack_Orbit")]
     [SerializeField] AnimationCurve knockBackCurve;
-    [SerializeField] float knockbackTime = 1f;   //날아가는 시간 
-    [SerializeField] float stopDuration = 1f;
 
     //변수
     float pTime;
@@ -58,7 +57,7 @@ public class EA_Orbit : EnemyAction
                 attack.OnAttackAction();
         }
 
-        if (gravity.nearestPlanet == null) return;
+        //if (gravity.nearestPlanet == null) return;
 
         if (onChase)
         {
@@ -158,32 +157,24 @@ public class EA_Orbit : EnemyAction
     }
 
     //행성 도착 시 행성 center를 가져오는 로직 추가함. 
-    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos, Planet planet)
     {
-        Vector2 dir = strikePos - (Vector2)transform.position;
-        RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
-        if (hit.collider == null) yield break;
+        Vector2 startPos = transform.position;
+        Vector2 normal = (startPos - strikePos).normalized;
+        Vector2 strikeTargetPos = strikePos + (normal * (distanceFromStrikePoint + enemyHeight));
 
-        //추가한 부분
-        Planet planet = hit.collider.GetComponent<Planet>();
-
-        Vector2 strikeStartPos = transform.position;
-        Vector2 strikeTargetPos = hit.point;
-        
-        float strikeTime = hit.distance / strikeSpeed;
-        float time = 0; 
-        float distance = hit.distance; 
-
-        while (distance > distanceFromStrikePoint + enemyHeight)
+        float strikeTime = (startPos - strikeTargetPos).magnitude / strikeSpeed;
+        float time = 0; //강습 시간
+        while (time < strikeTime)
         {
             time += Time.deltaTime;
-            distance = Vector2.Distance(transform.position, strikeTargetPos);
-            transform.position = (Vector2.Lerp(strikeStartPos, strikeTargetPos, time / strikeTime));
+            rb.MovePosition(Vector2.Lerp(startPos, strikeTargetPos, time / strikeTime));
 
+            Debug.DrawLine(startPos, strikePos, Color.green);
             yield return null;
         }
-
-        yield return new WaitForSeconds(0.5f);
+        //착지하면 활동 시작. 
+        yield return new WaitForSeconds(finishStrikeDelay);
 
         //추가한 부분
         chase_Orbit.SetCenterPoint(planet);
@@ -209,7 +200,7 @@ public class EA_Orbit : EnemyAction
 
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
     {
-        EnemyPause(knockbackTime + 0.3f);
+        EnemyPause(pauseTime);
 
         chase_Orbit.ResetCenterPoint();
 
@@ -219,7 +210,7 @@ public class EA_Orbit : EnemyAction
         rb.velocity = Vector2.zero;
         rb.AddForce(dir * forceAmount, ForceMode2D.Impulse);
 
-        StartCoroutine(StopRoutine(knockbackTime + 0.3f));
+        StartCoroutine(StopRoutine(pauseTime));
     }
 
     IEnumerator StopRoutine(float waitTime)

@@ -16,9 +16,9 @@ public class PopperManager : MonoBehaviour
     //드롭 확률 조절 관련
     //List<EquippedItem> equippedWeapons = new List<EquippedItem>(); // 드롭 가능한 아이템 목록
     [SerializeField]
-    List<EquippedItem>[] equippedWeapons;
+    List<EquippedItem> equippedWeapons;
     [SerializeField]
-    List<EquippedItem>[] equippedDrones;
+    List<EquippedItem> equippedDrones;
 
     [SerializeField] float dropChanceIncrement = 0.1f; // 드롭 실패 시 확률 증가량
     [SerializeField] float dropChanceDecrement = 0.05f; // 드롭 성공 시 확률 감소량
@@ -45,38 +45,24 @@ public class PopperManager : MonoBehaviour
 
     #region 초기화
 
-    public void ReadyWeaponPop(List<WeaponData>[] tierLists, List<GameObject>[] tierLists2)
+    public void ReadyWeaponPop(List<WeaponData> wList, List<GameObject> dList)
     {
         //초기화
-        equippedWeapons = new List<EquippedItem>[tierLists.Length];
-        for(int i =0; i < equippedWeapons.Length; i++)
-        {
-            equippedWeapons[i] = new List<EquippedItem>();
-        }
-        equippedDrones = new List<EquippedItem>[tierLists2.Length];
-        for (int i = 0; i < equippedDrones.Length; i++)
-        {
-            equippedDrones[i] = new List<EquippedItem>();
-        }
+        equippedWeapons = new List<EquippedItem>();
+        equippedDrones = new List<EquippedItem>();
 
         //내용 집어넣기
-        for (int i = 0; i < tierLists.Length; i++)
+        for (int i = 0; i < wList.Count; i++)
         {
-            for(int j = 0; j < tierLists[i].Count; j++)
-            {
-                equippedWeapons[i].Add(new EquippedItem(0.1f, tierLists[i][j]));
-            }
-            //Debug.Log("equippedWeapons" + i.ToString() + " count : " + equippedWeapons[i].Count);
-            ResizeDropChance(equippedWeapons[i]);
+            equippedWeapons.Add(new EquippedItem(0.1f, wList[i]));
         }
-        for (int i = 0; i < tierLists2.Length; i++)
+        ResizeDropChance(equippedWeapons);
+
+        for (int i = 0; i < dList.Count; i++)
         {
-            for (int j = 0; j < tierLists2[i].Count; j++)
-            {
-                equippedDrones[i].Add(new EquippedItem(0.1f, tierLists2[i][j]));
-            }
-            ResizeDropChance(equippedDrones[i]);
+            equippedDrones.Add(new EquippedItem(0.1f, dList[i]));
         }
+        ResizeDropChance(equippedDrones);
 
         //드랍 확률 초기화
         currWeaponDropChance = totalDropChance;
@@ -130,36 +116,37 @@ public class PopperManager : MonoBehaviour
         {
             Vector2 targetPoint = GetEmptySpace(targetTr);
 
-            GameObject bubbleObj = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
-            bubbleObj.transform.SetPositionAndRotation(targetTr.position, targetTr.rotation);
-            if (bubbleObj.TryGetComponent<SelfCollectable>(out SelfCollectable bubble))
+            if (isWeapon)
             {
+                GameObject bubbleObj = GameManager.Instance.poolManager.GetPoolObj(weaponBubble, 2);
+                bubbleObj.transform.SetPositionAndRotation(targetTr.position, targetTr.rotation);
+                Bubble_Weapon bub = bubbleObj.GetComponent<Bubble_Weapon>();
+                if (bub != null)
+                {
+                    WeaponData data = TryDropItem(equippedWeapons).item as WeaponData;
+                    bub.SetBubble(data);
+                }
+                currWeaponDropChance = totalDropChance;
+
                 float randomForce = UnityEngine.Random.Range(3f, 5f);
                 Vector2 dir = targetPoint - (Vector2)targetTr.position;
-
-                bubble.LaunchBubble(dir.normalized * randomForce);
-                if (isWeapon)
+                bub.LaunchBubble(dir.normalized * randomForce);
+            }
+            else
+            {
+                GameObject bubbleObj = GameManager.Instance.poolManager.GetPoolObj(droneBubble, 2);
+                bubbleObj.transform.SetPositionAndRotation(targetTr.position, targetTr.rotation);
+                Bubble_Drone bub = bubbleObj.GetComponent<Bubble_Drone>();
+                if (bub != null)
                 {
-                    Bubble_Weapon bub = bubble as Bubble_Weapon;
-                    if(bub != null)
-                    {
-                        WeaponData data = TryDropItem(equippedWeapons[0]).item as WeaponData;
-                        bub.SetBubble(data);
-                    }
-                    currWeaponDropChance = totalDropChance;
-
+                    GameObject prefab = TryDropItem(equippedDrones).item as GameObject;
+                    bub.SetDrone(prefab);
                 }
-                else
-                {
-                    Bubble_Drone bub = bubble as Bubble_Drone;
-                    if(bub != null)
-                    {
-                        GameObject prefab = TryDropItem(equippedDrones[0]).item as GameObject;
-                        bub.SetDrone(prefab);
-                    }
-                    currDroneDropChance = totalDropChance;
+                currDroneDropChance = totalDropChance;
 
-                }
+                float randomForce = UnityEngine.Random.Range(3f, 5f);
+                Vector2 dir = targetPoint - (Vector2)targetTr.position;
+                bub.LaunchBubble(dir.normalized * randomForce);
             }
         }
         else

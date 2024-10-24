@@ -15,7 +15,7 @@ public class PlayerWeapon : MonoBehaviour
     bool infiniteBullets;    //총알이 무한
     bool isChanging;    //무기를 바꾸는 중인가요?
     float range;    //거리 표시 용 
-    float weaponDuration;
+    //float weaponDuration;
 
 
     [Header("Weapon Sight")]
@@ -56,7 +56,7 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         UpdateWeaponSight();
-        CheckWeaponDuration();
+        //CheckWeaponDuration();
     }
 
     #region WeaponSight
@@ -191,7 +191,7 @@ public class PlayerWeapon : MonoBehaviour
     void AfterShootProcess()
     {
         //쏠 때마다 총알 한발씩 제거
-        //if (!infiniteBullets) currAmmo -= 1;
+        if (!infiniteBullets) currAmmo -= 1;
         GameManager.Instance.playerManager.UpdateGaugeUIShootTime(currAmmo);  //UI 에 전달
 
         //PlayerView 의 애니메이션 실행 
@@ -257,18 +257,18 @@ public class PlayerWeapon : MonoBehaviour
 
     }
 
-    //총기 지속시간 체크
-    void CheckWeaponDuration()
-    {
-        if(weaponDuration > 0)
-        {
-            weaponDuration -= Time.deltaTime;
-            if(weaponDuration <= 0)
-            {
-                DequeueData();
-            }
-        }
-    }
+    ////총기 지속시간 체크
+    //void CheckWeaponDuration()
+    //{
+    //    if(weaponDuration > 0)
+    //    {
+    //        weaponDuration -= Time.deltaTime;
+    //        if(weaponDuration <= 0)
+    //        {
+    //            DequeueData();
+    //        }
+    //    }
+    //}
 
     //기본 총기 소환
     public void BackToBaseWeapon(bool instant)
@@ -276,23 +276,23 @@ public class PlayerWeapon : MonoBehaviour
         WeaponType wtype = GetWeaponType(baseWeaponData);
         ChangeWeapon(wtype, wtype.maxAmmo, instant);
     }
-    public void ChangeBaseWeapon(WeaponData data)
-    {
-        WeaponData preBaseData = baseWeaponData;
-        baseWeaponData = data;
+    //public void ChangeBaseWeapon(WeaponData data)
+    //{
+    //    WeaponData preBaseData = baseWeaponData;
+    //    baseWeaponData = data;
 
-        if(currWeaponType.weaponData == preBaseData)
-        {
-            BackToBaseWeapon(false);
-        }
-    }
+    //    if(currWeaponType.weaponData == preBaseData)
+    //    {
+    //        BackToBaseWeapon(false);
+    //    }
+    //}
 
     public WeaponType GetWeaponType(WeaponData data)
     {
         WeaponType wtype;
 
         //현재 만들어진 무기가 있으면 가져온다. 그렇지 않으면 새로 생성한다. 
-        if (weaponTypeDictionary.ContainsKey(data))
+        if (weaponTypeDictionary.ContainsKey(data)) 
         {
             weaponTypeDictionary.TryGetValue(data, out wtype);
         }
@@ -338,14 +338,14 @@ public class PlayerWeapon : MonoBehaviour
         currWeaponType = weaponType;
         currWeaponType.gameObject.SetActive(true);
 
-        //스킨
-        playerBehavior.TryChangeWeaponSkin(currWeaponType.weaponData);
+        //무기에게 정보 업데이트 명령(tier별 총기 스텟, Skin 변경
+        currWeaponType.InitializeByTier();
 
         //이 스크립트(Player Weapon) 에서 필요한 Ammo, Range 갱신
         currAmmo = curAmmo;
         maxAmmo = currWeaponType.maxAmmo;
         range = currWeaponType.range;
-        weaponDuration = currWeaponType.weaponDuration;
+        //weaponDuration = currWeaponType.weaponDuration;
         ShowWeaponSight(currWeaponType.showRange);
 
         if (maxAmmo == 0) infiniteBullets = true;

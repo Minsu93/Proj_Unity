@@ -10,6 +10,7 @@ public class Bubble_Weapon : SelfCollectable
     [SerializeField] private WeaponData weaponData;
     public event System.Action<WeaponData> WeaponConsumeEvent;
     SpriteRenderer spr;
+
     protected override void Awake()
     {
         base.Awake();
@@ -35,7 +36,8 @@ public class Bubble_Weapon : SelfCollectable
         //무기 교체
         if(WeaponConsumeEvent != null) WeaponConsumeEvent(weaponData);
 
-        GameManager.Instance.arrowManager.RemoveArrow(this.gameObject, 1);
+        if(GameManager.Instance != null)
+            GameManager.Instance.arrowManager.RemoveArrow(this.gameObject, 1);
 
         return GameManager.Instance.playerManager.ChangeWeapon(weaponData);
     }
@@ -45,12 +47,15 @@ public class Bubble_Weapon : SelfCollectable
         spr.sprite = w_Data.BubbleIcon;
         GameManager.Instance.arrowManager.CreateArrow(this.gameObject, 1);
 
+        StageManager.Instance.StageClearEvent -= LifeTimerOver;
+        StageManager.Instance.StageClearEvent += LifeTimerOver;
     }
 
     private void OnDrawGizmos()
     {
     #if UNITY_EDITOR
-        Handles.Label(transform.position + Vector3.up * 0.5f, weaponData.name) ;
+        if( weaponData != null )
+            Handles.Label(transform.position + Vector3.up * 0.5f, weaponData.name) ;
     #endif
     }
 

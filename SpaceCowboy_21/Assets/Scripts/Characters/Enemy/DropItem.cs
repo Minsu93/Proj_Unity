@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class DropItem : MonoBehaviour
 {
-
-
     private void Awake()
     {
         EnemyAction enemyAction = GetComponent<EnemyAction>();

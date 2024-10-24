@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
-public class AutoCollectable : Collectable
+public abstract class AutoCollectable : Collectable
 {
     protected CircleCollider2D physicsCollider;
+    bool collectStart;
 
-    public int amount = 1;
-    public float timeToAutoCollect; //자동 수집까지 걸리는 시간
+    //public float timeToAutoCollect; //자동 수집까지 걸리는 시간
     public float collectDuration;  //수집 속도. 
 
     float _easeBaseSpeed = 1.5F; //initial acceleration
 
-    float timer;
+    //float timer;
     float collectTimer;
 
 
@@ -28,27 +28,40 @@ public class AutoCollectable : Collectable
     {
         physicsCollider.enabled = true;
         gravity.activate = true;
-        timer = 0f;
-        collectTimer = 0f;
+        collectStart = false;
+
+        StageManager.Instance.StageClearEvent -= DisableMethod;
+        StageManager.Instance.StageClearEvent += DisableMethod;
     }
 
     private void Update()
     {
-        if(timer < timeToAutoCollect)
-        {
-            timer += Time.deltaTime;
-            if(timer >= timeToAutoCollect)
-            {
-                physicsCollider.enabled = false;
-                gravity.activate = false;
-            }
-        }
-        else
+        //if(timer < timeToAutoCollect)
+        //{
+        //    timer += Time.deltaTime;
+        //    if(timer >= timeToAutoCollect)
+        //    {
+        //        physicsCollider.enabled = false;
+        //        gravity.activate = false;
+        //    }
+        //}
+        //else
+        //{
+        //    AutoCollect();
+        //}
+
+        if (collectStart)
         {
             AutoCollect();
         }
     }
 
+    public void StartAutoCollect()
+    {
+        collectStart = true;
+        if (physicsCollider.enabled) physicsCollider.enabled = false;
+        if (gravity.activate) gravity.activate = false;
+    }
 
     //플레이어 위치로 자동으로 날아가는 로직. 
     void AutoCollect()
@@ -91,9 +104,17 @@ public class AutoCollectable : Collectable
     {
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
-            gameObject.SetActive(false);
+            if (ConsumeEvent())
+            {
+                GameManager.Instance.particleManager.GetParticle(consumeEffect, transform.position, transform.rotation);
+                DisableMethod();
+            }
         }
+    }
+
+    void DisableMethod()
+    {
+        gameObject.SetActive(false);
     }
 
 }

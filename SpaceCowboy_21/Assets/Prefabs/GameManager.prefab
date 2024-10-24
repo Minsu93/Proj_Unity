@@ -115,16 +115,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expSheet:
-  - 10
-  - 35
+  - 30
   - 60
-  baseWeaponByLvs:
-  - level: 0
-    data: {fileID: 11400000, guid: dfdba5774fffedd48b093714fafdbe7f, type: 2}
-  - level: 1
-    data: {fileID: 11400000, guid: 7d93473aec0604543bbf6a6c56481193, type: 2}
-  - level: 2
-    data: {fileID: 11400000, guid: 103ce9b9f8363774daec76303f96df28, type: 2}
 --- !u!1 &529613330383855574
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,6 +179,7 @@ MonoBehaviour:
   - {fileID: 6499634569363800450, guid: f67be9e5c8e4a3143bf98a6378c2aac4, type: 3}
   - {fileID: 7424398827703927764, guid: 472b274baa81c84419f4b686e6398ae6, type: 3}
   - {fileID: 8417428132932555912, guid: 7ee1ea38dbefffb4e9bb5d1207d3c67e, type: 3}
+  - {fileID: 1205147032739621916, guid: dd15ffc32f2a4d54084cb5252c008304, type: 3}
 --- !u!1 &529613330717527071
 GameObject:
   m_ObjectHideFlags: 0
@@ -241,7 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 9007588099006207600, guid: d54a103f216825a40a94f2675f1a6ca3, type: 3}
-  worldGravity: 400
+  worldGravity: 450
   worldGravityRadius: 10
   stageUI: {fileID: 1202007102574526758, guid: 79b13f0459b1c134c9f7aba260d70ef0, type: 3}
   playBGM: 1
@@ -311,6 +304,7 @@ MonoBehaviour:
     - {fileID: 6292677011125795810, guid: 2050542b951974b4d8fe6db941181a7f, type: 3}
     - {fileID: 6292677011125795810, guid: a84872a345c1ae345bad49b58a5b67c9, type: 3}
     - {fileID: 6292677011125795810, guid: d5cd6a30e5dd36e4b809bab789b26af1, type: 3}
+    - {fileID: 6292677011125795810, guid: c36f199a52d00ed4badd2bcb27fa27ce, type: 3}
   - name: EnemyProjectile
     prefabArray:
     - {fileID: 8787735894096937198, guid: 950535300ae877040b7b4136349d60c9, type: 3}
@@ -559,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d73b4d3fdf835ca4aa50fc0a85297cdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tier1_WList: []
+  WeaponList: []
 --- !u!1 &2461457789644693355
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,10 +735,11 @@ MonoBehaviour:
   itemTables:
   - item: {fileID: 1173541342381672976, guid: 42c4d89ba62b9a34fb7bd9e6868a03c7, type: 3}
     dropChance: 1
-  - item: {fileID: 1173541342381672976, guid: c447bb9b369fb234e9409a138e02dfc2, type: 3}
-    dropChance: 1
-  - item: {fileID: 1173541342381672976, guid: 7327e560140e29c4fa9e0ac980c89201, type: 3}
-    dropChance: 1
+  defaultMoney:
+    item: {fileID: 8187727286826273149, guid: 04dcd38de3ad44945a26a7e3dbb71b78, type: 3}
+    dropChance: 0.3
+  minCount: 2
+  maxCount: 4
 --- !u!114 &8722262583444838138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,9 +752,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab634f7d5908b44e93e283a598ab6b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popperPrefab: {fileID: 589853217845385795, guid: 6c0bf7cf7b04f724088c05ddef120b7b, type: 3}
   weaponBubble: {fileID: 7158106260931719753, guid: 5196d22259ebe4e4c841ec10b1c57e9c, type: 3}
   droneBubble: {fileID: 7158106260931719753, guid: f60e3b59c7238354bb1cc13b9d7ff22b, type: 3}
+  equippedWeapons: []
+  equippedDrones: []
   dropChanceIncrement: 0.1
   dropChanceDecrement: 0.05
   totalDropChance: 0.1

@@ -20,7 +20,7 @@ public class EA_Tester : EnemyAction
         return;
     }
 
-    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos, Planet planet)
     {
         yield return null;
     }

@@ -329,25 +329,34 @@ public class WaveManager : MonoBehaviour
             EnemyAction act = monster.GetComponent<EnemyAction>();
 
             Vector2 strikePos = Vector2.zero;
-
+            Planet targetPlanet;
             switch (act.enemyType)
             {
                 case EnemyType.Ground:
+                    //Ground는 화면에 보이는 행성들에 떨어짐.
+                    targetPlanet = GetRandomVisiblePlanet();
+                    int strikePointIndex = targetPlanet.GetClosestIndex(monster.transform.position);
+                    strikePos = targetPlanet.worldPoints[strikePointIndex];
+                    break;
                 case EnemyType.Orbit:
-                    //적들을 생성지역 가장 가까이에 있는 행성으로 이동시킨다. 
-                    //Planet planet = SelectClosesetPlanetFromScreen(safePoint);
-                    Planet planet = GetRandomVisiblePlanet();
-                    int strikePointIndex = planet.GetClosestIndex(transform.position);
-                    strikePos = planet.worldPoints[strikePointIndex];
+                    //orbit은 플레이어와 가장 가까운 행성으로만 떨어짐
+                    targetPlanet = GameManager.Instance.playerManager.playerNearestPlanet;
+                    strikePointIndex = targetPlanet.GetClosestIndex(monster.transform.position);
+                    strikePos = targetPlanet.worldPoints[strikePointIndex];
                     break;
 
                 case EnemyType.Air:
                     //적들을 캐릭터 주변 공중으로 이동시킨다. 
+                    targetPlanet = null;
                     strikePos = GetRandomPointNearPlayer(minAirDistance, maxAirDistance);
+                    break;
+
+                default:
+                    targetPlanet = null;
                     break;
             }
             //Strike시작
-            monster.GetComponent<EnemyAction>().EnemyStartStrike(strikePos, true);
+            monster.GetComponent<EnemyAction>().EnemyStartStrike(strikePos, targetPlanet, true);
 
             if (!isSpawnedByBoss)
             {

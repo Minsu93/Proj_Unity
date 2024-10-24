@@ -8,11 +8,7 @@ public class WeaponDictionary : MonoBehaviour
 {
     [Header("Guns")]
     [SerializeField]
-    //List<WeaponData> weaponDataList = new List<WeaponData>();   //리스트에는 모든 weaponData들을 넣어두면 된다.
-    //public List<WeaponData> unlockedDataList = new List<WeaponData>();  //해금된 weapon리스트
-    List<WeaponData> tier1_WList = new List<WeaponData>();
-    List<WeaponData> tier2_WList = new List<WeaponData>();
-    List<WeaponData> tier3_WList = new List<WeaponData>();
+    List<WeaponData> WeaponList = new List<WeaponData>();
 
     WeaponData[] wDataArray;
 
@@ -20,12 +16,9 @@ public class WeaponDictionary : MonoBehaviour
     ItemStates myWeaponStates;    //모든 아이템 해금 정보 + weaponData
 
     [Header("Drones")]
-    //[SerializeField] List<GameObject> dronPrefabList = new List<GameObject> ();//리스트에는 모든 dronePrefab들을 넣어두면 된다.
-    //public List<GameObject> unlockedDroneList = new List<GameObject> ();
 
-    List<GameObject> tier1_DList = new List<GameObject>();
-    List<GameObject> tier2_DList = new List<GameObject>();
-    List<GameObject> tier3_DList = new List<GameObject>();
+    List<GameObject> DroneList = new List<GameObject>();
+
     GameObject[] dDataArray;
 
     Dictionary<string, ItemState> droneNameDictionary = new Dictionary<string, ItemState>();
@@ -65,61 +58,31 @@ public class WeaponDictionary : MonoBehaviour
     void UpdateUnlockedDataList()
     {
         //무기 티어별 리스트
-        tier1_WList.Clear();
-        tier2_WList.Clear();
-        tier3_WList.Clear();
+        WeaponList.Clear();
 
         for (int i  = 0;  i < myWeaponStates.states.Count; i++)
         {
             if (myWeaponStates.states[i].unlocked)
             {
                 WeaponData data = FindItemByName(myWeaponStates.states[i].name, wDataArray);
-                int tier = myWeaponStates.states[i].tier;
-                switch(tier)
-                {
-                    case 0:
-                        tier1_WList.Add(data); break;
-                    case 1:
-                        tier2_WList.Add(data); break;
-                    case 2:
-                        tier3_WList.Add(data); break;
-                }
+                WeaponList.Add(data);
             }
         }
-        List<WeaponData>[] listArray = new List<WeaponData>[3];
-        listArray[0] = tier1_WList;
-        listArray[1] = tier2_WList;
-        listArray[2] = tier3_WList;
 
         //드론 티어별 리스트 
-        tier1_DList.Clear();
-        tier2_DList.Clear();
-        tier3_DList.Clear();
+        DroneList.Clear();
 
         for (int i = 0; i < myDroneStates.states.Count; i++)
         {
             if (myDroneStates.states[i].unlocked)
             {
                 GameObject data = FindDroneByName(myDroneStates.states[i].name, dDataArray);
-                int tier = myDroneStates.states[i].tier;
-                switch (tier)
-                {
-                    case 0:
-                        tier1_DList.Add(data); break;
-                    case 1:
-                        tier2_DList.Add(data); break;
-                    case 2:
-                        tier3_DList.Add(data); break;
-                }
+                DroneList.Add(data);
             }
         }
-        List<GameObject>[] listArray2 = new List<GameObject>[3];
-        listArray2[0] = tier1_DList;
-        listArray2[1] = tier2_DList;
-        listArray2[2] = tier3_DList;
 
         //PopperManager에 적용
-        GameManager.Instance.popperManager.ReadyWeaponPop(listArray,listArray2);
+        GameManager.Instance.popperManager.ReadyWeaponPop(WeaponList, DroneList);
 
     }
 
@@ -191,7 +154,6 @@ public class WeaponDictionary : MonoBehaviour
 [Serializable]
 public class ItemState
 {
-    public int tier;
     public string name;
     public bool unlocked;
 }

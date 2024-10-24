@@ -80,7 +80,7 @@ public class EA_Ground : EnemyAction
 
     public override void EnemyKnockBack(Vector2 hitPos, float forceAmount)
     {
-        EnemyPause(1f);
+        EnemyPause(pauseTime);
 
         if (onAir)
         {
@@ -107,31 +107,33 @@ public class EA_Ground : EnemyAction
 
     }
 
-    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos, Planet planet)
     {
-        Vector2 dir = strikePos - (Vector2)transform.position;
-        RaycastHit2D hit = Physics2D.CircleCast(transform.position, enemyHeight, dir.normalized, float.MaxValue, LayerMask.GetMask("Planet"));
-        if (hit.collider == null) yield break;
 
-        Vector2 strikeStartPos = transform.position;
-        Vector2 normal = (strikeStartPos - hit.point).normalized;
-        Vector2 strikeTargetPos = hit.point + (normal * (distanceFromStrikePoint + enemyHeight));
+        Vector2 startPos = transform.position;
+        Vector2 normal = (startPos - strikePos).normalized;
+        Vector2 strikeTargetPos = strikePos + (normal * (distanceFromStrikePoint + enemyHeight));
 
-        float strikeTime = (strikeStartPos - strikeTargetPos).magnitude / strikeSpeed;
+        float strikeTime = (startPos - strikeTargetPos).magnitude / strikeSpeed;
         float time = 0; //강습 시간
         while (time < strikeTime)
         {
             time += Time.deltaTime;
-            rb.MovePosition(Vector2.Lerp(strikeStartPos, strikeTargetPos, time / strikeTime));
+            rb.MovePosition(Vector2.Lerp(startPos, strikeTargetPos, time / strikeTime));
 
+            Debug.DrawLine(startPos, strikePos, Color.green);
             yield return null;
         }
         //착지하면 활동 시작. 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(finishStrikeDelay);
         AfterStrikeEvent();
     }
 
-    //추가된 부분
+    public override void AfterStrikeEvent()
+    {
+        base.AfterStrikeEvent();
+        onAir = true;
+    }
 
     void RotateCharacterToGround()
     {

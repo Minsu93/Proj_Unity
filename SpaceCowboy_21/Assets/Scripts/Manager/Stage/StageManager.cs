@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
+
+    private static StageManager instance;
+    public static StageManager Instance { get { return instance; }}
+
+
     [SerializeField]
     bool startWave;
 
@@ -35,12 +40,18 @@ public class StageManager : MonoBehaviour
 
 
     int currCamIndex = 0;
-    int preStageIndex = 0;
+    int preStageIndex = -1;
     int currStageIndex = 0;
     public int CurrStageIndex {  get { return currStageIndex; } }
     [SerializeField] int maxStage = 5;
     public int MaxStage { get { return maxStage; } }
 
+    public event System.Action StageClearEvent;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -83,12 +94,13 @@ public class StageManager : MonoBehaviour
         GameManager.Instance.cameraManager.StopCameraFollow();
 
         //3. 현재 스테이지 MapBorder 비활성화
-        mapBorders[0].ActivateBorder = false;
+        mapBorders[currStageIndex].ActivateBorder = false;
 
         //다음 스테이지 생성
         if (currStageIndex +1 < maxStage)
         {
             mapBorders[currStageIndex + 1].gameObject.SetActive(true);
+
             MoveAStarNavMesh(mapBorders[currStageIndex+1].transform.position);
         }
 
@@ -109,6 +121,12 @@ public class StageManager : MonoBehaviour
         mapBorders[currStageIndex].ActivateBorder = true;
 
         if (startWave) waveManager.WaveStart(CurrStageIndex);
+
+        //이전 웨이브 오브젝트 및 레벨 제거
+        if(preStageIndex >= 0)
+            mapBorders[preStageIndex].gameObject.SetActive(false);
+
+        if (CurrStageIndex > 0 && StageClearEvent != null) StageClearEvent();
     }
 
     /// <summary>
@@ -128,8 +146,10 @@ public class StageManager : MonoBehaviour
         GameManager.Instance.MapSize = new Vector2(mapBorders[currStageIndex].width / 2, mapBorders[currStageIndex].height / 2);
         GameManager.Instance.MapCenter = mapBorders[currStageIndex].transform.position;
 
-        //4. 지난 맵 제거
-        mapBorders[preStageIndex].gameObject.SetActive(true);
+        //4. 다음 맵 활성화
+        //mapBorders[CurrStageIndex].ActivateBorder = true;
+
+
 
         StartCoroutine(MoveComplete());
     }
@@ -142,7 +162,7 @@ public class StageManager : MonoBehaviour
         Vector2 point = waveManager.GetPointFromOutsideScreen(flagPoints[currStageIndex].startPoint.position - flagPoints[currStageIndex].flagPoint.position);
         GameManager.Instance.playerManager.SuperBoost(point, flagPoints[currStageIndex].flagPoint, true, StartWave);
 
-        //웨이브 활성화
+        //행성 활성화 
         waveManager.AddStagePlanets(mapBorders[currStageIndex].transform);
     }
 

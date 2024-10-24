@@ -260,7 +260,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4366261071164999793}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.07159901, y: -0.118356586, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -358,9 +358,9 @@ MonoBehaviour:
   enemyState: 0
   enemyHeight: 1
   turnSpeedOnLand: 100
-  bodyDamage: 0
   strikeSpeed: 10
-  distanceFromStrikePoint: 2
+  distanceFromStrikePoint: 1
+  finishStrikeDelay: 1
   clearMoveDistance: 3
   clearMoveTime: 3
   clearCurve:
@@ -388,9 +388,12 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   knockbackable: 1
-  knockbackAmount: 8
+  impactResist: 5
+  knockbackAmount: 1
+  kick_knockAmount: 8
+  pauseTime: 1
   hitEffect: {fileID: 0}
-  deadEffect: {fileID: 0}
+  deadEffect: {fileID: 1205147032739621916, guid: dd15ffc32f2a4d54084cb5252c008304, type: 3}
   dmgNum: {fileID: 2921101516471853322, guid: cc66ca5c9531a6f418088ca096000d14, type: 3}
   projHitObj: {fileID: 939904343087575540}
   physicsColl: {fileID: 6769198538435257408}

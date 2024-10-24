@@ -48,7 +48,7 @@ public class EnemyTurret : EnemyAction
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator StrikeRoutine(Vector2 strikePos)
+    protected override IEnumerator StrikeRoutine(Vector2 strikePos, Planet planet)
     {
         throw new System.NotImplementedException();
     }

@@ -9,10 +9,8 @@ public class WType_AutoBurst : WeaponType
         //총 발사 주기
         if (Time.time - lastShootTime < shootInterval) return;
 
-        //Shoot(pos, dir);
-        StartCoroutine(burstShootRoutine(pos, dir, numberOfBurst, burstInterval));
+        StartCoroutine(burstShootRoutine(pos, dir, numberOfProjectile, burstInterval));
         //ArrowShapeShootRoutine(pos, dir);
-
 
         //PlayerWeapon에서 후처리
         AfterShootProcess();
@@ -23,7 +21,14 @@ public class WType_AutoBurst : WeaponType
         return;
     }
 
-
+    protected IEnumerator burstShootRoutine(Vector2 pos, Vector3 dir, int repeatNumber, float interval)
+    {
+        for (int i = 0; i < repeatNumber; i++)
+        {
+            SingleShoot(pos, dir, projectilePrefab);
+            yield return new WaitForSeconds(interval);
+        }
+    }
 
     //void ArrowShapeShootRoutine(Vector2 pos, Vector2 dir)
     //{
